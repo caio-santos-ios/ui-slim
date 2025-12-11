@@ -1,0 +1,39 @@
+.loading-overlay {
+    background-color: rgba(252, 252, 252, 0.823);
+    position: absolute;
+    width: 100dvw;
+    height: 100dvh;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-loader {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.loader {
+  width: 90px;
+  height: 90px;
+  border: 6px solid #e5e7eb;      
+  border-top-color: var(--primary-color);      
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.title-loader {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}

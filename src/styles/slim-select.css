@@ -1,0 +1,53 @@
+select {
+    border: 0;
+    outline: none;
+}
+
+.label {
+    /* color: var(--primary-color); */
+    font-weight: 500;
+}
+
+.select {
+    /* border: 1px solid;
+    border: 1px solid var(--primary-color); */
+    border-radius: .5rem;
+    padding: .45rem .5rem;
+    /* color: var(--primary-color); */
+}
+
+.select::placeholder {
+    color: blue !important;
+}
+
+input {
+    outline: none;
+    border-radius: .5rem;
+    padding: .4rem .5rem;
+}
+
+.input::placeholder {
+    opacity: 1;
+    /* font-size: .8rem; */
+    font-weight: 500;
+}
+
+.slim-label-primary {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.slim-label-secondary {
+    color: var(--secondary-color);
+    font-weight: 700;
+}
+
+.slim-select-primary {
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.slim-input-secondary {
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+}
