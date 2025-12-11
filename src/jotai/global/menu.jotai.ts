@@ -128,7 +128,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 subMenu: [],
                 description: 'Tabelas Genérica',
                 icon: '',
-                link: '',
+                link: 'generic-tables',
                 padding: 'px-4',
                 authorized: true,
             },            

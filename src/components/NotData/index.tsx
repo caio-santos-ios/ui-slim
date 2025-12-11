@@ -2,13 +2,11 @@
 
 import "./style.css";
 import { useAtom } from "jotai";
-import { GrNext, GrPrevious } from "react-icons/gr";
 import { paginationAtom } from "@/jotai/global/pagination.jotai";
-import { TPagination } from "@/types/global/pagination.type";
 import Image from "next/image";
 
 export const NotData = () => {
-    const [pagination] = useAtom<TPagination<any>>(paginationAtom);   
+    const [pagination] = useAtom(paginationAtom);   
 
     return (
         <>
