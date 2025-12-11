@@ -88,7 +88,6 @@ export const ModalGenericTable = ({title, isOpen, setIsOpen, onClose, onSelectVa
                             </div>                          
                             <div className="flex justify-end gap-2 w-12/12 mt-3">
                                 <button type="button" onClick={cancel} className="slim-btn slim-btn-primary-light">Cancelar</button>
-                                {/* <button type="submit" className="slim-btn slim-btn-primary">Salvar</button> */}
                                 <Button text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>

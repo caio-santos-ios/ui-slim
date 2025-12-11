@@ -2,3 +2,7 @@ header {
     font-family: "Kedebideri", sans-serif;
     height: var(--height-header);
 }
+
+.container-profile-header {
+    color: var(--primary-color);
+}

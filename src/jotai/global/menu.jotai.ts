@@ -38,7 +38,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 subMenu: [],
                 description: 'Profissionais',
                 icon: '',
-                link: '',
+                link: 'master-data/professionals',
                 padding: 'px-4',
                 authorized: true,
             },

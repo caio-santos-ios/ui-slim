@@ -17,11 +17,3 @@
     border: 1px solid var(--secondary-color);
     color: var(--secondary-color);
 }
-
-.slim-input-primary::placeholder {
-    /* color: var(--primary-color); */
-}
-
-.slim-input-secondary::placeholder {
-    /* color: var(--secondary-color); */
-}

@@ -21,13 +21,11 @@ import { NotData } from "@/components/Global/NotData";
 import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { ModalGenericTable } from "@/components/MasterData/GenericTable/Modal";
+import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
 
 const columns: any[] = [
-  { key: "category", title: "Categoria" },
-  { key: "paymentMethod", title: "Metodo de pagamento" },
-  { key: "contract", title: "Contrato" },
-  { key: "costCenter", title: "Centro de Custo" },
-  { key: "createdAt", title: "Data de criação" },
+  { key: "table", title: "Tabela" },
+  // { key: "createdAt", title: "Data de criação" },
 ];
 
 export default function Dashboard() {
@@ -113,9 +111,9 @@ export default function Dashboard() {
 
                 <ul className="grid gap-2 slim-list-card lg:hidden">
                   {
-                    pagination.data.map((x: TAccountsReceivable) => {
+                    pagination.data.map((x: TGenericTable, i: number) => {
                       return (
-                        <Card key={x.id}
+                        <Card key={i}
                           buttons={
                             <>
                               <MenuItem>
@@ -127,10 +125,11 @@ export default function Dashboard() {
                             </>
                           }
                         >
-                          <p>Contrato: <span className="font-bold">{x.category}</span></p>
+                          <p></p>
+                          {/* <p>Contrato: <span className="font-bold">{x.category}</span></p>
                           <p>Metodo Pagemento: <span className="font-bold">{x.category}</span></p>
                           <p>Categoria: <span className="font-bold">{x.category}</span></p>
-                          <p>Centro de Custo: <span className="font-bold">{x.category}</span></p>
+                          <p>Centro de Custo: <span className="font-bold">{x.category}</span></p> */}
                         </Card>                       
                       )
                     })
