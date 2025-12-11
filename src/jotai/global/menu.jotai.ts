@@ -122,6 +122,16 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 padding: 'px-4',
                 authorized: true,
             },            
+            {
+                code: '22',
+                isOpen: true,
+                subMenu: [],
+                description: 'Tabelas Genérica',
+                icon: '',
+                link: '',
+                padding: 'px-4',
+                authorized: true,
+            },            
         ],
     },
     // {
