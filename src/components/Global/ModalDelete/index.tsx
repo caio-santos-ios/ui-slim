@@ -2,13 +2,7 @@
 
 import "./style.css";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { SubmitHandler, useForm } from "react-hook-form";
 import { TAccountsReceivable } from "@/types/accountsReceivable/accountsReceivable.type";
-import { InputForm } from "@/components/InputForm";
-import { SelectForm } from "@/components/SelectForm";
-import { configApi, resolveResponse } from "@/service/config.service";
-import { api } from "@/service/api.service";
-import { useEffect } from "react";
 
 type TProp = {
     title: string;
