@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { userLoggerAtom } from "@/jotai/auth/auth.jotai";
 import { useAtom } from "jotai";
@@ -6,11 +6,11 @@ import { Autorization } from "@/components/Global/Autorization";
 import { FormResetPassword } from "@/components/Auth/ResetPassword";
 
 export default function ResetPassword() {
-  const [userLogger] = useAtom(userLoggerAtom);
+  // const [userLogger] = useAtom(userLoggerAtom);
 
   return (
     <>
-      <Autorization path="reset-password" />
+      {/* <Autorization path="reset-password" />
       {
         !userLogger &&
         <main className="h-dvh slim-bg-secondary">
@@ -18,7 +18,7 @@ export default function ResetPassword() {
             <FormResetPassword />
           </div>
         </main>
-      }
+      } */}
     </>
   );
 }

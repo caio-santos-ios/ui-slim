@@ -5,7 +5,6 @@ import "../../styles/slim.css";
 import "../../styles/slim-input.css";
 import "../../styles/slim-btn.css";
 import "../../styles/login/login.css";
-import { ToastContainer } from "react-toastify";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
