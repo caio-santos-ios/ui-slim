@@ -1,3 +1,15 @@
+input {
+    outline: none;
+    border-radius: .5rem;
+    padding: .4rem .5rem;
+}
+
+.input::placeholder {
+    opacity: 1;
+    /* font-size: .8rem; */
+    font-weight: 500;
+}
+
 .slim-label-primary {
     color: var(--primary-color);
     font-weight: 700;

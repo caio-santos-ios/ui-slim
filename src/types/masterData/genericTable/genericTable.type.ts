@@ -3,4 +3,5 @@ export type TGenericTable = {
     table: string;
     code: string;
     description: string;
+    createdAt: string;
 }

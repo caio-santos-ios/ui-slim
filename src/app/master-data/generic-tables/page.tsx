@@ -4,7 +4,6 @@ import { userLoggerAtom } from "@/jotai/auth/auth.jotai";
 import { paginationAtom } from "@/jotai/global/pagination.jotai";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
-import { TAccountsReceivable } from "@/types/accountsReceivable/accountsReceivable.type";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
@@ -21,12 +20,10 @@ import { NotData } from "@/components/Global/NotData";
 import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { ModalGenericTable } from "@/components/MasterData/GenericTable/Modal";
+import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
 
 const columns: any[] = [
-  { key: "category", title: "Categoria" },
-  { key: "paymentMethod", title: "Metodo de pagamento" },
-  { key: "contract", title: "Contrato" },
-  { key: "costCenter", title: "Centro de Custo" },
+  { key: "table", title: "Tabela" },
   { key: "createdAt", title: "Data de criação" },
 ];
 
@@ -34,7 +31,7 @@ export default function Dashboard() {
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
-  const [accountsReceivable, setAccountsReceivable] = useState<TAccountsReceivable>();
+  const [currentBody, setCurrentBody] = useState<TGenericTable>();
 
 
   const [userLogger] = useAtom(userLoggerAtom);
@@ -56,23 +53,23 @@ export default function Dashboard() {
     }
   };
 
-  const openModal = (action: "create" | "edit" = "create", body?: TAccountsReceivable) => {
+  const openModal = (action: "create" | "edit" = "create", body?: TGenericTable) => {
     if(body) {
-      setAccountsReceivable(body);
+      setCurrentBody(body);
     };
     
     setTypeModal(action);
     setModal(true);
   };
   
-  const openModalDelete = (body: TAccountsReceivable) => {
-    setAccountsReceivable(body);
+  const openModalDelete = (body: TGenericTable) => {
+    setCurrentBody(body);
     setModalDelete(true);
   };
 
   const destroy = async () => {
     try {
-      const { status, data} = await api.delete(`/accounts-receivable/${accountsReceivable?.id}`, configApi());
+      const { status, data} = await api.delete(`/generic-tables/${currentBody?.id}`, configApi());
       resolveResponse({status, ...data});
       setModalDelete(false);
       await getAll();
@@ -86,7 +83,6 @@ export default function Dashboard() {
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean) => {
-    console.log(isSuccess)
     if(isSuccess) {
       setModal(false); 
       await getAll();
@@ -113,7 +109,7 @@ export default function Dashboard() {
 
                 <ul className="grid gap-2 slim-list-card lg:hidden">
                   {
-                    pagination.data.map((x: TAccountsReceivable) => {
+                    pagination.data.map((x: TGenericTable) => {
                       return (
                         <Card key={x.id}
                           buttons={
@@ -127,10 +123,8 @@ export default function Dashboard() {
                             </>
                           }
                         >
-                          <p>Contrato: <span className="font-bold">{x.category}</span></p>
-                          <p>Metodo Pagemento: <span className="font-bold">{x.category}</span></p>
-                          <p>Categoria: <span className="font-bold">{x.category}</span></p>
-                          <p>Centro de Custo: <span className="font-bold">{x.category}</span></p>
+                          <p>Tabela: <span className="font-bold">{x.table}</span></p>
+                          <p>Data de criação: <span className="font-bold">{maskDate(x.createdAt)}</span></p>
                         </Card>                       
                       )
                     })
@@ -171,6 +165,7 @@ export default function Dashboard() {
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={() => setModal(false)}
               onSelectValue={handleReturnModal}
+              body={currentBody}
             />      
 
             <ModalDelete 

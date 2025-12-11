@@ -62,7 +62,7 @@ export default function Home() {
               </div>
               <Button isLoading={isLoading} text="Entrar" theme="primary" styleClassBtn="w-full p-3 mb-8"/>
 
-              {/* <div className="text-center font-normal">Esqueceu a senha? <a className="font-bold text-blue-600" href="reset-password">Recuperar senha</a></div> */}
+              <div className="text-center font-normal">Esqueceu a senha? <a className="font-bold text-blue-600" href="reset-password">Recuperar senha</a></div>
             </form>
           </div>
         </main>
