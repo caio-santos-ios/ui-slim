@@ -1,0 +1,44 @@
+.slim-container {
+    border-radius: .5rem;
+    padding: 1rem;
+    width: 100%;
+}
+
+.container-breadcrump {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.breadcrump {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    color: var(--primary-text-color); 
+    padding: .5rem;
+    border-radius: 1rem;
+    font-weight: 600;
+}
+
+.buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+button {
+    border-radius: .5rem;
+    padding: 0 1rem;
+    height: 2rem;
+    cursor: pointer;
+}
+
+.slim-container-main {
+    height: calc(100dvh - (var(--height-header) + 8rem));
+}
+
+@media (min-width: 1024px) {
+    .slim-container {
+        width: calc(100dvw - (var(--width-side-bar) + 2rem));
+    }
+}

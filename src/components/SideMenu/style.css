@@ -1,0 +1,13 @@
+@media (max-width: 768px) {
+    .open-menu {
+        transition: 1s;
+        width: 100dvw;
+        height: calc(100dvh - var(--height-header));
+    }
+}
+
+@media (min-width: 1024) {
+    .side-bar {
+        width: var(--width-side-bar);
+    }
+}

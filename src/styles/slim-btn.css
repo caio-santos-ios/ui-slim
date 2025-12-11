@@ -1,0 +1,42 @@
+
+.slim-btn {
+    font-weight: 600;
+    border-radius: .5rem;
+    padding: 0.5rem;
+    
+}
+
+.slim-btn-primary {
+    border: 1px solid var(--primary-color);
+    background-color: var(--primary-color);
+    color: var(--secondary-text-color);
+}
+
+.slim-btn-primary:hover {
+    border: 1px solid var(--primary-color);
+    background-color: transparent;
+    color: var(--primary-color);
+}
+
+.slim-btn-primary-light {
+    border: 1px solid var(--primary-color);
+    background-color: transparent;
+    color: var(--primary-text-color);
+}
+
+.slim-btn-secondary-light {
+    border: 1px solid var(--secondary-color);
+    background-color: transparent;
+    color: var(--secondary-text-color);
+}
+
+.slim-btn-secondary {
+    border: 1px solid var(--secondary-color);
+    background-color: var(--secondary-color);
+    color: var(--primary-text-color);
+}
+
+.slim-btn-spinner-primary {
+    border: 4px solid #ccc;
+    border-top-color: var(--primary-color);
+}
