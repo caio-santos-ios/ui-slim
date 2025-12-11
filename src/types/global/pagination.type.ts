@@ -1,5 +1,5 @@
-export type TPagination<T> = {
-    data: T[];
+export type TPagination = {
+    data: any[];
     totalCount: number;
     currentPage: number;
     pageSize: number;
