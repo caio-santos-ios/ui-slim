@@ -34,7 +34,7 @@ export default function Home() {
 
   return (
     <>
-      <Autorization />
+      <Autorization path="login" />
       {
         !userLogger &&
         <main className="h-dvh slim-bg-secondary">

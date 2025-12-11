@@ -91,7 +91,7 @@ export default function Dashboard() {
   };
   
   useEffect(() => {
-    getAll();
+    // getAll();
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean) => {

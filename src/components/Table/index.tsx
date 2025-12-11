@@ -21,7 +21,7 @@ type TPropos = {
 };
 
 export default function DataTable({columns, children, isAction = true}: TPropos) {
-    const [pagination] = useAtom<TPagination<any>>(paginationAtom);     
+    const [pagination] = useAtom(paginationAtom);     
     
     return (
         <>
