@@ -12,7 +12,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-export const ResetPassword = () => {
+export const FormResetPassword = () => {
     const [userLogger] = useAtom(userLoggerAtom);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [passwordEnabled, setPasswordEnabled] = useState<boolean>(true);

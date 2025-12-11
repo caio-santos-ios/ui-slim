@@ -1,19 +1,15 @@
 "use client";
 
 import { userLoggerAtom } from "@/jotai/auth/auth.jotai";
-import { modalAtom } from "@/jotai/global/modal.jotai";
 import { paginationAtom } from "@/jotai/global/pagination.jotai";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
-import { TAccountsReceivable, TCreateAccountsReceivable } from "@/types/accountsReceivable/accountsReceivable.type";
-import { TPagination } from "@/types/global/pagination.type";
+import { TAccountsReceivable } from "@/types/accountsReceivable/accountsReceivable.type";
 import { useAtom } from "jotai";
-import { useEffect, useState, Fragment } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { MenuItem } from '@headlessui/react';
-import { ModalAccountsReceivable } from "@/components/AccountsReceivable/Modal";
 import { maskDate } from "@/utils/mask.util";
 import { Autorization } from "@/components/Global/Autorization";
 import { Header } from "@/components/Global/Header";
@@ -24,6 +20,7 @@ import DataTable from "@/components/Global/Table";
 import { NotData } from "@/components/Global/NotData";
 import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
+import { ModalGenericTable } from "@/components/MasterData/GenericTable/Modal";
 
 const columns: any[] = [
   { key: "category", title: "Categoria" },
@@ -40,20 +37,19 @@ export default function Dashboard() {
   const [accountsReceivable, setAccountsReceivable] = useState<TAccountsReceivable>();
 
 
-  const [_m, setOpenModal] = useAtom(modalAtom);
-  const [accountId, setAccountId] = useState("");
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
  
   const getAll = async () => {
     try {
       const {data} = await api.get(`/generic-tables?deleted=false&pageSize=10&pageNumber=1`, configApi());
+      const result = data.result;
 
       setPagination({
-        currentPage: data.currentPage,
-        data: data.data,
-        sizePage: data.pageSize,
-        totalPages: data.totalCount
+        currentPage: result.currentPage,
+        data: result.data,
+        sizePage: result.pageSize,
+        totalPages: result.totalCount
       });
     } catch (error) {
       resolveResponse(error);
@@ -86,10 +82,11 @@ export default function Dashboard() {
   };
   
   useEffect(() => {
-    // getAll();
+    getAll();
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean) => {
+    console.log(isSuccess)
     if(isSuccess) {
       setModal(false); 
       await getAll();
@@ -169,12 +166,11 @@ export default function Dashboard() {
               </SlimContainer>
             </div>
 
-            <ModalAccountsReceivable 
+            <ModalGenericTable 
               title={typeModal == 'create' ? 'Inserir Tabela Genérica' : 'Editar Tabela Genérica'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={() => setModal(false)}
               onSelectValue={handleReturnModal}
-              body={accountsReceivable}
             />      
 
             <ModalDelete 

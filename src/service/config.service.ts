@@ -21,6 +21,7 @@ export const resolveResponse = (response: any) => {
   };
 
   if(response.status >= 400 && response.status < 500) {
+    if(response.status === 401) {}
     toast.warn(response?.response?.data?.message, {
       theme: 'colored'
     });

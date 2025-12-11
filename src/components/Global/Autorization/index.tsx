@@ -23,9 +23,8 @@ export const Autorization = ({path}: TProp) => {
                 router.push("/");
             };
         } else {
-            console.log(path)
             setUserLogger(true);
-            if(path == "login") {
+            if(path == "login" || path == "reset-password") {
                 router.push("/dashboard");
             };
         };

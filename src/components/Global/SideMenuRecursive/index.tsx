@@ -36,7 +36,7 @@ export const SideMenuRecursive = ({menu}: TProps) => {
 
     const logout = async () => {
         localStorage.removeItem("token");   
-        router.push("/login");
+        router.push("/");
     };
 
     return (

@@ -3,12 +3,12 @@
 import "./style.css";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { SubmitHandler, useForm } from "react-hook-form";
-import { TAccountsReceivable } from "@/types/accountsReceivable/accountsReceivable.type";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { api } from "@/service/api.service";
 import { useEffect } from "react";
 import { InputForm } from "@/components/Global/InputForm";
-import { SelectForm } from "@/components/Global/SelectForm";
+import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
+import { Button } from "@/components/Global/Button";
 
 type TProp = {
     title: string;
@@ -16,13 +16,13 @@ type TProp = {
     setIsOpen: (isOpen: boolean) => void;
     onClose: () => void;
     onSelectValue: (isSuccess: boolean) => void;
-    body?: TAccountsReceivable
+    body?: TGenericTable
 }
 
 export const ModalGenericTable = ({title, isOpen, setIsOpen, onClose, onSelectValue, body}: TProp) => {
-    const { register, handleSubmit, reset, formState: { errors }} = useForm<TAccountsReceivable>();
+    const { register, handleSubmit, reset, formState: { errors }} = useForm<TGenericTable>();
 
-    const onSubmit: SubmitHandler<TAccountsReceivable> = async (body: TAccountsReceivable) => {
+    const onSubmit: SubmitHandler<TGenericTable> = async (body: TGenericTable) => {
         if(!body.id) {
           await create(body);
         } else {
@@ -30,9 +30,9 @@ export const ModalGenericTable = ({title, isOpen, setIsOpen, onClose, onSelectVa
         }
     };
 
-    const create = async (body: TAccountsReceivable) => {
+    const create = async (body: TGenericTable) => {
         try {
-            const { status, data} = await api.post(`/accounts-receivable`, body, configApi());
+            const { status, data} = await api.post(`/generic-tables`, body, configApi());
             resolveResponse({status, ...data});
             cancel();
             onSelectValue(true);
@@ -41,9 +41,9 @@ export const ModalGenericTable = ({title, isOpen, setIsOpen, onClose, onSelectVa
         }
     };
       
-    const update = async (body: TAccountsReceivable) => {
+    const update = async (body: TGenericTable) => {
         try {
-            const { status, data} = await api.put(`/accounts-receivable`, body, configApi());
+            const { status, data} = await api.put(`/generic-tables`, body, configApi());
             resolveResponse({status, ...data});
             cancel();
             onSelectValue(true);
@@ -55,11 +55,9 @@ export const ModalGenericTable = ({title, isOpen, setIsOpen, onClose, onSelectVa
     const cancel = () => {
         reset({
             id: "",
-            paymentMethod: "",
-            category: "",
-            contract: "",
-            costCenter: "",
-            createdAt: ""
+            code: "",
+            description: "",
+            table: ""
         });
 
         onClose();
@@ -81,34 +79,17 @@ export const ModalGenericTable = ({title, isOpen, setIsOpen, onClose, onSelectVa
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 mb-2">
-                                <InputForm {...register("contract")} styleClass="flex flex-1" placeholder="Digite" name="contract" title="Contrato" type="text" />
-                                
-                                <SelectForm {...register("category")} styleClass="flex flex-1" name="category" title="Categoria">
-                                    <option value="">SELECIONE...</option>
-                                    <option value="001">Receita de Vendas e Seriços</option>
-                                    <option value="002">Receitas Financeiras</option>
-                                    <option value="003">Outras Receitas e Entradas</option>
-                                </SelectForm>
-                                
-                                <SelectForm {...register("costCenter")} styleClass="flex flex-1" name="costCenter" title="Centro de Custo">
-                                    <option value="">SELECIONE...</option>
-                                    <option value="001">0001 - Administrativo</option>
-                                </SelectForm>
-                                
-                                <SelectForm {...register("paymentMethod")} styleClass="flex flex-1" name="paymentMethod" title="Forma de Pagamento">
-                                    <option value="">SELECIONE...</option>
-                                    <option value="001">Cartão de crédito</option>
-                                    <option value="002">Boleto</option>
-                                    <option value="003">Pix</option>
-                                    <option value="004">Dinheiro</option>
-                                    <option value="005">Transferência</option>
-                                    <option value="006">Outras Forma de Pagamento</option>
-                                </SelectForm>                 
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-2">
+                                <InputForm {...register("table")} styleClass="flex flex-1" placeholder="Digite" name="table" title="Tabela" type="text" />
+                                <InputForm {...register("code")} styleClass="flex flex-1" placeholder="Digite" name="code" title="Código" type="text" />
+                            </div>                          
+                            <div className="grid grid-cols-1 gap-2 mb-2">
+                                <InputForm {...register("description")} styleClass="flex flex-1" placeholder="Digite" name="description" title="Descrição" type="text" />
                             </div>                          
                             <div className="flex justify-end gap-2 w-12/12 mt-3">
                                 <button type="button" onClick={cancel} className="slim-btn slim-btn-primary-light">Cancelar</button>
-                                <button type="submit" className="slim-btn slim-btn-primary">Salvar</button>
+                                {/* <button type="submit" className="slim-btn slim-btn-primary">Salvar</button> */}
+                                <Button text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>
                     </DialogPanel>

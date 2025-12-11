@@ -28,14 +28,8 @@ export default function ResetPasswordLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="br" className="">
-      <head>
-        <link href="https://fonts.googleapis.com/css2?family=Kedebideri:wght@400;500;600;700;800;900&family=Yeseva+One&display=swap" rel="stylesheet"></link>
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ToastContainer />
-        {children}
-      </body>
-    </html>
+    <div className="dashboard-wrapper">
+      {children}
+    </div>
   );
 }

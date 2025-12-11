@@ -4,7 +4,7 @@ import { userLoggerAtom } from "@/jotai/auth/auth.jotai";
 import { api } from "@/service/api.service";
 import { resolveResponse } from "@/service/config.service";
 import { useAtom } from "jotai";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { set, SubmitHandler, useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { TLogin } from "@/types/auth/auth.type";
 import { useState } from "react";
@@ -18,17 +18,23 @@ import { Button } from "@/components/Global/Button";
 export default function Home() {
   const [userLogger] = useAtom(userLoggerAtom);
   const [passwordEnabled, setPasswordEnabled] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   
   const { register, handleSubmit, reset, formState: { errors }} = useForm<TLogin>();
 
   const login: SubmitHandler<TLogin> = async (body: TLogin) => {
     try {
+      setIsLoading(true);
       const {data} = await api.post(`/auth/login`, body);
+
       localStorage.setItem("token", data.data.token);
+      localStorage.setItem("name", data.data.name);
       router.push("/dashboard");
     } catch (error) {
       resolveResponse(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -55,9 +61,9 @@ export default function Home() {
                 </div>
                 <div className="text-red-500 min-h-6">{errors.password && errors.password.message}</div>
               </div>
-              <Button text="Entrar" theme="primary" styleClassBtn="w-full p-3 mb-8"/>
+              <Button isLoading={isLoading} text="Entrar" theme="primary" styleClassBtn="w-full p-3 mb-8"/>
 
-              <div className="text-center font-normal">Esqueceu a senha? <a className="font-bold text-blue-600" href="reset-password">Recuperar senha</a></div>
+              <div className="text-center font-normal">Esqueceu a senha? <a className="font-bold text-blue-600" href="reset">Recuperar senha</a></div>
             </form>
           </div>
         </main>
