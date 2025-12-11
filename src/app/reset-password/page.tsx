@@ -9,7 +9,7 @@ export default function ResetPassword() {
 
   return (
     <>
-      {/* <Autorization path="reset-password" />
+      <Autorization path="reset-password" />
       {
         !userLogger &&
         <main className="h-dvh slim-bg-secondary">
@@ -17,7 +17,7 @@ export default function ResetPassword() {
             <ResetPassword />
           </div>
         </main>
-      } */}
+      }
     </>
   );
 }

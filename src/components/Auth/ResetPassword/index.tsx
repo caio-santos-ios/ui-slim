@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/Global/Button"
 import { InputForm } from "@/components/Global/InputForm"
 import { Logo } from "@/components/Global/logo"
@@ -19,6 +21,7 @@ export const FormResetPassword = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const codeAccess = searchParams.get("codeAccess");
+    // const codeAccess = "";
     
     const { register, handleSubmit, reset, formState: { errors }} = useForm<TLogin>();
 
