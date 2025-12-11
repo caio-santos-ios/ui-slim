@@ -48,18 +48,17 @@ export default function Dashboard() {
   const [_m, setOpenModal] = useAtom(modalAtom);
   const [accountId, setAccountId] = useState("");
   const [userLogger] = useAtom(userLoggerAtom);
-  const [_p, setPagination] = useAtom<TPagination<any>>(paginationAtom);  
-  const [pagination] = useAtom<TPagination<any>>(paginationAtom); 
+  const [pagination, setPagination] = useAtom(paginationAtom); 
  
   const getAll = async () => {
     try {
-      const {data} = await api.get(`/accounts-receivable?deleted=false&pageSize=10&pageNumber=1`, configApi());
+      const {data} = await api.get(`/generic-tables?deleted=false&pageSize=10&pageNumber=1`, configApi());
 
       setPagination({
         currentPage: data.currentPage,
         data: data.data,
-        pageSize: data.pageSize,
-        totalCount: data.totalCount
+        sizePage: data.pageSize,
+        totalPages: data.totalCount
       });
     } catch (error) {
       resolveResponse(error);

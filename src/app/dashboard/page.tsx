@@ -48,8 +48,7 @@ export default function Dashboard() {
   const [_m, setOpenModal] = useAtom(modalAtom);
   const [accountId, setAccountId] = useState("");
   const [userLogger] = useAtom(userLoggerAtom);
-  const [_p, setPagination] = useAtom<TPagination<any>>(paginationAtom);  
-  const [pagination] = useAtom<TPagination<any>>(paginationAtom); 
+  const [pagination, setPagination] = useAtom(paginationAtom); 
  
   const getAll = async () => {
     try {
@@ -58,8 +57,8 @@ export default function Dashboard() {
       setPagination({
         currentPage: data.currentPage,
         data: data.data,
-        pageSize: data.pageSize,
-        totalCount: data.totalCount
+        sizePage: data.pageSize,
+        totalPages: data.totalCount
       });
     } catch (error) {
       resolveResponse(error);
