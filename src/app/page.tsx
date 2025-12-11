@@ -4,11 +4,10 @@ import { userLoggerAtom } from "@/jotai/auth/auth.jotai";
 import { api } from "@/service/api.service";
 import { resolveResponse } from "@/service/config.service";
 import { useAtom } from "jotai";
-import { set, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { TLogin } from "@/types/auth/auth.type";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { Autorization } from "@/components/Global/Autorization";
 import { Logo } from "@/components/Global/logo";
@@ -63,7 +62,7 @@ export default function Home() {
               </div>
               <Button isLoading={isLoading} text="Entrar" theme="primary" styleClassBtn="w-full p-3 mb-8"/>
 
-              <div className="text-center font-normal">Esqueceu a senha? <a className="font-bold text-blue-600" href="reset">Recuperar senha</a></div>
+              <div className="text-center font-normal">Esqueceu a senha? <a className="font-bold text-blue-600" href="reset-password">Recuperar senha</a></div>
             </form>
           </div>
         </main>
