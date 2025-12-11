@@ -112,7 +112,7 @@ export default function Dashboard() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Contas a Receber" breadcrumpIcon="FaMoneyBillTrendUp"
+              <SlimContainer breadcrump="Tabelas Genérica" breadcrumpIcon="LiaTableSolid"
                 buttons={
                   <>
                     <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>

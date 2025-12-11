@@ -15,7 +15,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/Button";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-export default function Home() {
+export default function ResetPassword() {
   const [userLogger] = useAtom(userLoggerAtom);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [passwordEnabled, setPasswordEnabled] = useState<boolean>(true);
