@@ -1,19 +1,19 @@
 "use client";
 
-import { Autorization } from "@/components/Autorization";
-import { InputForm } from "@/components/InputForm";
 import { userLoggerAtom } from "@/jotai/auth/auth.jotai";
 import { api } from "@/service/api.service";
 import { resolveResponse } from "@/service/config.service";
 import { useAtom } from "jotai";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Logo } from "@/components/logo";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { TLogin } from "@/types/auth/auth.type";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/Button";
+import { Autorization } from "@/components/Global/Autorization";
+import { Logo } from "@/components/Global/logo";
+import { InputForm } from "@/components/Global/InputForm";
+import { Button } from "@/components/Global/Button";
 
 export default function Home() {
   const [userLogger] = useAtom(userLoggerAtom);

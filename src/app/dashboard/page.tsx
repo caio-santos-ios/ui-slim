@@ -1,13 +1,13 @@
 "use client";
 
-import { Autorization } from "@/components/Autorization";
-import { Header } from "@/components/Header";
-import { SideMenu } from "@/components/SideMenu";
-import { SlimContainer } from "@/components/SlimContainer";
+import { Autorization } from "@/components/Global/Autorization";
+import { Header } from "@/components/Global/Header";
+import { NotData } from "@/components/Global/NotData";
+import { Pagination } from "@/components/Global/Pagination";
+import { SideMenu } from "@/components/Global/SideMenu";
+import { SlimContainer } from "@/components/Global/SlimContainer";
 import { userLoggerAtom } from "@/jotai/auth/auth.jotai";
 import { useAtom } from "jotai";
-import { Pagination } from "@/components/Pagination";
-import { NotData } from "@/components/NotData";
 
 const columns: any[] = [
   { key: "category", title: "Categoria" },

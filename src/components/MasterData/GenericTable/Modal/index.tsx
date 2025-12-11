@@ -19,7 +19,7 @@ type TProp = {
     body?: TAccountsReceivable
 }
 
-export const ModalAccountsReceivable = ({title, isOpen, setIsOpen, onClose, onSelectValue, body}: TProp) => {
+export const ModalGenericTable = ({title, isOpen, setIsOpen, onClose, onSelectValue, body}: TProp) => {
     const { register, handleSubmit, reset, formState: { errors }} = useForm<TAccountsReceivable>();
 
     const onSubmit: SubmitHandler<TAccountsReceivable> = async (body: TAccountsReceivable) => {
