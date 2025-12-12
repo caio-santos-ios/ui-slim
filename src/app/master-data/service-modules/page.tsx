@@ -37,7 +37,13 @@ export default function ServiceModules() {
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
-  const [currentBody, setCurrentBody] = useState<TServiceModule>();
+  const [currentBody, setCurrentBody] = useState<TServiceModule>({
+    id: "",
+    name: "",
+    description: "",
+    active: true,
+    cost: 0
+  });
 
 
   const [userLogger] = useAtom(userLoggerAtom);
@@ -64,7 +70,10 @@ export default function ServiceModules() {
 
   const openModal = (action: "create" | "edit" = "create", body?: TServiceModule) => {
     if(body) {
-      setCurrentBody(body);
+      const newBody = {...body}
+
+      newBody.cost = convertNumberMoney(newBody.cost);
+      setCurrentBody(newBody);
     };
     
     setTypeModal(action);
@@ -110,6 +119,18 @@ export default function ServiceModules() {
       pagination.currentPage -= 1;
       await getAll();
     };
+  };
+
+  const resetModal = () => {
+    setCurrentBody({
+      id: "",
+      name: "",
+      description: "",
+      active: true,
+      cost: 0
+    });
+
+    setModal(false);
   };
 
   return (
@@ -186,7 +207,7 @@ export default function ServiceModules() {
             <ModalServiceModule
               title={typeModal == 'create' ? 'Inserir Módulo de Serviço' : 'Editar Módulo de Serviço'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
-              onClose={() => setModal(false)}
+              onClose={resetModal}
               onSelectValue={handleReturnModal}
               body={currentBody}
             />      

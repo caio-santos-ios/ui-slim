@@ -33,7 +33,7 @@ const columns: {key: string; title: string}[] = [
   { key: "createdAt", title: "Data de criação" },
 ];
 
-export default function Plan() {
+export default function Procedure() {
   const [_, setLoading] = useAtom(loadingAtom);
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);

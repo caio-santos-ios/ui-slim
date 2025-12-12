@@ -34,7 +34,7 @@ export const ModalGenericTable = ({title, isOpen, action, setIsOpen, onClose, on
     const [items, setItems] =  useState<TGenericTable[]>([]);
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const [isEditItem, setIsEditItem] = useState<boolean>(false);
-    const [modal, setModal] = useState<boolean>(false);
+    const [modal] = useState<boolean>(false);
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [currentBody, setCurrentBody] = useState<TGenericTable>();
 
@@ -92,7 +92,7 @@ export const ModalGenericTable = ({title, isOpen, action, setIsOpen, onClose, on
     };
 
     const getItem = (item: TGenericTable) => {
-        setCurrentBody(item);
+        setCurrentBody({...item});
         reset({
             id: item.id,
             table: item.table,
@@ -172,7 +172,12 @@ export const ModalGenericTable = ({title, isOpen, action, setIsOpen, onClose, on
     
     useEffect(() => {
         if(body) {
-            reset(body);
+            reset({
+                active: true,
+                code: "",
+                description: "",
+                items: [],
+            });
             setIsEdit(true);
             setItems(body.items);
         };

@@ -60,7 +60,7 @@ export default function Dashboard() {
 
   const openModal = (action: "create" | "edit" = "create", body?: TGenericTable) => {
     if(body) {
-      setCurrentBody(body);
+      setCurrentBody({...body});
     };
     
     setTypeModal(action);
@@ -92,6 +92,20 @@ export default function Dashboard() {
       setModal(false); 
       await getAll();
     }
+  };
+
+  const resetModal = () => {
+    setCurrentBody({
+      active: true,
+      code: "",
+      description: "",
+      id: "",
+      table: "",
+      items: [],
+      createdAt: ""
+    });
+
+    setModal(false);
   };
 
   return (
@@ -168,7 +182,7 @@ export default function Dashboard() {
             <ModalGenericTable 
               title={typeModal == 'create' ? 'Inserir Tabela Genérica' : 'Editar Tabela Genérica'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
-              onClose={() => setModal(false)}
+              onClose={resetModal}
               onSelectValue={handleReturnModal}
               body={currentBody}
               action={typeModal}
