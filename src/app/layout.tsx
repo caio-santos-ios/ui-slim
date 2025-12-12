@@ -6,6 +6,7 @@ import "../styles/slim-input.css";
 import "../styles/slim-btn.css";
 import "../styles/slim-select.css";
 import "../styles/slim-switch.css";
+import "../styles/slim-textarea.css";
 import "../styles/login/login.css";
 import { ToastContainer } from "react-toastify";
 import { Loading } from "@/components/Global/Loading";

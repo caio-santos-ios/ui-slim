@@ -20,30 +20,25 @@ import { NotData } from "@/components/Global/NotData";
 import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
-import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
-import { ModalServiceModule } from "@/components/MasterData/ServiceModule/Modal";
 import { convertNumberMoney } from "@/utils/convert.util";
+import { TProcedure } from "@/types/masterData/procedure/procedure.type";
+import { ModalProcedure } from "@/components/MasterData/Procedure/Modal";
 
 const columns: {key: string; title: string}[] = [
+  { key: "code", title: "Código" },
   { key: "name", title: "Nome" },
   { key: "description", title: "Descrição" },
-  { key: "cost", title: "Custo" },
+  { key: "serviceModule", title: "Módulo de Serviço" },
   { key: "active", title: "Status" },
   { key: "createdAt", title: "Data de Cadastro" },
 ];
 
-export default function ServiceModules() {
+export default function Procedure() {
   const [_, setLoading] = useAtom(loadingAtom);
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
-  const [currentBody, setCurrentBody] = useState<TServiceModule>({
-    id: "",
-    name: "",
-    description: "",
-    active: true,
-    cost: 0
-  });
+  const [currentBody, setCurrentBody] = useState<TProcedure>();
 
 
   const [userLogger] = useAtom(userLoggerAtom);
@@ -52,7 +47,7 @@ export default function ServiceModules() {
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/service-modules?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/procedures?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -68,26 +63,24 @@ export default function ServiceModules() {
     }
   };
 
-  const openModal = (action: "create" | "edit" = "create", body?: TServiceModule) => {
+  const openModal = (action: "create" | "edit" = "create", body?: TProcedure) => {
     if(body) {
-      const newBody = {...body}
-
-      newBody.cost = convertNumberMoney(newBody.cost);
-      setCurrentBody(newBody);
+      setCurrentBody({...body});
     };
     
     setTypeModal(action);
     setModal(true);
   };
   
-  const openModalDelete = (body: TServiceModule) => {
+  const openModalDelete = (body: TProcedure) => {
     setCurrentBody(body);
     setModalDelete(true);
   };
 
   const destroy = async () => {
     try {
-      const { status } = await api.delete(`/service-modules/${currentBody?.id}`, configApi());
+      const {status} = await api.delete(`/procedures/${currentBody?.id}`, configApi());
+
       resolveResponse({status, message: "Exclído com sucesso"});
       setModalDelete(false);
       resetModal();
@@ -107,6 +100,21 @@ export default function ServiceModules() {
       await getAll();
     }
   };
+
+  const resetModal = () => {
+    setCurrentBody({
+      id: "",
+      name: "",
+      code: "",
+      description: "",
+      serviceModuleId: "",
+      externalCodes: "",
+      notes: "",
+      active: true
+    });
+
+    setModal(false);
+  };
   
   const passPage = async (action: "previous" | "next") => {
     if(pagination.totalPages == 1) return;
@@ -122,18 +130,6 @@ export default function ServiceModules() {
     };
   };
 
-  const resetModal = () => {
-    setCurrentBody({
-      id: "",
-      name: "",
-      description: "",
-      active: true,
-      cost: 0
-    });
-
-    setModal(false);
-  };
-
   return (
     <>
       <Autorization />
@@ -145,7 +141,7 @@ export default function ServiceModules() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Módulos de Serviços" breadcrumpIcon="MdApps"
+              <SlimContainer breadcrump="Procedimentos" breadcrumpIcon="MdChecklist"
                 buttons={
                   <>
                     <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
@@ -154,7 +150,7 @@ export default function ServiceModules() {
 
                 <ul className="grid gap-2 slim-list-card lg:hidden">
                   {
-                    pagination.data.map((x: TServiceModule, i: number) => {
+                    pagination.data.map((x: TProcedure, i: number) => {
                       return (
                         <Card key={i}
                           buttons={
@@ -168,8 +164,8 @@ export default function ServiceModules() {
                             </>
                           }
                         >
+                          <p>Código: <span className="font-bold">{x.code}</span></p>
                           <p>Nome: <span className="font-bold">{x.name}</span></p>
-                          <p>Custo: <span className="font-bold">{x.cost}</span></p>
                         </Card>                       
                       )
                     })
@@ -184,7 +180,7 @@ export default function ServiceModules() {
                           <tr key={i}>
                             {columns.map((col: any) => (
                               <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
-                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "cost" ? convertNumberMoney(x.cost) : (x as any)[col.key]}
+                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "price" ? convertNumberMoney(x.price) : (x as any)[col.key]}
                               </td>        
                             ))}   
                             <td className="text-center">
@@ -205,8 +201,8 @@ export default function ServiceModules() {
               </SlimContainer>
             </div>
 
-            <ModalServiceModule
-              title={typeModal == 'create' ? 'Inserir Módulo de Serviço' : 'Editar Módulo de Serviço'} 
+            <ModalProcedure
+              title={typeModal == 'create' ? 'Inserir Procedimento' : 'Editar Procedimento'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={resetModal}
               onSelectValue={handleReturnModal}
@@ -214,7 +210,7 @@ export default function ServiceModules() {
             />      
 
             <ModalDelete 
-              title='Excluír Módulo de Serviço'
+              title='Excluír Procedimento'
               isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} 
               onClose={() => setModalDelete(false)}
               onSelectValue={destroy}

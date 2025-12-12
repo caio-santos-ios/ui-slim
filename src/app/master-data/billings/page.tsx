@@ -20,29 +20,33 @@ import { NotData } from "@/components/Global/NotData";
 import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
-import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
-import { ModalServiceModule } from "@/components/MasterData/ServiceModule/Modal";
+import { TBilling } from "@/types/masterData/billing/billing.type";
+import { ModalBilling } from "@/components/MasterData/Billing/Modal";
 import { convertNumberMoney } from "@/utils/convert.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "name", title: "Nome" },
   { key: "description", title: "Descrição" },
-  { key: "cost", title: "Custo" },
-  { key: "active", title: "Status" },
+  { key: "start", title: "Inicio da Realização" },
+  { key: "end", title: "Fim da Realização" },
+  { key: "deliveryDate", title: "Data Entrega de Faturamento" },
+  { key: "billingDate", title: "Data de Faturamento" },
   { key: "createdAt", title: "Data de Cadastro" },
 ];
 
-export default function ServiceModules() {
+export default function Billing() {
   const [_, setLoading] = useAtom(loadingAtom);
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
-  const [currentBody, setCurrentBody] = useState<TServiceModule>({
+  const [currentBody, setCurrentBody] = useState<TBilling>({
     id: "",
     name: "",
     description: "",
-    active: true,
-    cost: 0
+    start: "",
+    end: "",
+    deliveryDate: "",
+    billingDate: ""
   });
 
 
@@ -52,7 +56,7 @@ export default function ServiceModules() {
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/service-modules?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/billings?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -68,11 +72,9 @@ export default function ServiceModules() {
     }
   };
 
-  const openModal = (action: "create" | "edit" = "create", body?: TServiceModule) => {
+  const openModal = (action: "create" | "edit" = "create", body?: TBilling) => {
     if(body) {
       const newBody = {...body}
-
-      newBody.cost = convertNumberMoney(newBody.cost);
       setCurrentBody(newBody);
     };
     
@@ -80,14 +82,14 @@ export default function ServiceModules() {
     setModal(true);
   };
   
-  const openModalDelete = (body: TServiceModule) => {
+  const openModalDelete = (body: TBilling) => {
     setCurrentBody(body);
     setModalDelete(true);
   };
 
   const destroy = async () => {
     try {
-      const { status } = await api.delete(`/service-modules/${currentBody?.id}`, configApi());
+      const { status } = await api.delete(`/billings/${currentBody?.id}`, configApi());
       resolveResponse({status, message: "Exclído com sucesso"});
       setModalDelete(false);
       resetModal();
@@ -127,8 +129,10 @@ export default function ServiceModules() {
       id: "",
       name: "",
       description: "",
-      active: true,
-      cost: 0
+      start: "",
+      end: "",
+      deliveryDate: "",
+      billingDate: ""
     });
 
     setModal(false);
@@ -145,7 +149,7 @@ export default function ServiceModules() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Módulos de Serviços" breadcrumpIcon="MdApps"
+              <SlimContainer breadcrump="Faturamento" breadcrumpIcon="MdReceiptLong"
                 buttons={
                   <>
                     <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
@@ -154,7 +158,7 @@ export default function ServiceModules() {
 
                 <ul className="grid gap-2 slim-list-card lg:hidden">
                   {
-                    pagination.data.map((x: TServiceModule, i: number) => {
+                    pagination.data.map((x: TBilling, i: number) => {
                       return (
                         <Card key={i}
                           buttons={
@@ -169,7 +173,6 @@ export default function ServiceModules() {
                           }
                         >
                           <p>Nome: <span className="font-bold">{x.name}</span></p>
-                          <p>Custo: <span className="font-bold">{x.cost}</span></p>
                         </Card>                       
                       )
                     })
@@ -205,8 +208,8 @@ export default function ServiceModules() {
               </SlimContainer>
             </div>
 
-            <ModalServiceModule
-              title={typeModal == 'create' ? 'Inserir Módulo de Serviço' : 'Editar Módulo de Serviço'} 
+            <ModalBilling
+              title={typeModal == 'create' ? 'Inserir Faturamento' : 'Editar Faturamento'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={resetModal}
               onSelectValue={handleReturnModal}
@@ -214,7 +217,7 @@ export default function ServiceModules() {
             />      
 
             <ModalDelete 
-              title='Excluír Módulo de Serviço'
+              title='Excluír Faturamento'
               isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} 
               onClose={() => setModalDelete(false)}
               onSelectValue={destroy}
