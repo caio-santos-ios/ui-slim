@@ -101,7 +101,7 @@ export const FormResetPassword = () => {
                 </>
             }
             <Button isLoading={isLoading} text={requestCode ? 'Salvar senha' : 'Enviar Código'} theme="primary" styleClassBtn="w-full p-3 mb-8"/>
-            <div className="text-center font-normal">Recuperou a senha {isLoading}? <a className="font-bold text-blue-600" href="/">Fazer login</a></div>
+            <div className="text-center font-normal">Recuperou a senha? <a className="font-bold text-blue-600" href="/">Fazer login</a></div>
         </form>
     )
 }

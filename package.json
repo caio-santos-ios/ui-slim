@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
+    "@maskito/core": "^5.0.0",
+    "@maskito/react": "^5.0.0",
     "axios": "^1.13.2",
     "cookie": "^1.1.1",
     "jotai": "^2.15.2",
@@ -18,7 +20,8 @@
     "react-dom": "19.2.0",
     "react-hook-form": "^7.68.0",
     "react-icons": "^5.5.0",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "use-mask-input": "^3.5.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

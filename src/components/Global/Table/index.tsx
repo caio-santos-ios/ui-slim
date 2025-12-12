@@ -18,16 +18,17 @@ type TPropos = {
   columns: any[];
   isAction?: boolean;
   children: ReactNode;
+  isActive?: boolean;
 };
 
-export default function DataTable({columns, children, isAction = true}: TPropos) {
+export default function DataTable({columns, children, isAction = true, isActive = true}: TPropos) {
     const [pagination] = useAtom(paginationAtom);     
     
     return (
         <>
             {
 
-                pagination.data.length > 0 &&
+                pagination.data.length > 0 && isActive &&
                 <div className={`bg-white shadow-sm rounded-md overflow-hidden`}>
                     <div className="w-full overflow-x-auto hidden lg:block">
                         <table className="min-w-full divide-y divide-gray-200">

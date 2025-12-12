@@ -4,4 +4,6 @@ export type TGenericTable = {
     code: string;
     description: string;
     createdAt: string;
+    active: boolean;
+    items: any[]
 }

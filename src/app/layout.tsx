@@ -4,8 +4,11 @@ import "../styles/globals.css";
 import "../styles/slim.css";
 import "../styles/slim-input.css";
 import "../styles/slim-btn.css";
+import "../styles/slim-select.css";
+import "../styles/slim-switch.css";
 import "../styles/login/login.css";
 import { ToastContainer } from "react-toastify";
+import { Loading } from "@/components/Global/Loading";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +37,7 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ToastContainer />
-        {/* <div>TESTE</div> */}
+        <Loading />
         {children}
       </body>
     </html>

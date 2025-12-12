@@ -35,7 +35,7 @@ export const Header = () => {
                 height={150}
             />
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 container-profile-header">
                 <FaUserCircle size={50} />
                 <div>
                     <h4 className="text-lg font-semibold hidden lg:block">{name}</h4>

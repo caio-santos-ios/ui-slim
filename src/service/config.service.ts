@@ -21,7 +21,19 @@ export const resolveResponse = (response: any) => {
   };
 
   if(response.status >= 400 && response.status < 500) {
-    if(response.status === 401) {}
+    if(response.status === 401) {
+      toast.warn("Sessão finalizada!", {
+        theme: 'colored'
+      });
+
+      setTimeout(() => {
+        window.location.href = "/";
+        localStorage.removeItem("token");
+        localStorage.removeItem("name");
+      }, 1000);
+      return;
+    }
+
     toast.warn(response?.response?.data?.message, {
       theme: 'colored'
     });

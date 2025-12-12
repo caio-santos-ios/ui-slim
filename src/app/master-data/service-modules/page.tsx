@@ -19,19 +19,25 @@ import DataTable from "@/components/Global/Table";
 import { NotData } from "@/components/Global/NotData";
 import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
-import { ModalGenericTable } from "@/components/MasterData/GenericTable/Modal";
-import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
+import { loadingAtom } from "@/jotai/global/loading.jotai";
+import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
+import { ModalServiceModule } from "@/components/MasterData/ServiceModule/Modal";
+import { convertNumberMoney } from "@/utils/convert.util";
 
-const columns: any[] = [
-  { key: "table", title: "Tabela" },
-  // { key: "createdAt", title: "Data de criação" },
+const columns: {key: string; title: string}[] = [
+  { key: "name", title: "Nome" },
+  { key: "description", title: "Descrição" },
+  { key: "cost", title: "Custo" },
+  { key: "active", title: "Status" },
+  { key: "createdAt", title: "Data de criação" },
 ];
 
-export default function Dashboard() {
+export default function ServiceModules() {
+  const [_, setLoading] = useAtom(loadingAtom);
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
-  const [currentBody, setCurrentBody] = useState<TGenericTable>();
+  const [currentBody, setCurrentBody] = useState<TServiceModule>();
 
 
   const [userLogger] = useAtom(userLoggerAtom);
@@ -39,7 +45,8 @@ export default function Dashboard() {
  
   const getAll = async () => {
     try {
-      const {data} = await api.get(`/generic-tables?deleted=false&pageSize=10&pageNumber=1&orderBy=table&sort=desc`, configApi());
+      setLoading(true);
+      const {data} = await api.get(`/service-modules?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -50,10 +57,12 @@ export default function Dashboard() {
       });
     } catch (error) {
       resolveResponse(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const openModal = (action: "create" | "edit" = "create", body?: TGenericTable) => {
+  const openModal = (action: "create" | "edit" = "create", body?: TServiceModule) => {
     if(body) {
       setCurrentBody(body);
     };
@@ -62,14 +71,14 @@ export default function Dashboard() {
     setModal(true);
   };
   
-  const openModalDelete = (body: TGenericTable) => {
+  const openModalDelete = (body: TServiceModule) => {
     setCurrentBody(body);
     setModalDelete(true);
   };
 
   const destroy = async () => {
     try {
-      const { status, data} = await api.delete(`/generic-tables/${currentBody?.id}`, configApi());
+      const { status, data} = await api.delete(`/service-modules/${currentBody?.id}`, configApi());
       resolveResponse({status, ...data});
       setModalDelete(false);
       await getAll();
@@ -88,6 +97,20 @@ export default function Dashboard() {
       await getAll();
     }
   };
+  
+  const passPage = async (action: "previous" | "next") => {
+    if(pagination.totalPages == 1) return;
+    
+    if(action === 'previous' && pagination.currentPage > 1) {
+      pagination.currentPage -= 1;
+      await getAll();
+    };
+
+    if(action === 'next' && pagination.currentPage > pagination.totalPages) {
+      pagination.currentPage -= 1;
+      await getAll();
+    };
+  };
 
   return (
     <>
@@ -100,7 +123,7 @@ export default function Dashboard() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Tabelas Genérica" breadcrumpIcon="LiaTableSolid"
+              <SlimContainer breadcrump="Módulos de Serviços" breadcrumpIcon="MdApps"
                 buttons={
                   <>
                     <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
@@ -109,7 +132,7 @@ export default function Dashboard() {
 
                 <ul className="grid gap-2 slim-list-card lg:hidden">
                   {
-                    pagination.data.map((x: TGenericTable, i: number) => {
+                    pagination.data.map((x: TServiceModule, i: number) => {
                       return (
                         <Card key={i}
                           buttons={
@@ -123,8 +146,8 @@ export default function Dashboard() {
                             </>
                           }
                         >
-                          <p>Tabela: <span className="font-bold">{x.table}</span></p>
-                          <p>Data de criação: <span className="font-bold">{maskDate(x.createdAt)}</span></p>
+                          <p>Nome: <span className="font-bold">{x.name}</span></p>
+                          <p>Custo: <span className="font-bold">{x.cost}</span></p>
                         </Card>                       
                       )
                     })
@@ -139,7 +162,7 @@ export default function Dashboard() {
                           <tr key={i}>
                             {columns.map((col: any) => (
                               <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
-                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : (x as any)[col.key]}
+                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "cost" ? convertNumberMoney(x.cost) : (x as any)[col.key]}
                               </td>        
                             ))}   
                             <td className="text-center">
@@ -156,21 +179,20 @@ export default function Dashboard() {
                 </DataTable>
 
                 <NotData />
-                <Pagination />
+                <Pagination passPage={passPage} />
               </SlimContainer>
             </div>
 
-            <ModalGenericTable 
-              title={typeModal == 'create' ? 'Inserir Tabela Genérica' : 'Editar Tabela Genérica'} 
+            <ModalServiceModule
+              title={typeModal == 'create' ? 'Inserir Módulo de Serviço' : 'Editar Módulo de Serviço'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={() => setModal(false)}
               onSelectValue={handleReturnModal}
               body={currentBody}
-              action={typeModal}
             />      
 
             <ModalDelete 
-              title='Excluír Tabela Genérica'
+              title='Excluír Módulo de Serviço'
               isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} 
               onClose={() => setModalDelete(false)}
               onSelectValue={destroy}
