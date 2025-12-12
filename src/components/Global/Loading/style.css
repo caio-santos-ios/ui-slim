@@ -3,7 +3,7 @@
     position: absolute;
     width: 100dvw;
     height: 100dvh;
-    z-index: 2;
+    z-index: 11;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -66,6 +66,7 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
         let value = zipCode.target.value.replace(/\D/g, "");
 
         if(value.length == 8) {
+            setLoading(true);
             const {data} = await axios.get(`https://viacep.com.br/ws/${value}/json/`);
             reset({
                 ...getValues(),
@@ -81,6 +82,7 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                     zipCode: data.cep
                 }
             })
+            setLoading(false);
         };
     };
 
@@ -130,7 +132,17 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
             email: "",
             phone: "",
             cpf: "",
-            address: {},
+            address: {
+                city: "",
+                complement: "",
+                neighborhood: "",
+                number: "",
+                parent: "",
+                parentId: "",
+                state: "",
+                street: "",
+                zipCode: ""
+            },
             type: "",        
             specialty: "",       
             registration: "",     
@@ -141,10 +153,33 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
     };
 
     useEffect(() => {
-        if(body) {
+        reset({
+            id: "",
+            name: "",
+            email: "",
+            phone: "",
+            cpf: "",
+            address: {
+                city: "",
+                complement: "",
+                neighborhood: "",
+                number: "",
+                parent: "",
+                parentId: "",
+                state: "",
+                street: "",
+                zipCode: ""
+            },
+            type: "",        
+            specialty: "",       
+            registration: "",     
+            number: "",
+        });
+
+        if(title == "Editar Profissional") {
             reset(body);
         };
-    }, [body]);
+    }, [isOpen, body, title]);
     
     useEffect(() => {
         
@@ -213,7 +248,7 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                 </div>                                
                                 <div className={`flex flex-col col-span-2 mb-2`}>
                                     <label className={`label slim-label-primary`}>E-mail</label>
-                                    <input {...register("email", {required: "E-mail é obrigatório", pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("email", {required: "E-mail é obrigatório", pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Telefone</label>
