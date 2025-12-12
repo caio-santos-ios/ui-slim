@@ -64,7 +64,7 @@ export default function Plan() {
 
   const openModal = (action: "create" | "edit" = "create", body?: TPlan) => {
     if(body) {
-      setCurrentBody(body);
+      setCurrentBody({...body});
     };
     
     setTypeModal(action);
@@ -96,6 +96,20 @@ export default function Plan() {
       setModal(false); 
       await getAll();
     }
+  };
+
+  const resetModal = () => {
+    setCurrentBody({
+      id: "",
+      name: "",
+      price: 0,
+      type: "",
+      description: "",
+      serviceModuleId: "",
+      active: true
+    });
+
+    setModal(false);
   };
   
   const passPage = async (action: "previous" | "next") => {
@@ -186,7 +200,7 @@ export default function Plan() {
             <ModalPlan
               title={typeModal == 'create' ? 'Inserir Planos' : 'Editar Planos'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
-              onClose={() => setModal(false)}
+              onClose={resetModal}
               onSelectValue={handleReturnModal}
               body={currentBody}
             />      

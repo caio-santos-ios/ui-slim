@@ -75,9 +75,15 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
     };
 
     useEffect(() => {
-        if(body) {
-            console.log(body);
-            body.cost = convertNumberMoney(body.cost);
+        reset({
+            id: "",
+            name:"",
+            description: "",
+            cost: 0,
+            active: true
+        });
+
+        if(body?.id) {
             reset(body);
         };
     }, [body]);
@@ -128,7 +134,7 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
                                 </div>                                              
                                 <div className={`flex flex-col col-span-2 mb-2`}>
                                     <label className={`label slim-label-primary`}>Custo</label>
-                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("cost", {required: "Custo é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("cost")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col col-span-5 mb-2`}>
                                     <label className={`label slim-label-primary`}>Descrição</label>

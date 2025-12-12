@@ -176,10 +176,10 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
             number: "",
         });
 
-        if(title == "Editar Profissional") {
+        if(body) {
             reset(body);
         };
-    }, [isOpen, body, title]);
+    }, [body]);
     
     useEffect(() => {
         

@@ -66,7 +66,7 @@ export default function Professional() {
 
   const openModal = (action: "create" | "edit" = "create", body?: TProfessional) => {
     if(body) {
-      setCurrentBody(body);
+      setCurrentBody({...body});
     };
     
     setTypeModal(action);
@@ -98,6 +98,33 @@ export default function Professional() {
       setModal(false); 
       await getAll();
     }
+  };
+
+  const resetModal = () => {
+    setCurrentBody({
+      id: "",
+      name: "",
+      email: "",
+      phone: "",
+      cpf: "",
+      address: {
+          city: "",
+          complement: "",
+          neighborhood: "",
+          number: "",
+          parent: "",
+          parentId: "",
+          state: "",
+          street: "",
+          zipCode: ""
+      },
+      type: "",        
+      specialty: "",       
+      registration: "",     
+      number: "",
+    });
+
+    setModal(false);
   };
   
   const passPage = async (action: "previous" | "next") => {
@@ -188,7 +215,7 @@ export default function Professional() {
             <Modalprofessional
               title={typeModal == 'create' ? 'Inserir Profissional' : 'Editar Profissional'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
-              onClose={() => setModal(false)}
+              onClose={resetModal}
               onSelectValue={handleReturnModal}
               body={currentBody}
             />      

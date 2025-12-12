@@ -51,7 +51,6 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
       
     const update = async (body: TPlan) => {
         try {
-            console.log(body);
             const { status, data} = await api.put(`/plans`, {...body, price: convertStringMoney(body.price.toString())}, configApi());
             resolveResponse({status, ...data});
             cancel();
@@ -87,6 +86,14 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
     };
 
     useEffect(() => {
+        reset({
+            id: "",
+            name:"",
+            description: "",
+            price: 0,
+            active: true
+        });
+
         if(body) {
             body.price = convertNumberMoney(body.price);
             reset(body);
