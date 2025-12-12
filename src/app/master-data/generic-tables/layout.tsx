@@ -1,3 +1,4 @@
+import { Loading } from "@/components/Global/Loading";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ToastContainer } from "react-toastify";
@@ -24,16 +25,8 @@ export default function DashboadLayout({
 }>) {
   return (
     <div className="dashboard-wrapper">
+      <Loading />
       {children}
     </div>
-    // <html lang="br" className="">
-    //   <head>
-    //     <link href="https://fonts.googleapis.com/css2?family=Kedebideri:wght@400;500;600;700;800;900&family=Yeseva+One&display=swap" rel="stylesheet"></link>
-    //   </head>
-    //   <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-    //     <ToastContainer />
-    //     {children}
-    //   </body>
-    // </html>
   );
 }
