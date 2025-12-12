@@ -156,7 +156,7 @@ export default function Dashboard() {
                 </DataTable>
 
                 <NotData />
-                <Pagination />
+                <Pagination passPage={() => {}} />
               </SlimContainer>
             </div>
 
