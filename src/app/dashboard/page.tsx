@@ -38,7 +38,7 @@ export default function Dashboard() {
                   </>
                 }>
                 <NotData />
-                <Pagination />
+                <Pagination passPage={() => {}} />
               </SlimContainer>
             </div>
           </main>
