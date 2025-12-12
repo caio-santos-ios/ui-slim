@@ -20,26 +20,24 @@ import { NotData } from "@/components/Global/NotData";
 import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
-import { Modalprofessional } from "@/components/MasterData/Professional/Modal";
-import { TProfessional } from "@/types/masterData/professional/professional.type";
+import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
+import { ModalServiceModule } from "@/components/MasterData/ServiceModule/Modal";
+import { convertNumberMoney } from "@/utils/convert.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "name", title: "Nome" },
-  { key: "email", title: "E-mail" },
-  { key: "phone", title: "Telefone" },
-  { key: "typeName", title: "Tipo de Profissão" },
-  { key: "specialtyName", title: "Especialidade" },
-  { key: "registrationName", title: "Registro" },
-  { key: "number", title: "Código" },
+  { key: "description", title: "Descrição" },
+  { key: "cost", title: "Custo" },
+  { key: "active", title: "Status" },
   { key: "createdAt", title: "Data de criação" },
 ];
 
-export default function Professional() {
+export default function ServiceModules() {
   const [_, setLoading] = useAtom(loadingAtom);
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
-  const [currentBody, setCurrentBody] = useState<TProfessional>();
+  const [currentBody, setCurrentBody] = useState<TServiceModule>();
 
 
   const [userLogger] = useAtom(userLoggerAtom);
@@ -48,7 +46,7 @@ export default function Professional() {
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/professionals?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/service-modules?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -64,7 +62,7 @@ export default function Professional() {
     }
   };
 
-  const openModal = (action: "create" | "edit" = "create", body?: TProfessional) => {
+  const openModal = (action: "create" | "edit" = "create", body?: TServiceModule) => {
     if(body) {
       setCurrentBody(body);
     };
@@ -73,14 +71,14 @@ export default function Professional() {
     setModal(true);
   };
   
-  const openModalDelete = (body: TProfessional) => {
+  const openModalDelete = (body: TServiceModule) => {
     setCurrentBody(body);
     setModalDelete(true);
   };
 
   const destroy = async () => {
     try {
-      const { status, data} = await api.delete(`/professionals/${currentBody?.id}`, configApi());
+      const { status, data} = await api.delete(`/service-modules/${currentBody?.id}`, configApi());
       resolveResponse({status, ...data});
       setModalDelete(false);
       await getAll();
@@ -125,7 +123,7 @@ export default function Professional() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Profissionais" breadcrumpIcon="FaUserTie"
+              <SlimContainer breadcrump="Módulos de Serviços" breadcrumpIcon="MdApps"
                 buttons={
                   <>
                     <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
@@ -134,7 +132,7 @@ export default function Professional() {
 
                 <ul className="grid gap-2 slim-list-card lg:hidden">
                   {
-                    pagination.data.map((x: TProfessional, i: number) => {
+                    pagination.data.map((x: TServiceModule, i: number) => {
                       return (
                         <Card key={i}
                           buttons={
@@ -149,7 +147,7 @@ export default function Professional() {
                           }
                         >
                           <p>Nome: <span className="font-bold">{x.name}</span></p>
-                          <p>Tipo de Profissional: <span className="font-bold">{maskDate(x.type)}</span></p>
+                          <p>Custo: <span className="font-bold">{x.cost}</span></p>
                         </Card>                       
                       )
                     })
@@ -164,7 +162,7 @@ export default function Professional() {
                           <tr key={i}>
                             {columns.map((col: any) => (
                               <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
-                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : (x as any)[col.key]}
+                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "cost" ? convertNumberMoney(x.cost) : (x as any)[col.key]}
                               </td>        
                             ))}   
                             <td className="text-center">
@@ -185,8 +183,8 @@ export default function Professional() {
               </SlimContainer>
             </div>
 
-            <Modalprofessional
-              title={typeModal == 'create' ? 'Inserir Profissional' : 'Editar Profissional'} 
+            <ModalServiceModule
+              title={typeModal == 'create' ? 'Inserir Módulo de Serviço' : 'Editar Módulo de Serviço'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={() => setModal(false)}
               onSelectValue={handleReturnModal}
@@ -194,7 +192,7 @@ export default function Professional() {
             />      
 
             <ModalDelete 
-              title='Excluír Profissional'
+              title='Excluír Módulo de Serviço'
               isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} 
               onClose={() => setModalDelete(false)}
               onSelectValue={destroy}

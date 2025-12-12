@@ -39,7 +39,7 @@ export default function Dashboard() {
  
   const getAll = async () => {
     try {
-      const {data} = await api.get(`/generic-tables?deleted=false&pageSize=10&pageNumber=1`, configApi());
+      const {data} = await api.get(`/generic-tables?deleted=false&pageSize=10&pageNumber=1&orderBy=table&sort=desc`, configApi());
       const result = data.result;
 
       setPagination({
@@ -166,6 +166,7 @@ export default function Dashboard() {
               onClose={() => setModal(false)}
               onSelectValue={handleReturnModal}
               body={currentBody}
+              action={typeModal}
             />      
 
             <ModalDelete 

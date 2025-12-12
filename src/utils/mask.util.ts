@@ -43,3 +43,26 @@ export const maskZipCode = (event: React.ChangeEvent<HTMLInputElement>) => {
 
   event.target.value = value;
 };
+
+export const maskMoney = (event: React.ChangeEvent<HTMLInputElement>) => {
+  let value = event.target.value.replace(/\D/g, "");
+
+  // Evita números muito grandes (opcional)
+  value = value.slice(0, 15);
+
+  // Se não houver valor, limpa
+  if (!value) {
+    event.target.value = "";
+    return;
+  }
+
+  // Converte para centavos
+  const cents = (parseInt(value, 10) / 100).toFixed(2);
+
+  // Formata para padrão brasileiro
+  const formatted = cents
+    .replace(".", ",")                 // decimal com vírgula
+    .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // milhares
+
+  event.target.value = formatted;
+};

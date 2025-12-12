@@ -13,6 +13,8 @@ import { maskCPF, maskPhone, maskZipCode } from "@/utils/mask.util";
 import axios from "axios";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
+import { toast } from "react-toastify";
+import { validatorCPF } from "@/utils/validator.utils";
 
 type TProp = {
     title: string;
@@ -85,7 +87,7 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
     const getSelectType = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/generic-tables?deleted=false&table=tipo-profissional&pageSize=10&pageNumber=1`, configApi());
+            const {data} = await api.get(`/generic-tables/table/tipo-profissional`, configApi());
             const result = data.result;    
             setType(result.data);
         } catch (error) {
@@ -98,7 +100,7 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
     const getSelectSpecialty = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/generic-tables?deleted=false&table=especialidade-profissional&pageSize=10&pageNumber=1`, configApi());
+            const {data} = await api.get(`/generic-tables/table/especialidade-profissional`, configApi());
             const result = data.result;    
             setSpecialty(result.data);
         } catch (error) {
@@ -111,7 +113,7 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
     const getSelectRegistration = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/generic-tables?deleted=false&table=registro-profissional&pageSize=10&pageNumber=1`, configApi());
+            const {data} = await api.get(`/generic-tables/table/registro-profissional`, configApi());
             const result = data.result;    
             setRegistration(result.data);
         } catch (error) {
@@ -145,10 +147,54 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
     }, [body]);
     
     useEffect(() => {
+        
+    }, [getValues("name"), getValues("email"), getValues("phone"), getValues("cpf"), getValues("address"), getValues("type"), getValues("specialty"), getValues("registration"), getValues("number")]);
+
+    useEffect(() => {
         getSelectType();
         getSelectSpecialty();
         getSelectRegistration();
     }, []);
+
+    const validatedField = () => {
+        const errorPriority = [
+            "name",
+            "email",
+            "phone",
+            "cpf",
+            "address.zipCode",
+            "address.number",
+            "address.street",
+            "address.neighborhood",
+            "address.city",
+            "address.state",
+            "type",
+            "specialty",
+            "registration",
+            "number"
+        ];
+
+        const getErrorByPath = (path: string) => {
+            const parts = path.split(".");
+            let current: any = errors;
+
+            for (const part of parts) {
+                if (!current[part]) return null;
+                current = current[part];
+            }
+
+            return current.message || null;
+        };
+
+        for (const field of errorPriority) {
+            const message = getErrorByPath(field);
+
+            if (message) {
+                toast.warn(message, { theme: "colored" });
+                return; 
+            }
+        }
+    };
 
     return (
         <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
@@ -163,91 +209,91 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                             <div className="grid grid-cols-1 lg:grid-cols-5 gap-2 mb-2">
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Nome</label>
-                                    <input {...register("name")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("name", {required: "Nome é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col col-span-2 mb-2`}>
                                     <label className={`label slim-label-primary`}>E-mail</label>
-                                    <input {...register("email")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("email", {required: "E-mail é obrigatório", pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Telefone</label>
-                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("phone")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("phone", {required: "Telefone é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>CPF</label>
-                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskCPF(e)} {...register("cpf")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskCPF(e)} {...register("cpf", {required: "CPF é obrigatório", validate: value => validatorCPF(value) || "CPF inválido"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>CEP</label>
-                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e)} {...register("address.zipCode")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e)} {...register("address.zipCode", {required: "CEP é obrigatório", minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Número</label>
-                                    <input {...register("address.number")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("address.number", {required: "Número é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col col-span-2 mb-2`}>
                                     <label className={`label slim-label-primary`}>Rua</label>
-                                    <input {...register("address.street")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("address.street", {required: "Rua é obrigatória"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Bairro</label>
-                                    <input {...register("address.neighborhood")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("address.neighborhood", {required: "Bairro é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Cidade</label>
-                                    <input {...register("address.city")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("address.city", {required: "Cidade é obrigatória"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Estado</label>
-                                    <input {...register("address.state")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("address.state", {required: "Estado é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col col-span-3 mb-2`}>
                                     <label className={`label slim-label-primary`}>Complemento</label>
                                     <input {...register("address.complement")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
+                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Tipo de Profissional</label>
-                                    <select className="select slim-select-primary" {...register("type")}>
+                                    <select className="select slim-select-primary" {...register("type", {required: "Tipo de Profissional é obrigatório"})}>
                                         <option value="">Selecione</option>
                                         {
-                                            type.map((x: any) => (
-                                                <option key={x.id} value={x.id}>{x.description}</option>
+                                            type.map((x: any, i: number) => (
+                                                <option key={i} value={x.id}>{x.description}</option>
                                             ))
                                         }
                                     </select>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Especialidade</label>
-                                    <select className="select slim-select-primary" {...register("specialty")}>
+                                    <select className="select slim-select-primary" {...register("specialty", {required: "Especialidade é obrigatória"})}>
                                         <option value="">Selecione</option>
                                         {
-                                            specialty.map((x: any) => (
-                                                <option key={x.id} value={x.id}>{x.description}</option>
+                                            specialty.map((x: any, i: number) => (
+                                                <option key={i} value={x.id}>{x.description}</option>
                                             ))
                                         }
                                     </select>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Registro</label>
-                                    <select className="select slim-select-primary" {...register("registration")}>
+                                    <select className="select slim-select-primary" {...register("registration", {required: "Registro é obrigatório"})}>
                                         <option value="">Selecione</option>
                                         {
-                                            registration.map((x: any) => (
-                                                <option key={x.id} value={x.id}>{x.description}</option>
+                                            registration.map((x: any, i: number) => (
+                                                <option key={i} value={x.id}>{x.description}</option>
                                             ))
                                         }
                                     </select>
                                 </div>                    
-                                 <div className={`flex flex-col mb-2`}>
+                                <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Código</label>
-                                    <input {...register("number")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("number", {required: "Código é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>             
                             </div>                          
                                                    
                             <div className="flex justify-end gap-2 w-12/12 mt-3">
                                 <button type="button" onClick={cancel} className="slim-btn slim-btn-primary-light">Cancelar</button>
-                                {/* <button type="submit" className="slim-btn slim-btn-primary">Salvar</button> */}
-                                <Button text="Salvar" theme="primary" styleClassBtn=""/>
+                                <Button click={validatedField} text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>
                     </DialogPanel>

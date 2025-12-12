@@ -22,7 +22,6 @@ export const resolveResponse = (response: any) => {
 
   if(response.status >= 400 && response.status < 500) {
     if(response.status === 401) {
-      console.log("Unauthorized - perhaps redirect to login?");
       toast.warn("Sessão finalizada!", {
         theme: 'colored'
       });
