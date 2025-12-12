@@ -21,6 +21,7 @@ import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { ModalGenericTable } from "@/components/MasterData/GenericTable/Modal";
 import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
+import { loadingAtom } from "@/jotai/global/loading.jotai";
 
 const columns: any[] = [
   { key: "table", title: "Tabela" },
@@ -28,6 +29,7 @@ const columns: any[] = [
 ];
 
 export default function Dashboard() {
+  const [_, setLoading] = useAtom(loadingAtom);
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
@@ -39,6 +41,7 @@ export default function Dashboard() {
  
   const getAll = async () => {
     try {
+      setLoading(true);
       const {data} = await api.get(`/generic-tables?deleted=false&pageSize=10&pageNumber=1&orderBy=table&sort=desc`, configApi());
       const result = data.result;
 
@@ -50,6 +53,8 @@ export default function Dashboard() {
       });
     } catch (error) {
       resolveResponse(error);
+    } finally {
+      setLoading(false);
     }
   };
 
