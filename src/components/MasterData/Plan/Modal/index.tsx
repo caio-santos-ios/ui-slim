@@ -167,7 +167,7 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
                                         <option value="">Selecione</option>
                                         {
                                             type.map((x: any, i: number) => (
-                                                <option key={i} value={x.id}>{x.description}</option>
+                                                <option key={i} value={x.id}>{x.name}</option>
                                             ))
                                         }
                                     </select>
