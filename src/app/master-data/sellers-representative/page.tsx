@@ -20,15 +20,15 @@ import { NotData } from "@/components/Global/NotData";
 import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
-import { convertNumberMoney } from "@/utils/convert.util";
-import { TSeller } from "@/types/masterData/seller/seller.type";
-import { ModalSeller } from "@/components/MasterData/Seller/Modal";
+import { ModalSellerRepresentative } from "@/components/MasterData/SellersRepresentative/Modal";
+import { ResetSellerRepresentative, TSellerRepresentative } from "@/types/masterData/sellerRepresentative/sellerRepresentative.type";
 
 const columns: {key: string; title: string}[] = [
-  { key: "name", title: "Nome" },
+  { key: "corporateName", title: "Razão Social" },
+  { key: "tradeName", title: "Nome Fantasia" },
   { key: "email", title: "E-mail" },
   { key: "phone", title: "Telefone" },
-  { key: "cpf", title: "CPF" },
+  { key: "effectiveDate", title: "Vigência" },
   { key: "createdAt", title: "Data de Cadastro" },
 ];
 
@@ -37,37 +37,16 @@ export default function Seller() {
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
-  const [currentBody, setCurrentBody] = useState<TSeller>({
-    id: "",
-    type: "internal",
-    name: "",
-    email: "",
-    phone: "",
-    cpf: "",
-    address: {
-      city: "",
-      complement: "",
-      neighborhood: "",
-      number: "",
-      parent: "",
-      parentId: "",
-      state: "",
-      street: "",
-      zipCode: ""
-    },
-    notes: ""
-  });
-
-
+  const [currentBody, setCurrentBody] = useState<TSellerRepresentative>(ResetSellerRepresentative);
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
  
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/sellers?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/seller-representatives?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
-
+      
       setPagination({
         currentPage: result.currentPage,
         data: result.data,
@@ -81,7 +60,7 @@ export default function Seller() {
     }
   };
 
-  const openModal = (action: "create" | "edit" = "create", body?: TSeller) => {
+  const openModal = (action: "create" | "edit" = "create", body?: TSellerRepresentative) => {
     if(body) {
       const newBody = {...body}
       setCurrentBody(newBody);
@@ -91,14 +70,14 @@ export default function Seller() {
     setModal(true);
   };
   
-  const openModalDelete = (body: TSeller) => {
+  const openModalDelete = (body: TSellerRepresentative) => {
     setCurrentBody(body);
     setModalDelete(true);
   };
 
   const destroy = async () => {
     try {
-      const { status } = await api.delete(`/sellers/${currentBody?.id}`, configApi());
+      const { status } = await api.delete(`/seller-representatives/${currentBody?.id}`, configApi());
       resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
       resetModal();
@@ -134,26 +113,7 @@ export default function Seller() {
   };
 
   const resetModal = () => {
-    setCurrentBody({
-      id: "",
-      name: "",
-      type: "internal",
-      email: "",
-      phone: "",
-      cpf: "",
-      address: {
-        city: "",
-        complement: "",
-        neighborhood: "",
-        number: "",
-        parent: "",
-        parentId: "",
-        state: "",
-        street: "",
-        zipCode: ""
-      },
-      notes: ""
-    });
+    setCurrentBody(ResetSellerRepresentative);
 
     setModal(false);
   };
@@ -169,7 +129,7 @@ export default function Seller() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Vendedores" breadcrumpIcon="MdPeopleAlt"
+              <SlimContainer breadcrump="Representantes" breadcrumpIcon="MdGroups"
                 buttons={
                   <>
                     <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
@@ -178,7 +138,7 @@ export default function Seller() {
 
                 <ul className="grid gap-2 slim-list-card lg:hidden">
                   {
-                    pagination.data.map((x: TSeller, i: number) => {
+                    pagination.data.map((x: TSellerRepresentative, i: number) => {
                       return (
                         <Card key={i}
                           buttons={
@@ -192,7 +152,7 @@ export default function Seller() {
                             </>
                           }
                         >
-                          <p>Nome: <span className="font-bold">{x.name}</span></p>
+                          <p>Razão Social: <span className="font-bold">{x.corporateName}</span></p>
                         </Card>                       
                       )
                     })
@@ -207,7 +167,7 @@ export default function Seller() {
                           <tr key={i}>
                             {columns.map((col: any) => (
                               <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
-                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "cost" ? convertNumberMoney(x.cost) : (x as any)[col.key]}
+                                {col.key == 'createdAt' || col.key == 'effectiveDate' ? maskDate((x as any)[col.key]) : (x as any)[col.key]}
                               </td>        
                             ))}   
                             <td className="text-center">
@@ -228,8 +188,8 @@ export default function Seller() {
               </SlimContainer>
             </div>
 
-            <ModalSeller
-              title={typeModal == 'create' ? 'Inserir Vendedor' : 'Editar Vendedor'} 
+            <ModalSellerRepresentative
+              title={typeModal == 'create' ? 'Inserir Representante' : 'Editar Representante'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={resetModal}
               onSelectValue={handleReturnModal}
@@ -237,7 +197,7 @@ export default function Seller() {
             />      
 
             <ModalDelete 
-              title='Excluír Vendedor'
+              title='Excluír Representante'
               isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} 
               onClose={() => setModalDelete(false)}
               onSelectValue={destroy}

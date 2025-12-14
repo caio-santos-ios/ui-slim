@@ -3,6 +3,7 @@
 import "./style.css";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { TAccountsReceivable } from "@/types/accountsReceivable/accountsReceivable.type";
+import { Button } from "../Button";
 
 type TProp = {
     title: string;
@@ -28,8 +29,8 @@ export const ModalDelete = ({title, isOpen, setIsOpen, onClose, onSelectValue}: 
                         </div>
                         <h1 className="text-lg font-bold">Deseja excluír esse registro?</h1>
                         <div className="flex justify-end gap-2 w-12/12 mt-3">
-                            <button type="button" onClick={onClose} className="slim-btn slim-btn-primary-light">Cancelar</button>
-                            <button type="button" onClick={destroy} className="slim-btn slim-btn-primary">Salvar</button>
+                            <Button theme="primary-light" text="Cancelar" click={onClose}/>
+                            <Button theme="primary" text="Confirmar" click={destroy}/>
                         </div>  
                     </DialogPanel>
                 </div>

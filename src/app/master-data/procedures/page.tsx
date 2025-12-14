@@ -81,7 +81,7 @@ export default function Procedure() {
     try {
       const {status} = await api.delete(`/procedures/${currentBody?.id}`, configApi());
 
-      resolveResponse({status, message: "Exclído com sucesso"});
+      resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
       resetModal();
       await getAll();

@@ -3,10 +3,34 @@ import { TAddress } from "../address/address.type";
 export type TSeller = {
     id?: string;
     type: "internal" | "external";
-    name: "";
-    email: "";
-    phone: "";
-    cpf: "";
+    name: string;
+    email: string;
+    phone: string;
+    cpf: string;
     address: TAddress;
-    notes: "";
+    notes: string;
+    parentId: string;
+}
+
+export const ResetSeller = {
+    type: "internal",
+    name: "",
+    email: "",
+    phone: "",
+    cpf: "",
+    address: {
+        id: "",
+        zipCode: "",
+        street: "",
+        number: "",
+        neighborhood: "",
+        city: "",
+        state: "",
+        complement: "",
+        parentId: "",
+        parent: "",
+    },
+    notes: "",
+    parentId: "",
+    id: ""
 }

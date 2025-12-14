@@ -96,6 +96,16 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 code: '19',
                 isOpen: true,
                 subMenu: [],
+                description: 'Representantes',
+                icon: '',
+                link: 'master-data/sellers-representative',
+                padding: 'px-4',
+                authorized: true,
+            },
+            {
+                code: '20',
+                isOpen: true,
+                subMenu: [],
                 description: 'Comissões',
                 icon: '',
                 link: 'master-data/commissions',
@@ -103,7 +113,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 authorized: true,
             },       
             {
-                code: '20',
+                code: '21',
                 isOpen: true,
                 subMenu: [],
                 description: 'Rede Creadenciada',
@@ -113,7 +123,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 authorized: true,
             },            
             {
-                code: '21',
+                code: '22',
                 isOpen: true,
                 subMenu: [],
                 description: 'Tabelas de Importação',
@@ -123,7 +133,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 authorized: true,
             },            
             {
-                code: '22',
+                code: '23',
                 isOpen: true,
                 subMenu: [],
                 description: 'Tabelas Genérica',

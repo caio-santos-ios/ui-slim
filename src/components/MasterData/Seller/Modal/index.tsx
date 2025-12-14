@@ -5,7 +5,7 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { api } from "@/service/api.service";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/Global/Button";
 import { maskCPF, maskPhone } from "@/utils/mask.util";
 import axios from "axios";
@@ -14,6 +14,7 @@ import { useAtom } from "jotai";
 import { toast } from "react-toastify";
 import { validatorCPF } from "@/utils/validator.utils";
 import { TSeller } from "@/types/masterData/seller/seller.type";
+import { TSellerRepresentative } from "@/types/masterData/sellerRepresentative/sellerRepresentative.type";
 
 type TProp = {
     title: string;
@@ -26,18 +27,7 @@ type TProp = {
 
 export const ModalSeller = ({title, isOpen, setIsOpen, onClose, onSelectValue, body}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
-    const { register, handleSubmit, reset, getValues, watch, formState: { errors }} = useForm<TSeller>();
-    const [tabCurrent, setTabCurrent] = useState<"data" | "dataResponsible" | "seller" | "attachment" | "dataBank">("data")
-
-    const tabs = [
-    { key: 'data', title: 'Dados Gerais' },
-    { key: 'dataResponsible', title: 'Dados do Responsável' },
-    { key: 'seller', title: 'Vendedor' },
-    { key: 'attachment', title: 'Anexos' },
-    { key: 'dataBank', title: 'Dados Bancários' },
-    ];
-
-    const tabIndex = tabs.findIndex(t => t.key === tabCurrent);
+    const { register, handleSubmit, reset, getValues, formState: { errors }} = useForm<TSeller>();
 
     const onSubmit: SubmitHandler<TSeller> = async (body: TSeller) => {
         if(!body.id) {
@@ -92,7 +82,7 @@ export const ModalSeller = ({title, isOpen, setIsOpen, onClose, onSelectValue, b
             setLoading(false);
         };
     };
-
+    
     const cancel = () => {
         reset({
             id: "",
@@ -119,10 +109,6 @@ export const ModalSeller = ({title, isOpen, setIsOpen, onClose, onSelectValue, b
     };
 
     useEffect(() => {
-        console.log(watch('type'))
-    }, [watch('type')])
-
-    useEffect(() => {
         reset({
             id: "",
             name: "",
@@ -130,21 +116,19 @@ export const ModalSeller = ({title, isOpen, setIsOpen, onClose, onSelectValue, b
             phone: "",
             cpf: "",
             address: {
-            city: "",
-            complement: "",
-            neighborhood: "",
-            number: "",
-            parent: "",
-            parentId: "",
-            state: "",
-            street: "",
-            zipCode: ""
+                city: "",
+                complement: "",
+                neighborhood: "",
+                number: "",
+                parent: "",
+                parentId: "",
+                state: "",
+                street: "",
+                zipCode: ""
             },
             notes: "",
             type: "internal"
         });
-
-        setTabCurrent("data");
         
         if(body) {
             reset(body);
@@ -163,8 +147,7 @@ export const ModalSeller = ({title, isOpen, setIsOpen, onClose, onSelectValue, b
             "address.street",
             "address.neighborhood",
             "address.city",
-            "address.state",
-            "notes"
+            "address.state"
         ];
 
         const getErrorByPath = (path: string) => {
@@ -199,158 +182,64 @@ export const ModalSeller = ({title, isOpen, setIsOpen, onClose, onSelectValue, b
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            {watch('type') === 'external' && (
-                                <>
-                                    <div className="grid grid-cols-1 lg:grid-cols-10 gap-2 mb-2 slim-bg-primary p-2 rounded-4xl">
-                                        {tabs.map((x: any) => (
-                                            <div key={x.key} onClick={() => setTabCurrent(x.key)} className={`col-span-2 rounded-4xl py-2 font-bold text-lg text-center cursor-pointer ${tabCurrent === x.key ? 'slim-bg-secondary' : 'slim-bg-primary'}`}>
-                                                {x.title}
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="relative overflow-hidden w-full">
-                                        <div className="flex transition-transform duration-300 ease-in-out" style={{ transform: `translateX(-${tabIndex * 100}%)` }}>
-                                            <div className="w-full shrink-0 p-4">
-                                                Conteúdo Dados Gerais
-                                            </div>
-
-                                            <div className="w-full shrink-0 p-4">
-                                                Conteúdo Dados do Responsável
-                                            </div>
-
-                                            <div className="w-full shrink-0 p-4">
-                                                <div className="grid grid-cols-1 lg:grid-cols-5 gap-2 mb-2">
-                                                    <div className={`flex flex-col mb-2`}>
-                                                        <label className={`label slim-label-primary`}>Tipo</label>
-                                                        <select className="select slim-select-primary" {...register("type", {required: "Tipo de Profissional é obrigatório"})}>
-                                                            <option value="internal">Interno</option>
-                                                            <option value="external">Externo</option>                                        
-                                                        </select>
-                                                    </div>         
-                                                    <div className={`flex flex-col col-span-2 mb-2`}>
-                                                        <label className={`label slim-label-primary`}>Nome</label>
-                                                        <input {...register("name", {required: "Nome é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                                    </div>                                
-                                                    <div className={`flex flex-col col-span-3 mb-2`}>
-                                                        <label className={`label slim-label-primary`}>E-mail</label>
-                                                        <input {...register("email", {required: "E-mail é obrigatório", pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                                    </div>                                
-                                                    <div className={`flex flex-col mb-2`}>
-                                                        <label className={`label slim-label-primary`}>Telefone</label>
-                                                        <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("phone", {required: "Telefone é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                                    </div>                                
-                                                    <div className={`flex flex-col mb-2`}>
-                                                        <label className={`label slim-label-primary`}>CPF</label>
-                                                        <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskCPF(e)} {...register("cpf", {required: "CPF é obrigatório", validate: value => validatorCPF(value) || "CPF inválido"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                                    </div>                                
-                                                    <div className={`flex flex-col mb-2`}>
-                                                        <label className={`label slim-label-primary`}>CEP</label>
-                                                        <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e)} {...register("address.zipCode", {required: "CEP é obrigatório", minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                                    </div>                                
-                                                    <div className={`flex flex-col mb-2`}>
-                                                        <label className={`label slim-label-primary`}>Número</label>
-                                                        <input {...register("address.number", {required: "Número é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                                    </div>                                
-                                                    <div className={`flex flex-col col-span-3 mb-2`}>
-                                                        <label className={`label slim-label-primary`}>Rua</label>
-                                                        <input {...register("address.street", {required: "Rua é obrigatória"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                                    </div>                                
-                                                    <div className={`flex flex-col mb-2`}>
-                                                        <label className={`label slim-label-primary`}>Bairro</label>
-                                                        <input {...register("address.neighborhood", {required: "Bairro é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                                    </div>                                
-                                                    <div className={`flex flex-col mb-2`}>
-                                                        <label className={`label slim-label-primary`}>Cidade</label>
-                                                        <input {...register("address.city", {required: "Cidade é obrigatória"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                                    </div>                                
-                                                    <div className={`flex flex-col mb-2`}>
-                                                        <label className={`label slim-label-primary`}>Estado</label>
-                                                        <input {...register("address.state", {required: "Estado é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                                    </div>                                
-                                                    <div className={`flex flex-col col-span-5 mb-2`}>
-                                                        <label className={`label slim-label-primary`}>Complemento</label>
-                                                        <input {...register("address.complement")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                                    </div>                               
-                                                    <div className={`flex flex-col col-span-7 mb-2`}>
-                                                        <label className={`label slim-label-primary`}>Observações</label>
-                                                        <textarea {...register("notes")} className={`slim-textarea slim-textarea-primary`} placeholder="Digite" rows={4}></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="w-full shrink-0 p-4">
-                                                Conteúdo Anexos
-                                            </div>
-
-                                            <div className="w-full shrink-0 p-4">
-                                                Conteúdo Dados Bancários
-                                            </div>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                            {
-                                watch("type") == "internal" && (
-                                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-2 mb-2">
-                                        <div className={`flex flex-col mb-2`}>
-                                            <label className={`label slim-label-primary`}>Tipo</label>
-                                            <select className="select slim-select-primary" {...register("type", {required: "Tipo de Profissional é obrigatório"})}>
-                                                <option value="internal">Interno</option>
-                                                <option value="external">Externo</option>                                        
-                                            </select>
-                                        </div>         
-                                        <div className={`flex flex-col col-span-2 mb-2`}>
-                                            <label className={`label slim-label-primary`}>Nome</label>
-                                            <input {...register("name", {required: "Nome é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                        </div>                                
-                                        <div className={`flex flex-col col-span-3 mb-2`}>
-                                            <label className={`label slim-label-primary`}>E-mail</label>
-                                            <input {...register("email", {required: "E-mail é obrigatório", pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                        </div>                                
-                                        <div className={`flex flex-col mb-2`}>
-                                            <label className={`label slim-label-primary`}>Telefone</label>
-                                            <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("phone", {required: "Telefone é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                        </div>                                
-                                        <div className={`flex flex-col mb-2`}>
-                                            <label className={`label slim-label-primary`}>CPF</label>
-                                            <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskCPF(e)} {...register("cpf", {required: "CPF é obrigatório", validate: value => validatorCPF(value) || "CPF inválido"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                        </div>                                
-                                        <div className={`flex flex-col mb-2`}>
-                                            <label className={`label slim-label-primary`}>CEP</label>
-                                            <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e)} {...register("address.zipCode", {required: "CEP é obrigatório", minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                        </div>                                
-                                        <div className={`flex flex-col mb-2`}>
-                                            <label className={`label slim-label-primary`}>Número</label>
-                                            <input {...register("address.number", {required: "Número é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                        </div>                                
-                                        <div className={`flex flex-col col-span-3 mb-2`}>
-                                            <label className={`label slim-label-primary`}>Rua</label>
-                                            <input {...register("address.street", {required: "Rua é obrigatória"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                        </div>                                
-                                        <div className={`flex flex-col mb-2`}>
-                                            <label className={`label slim-label-primary`}>Bairro</label>
-                                            <input {...register("address.neighborhood", {required: "Bairro é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                        </div>                                
-                                        <div className={`flex flex-col mb-2`}>
-                                            <label className={`label slim-label-primary`}>Cidade</label>
-                                            <input {...register("address.city", {required: "Cidade é obrigatória"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                        </div>                                
-                                        <div className={`flex flex-col mb-2`}>
-                                            <label className={`label slim-label-primary`}>Estado</label>
-                                            <input {...register("address.state", {required: "Estado é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                        </div>                                
-                                        <div className={`flex flex-col col-span-5 mb-2`}>
-                                            <label className={`label slim-label-primary`}>Complemento</label>
-                                            <input {...register("address.complement")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                        </div>                               
-                                        <div className={`flex flex-col col-span-7 mb-2`}>
-                                            <label className={`label slim-label-primary`}>Observações</label>
-                                            <textarea {...register("notes")} className={`slim-textarea slim-textarea-primary`} placeholder="Digite" rows={4}></textarea>
-                                        </div>
-                                    </div>                          
-                                )
-                            }
+                          
+                            <div className="grid grid-cols-1 lg:grid-cols-5 gap-2 mb-2">
+                                <div className={`flex flex-col mb-2`}>
+                                    <label className={`label slim-label-primary`}>Tipo</label>
+                                    <select className="select slim-select-primary" {...register("type", {required: "Tipo de Profissional é obrigatório"})}>
+                                        <option value="internal">Interno</option>
+                                        <option value="external">Externo</option>                                        
+                                    </select>
+                                </div>         
+                                <div className={`flex flex-col col-span-2 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Nome</label>
+                                    <input {...register("name", {required: "Nome é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>                                
+                                <div className={`flex flex-col col-span-3 mb-2`}>
+                                    <label className={`label slim-label-primary`}>E-mail</label>
+                                    <input {...register("email", {required: "E-mail é obrigatório", pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>                                
+                                <div className={`flex flex-col mb-2`}>
+                                    <label className={`label slim-label-primary`}>Telefone</label>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("phone", {required: "Telefone é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>                                
+                                <div className={`flex flex-col mb-2`}>
+                                    <label className={`label slim-label-primary`}>CPF</label>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskCPF(e)} {...register("cpf", {required: "CPF é obrigatório", validate: value => validatorCPF(value) || "CPF inválido"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>                                
+                                <div className={`flex flex-col mb-2`}>
+                                    <label className={`label slim-label-primary`}>CEP</label>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e)} {...register("address.zipCode", {required: "CEP é obrigatório", minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>                                
+                                <div className={`flex flex-col mb-2`}>
+                                    <label className={`label slim-label-primary`}>Número</label>
+                                    <input {...register("address.number", {required: "Número é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>                                
+                                <div className={`flex flex-col col-span-3 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Rua</label>
+                                    <input {...register("address.street", {required: "Rua é obrigatória"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>                                
+                                <div className={`flex flex-col mb-2`}>
+                                    <label className={`label slim-label-primary`}>Bairro</label>
+                                    <input {...register("address.neighborhood", {required: "Bairro é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>                                
+                                <div className={`flex flex-col mb-2`}>
+                                    <label className={`label slim-label-primary`}>Cidade</label>
+                                    <input {...register("address.city", {required: "Cidade é obrigatória"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>                                
+                                <div className={`flex flex-col mb-2`}>
+                                    <label className={`label slim-label-primary`}>Estado</label>
+                                    <input {...register("address.state", {required: "Estado é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>                                
+                                <div className={`flex flex-col col-span-5 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Complemento</label>
+                                    <input {...register("address.complement")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>                               
+                                <div className={`flex flex-col col-span-7 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Observações</label>
+                                    <textarea {...register("notes")} className={`slim-textarea slim-textarea-primary`} placeholder="Digite" rows={4}></textarea>
+                                </div>
+                            </div>                          
                                                    
                             <div className="flex justify-end gap-2 w-12/12 mt-3">
                                 <button type="button" onClick={cancel} className="slim-btn slim-btn-primary-light">Cancelar</button>

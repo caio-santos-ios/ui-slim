@@ -88,7 +88,7 @@ export default function ServiceModules() {
   const destroy = async () => {
     try {
       const { status } = await api.delete(`/service-modules/${currentBody?.id}`, configApi());
-      resolveResponse({status, message: "Exclído com sucesso"});
+      resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
       resetModal();
       await getAll();

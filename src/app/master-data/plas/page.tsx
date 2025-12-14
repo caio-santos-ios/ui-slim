@@ -80,7 +80,7 @@ export default function Plan() {
   const destroy = async () => {
     try {
       const { status } = await api.delete(`/plans/${currentBody?.id}`, configApi());
-      resolveResponse({status, message: "Exclído com sucesso"});
+      resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
       resetModal();
       await getAll();

@@ -19,7 +19,7 @@
   right: 0;
   bottom: 0;
   background-color: #fff;
-  border: 1px solid #adb5bd;
+  border: 1px solid #eb2412;
   transition: .4s;
   border-radius: 30px;
 }
@@ -32,7 +32,7 @@
   border-radius: 20px;
   left: 0.27em;
   bottom: 0.23em;
-  background-color: #adb5bd;
+  background-color: #eb2412;
   transition: .4s;
 }
 
