@@ -184,7 +184,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     const getRecipient = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/customer-recipients?deleted=false&orderBy=createdAt&sort=desc&pageSize=100&pageNumber=1`, configApi());
+            const {data} = await api.get(`/customer-recipients?deleted=false&contractorId=${contractorId}&orderBy=createdAt&sort=desc&pageSize=100&pageNumber=1`, configApi());
             const result = data.result;
             setCustomerRecipient(result.data);
         } catch (error) {
@@ -209,6 +209,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     };
     
     useEffect(() => {
+        console.log(contractorId)
         reset();
 
         setTabCurrent("data");

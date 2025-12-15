@@ -211,7 +211,8 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
                         
                         {
                             tabCurrent == "contract" &&
-                            <ModalContractor onSelectValue={onSelectValue} body={body} onClose={cancel}/> 
+                            <></>
+                            // <ModalContractor onSelectValue={onSelectValue} body={body} onClose={cancel}/> 
                         }
                     </DialogPanel>
                 </div>
