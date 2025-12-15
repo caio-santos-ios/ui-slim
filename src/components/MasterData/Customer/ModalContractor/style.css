@@ -1,0 +1,18 @@
+.container-modal {
+    background-color: rgba(248, 248, 248, 0.46);
+}
+
+.header-modal {
+    color: var(--primary-color);
+}
+
+.list-contact {
+    
+}
+
+.card-modal {
+    padding: 1rem 0;
+    /* height: calc(100dvh - 32rem); */
+    /* height: calc(100dvh - 15rem); */
+    overflow-y: auto;
+}
