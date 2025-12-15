@@ -10,3 +10,16 @@ export type TAddress = {
     parentId: string;
     parent: string;
 }
+
+export const ResetAddress = {
+    id: "",
+    zipCode: "",
+    street: "",
+    number: "",
+    neighborhood: "",
+    city: "",
+    state: "",
+    complement: "",
+    parentId: "",
+    parent: "",
+}

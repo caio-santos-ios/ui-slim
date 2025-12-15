@@ -89,6 +89,7 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
     }, [body]);
 
     const validatedField = () => {
+        console.log(errors)
         const errorPriority = [
             "name",
             "cost",
@@ -141,7 +142,7 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
                                     <input {...register("description", {required: "Descrição é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>   
                                 <div className={`flex flex-col mb-2`}>
-                                    <label className={`label slim-label-primary`}>Ativo</label>
+                                    <label className={`label slim-label-primary`}>Status</label>
                                     <label className="slim-switch">
                                         <input {...register("active")} type="checkbox"/>
                                         <span className="slider"></span>
@@ -150,8 +151,8 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
                             </div>                          
                                                    
                             <div className="flex justify-end gap-2 w-12/12 mt-3">
-                                <button type="button" onClick={cancel} className="slim-btn slim-btn-primary-light">Cancelar</button>
-                                <Button click={validatedField} text="Salvar" theme="primary" styleClassBtn=""/>
+                                <Button type="button" click={cancel} text="Cancelar" theme="primary-light" styleClassBtn=""/>
+                                <Button type="submit" click={validatedField} text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>
                     </DialogPanel>

@@ -28,7 +28,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 subMenu: [],
                 description: 'Clientes',
                 icon: '',
-                link: '',
+                link: 'master-data/customers',
                 padding: 'px-4',
                 authorized: true,
             },
