@@ -10,6 +10,7 @@
 
 .slim-bg-secondary {
     background-color: var(--secondary-color);
+    color: var(--primary-text-color);
 }
 
 .slim-bg-tree {
@@ -58,4 +59,22 @@
         width: calc(100dvw - var(--width-side-bar));
         padding: 1rem;
     }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--primary-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
 }

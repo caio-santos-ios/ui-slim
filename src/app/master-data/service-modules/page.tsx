@@ -29,7 +29,7 @@ const columns: {key: string; title: string}[] = [
   { key: "description", title: "Descrição" },
   { key: "cost", title: "Custo" },
   { key: "active", title: "Status" },
-  { key: "createdAt", title: "Data de criação" },
+  { key: "createdAt", title: "Data de Cadastro" },
 ];
 
 export default function ServiceModules() {
@@ -87,9 +87,10 @@ export default function ServiceModules() {
 
   const destroy = async () => {
     try {
-      const { status, data} = await api.delete(`/service-modules/${currentBody?.id}`, configApi());
-      resolveResponse({status, ...data});
+      const { status } = await api.delete(`/service-modules/${currentBody?.id}`, configApi());
+      resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
+      resetModal();
       await getAll();
     } catch (error) {
       resolveResponse(error);

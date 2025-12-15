@@ -1,0 +1,7 @@
+.container-modal {
+    background-color: rgba(248, 248, 248, 0.46);
+}
+
+.header-modal {
+    color: var(--primary-color);
+}

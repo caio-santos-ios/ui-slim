@@ -1,4 +1,6 @@
 export const maskDate = (dateString: string) => {
+    if (!dateString) return "";
+
     const date = new Date(dateString);
 
     return date.toLocaleString("pt-BR", {
@@ -28,16 +30,29 @@ export const maskPhone = (event: React.ChangeEvent<HTMLInputElement>) => {
 }
 
 export const maskCPF = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value.replace(/\D/g, ""); 
+  let value = event.target.value.replace(/\D/g, ""); 
 
-    value = value.slice(0, 11)
+  value = value.slice(0, 11)
 
-    value = value.replace(/^(\d{3})(\d)/, "$1.$2");
-    value = value.replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3");
+  value = value.replace(/^(\d{3})(\d)/, "$1.$2");
+  value = value.replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3");
 
-    value = value.replace(/(\d{3})(\d{2})$/, "$1-$2");
+  value = value.replace(/(\d{3})(\d{2})$/, "$1-$2");
 
-    event.target.value = value;
+  event.target.value = value;
+};
+
+export const maskCNPJ = (event: React.ChangeEvent<HTMLInputElement>) => {
+  let value = event.target.value.replace(/\D/g, ""); 
+  
+  value = value.slice(0, 14);
+
+  value = value.replace(/^(\d{2})(\d)/, "$1.$2"); 
+  value = value.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+  value = value.replace(/\.(\d{3})(\d)/, ".$1/$2"); 
+  value = value.replace(/(\d{4})(\d{2})$/, "$1-$2"); 
+
+  event.target.value = value;
 };
 
 export const maskZipCode = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,4 +82,36 @@ export const maskMoney = (event: React.ChangeEvent<HTMLInputElement>) => {
     .replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
 
   event.target.value = formatted;
+};
+
+export const maskAgency = (
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  let value = event.target.value.replace(/\D/g, '');
+
+  // máximo: 5 dígitos (4 + DV)
+  value = value.slice(0, 5);
+
+  // aplica máscara
+  if (value.length > 4) {
+    value = value.replace(/^(\d{4})(\d)$/, '$1-$2');
+  }
+
+  event.target.value = value;
+};
+
+export const maskAccount = (
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  let value = event.target.value.replace(/\D/g, '');
+
+  // máximo: 13 dígitos (12 + DV)
+  value = value.slice(0, 13);
+
+  // separa DV
+  if (value.length > 5) {
+    value = value.replace(/^(\d{5,12})(\d)$/, '$1-$2');
+  }
+
+  event.target.value = value;
 };

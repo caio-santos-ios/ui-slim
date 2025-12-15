@@ -21,24 +21,42 @@ import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { convertNumberMoney } from "@/utils/convert.util";
-import { TPlan } from "@/types/masterData/plans/plans.type";
-import { ModalPlan } from "@/components/MasterData/Plan/Modal";
+import { TSeller } from "@/types/masterData/seller/seller.type";
+import { ModalSeller } from "@/components/MasterData/Seller/Modal";
 
 const columns: {key: string; title: string}[] = [
   { key: "name", title: "Nome" },
-  { key: "description", title: "Descrição" },
-  { key: "price", title: "Preço" },
-  { key: "serviceModule", title: "Módulo de Serviço" },
-  { key: "active", title: "Status" },
-  { key: "createdAt", title: "Data de criação" },
+  { key: "email", title: "E-mail" },
+  { key: "phone", title: "Telefone" },
+  { key: "cpf", title: "CPF" },
+  { key: "createdAt", title: "Data de Cadastro" },
 ];
 
-export default function Procedure() {
+export default function Seller() {
   const [_, setLoading] = useAtom(loadingAtom);
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
-  const [currentBody, setCurrentBody] = useState<TPlan>();
+  const [currentBody, setCurrentBody] = useState<TSeller>({
+    id: "",
+    type: "internal",
+    name: "",
+    email: "",
+    phone: "",
+    cpf: "",
+    address: {
+      city: "",
+      complement: "",
+      neighborhood: "",
+      number: "",
+      parent: "",
+      parentId: "",
+      state: "",
+      street: "",
+      zipCode: ""
+    },
+    notes: ""
+  });
 
 
   const [userLogger] = useAtom(userLoggerAtom);
@@ -47,7 +65,7 @@ export default function Procedure() {
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/plans?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/sellers?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -63,25 +81,27 @@ export default function Procedure() {
     }
   };
 
-  const openModal = (action: "create" | "edit" = "create", body?: TPlan) => {
+  const openModal = (action: "create" | "edit" = "create", body?: TSeller) => {
     if(body) {
-      setCurrentBody({...body});
+      const newBody = {...body}
+      setCurrentBody(newBody);
     };
     
     setTypeModal(action);
     setModal(true);
   };
   
-  const openModalDelete = (body: TPlan) => {
+  const openModalDelete = (body: TSeller) => {
     setCurrentBody(body);
     setModalDelete(true);
   };
 
   const destroy = async () => {
     try {
-      const { status, data} = await api.delete(`/plans/${currentBody?.id}`, configApi());
-      resolveResponse({status, ...data});
+      const { status } = await api.delete(`/sellers/${currentBody?.id}`, configApi());
+      resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
+      resetModal();
       await getAll();
     } catch (error) {
       resolveResponse(error);
@@ -98,20 +118,6 @@ export default function Procedure() {
       await getAll();
     }
   };
-
-  const resetModal = () => {
-    setCurrentBody({
-      id: "",
-      name: "",
-      price: 0,
-      type: "",
-      description: "",
-      serviceModuleId: "",
-      active: true
-    });
-
-    setModal(false);
-  };
   
   const passPage = async (action: "previous" | "next") => {
     if(pagination.totalPages == 1) return;
@@ -127,6 +133,31 @@ export default function Procedure() {
     };
   };
 
+  const resetModal = () => {
+    setCurrentBody({
+      id: "",
+      name: "",
+      type: "internal",
+      email: "",
+      phone: "",
+      cpf: "",
+      address: {
+        city: "",
+        complement: "",
+        neighborhood: "",
+        number: "",
+        parent: "",
+        parentId: "",
+        state: "",
+        street: "",
+        zipCode: ""
+      },
+      notes: ""
+    });
+
+    setModal(false);
+  };
+
   return (
     <>
       <Autorization />
@@ -138,7 +169,7 @@ export default function Procedure() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Planos" breadcrumpIcon="MdPriceChange"
+              <SlimContainer breadcrump="Vendedores" breadcrumpIcon="MdPeopleAlt"
                 buttons={
                   <>
                     <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
@@ -147,7 +178,7 @@ export default function Procedure() {
 
                 <ul className="grid gap-2 slim-list-card lg:hidden">
                   {
-                    pagination.data.map((x: TPlan, i: number) => {
+                    pagination.data.map((x: TSeller, i: number) => {
                       return (
                         <Card key={i}
                           buttons={
@@ -162,7 +193,6 @@ export default function Procedure() {
                           }
                         >
                           <p>Nome: <span className="font-bold">{x.name}</span></p>
-                          <p>Preço: <span className="font-bold">{x.price}</span></p>
                         </Card>                       
                       )
                     })
@@ -177,7 +207,7 @@ export default function Procedure() {
                           <tr key={i}>
                             {columns.map((col: any) => (
                               <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
-                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "price" ? convertNumberMoney(x.price) : (x as any)[col.key]}
+                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "cost" ? convertNumberMoney(x.cost) : (x as any)[col.key]}
                               </td>        
                             ))}   
                             <td className="text-center">
@@ -198,8 +228,8 @@ export default function Procedure() {
               </SlimContainer>
             </div>
 
-            <ModalPlan
-              title={typeModal == 'create' ? 'Inserir Planos' : 'Editar Planos'} 
+            <ModalSeller
+              title={typeModal == 'create' ? 'Inserir Vendedor' : 'Editar Vendedor'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={resetModal}
               onSelectValue={handleReturnModal}
@@ -207,7 +237,7 @@ export default function Procedure() {
             />      
 
             <ModalDelete 
-              title='Excluír Planos'
+              title='Excluír Vendedor'
               isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} 
               onClose={() => setModalDelete(false)}
               onSelectValue={destroy}

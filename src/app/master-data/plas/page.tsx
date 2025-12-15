@@ -30,7 +30,7 @@ const columns: {key: string; title: string}[] = [
   { key: "price", title: "Preço" },
   { key: "serviceModule", title: "Módulo de Serviço" },
   { key: "active", title: "Status" },
-  { key: "createdAt", title: "Data de criação" },
+  { key: "createdAt", title: "Data de Cadastro" },
 ];
 
 export default function Plan() {
@@ -79,9 +79,10 @@ export default function Plan() {
 
   const destroy = async () => {
     try {
-      const { status, data} = await api.delete(`/plans/${currentBody?.id}`, configApi());
-      resolveResponse({status, ...data});
+      const { status } = await api.delete(`/plans/${currentBody?.id}`, configApi());
+      resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
+      resetModal();
       await getAll();
     } catch (error) {
       resolveResponse(error);

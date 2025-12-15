@@ -25,7 +25,7 @@ type TProp = {
     body?: TProfessional
 }
 
-export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectValue, body}: TProp) => {
+export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectValue, body}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
     const { register, handleSubmit, reset, getValues, formState: { errors }} = useForm<TProfessional>();
     const [type, setType] = useState([]);
@@ -180,10 +180,6 @@ export const Modalprofessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
             reset(body);
         };
     }, [body]);
-    
-    useEffect(() => {
-        
-    }, [getValues("name"), getValues("email"), getValues("phone"), getValues("cpf"), getValues("address"), getValues("type"), getValues("specialty"), getValues("registration"), getValues("number")]);
 
     useEffect(() => {
         getSelectType();

@@ -74,9 +74,10 @@ export default function Dashboard() {
 
   const destroy = async () => {
     try {
-      const { status, data} = await api.delete(`/generic-tables/${currentBody?.id}`, configApi());
-      resolveResponse({status, ...data});
+      const { status } = await api.delete(`/generic-tables/table/${currentBody?.table}`, configApi());
+      resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
+      resetModal();
       await getAll();
     } catch (error) {
       resolveResponse(error);

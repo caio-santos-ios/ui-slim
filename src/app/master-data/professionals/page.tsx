@@ -20,7 +20,7 @@ import { NotData } from "@/components/Global/NotData";
 import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
-import { Modalprofessional } from "@/components/MasterData/Professional/Modal";
+import { ModalProfessional } from "@/components/MasterData/Professional/Modal";
 import { TProfessional } from "@/types/masterData/professional/professional.type";
 
 const columns: {key: string; title: string}[] = [
@@ -31,7 +31,7 @@ const columns: {key: string; title: string}[] = [
   { key: "specialtyName", title: "Especialidade" },
   { key: "registrationName", title: "Registro" },
   { key: "number", title: "Código" },
-  { key: "createdAt", title: "Data de criação" },
+  { key: "createdAt", title: "Data de Cadastro" },
 ];
 
 export default function Professional() {
@@ -80,9 +80,10 @@ export default function Professional() {
 
   const destroy = async () => {
     try {
-      const { status, data} = await api.delete(`/professionals/${currentBody?.id}`, configApi());
-      resolveResponse({status, ...data});
+      const { status } = await api.delete(`/professionals/${currentBody?.id}`, configApi());
+      resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
+      resetModal();
       await getAll();
     } catch (error) {
       resolveResponse(error);
@@ -212,7 +213,7 @@ export default function Professional() {
               </SlimContainer>
             </div>
 
-            <Modalprofessional
+            <ModalProfessional
               title={typeModal == 'create' ? 'Inserir Profissional' : 'Editar Profissional'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={resetModal}

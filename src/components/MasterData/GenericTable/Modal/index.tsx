@@ -85,6 +85,7 @@ export const ModalGenericTable = ({title, isOpen, action, setIsOpen, onClose, on
             code: "",
             description: "",
             table: "",
+            active: true
         });
 
         onClose();
@@ -138,7 +139,8 @@ export const ModalGenericTable = ({title, isOpen, action, setIsOpen, onClose, on
     const cancelItem = () => {
         reset({
             code: "",
-            description: ""
+            description: "",
+            active: true,
         });
         setIsEditItem(false);
     };
@@ -209,7 +211,7 @@ export const ModalGenericTable = ({title, isOpen, action, setIsOpen, onClose, on
                                     <input {...register("description")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div> 
                                 <div className={`flex flex-col mb-2`}>
-                                    <label className={`label slim-label-primary`}>Ativo</label>
+                                    <label className={`label slim-label-primary`}>Status</label>
                                     <label className="slim-switch">
                                         <input {...register("active")} type="checkbox"/>
                                         <span className="slider"></span>

@@ -1,4 +1,5 @@
 export type TAddress = {
+    id?: string;
     zipCode: string;
     street: string;
     number: string;

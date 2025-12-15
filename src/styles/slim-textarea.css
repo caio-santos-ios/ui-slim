@@ -1,0 +1,31 @@
+textarea {
+    outline: none;
+    border-radius: .5rem;
+    padding: .4rem .5rem;
+    resize: none;
+}
+
+.textarea::placeholder {
+    opacity: 1;
+    font-weight: 500;
+}
+
+.slim-label-primary {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.slim-label-secondary {
+    color: var(--secondary-color);
+    font-weight: 700;
+}
+
+.slim-textarea-primary {
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.slim-textarea-secondary {
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+}
