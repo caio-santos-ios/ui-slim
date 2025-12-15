@@ -16,16 +16,17 @@ import { Button } from "@/components/Global/Button";
 type TProp = {
     body?: TSeller;
     parentId: string;
+    onClose: () => void;
 }
 
-export const ModalSeller = ({parentId, body}: TProp) => {
+export const ModalSeller = ({parentId, body, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
-    const [departaments, setDepartament] = useState<TGenericTable[]>([]);
-    const [positions, setPosition] = useState<TGenericTable[]>([]);
-    
     const { register, handleSubmit, reset, watch, formState: { errors }} = useForm<TSeller>();
 
     const onSubmit: SubmitHandler<TSeller> = async (body: TSeller) => {
+        body.parentId = parentId;
+        body.parent = "seller-representative-seller";
+
         if(watch("id")) {
             await update(body);
         } else {
@@ -33,38 +34,22 @@ export const ModalSeller = ({parentId, body}: TProp) => {
         }
     };
 
-    const create = async (body: TSeller, isMessage = true) => {
+    const create = async (body: TSeller) => {
         try {
-            const { status, data} = await api.post('/', body, configApi());
-            cancel()
-            // onResult();
-            
-            if(isMessage) {
-                resolveResponse({status, ...data});
-            };
-            
-        } catch (error) {
-            resolveResponse(error);
-        }
-    };
-    
-    const update = async (body: TSeller, isMessage = false) => {
-        try {
-            const { status, data} = await api.put(`/`, body, configApi());
-            cancel()
-            // onResult();
-
-            if(isMessage) {
-                resolveResponse({status, ...data});
-            };
-
+            const { status, data} = await api.post('/sellers', body, configApi());
+            resolveResponse({status, ...data});
         } catch (error) {
             resolveResponse(error);
         }
     };
 
-    const cancel = () => {
-        reset(ResetSeller);
+    const update = async (body: TSeller) => {
+        try {
+            const { status, data} = await api.put(`/sellers`, body, configApi());
+            resolveResponse({status, ...data});
+        } catch (error) {
+            resolveResponse(error);
+        }
     };
 
     const getAddressByZipCode = async (zipCode: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,7 +65,7 @@ export const ModalSeller = ({parentId, body}: TProp) => {
                     complement: data.complemento,
                     neighborhood: data.bairro,
                     number: "",
-                    parent: "seller-epresentative-seller",
+                    parent: "seller-presentative-seller",
                     parentId,
                     state: data.estado,
                     street: data.logradouro,
@@ -92,8 +77,30 @@ export const ModalSeller = ({parentId, body}: TProp) => {
     };
 
     useEffect(() => {
-        reset(ResetSeller);
-
+        reset({
+            type: "external",
+            name: "",
+            email: "",
+            phone: "",
+            cpf: "",
+            address: {
+                id: "",
+                zipCode: "",
+                street: "",
+                number: "",
+                neighborhood: "",
+                city: "",
+                state: "",
+                complement: "",
+                parentId: "",
+                parent: "",
+            },
+            notes: "",
+            parentId: "",
+            id: ""
+        });
+        console.log(body)
+        console.log(parentId)
         if(body) {
             reset(body);
         };
@@ -105,6 +112,7 @@ export const ModalSeller = ({parentId, body}: TProp) => {
                 <div className={`flex flex-col mb-2`}>
                     <label className={`label slim-label-primary`}>Tipo</label>
                     <select className="select slim-select-primary" {...register("type")}>
+                        <option value="">Selecione</option>
                         <option value="internal">Interno</option>
                         <option value="external">Externo</option>
                     </select>
@@ -159,7 +167,7 @@ export const ModalSeller = ({parentId, body}: TProp) => {
                 </div>
             </div>
             <div className="flex justify-end gap-2 w-12/12 mt-3">
-                <Button type="button" text="Cancelar" theme="primary-light" styleClassBtn=""/>
+                <Button type="button" click={onClose} text="Cancelar" theme="primary-light" styleClassBtn=""/>
                 <Button type="submit" text="Salvar" theme="primary" styleClassBtn=""/>
             </div>
         </form>

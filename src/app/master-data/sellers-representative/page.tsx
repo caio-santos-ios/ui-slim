@@ -46,7 +46,7 @@ export default function Seller() {
       setLoading(true);
       const {data} = await api.get(`/seller-representatives?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
-      
+      console.log(result.data[0])
       setPagination({
         currentPage: result.currentPage,
         data: result.data,

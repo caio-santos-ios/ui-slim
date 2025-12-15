@@ -10,6 +10,7 @@ export type TSeller = {
     address: TAddress;
     notes: string;
     parentId: string;
+    parent: string;
 }
 
 export const ResetSeller = {

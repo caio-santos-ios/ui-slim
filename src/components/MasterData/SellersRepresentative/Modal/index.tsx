@@ -169,8 +169,8 @@ export const ModalSellerRepresentative = ({title, isOpen, setIsOpen, onClose, on
 
             if(isClose) {
                 cancel();
-                onSelectValue(true);
             };
+            onSelectValue(true);
         } catch (error) {
             resolveResponse(error);
         }
@@ -187,8 +187,8 @@ export const ModalSellerRepresentative = ({title, isOpen, setIsOpen, onClose, on
 
             if(isClose) {
                 cancel();
-                onSelectValue(true);
             };
+            onSelectValue(true);
         } catch (error) {
             resolveResponse(error);
         }
@@ -985,7 +985,7 @@ export const ModalSellerRepresentative = ({title, isOpen, setIsOpen, onClose, on
 
                         {
                             tabCurrent == "seller" &&
-                            <ModalSeller body={watch("seller")} parentId={watch("id")!} />
+                            <ModalSeller onClose={onClose} body={watch("seller")} parentId={watch("id")!} />
                             // <div className="w-full shrink-0 p-4">
                             //     <div className="grid grid-cols-1 lg:grid-cols-5 gap-2 mb-2">
                             //         <div className={`flex flex-col mb-2`}>
