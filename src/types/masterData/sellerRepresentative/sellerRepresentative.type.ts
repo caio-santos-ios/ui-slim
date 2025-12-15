@@ -113,7 +113,8 @@ export const ResetSellerRepresentative: TSellerRepresentative = {
             parent: "",
         },
         notes: "",
-        parentId: ""
+        parentId: "",
+        parent: "",
     },
     bank: {
         bank: "Conta Corrente",

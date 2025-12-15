@@ -253,6 +253,11 @@ export const ModalRepresente = ({body, tab, onClose}: TProp) => {
 
         if(body) {
             body.effectiveDate = body.effectiveDate.toString().split('T')[0];
+            
+            if(body.responsible.dateOfBirth) {
+                body.responsible.dateOfBirth = body.responsible.dateOfBirth.toString().split('T')[0];
+            };
+
             reset(body);
         };
     }, [body]);
@@ -290,7 +295,6 @@ export const ModalRepresente = ({body, tab, onClose}: TProp) => {
                         <label className={`label slim-label-primary`}>Vigência</label>
                         <input {...register("effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                     </div>
-
                     <div className={`flex flex-col mb-2`}>
                         <label className={`label slim-label-primary`}>CEP</label>
                         <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e, '')} {...register("address.zipCode", {minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
@@ -353,7 +357,7 @@ export const ModalRepresente = ({body, tab, onClose}: TProp) => {
                         <label className={`label slim-label-primary`}>WhatsApp</label>
                         <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("responsible.whatsapp")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                     </div>
-                    <div className={`flex flex-col mb-2`}>
+                    <div className={`flex flex-col col-span-2 mb-2`}>
                         <label className={`label slim-label-primary`}>Gênero</label>
                         <select className="select slim-select-primary" {...register("responsible.gender")}>
                             <option value="">Selecione</option>
@@ -363,6 +367,10 @@ export const ModalRepresente = ({body, tab, onClose}: TProp) => {
                                 })
                             }
                         </select>
+                    </div>
+                     <div className={`flex flex-col mb-2`}>
+                        <label className={`label slim-label-primary`}>Data de Nascimento</label>
+                        <input {...register("responsible.dateOfBirth")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                     </div>
                     <div className={`flex flex-col mb-2`}>
                         <label className={`label slim-label-primary`}>CEP</label>
@@ -388,7 +396,7 @@ export const ModalRepresente = ({body, tab, onClose}: TProp) => {
                         <label className={`label slim-label-primary`}>Estado</label>
                         <input {...register("responsible.address.state")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                     </div>
-                    <div className={`flex flex-col col-span-4 mb-2`}>
+                    <div className={`flex flex-col col-span-2 mb-2`}>
                         <label className={`label slim-label-primary`}>Complemento</label>
                         <input {...register("responsible.address.complement")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                     </div>
