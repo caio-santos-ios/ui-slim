@@ -21,7 +21,7 @@ import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { convertNumberMoney } from "@/utils/convert.util";
-import { TSeller } from "@/types/masterData/seller/seller.type";
+import { ResetSeller, TSeller } from "@/types/masterData/seller/seller.type";
 import { ModalSeller } from "@/components/MasterData/Seller/Modal";
 
 const columns: {key: string; title: string}[] = [
@@ -37,26 +37,7 @@ export default function Seller() {
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
-  const [currentBody, setCurrentBody] = useState<TSeller>({
-    id: "",
-    type: "internal",
-    name: "",
-    email: "",
-    phone: "",
-    cpf: "",
-    address: {
-      city: "",
-      complement: "",
-      neighborhood: "",
-      number: "",
-      parent: "",
-      parentId: "",
-      state: "",
-      street: "",
-      zipCode: ""
-    },
-    notes: ""
-  });
+  const [currentBody, setCurrentBody] = useState<TSeller>(ResetSeller);
 
 
   const [userLogger] = useAtom(userLoggerAtom);
@@ -134,26 +115,7 @@ export default function Seller() {
   };
 
   const resetModal = () => {
-    setCurrentBody({
-      id: "",
-      name: "",
-      type: "internal",
-      email: "",
-      phone: "",
-      cpf: "",
-      address: {
-        city: "",
-        complement: "",
-        neighborhood: "",
-        number: "",
-        parent: "",
-        parentId: "",
-        state: "",
-        street: "",
-        zipCode: ""
-      },
-      notes: ""
-    });
+    setCurrentBody(ResetSeller);
 
     setModal(false);
   };

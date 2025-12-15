@@ -13,7 +13,7 @@ export type TSeller = {
     parent: string;
 }
 
-export const ResetSeller = {
+export const ResetSeller: TSeller = {
     type: "internal",
     name: "",
     email: "",
@@ -33,5 +33,6 @@ export const ResetSeller = {
     },
     notes: "",
     parentId: "",
+    parent: "",
     id: ""
 }
