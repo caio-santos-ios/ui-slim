@@ -9,5 +9,7 @@
 @media (min-width: 1024) {
     .side-bar {
         width: var(--width-side-bar);
+        max-height: calc(100dvh - var(--height-header));
+        overflow-y: auto;
     }
 }
