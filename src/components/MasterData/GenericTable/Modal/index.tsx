@@ -177,6 +177,7 @@ export const ModalGenericTable = ({title, isOpen, action, setIsOpen, onClose, on
             reset({
                 active: true,
                 code: "",
+                table: body.table,
                 description: "",
                 items: [],
             });
