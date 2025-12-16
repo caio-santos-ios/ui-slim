@@ -14,17 +14,13 @@ import { FaTrash } from "react-icons/fa";
 import axios from "axios";
 import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
 import { TSeller } from "@/types/masterData/seller/seller.type";
-import { ResetCustomerRecipient, TRecipient } from "@/types/masterData/customers/customer.type";
+import { ResetCustomerRecipient, TRecipient } from "@/types/masterData/customers/customerRecipient.type";
 import { ModalDelete } from "@/components/Global/ModalDelete";
+import { TPlan } from "@/types/masterData/plans/plans.type";
 
 type TProp = {
-    // title: string;
     isOpen: boolean;
-    // setIsOpen: (isOpen: boolean) => void;
     onClose: () => void;
-    // onSelectValue: (isSuccess: boolean) => void;
-    // tab: "data" | "dataResponsible" | "contact" | "seller" | "attachment" | "dataBank",
-    // body?: TRecipient
     contractorId: string;
     contractorType: string;
 }
@@ -34,7 +30,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [origins, setOrigin] = useState<TGenericTable[]>([]);
     const [genders, setGender] = useState<TGenericTable[]>([]);
-    const [plans, setPlan] = useState<TSeller[]>([]);
+    const [plans, setPlan] = useState<TPlan[]>([]);
     const [customerRecipients, setCustomerRecipient] = useState<any[]>([]);
     const [currentId, setCureentId] = useState<string>("");
     const [tabCurrent, setTabCurrent] = useState<"data" | "dataResponsible" | "contact" | "seller" | "attachment" | "dataBank">("data")
@@ -267,7 +263,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                         <option value="">Selecione</option>
                         {
                             plans.map((x: any) => {
-                                return <option key={x.id} value={x.code}>{x.name}</option>
+                                return <option key={x.id} value={x.id}>{x.name}</option>
                             })
                         }
                     </select>
@@ -319,7 +315,6 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Ações</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Nome</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>CPF</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>RG</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data de Nascimento</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Gênero</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Telefone</th>
@@ -342,13 +337,12 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="p-2">{x.name}</td>
-                                            <td className="p-2">{x.cpf}</td>
-                                            <td className="p-2">{x.rg}</td>
-                                            <td className="p-2">{maskDate(x.dateOfBirth)}</td>
-                                            <td className="p-2">{x.genderDescription}</td>
-                                            <td className="p-2">{x.phone}</td>
-                                            <td className="p-2">{x.email}</td>
+                                            <td className="px-4 py-2">{x.name}</td>
+                                            <td className="px-4 py-2">{x.cpf}</td>
+                                            <td className="px-4 py-2">{maskDate(x.dateOfBirth)}</td>
+                                            <td className="px-4 py-2">{x.genderDescription}</td>
+                                            <td className="px-4 py-2">{x.phone}</td>
+                                            <td className="px-4 py-2">{x.email}</td>
                                         </tr>
                                     )
                                 })
