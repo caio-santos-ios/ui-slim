@@ -4,21 +4,17 @@ import "./style.css";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { configApi, resolveResponse } from "@/service/config.service";
-import { api, baseURL } from "@/service/api.service";
+import { api } from "@/service/api.service";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/Global/Button";
-import { maskCNPJ, maskCPF, maskPhone } from "@/utils/mask.util";
+import { maskCNPJ } from "@/utils/mask.util";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
-import { validatorCPF } from "@/utils/validator.utils";
 import { ResetContact, TContact } from "@/types/masterData/contact/contact.type";
-import { MdEdit } from "react-icons/md";
-import { FaTrash } from "react-icons/fa";
-import { ModalDelete } from "@/components/Global/ModalDelete";
 import axios from "axios";
 import { ResetAttachment, TAttachment } from "@/types/masterData/attachment/attachment.type";
 import { ModalRecipient } from "../ModalRecipient";
-import { ModalContractor } from "../ModalContract";
+import { ModalContract } from "../ModalContract";
+import { ModalContractor } from "../ModalContractor";
 
 type TProp = {
     title: string;
@@ -211,8 +207,7 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
                         
                         {
                             tabCurrent == "contract" &&
-                            <></>
-                            // <ModalContractor onSelectValue={onSelectValue} body={body} onClose={cancel}/> 
+                            <ModalContract planId={body.planId} contractorType={body.type} contractorId={body.id} onClose={cancel}/> 
                         }
                     </DialogPanel>
                 </div>

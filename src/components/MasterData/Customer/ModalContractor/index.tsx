@@ -31,7 +31,7 @@ type TProp = {
     body?: TCustomerContractor
 }
 
-export const ModalContract = ({body, onSelectValue, onClose}: TProp) => {
+export const ModalContractor = ({body, onSelectValue, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
     const [origins, setOrigin] = useState<TGenericTable[]>([]);
     const [genders, setGender] = useState<TGenericTable[]>([]);
@@ -228,10 +228,13 @@ export const ModalContract = ({body, onSelectValue, onClose}: TProp) => {
                         <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getCNPJ(e)} {...register("document")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                     }
                 </div>
-                <div className={`flex flex-col mb-2`}>
-                        <label className={`label slim-label-primary`}>RG</label>
-                    <input maxLength={18} {...register("rg" )} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                </div>
+                {
+                    type == "B2C" &&
+                    <div className={`flex flex-col mb-2`}>
+                            <label className={`label slim-label-primary`}>RG</label>
+                        <input maxLength={18} {...register("rg" )} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                    </div>
+                }
                 <div className={`flex flex-col col-span-2 mb-2`}>
                     <label className={`label slim-label-primary`}>{type == 'B2C' ? 'Nome' : 'Razão Social'}</label>
                     <input {...register("corporateName")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
@@ -257,7 +260,7 @@ export const ModalContract = ({body, onSelectValue, onClose}: TProp) => {
                 </div>
                 {
                     type == "B2B" &&
-                    <div className={`flex flex-col mb-2`}>
+                    <div className={`flex flex-col col-span-2 mb-2`}>
                         <label className={`label slim-label-primary`}>Vigência</label>
                         <input {...register("effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                     </div>
@@ -318,7 +321,7 @@ export const ModalContract = ({body, onSelectValue, onClose}: TProp) => {
                     <label className={`label slim-label-primary`}>Número</label>
                     <input {...register("address.number")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col col-span-4 mb-2`}>
+                <div className={`flex flex-col ${type == "B2B" ? 'col-span-3' : 'col-span-4'} mb-2`}>
                     <label className={`label slim-label-primary`}>Rua</label>
                     <input {...register("address.street")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
@@ -330,7 +333,7 @@ export const ModalContract = ({body, onSelectValue, onClose}: TProp) => {
                     <label className={`label slim-label-primary`}>Cidade</label>
                     <input {...register("address.city")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col mb-2 ${type == "B2B" ? 'col-span-5' : 'col-span-1'}`}>
+                <div className={`flex flex-col mb-2 ${type == "B2B" ? 'col-span-1' : 'col-span-1'}`}>
                     <label className={`label slim-label-primary`}>Estado</label>
                     <input {...register("address.state")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
