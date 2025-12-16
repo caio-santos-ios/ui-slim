@@ -34,6 +34,7 @@ export const ModalGenericTable = ({title, isOpen, action, setIsOpen, onClose, on
     const [items, setItems] =  useState<TGenericTable[]>([]);
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const [isEditItem, setIsEditItem] = useState<boolean>(false);
+    const [currentAction, setCurrentAction] = useState<"create" | "edit">("create")
     const [modal] = useState<boolean>(false);
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [currentBody, setCurrentBody] = useState<TGenericTable>();
@@ -52,6 +53,10 @@ export const ModalGenericTable = ({title, isOpen, action, setIsOpen, onClose, on
         try {
             const { status, data} = await api.post(`/generic-tables`, body, configApi());
             resolveResponse({status, ...data});
+            await getByTable(getValues("table"));
+            action = "edit";
+            setIsEdit(true);
+            // setCurrentBody(data.result.data);
 
             if(openModal) {
                 cancel();
@@ -165,14 +170,16 @@ export const ModalGenericTable = ({title, isOpen, action, setIsOpen, onClose, on
     const getByTable = async (table: string) => {
         try {
             const {data} = await api.get(`/generic-tables/table/${table}`, configApi());
-            const result = data.result;
-            setItems(result.data);  
+
+            setItems(data.result.data);  
+            setCurrentAction("edit");
         } catch (error) {
             resolveResponse(error);
         }
     };
     
     useEffect(() => {
+        setCurrentAction(action);
         if(body) {
             reset({
                 active: true,
@@ -229,7 +236,7 @@ export const ModalGenericTable = ({title, isOpen, action, setIsOpen, onClose, on
                                 </div> 
                             </div>
 
-                            <DataTable isActive={action == "edit" && items.length > 0} columns={columns}>
+                            <DataTable isActive={currentAction == "edit" && items.length > 0} columns={columns}>
                                 <>
                                 {
                                     items.map((x: any, i: number) => {

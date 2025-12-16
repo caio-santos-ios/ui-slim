@@ -42,7 +42,7 @@ export default function Dashboard() {
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/generic-tables?deleted=false&pageSize=10&pageNumber=1&orderBy=table&sort=desc`, configApi());
+      const {data} = await api.get(`/generic-tables?deleted=false&pageSize=15&pageNumber=1&orderBy=table&sort=desc`, configApi());
       const result = data.result;
 
       setPagination({
