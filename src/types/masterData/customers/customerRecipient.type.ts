@@ -14,6 +14,7 @@ export type TRecipient = {
     planId: string;
     notes: string;
     contractorId: string;
+    bond: string;
 }
 
 export const ResetCustomerRecipient = {
@@ -29,5 +30,6 @@ export const ResetCustomerRecipient = {
     email: "",
     planId: "",
     notes: "",
-    contractId: ""
+    contractId: "",
+    bond: ""
 }

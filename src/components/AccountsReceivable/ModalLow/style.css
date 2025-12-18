@@ -5,9 +5,3 @@
 .header-modal {
     color: var(--primary-color);
 }
-
-.card-modal {
-    padding: 1rem 0;
-    max-height: calc(100dvh - 21rem);
-    overflow-y: auto;
-}

@@ -1,47 +1,64 @@
 "use client";
 
 import "./style.css";
-import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { set, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { api } from "@/service/api.service";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/Global/Button";
-import { maskAccount, maskAgency, maskCNPJ, maskCPF, maskPhone } from "@/utils/mask.util";
+import { maskCNPJ, maskCPF, maskMoney, maskPhone } from "@/utils/mask.util";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
-import { validatorCPF } from "@/utils/validator.utils";
-import { TContact } from "@/types/masterData/contact/contact.type";
-import { MdEdit } from "react-icons/md";
-import { FaTrash } from "react-icons/fa";
 import axios from "axios";
-import { ResetAttachment, TAttachment } from "@/types/masterData/attachment/attachment.type";
 import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
-import { TAddress } from "@/types/masterData/address/address.type";
 import { TCustomerContractor } from "@/types/masterData/customers/customer.type";
 import { TSeller } from "@/types/masterData/seller/seller.type";
+import { TPlan } from "@/types/masterData/plans/plans.type";
+import { convertStringMoney } from "@/utils/convert.util";
 
 type TProp = {
-    // title: string;
-    // isOpen: boolean;
-    // setIsOpen: (isOpen: boolean) => void;
     onClose: () => void;
-    onSelectValue: (isSuccess: boolean) => void;
-    // tab: "data" | "dataResponsible" | "contact" | "seller" | "attachment" | "dataBank",
-    body?: TCustomerContractor
+    onSelectValue: (isSuccess: boolean, id: string) => void;
+    onSelectType: (type: string) => void;
+    onSuccess: (isSuccess: boolean, body: TCustomerContractor) => void;
+    body: TCustomerContractor;
 }
 
-export const ModalContractor = ({body, onSelectValue, onClose}: TProp) => {
+export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
     const [origins, setOrigin] = useState<TGenericTable[]>([]);
     const [genders, setGender] = useState<TGenericTable[]>([]);
     const [sellers, setSeller] = useState<TSeller[]>([]);
-
+    const [segments, setSegment] = useState<TGenericTable[]>([]);
+    const [plans, setPlan] = useState<TPlan[]>([]);
     const [tabCurrent, setTabCurrent] = useState<"data" | "dataResponsible" | "contact" | "seller" | "attachment" | "dataBank">("data")
-    const { register, handleSubmit, reset, getValues, watch, formState: { errors }} = useForm<TCustomerContractor>();
+    const { register, handleSubmit, reset, getValues, watch, formState: { errors }} = useForm<TCustomerContractor>({
+        defaultValues: {
+            ...body,
+            effectiveDate: !body.effectiveDate ? null : body.effectiveDate.toString().split('T')[0],
+            dateOfBirth: !body.dateOfBirth ? null : body.dateOfBirth.toString().split('T')[0],
+        }
+    });
+
     const type = watch("type");
 
+
     const onSubmit: SubmitHandler<TCustomerContractor> = async (body: TCustomerContractor) => {
+        if(body.effectiveDate) {
+            body.effectiveDate = new Date(body.effectiveDate);
+        } else {
+            body.effectiveDate = null;
+        };
+        
+        if(body.dateOfBirth) {
+            body.dateOfBirth = new Date(body.dateOfBirth);
+        } else {
+            body.dateOfBirth = null;
+        };
+
+        if(body.minimumValue) body.minimumValue = convertStringMoney(body.minimumValue);
+        if(!body.minimumValue) body.minimumValue = 0;
+
         if(!body.id) {
             await create(body);
         } else {
@@ -51,14 +68,11 @@ export const ModalContractor = ({body, onSelectValue, onClose}: TProp) => {
 
     const create = async (body: TCustomerContractor) => {
         try {
-            body.address.parent = "contract";
-            if(body.effectiveDate) {
-                body.effectiveDate = new Date(body.effectiveDate);
-            };
+            body.address.parent = "contract";           
             const { status, data} = await api.post('/customers', body, configApi());
-
+            onSuccess(true, data.result.data);
             resolveResponse({status, ...data});
-            onSelectValue(true)
+            onSelectValue(true, data.result.data.id);
         } catch (error) {
             resolveResponse(error);
         }
@@ -66,13 +80,9 @@ export const ModalContractor = ({body, onSelectValue, onClose}: TProp) => {
 
     const update = async (body: TCustomerContractor) => {
         try {
-            if(body.effectiveDate) {
-                body.effectiveDate = new Date(body.effectiveDate);
-            };
-
             const { status, data} = await api.put(`/customers`, body, configApi());
 
-            onSelectValue(true)
+            onSelectValue(true, data.result.data.id);
             resolveResponse({status, ...data});
         } catch (error) {
             resolveResponse(error);
@@ -147,7 +157,7 @@ export const ModalContractor = ({body, onSelectValue, onClose}: TProp) => {
     const getSelectOrigin = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/generic-tables/table/origem-cliente-contratante`, configApi());
+            const {data} = await api.get(`/generic-tables/table/origem-contratante-cliente`, configApi());
             const result = data.result;
             setOrigin(result.data);
         } catch (error) {
@@ -162,7 +172,7 @@ export const ModalContractor = ({body, onSelectValue, onClose}: TProp) => {
             setLoading(true);
             const {data} = await api.get(`/sellers?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1`, configApi());
             const result = data.result;
-            setSeller(result.data);
+            setSeller(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -183,30 +193,58 @@ export const ModalContractor = ({body, onSelectValue, onClose}: TProp) => {
         }
     };
     
-    useEffect(() => {
-        reset();
-        setTabCurrent("data");
+    const getSelectSegment = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/generic-tables/table/segmento-contratante-cliente`, configApi());
+            const result = data.result;
+            setSegment(result.data);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    const getSelectPlan = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/plans?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1&in$type=${body?.type},B2B e B2C`, configApi());
+            const result = data.result;
+
+            setPlan(result.data);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (type) {
+            onSelectType(type);
+        }
+    }, [type, onSelectType]);
+    
+    useEffect(() => {
         getSelectGender();
         getSelectOrigin();
         getSelectSeller();
+        getSelectSegment();
+        getSelectPlan();
     }, []);
-
+    
     useEffect(() => {
-        if (body && genders.length > 0) {
-            const data = { ...body };
+        setTabCurrent("data");
 
-            if (data.effectiveDate) {
-                data.effectiveDate = data.effectiveDate.toString().split('T')[0];
-            }
+        const data = { ...body };
 
-            if (data.dateOfBirth) {
-                data.dateOfBirth = data.dateOfBirth.toString().split('T')[0];
-            }
-
+        if (data.effectiveDate) data.effectiveDate = data.effectiveDate.toString().split('T')[0];
+        if (data.dateOfBirth) data.dateOfBirth = data.dateOfBirth.toString().split('T')[0];
+        if(body.id) {
             reset(data);
-        }
-    }, [body, genders]);
+        };
+    }, [genders, segments, sellers, plans]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="card-modal">
@@ -254,16 +292,22 @@ export const ModalContractor = ({body, onSelectValue, onClose}: TProp) => {
                     <label className={`label slim-label-primary`}>WhatsApp</label>
                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("whatsapp")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col ${type == "B2B" ? 'col-span-3' : 'col-span-3'} mb-2`}>
+                <div className={`flex flex-col ${type == "B2B" ? 'col-span-2' : 'col-span-3'} mb-2`}>
                     <label className={`label slim-label-primary`}>E-mail</label>
                     <input {...register("email", { pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
                 {
                     type == "B2B" &&
-                    <div className={`flex flex-col col-span-2 mb-2`}>
-                        <label className={`label slim-label-primary`}>Vigência</label>
-                        <input {...register("effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
-                    </div>
+                    <>
+                        <div className={`flex flex-col col-span-1 mb-2`}>
+                            <label className={`label slim-label-primary`}>Vigência</label>
+                            <input {...register("effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
+                        </div>
+                        <div className={`flex flex-col col-span-2 mb-2`}>
+                            <label className={`label slim-label-primary`}>Valor</label>
+                            <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("minimumValue")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                        </div>
+                    </>
                 }
                 {
                     type == "B2C" &&
@@ -303,16 +347,42 @@ export const ModalContractor = ({body, onSelectValue, onClose}: TProp) => {
                         }                        
                     </select>
                 </div>   
-                <div className={`flex flex-col mb-2`}>
-                    <label className={`label slim-label-primary`}>Tipo de Plano</label>
-                    <select {...register("typePlan")} className="select slim-select-primary">
-                        <option value="">Selecione</option>
-                        <option value="Individual">Individual</option>
-                        <option value="Familiar">Familiar</option>
-                        <option value="Concessão">Concessão</option>
-                        <option value="Concessão - Familia">Concessão - Familia</option>
-                    </select>
-                </div>   
+                {
+                    type == "B2B" ?
+                    <>
+                        <div className={`flex flex-col mb-2`}>
+                            <label className={`label slim-label-primary`}>Segmento</label>
+                            <select {...register("segment")} className="select slim-select-primary">
+                                <option value="">Selecione</option>
+                                {
+                                    segments.map((x: TGenericTable) => <option key={x.id} value={x.code}>{x.description}</option>)
+                                }                                                       
+                            </select>
+                        </div>  
+                        <div className={`flex flex-col mb-2`}>
+                            <label className={`label slim-label-primary`}>Plano</label>
+                            <select {...register("planId")} className="select slim-select-primary">
+                                <option value="">Selecione</option>
+                                {
+                                    plans.map((x: any) => {
+                                        return <option key={x.id} value={x.id}>{x.name}</option>
+                                    })
+                                }
+                            </select>
+                        </div>   
+                    </>
+                    : 
+                    <div className={`flex flex-col mb-2`}>
+                        <label className={`label slim-label-primary`}>Tipo de Plano</label>
+                        <select {...register("typePlan")} className="select slim-select-primary">
+                            <option value="">Selecione</option>
+                            <option value="Individual">Individual</option>
+                            <option value="Familiar">Familiar</option>
+                            <option value="Concessão">Concessão</option>
+                            <option value="Concessão - Familia">Concessão - Familia</option>
+                        </select>
+                    </div>   
+                }
                 <div className={`flex flex-col mb-2`}>
                     <label className={`label slim-label-primary`}>CEP</label>
                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e, '')} {...register("address.zipCode", {minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>

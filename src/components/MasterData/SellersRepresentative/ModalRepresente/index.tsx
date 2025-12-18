@@ -208,7 +208,7 @@ export const ModalRepresente = ({body, tab, onClose}: TProp) => {
     const getSelectGender = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/generic-tables/table/genero-representante`, configApi());
+            const {data} = await api.get(`/generic-tables/table/genero`, configApi());
             const result = data.result;
             setGender(result.data);
         } catch (error) {

@@ -19,7 +19,7 @@ export type TCustomerContract = {
     dueDateInstallment: string;
     chargingMethodInstallment: string;
 
-    recurrencePeriod: string;
+    recurrencePeriod: any;
     recurrence: string;
     endRecurrence: any;
 

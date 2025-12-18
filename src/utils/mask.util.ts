@@ -1,15 +1,15 @@
 export const maskDate = (dateString: string) => {
     if (!dateString) return "";
 
-    const date = new Date(dateString);
+    const [dateArray] = dateString.split("T");
+    const [year, month, day ] = dateArray.split("-");
+
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 
     return date.toLocaleString("pt-BR", {
         day: "2-digit",
         month: "2-digit",
-        year: "numeric",
-        // hour: "2-digit",
-        // minute: "2-digit",
-        // second: "2-digit",
+        year: "numeric"
     });
 }
 

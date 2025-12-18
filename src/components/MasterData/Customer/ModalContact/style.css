@@ -6,8 +6,8 @@
     color: var(--primary-color);
 }
 
-.card-modal {
+.list-attachment {
     padding: 1rem 0;
-    max-height: calc(100dvh - 21rem);
+    max-height: calc(100dvh - 22rem);
     overflow-y: auto;
 }

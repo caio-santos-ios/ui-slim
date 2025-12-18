@@ -6,13 +6,8 @@
     color: var(--primary-color);
 }
 
-.list-contact {
-    
-}
-
 .card-modal {
     padding: 1rem 0;
-    /* height: calc(100dvh - 32rem); */
-    height: calc(100dvh - 13rem);
+    max-height: calc(100dvh - 22rem);
     overflow-y: auto;
 }

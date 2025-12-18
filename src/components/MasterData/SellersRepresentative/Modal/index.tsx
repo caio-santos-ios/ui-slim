@@ -4,7 +4,7 @@ import "./style.css";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { configApi, resolveResponse } from "@/service/config.service";
-import { api, baseURL } from "@/service/api.service";
+import { api, baseURL, uriBase } from "@/service/api.service";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/Global/Button";
 import { maskCNPJ, maskCPF, maskPhone } from "@/utils/mask.util";
@@ -444,7 +444,7 @@ export const ModalSellerRepresentative = ({title, isOpen, setIsOpen, onClose, on
     const getSelectGender = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/generic-tables/table/genero-representante`, configApi());
+            const {data} = await api.get(`/generic-tables/table/genero`, configApi());
             const result = data.result;
             setGender(result.data);
         } catch (error) {
@@ -1066,7 +1066,7 @@ export const ModalSellerRepresentative = ({title, isOpen, setIsOpen, onClose, on
                                                             </div>
                                                         </div>
                                                         <strong>
-                                                            <a target="_blank" className="text-blue-600" href={`${baseURL}/${x.uri}`}>Visualizar Anexo</a>
+                                                            <a target="_blank" className="text-blue-600" href={`${uriBase}/${x.uri}`}>Visualizar Anexo</a>
                                                         </strong>
                                                     </div>
                                                 )

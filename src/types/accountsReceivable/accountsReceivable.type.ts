@@ -1,12 +1,11 @@
-import { TContract } from "../contract/contract.type";
-
 export type TAccountsReceivable = {
     id: string;
-    contract: string;
-    category: string;
-    costCenter: string;
-    paymentMethod: string;
-    createdAt: string;
+    customerId: string;
+    contractId: string;
 };
 
-export type TCreateAccountsReceivable = Omit<TAccountsReceivable, "id" | "createdAt">;
+export type TAccountsReceivableLow = {
+    id: string;
+    value: any;
+    valueLow: any;
+};

@@ -151,106 +151,109 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
         subMenu: [
             {
                 code: '21',
-                isOpen: true,
-                authorized: true,
-                subMenu: [
-                    {
-                        code: '1110',
-                        isOpen: false,
-                        subMenu: [],
-                        description: 'Contratos',
-                        icon: 'FaFileContract',
-                        link: '',
-                        padding: 'px-8'
-                    },
-                    {
-                        code: '1120',
-                        isOpen: false,
-                        subMenu: [],
-                        description: 'Contas a Receber',
-                        icon: 'FaMoneyBillTrendUp',
-                        link: '',
-                        padding: 'px-8'
-                    },
-                    {
-                        code: '1130',
-                        isOpen: false,
-                        subMenu: [],
-                        description: 'Contas a Pagar',
-                        icon: 'PiMoneyFill',
-                        link: '',
-                        padding: 'px-8'
-                    }
-                ],
-                description: 'Cadastros',
-                icon: 'FiGrid',
+                isOpen: false,
+                subMenu: [],
+                description: 'Contratos',
+                // icon: 'FaFileContract',
+                icon: '',
                 link: '',
-                padding: 'px-4',
+                padding: 'px-8'
             },
             {
                 code: '22',
-                isOpen: true,
-                authorized: true,
-                subMenu: [
-                    {
-                        code: '1210',
-                        subMenu: [],
-                        description: 'Inadimplentes',
-                        icon: 'PiNotepadFill',
-                        link: '',
-                        padding: 'px-8'
-                    },
-                    {
-                        code: '1220',
-                        subMenu: [],
-                        description: 'Fluxo de Caixa',
-                        icon: 'FaCashRegister',
-                        link: '',
-                        padding: 'px-8'
-                    },
-                    {
-                        code: '1230',
-                        subMenu: [],
-                        description: 'DRE',
-                        icon: 'IoStatsChart',
-                        link: '',
-                        padding: 'px-8'
-                    },
-                    {
-                        code: '1240',
-                        subMenu: [],
-                        description: 'Faturamento',
-                        icon: 'FaFileInvoiceDollar',
-                        link: '',
-                        padding: 'px-8'
-                    }
-                ],
-                description: 'Relatórios',
-                icon: 'BsFileEarmarkBarGraphFill',
-                link: '',
-                padding: 'px-4'
+                isOpen: false,
+                subMenu: [],
+                description: 'Contas a Receber',
+                // icon: 'FaMoneyBillTrendUp',
+                icon: '',
+                link: 'financial/accounts-receivable',
+                padding: 'px-8'
             },
             {
                 code: '23',
-                isOpen: true,
-                authorized: true,
+                isOpen: false,
                 subMenu: [],
-                description: 'Importações',
-                icon: 'FaFileImport',
+                description: 'Contas a Pagar',
+                // icon: 'PiMoneyFill',
+                icon: '',
                 link: '',
-                padding: 'px-4'
-            },
-            {
-                code: '24',
-                isOpen: true,
-                authorized: true,
-                subMenu: [],
-                description: 'Baixas',
-                icon: 'BsCalendarCheckFill',
-                link: '',
-                padding: 'px-4'
+                padding: 'px-8'
             }
         ],
+        // subMenu: [
+        //     {
+        //         code: '21',
+        //         isOpen: true,
+        //         authorized: true,
+        //         description: 'Cadastros',
+        //         icon: 'FiGrid',
+        //         link: '',
+        //         padding: 'px-4',
+        //     },
+        //     {
+        //         code: '22',
+        //         isOpen: true,
+        //         authorized: true,
+        //         subMenu: [
+        //             {
+        //                 code: '1210',
+        //                 subMenu: [],
+        //                 description: 'Inadimplentes',
+        //                 icon: 'PiNotepadFill',
+        //                 link: '',
+        //                 padding: 'px-8'
+        //             },
+        //             {
+        //                 code: '1220',
+        //                 subMenu: [],
+        //                 description: 'Fluxo de Caixa',
+        //                 icon: 'FaCashRegister',
+        //                 link: '',
+        //                 padding: 'px-8'
+        //             },
+        //             {
+        //                 code: '1230',
+        //                 subMenu: [],
+        //                 description: 'DRE',
+        //                 icon: 'IoStatsChart',
+        //                 link: '',
+        //                 padding: 'px-8'
+        //             },
+        //             {
+        //                 code: '1240',
+        //                 subMenu: [],
+        //                 description: 'Faturamento',
+        //                 icon: 'FaFileInvoiceDollar',
+        //                 link: '',
+        //                 padding: 'px-8'
+        //             }
+        //         ],
+        //         description: 'Relatórios',
+        //         icon: 'BsFileEarmarkBarGraphFill',
+        //         link: '',
+        //         padding: 'px-4'
+        //     },
+        //     {
+        //         code: '23',
+        //         isOpen: true,
+        //         authorized: true,
+        //         subMenu: [],
+        //         description: 'Importações',
+        //         icon: 'FaFileImport',
+        //         link: '',
+        //         padding: 'px-4'
+        //     },
+        //     {
+        //         code: '24',
+        //         isOpen: true,
+        //         authorized: true,
+        //         subMenu: [],
+        //         description: 'Baixas',
+        //         icon: 'BsCalendarCheckFill',
+        //         link: '',
+        //         padding: 'px-4'
+        //     }
+        // ],
         description: 'Financeiro',
         icon: 'BsCashCoin',
         link: '',

@@ -2,180 +2,96 @@
 
 import "./style.css";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { SubmitHandler, useForm } from "react-hook-form";
-import { configApi, resolveResponse } from "@/service/config.service";
-import { api } from "@/service/api.service";
-import { useEffect, useState } from "react";
-import { maskCNPJ } from "@/utils/mask.util";
+import { useCallback, useEffect, useState } from "react";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
-import { ResetContact, TContact } from "@/types/masterData/contact/contact.type";
-import axios from "axios";
-import { ResetAttachment, TAttachment } from "@/types/masterData/attachment/attachment.type";
 import { ModalRecipient } from "../ModalRecipient";
 import { ModalContract } from "../ModalContract";
 import { ModalContractor } from "../ModalContractor";
+import { ModalResponsible } from "../ModalResponsible";
+import { ResetCustomerContractor, TCustomerContractor } from "@/types/masterData/customers/customer.type";
+import { api } from "@/service/api.service";
+import { configApi, resolveResponse } from "@/service/config.service";
+import { ModalContact } from "../ModalContact";
+import { Button } from "@/components/Global/Button";
+import { ModalAttachment } from "../ModalAttachment";
 
 type TProp = {
     title: string;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     onClose: () => void;
-    onSelectValue: (isSuccess: boolean) => void;
-    body?: any
+    onSelectValue: (isSuccess: boolean, id: string) => void;
+    id: string;
 }
 
-export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue, body}: TProp) => {
+export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue, id}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
-    const [genders, setGender] = useState<any[]>([]);
-    const [departaments, setDepartament] = useState<any[]>([]);
-    const [positions, setPosition] = useState<any[]>([]);
-    const [modalDelete, setModalDelete] = useState<boolean>(false);
-    const [currentContact, setContactCurrent] = useState<TContact>({department: "", position: "", name: "", email: "", phone: "", whatsapp: "", parent: "", parentId: ""});
-    const [modalDeleteAttachment, setModalDeleteAttachment] = useState<boolean>(false);
-    const [currentAttachment, setCurrentAttachment] = useState<TAttachment>(ResetAttachment);
-    const [tabCurrent, setTabCurrent] = useState<"contractor" | "recipient" | "contract">("contractor")
-    const [bodyAttachment, setBodyAttatchment] = useState<TAttachment>(ResetAttachment);
-    const [attachments, setAttatchment] = useState<TAttachment[]>([]);
-
-    const [bodyContact, setBodyContact] = useState<TContact>(ResetContact);
-    const [contacts, setContact] = useState<TContact[]>([]);
-    
-    const { register, handleSubmit, reset, getValues, watch, formState: { errors }} = useForm<any>();
-
-    const tabs = [
+    const [tabCurrent, setTabCurrent] = useState<"contractor" | "responsible" | "recipient" | "contract" | "contact" | "attachment">("contractor")
+    const [currentBody, setCurrentBody] = useState<TCustomerContractor>(ResetCustomerContractor);
+    const [tabs, setTab] = useState<{key: string, title: string}[]>([
         { key: 'contractor', title: 'Contratante' },
         { key: 'recipient', title: 'Beneficiários' },
         { key: 'contract', title: 'Contratos' },
-    ];
-
-    const onSubmit: SubmitHandler<any> = async (body: any) => {
-        
-    };
-
-    const create = async (body: any, isClose: boolean = true, isMessage = true) => {
+    ]);
+    
+    const getById = async (id: string) => {
         try {
-            const { status, data} = await api.post('/seller-representatives', body, configApi());
-            console.log(data)
-            body = {...getValues()}
-            body.id = data.data.id;
-            body.address.id = body.address.id!;
-            body.address.parentId = body.id!;
-            body.address.parent = "seller-representative";
-            console.log(body.address)
-            reset(body);
-
-            if(isMessage) {
-                resolveResponse({status, ...data});
-            };
-
-            if(isClose) {
-                cancel();
-            };
-            onSelectValue(true);
-        } catch (error) {
-            resolveResponse(error);
-        }
-    };
-
-    const update = async (body: any, path: string = '', isClose: boolean = true, isMessage = false) => {
-        try {
-            body.effectiveDate = new Date(body.effectiveDate);
-            const { status, data} = await api.put(`/seller-representatives${path}`, body, configApi());
-
-            if(isMessage) {
-                resolveResponse({status, ...data});
-            };
-
-            if(isClose) {
-                cancel();
-            };
-            onSelectValue(true);
-        } catch (error) {
-            resolveResponse(error);
-        }
-    };
-
-    const getAddressByZipCode = async (zipCode: React.ChangeEvent<HTMLInputElement>) => {
-        let value = zipCode.target.value.replace(/\D/g, "");
-
-        if(value.length == 8) {
             setLoading(true);
-            const {data} = await axios.get(`https://viacep.com.br/ws/${value}/json/`);
-            reset({
-                ...getValues(),
-                address: {
-                    city: data.localidade,
-                    complement: data.complemento,
-                    neighborhood: data.bairro,
-                    number: getValues("address.number"),
-                    parent: "",
-                    parentId: "",
-                    state: data.estado,
-                    street: data.logradouro,
-                    zipCode: data.cep
-                }
-            })
+            const {data} = await api.get(`/customers/${id}`, configApi());
+            const result = data.result;
+            setCurrentBody(result.data)
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
             setLoading(false);
-        };
-    };
-
-    const getCNPJ = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        maskCNPJ(event);
-        let cnpj = event.target.value.replace(/\D/g, "");
-        if(cnpj.length == 14) {
-            try {
-                setLoading(true);
-                const {data} = await api.get(`/receita-ws/${cnpj}`, configApi());
-                const body: any = {...getValues()};
-                reset({
-                    ...body,
-                    tradeName: data.fantasia,
-                    corporateName: data.nome,
-                    address: {
-                        zipCode: data.cep,
-                        number: "",
-                        street: data.logradouro,
-                        city: data.municipio,
-                        complement: "",
-                        neighborhood: data.bairro,
-                        parent: 'seller-representatives',
-                        parentId: '',
-                        state: data.uf
-                    },
-                    email: data.email
-                })
-            } catch (error) {
-                resolveResponse(error);
-            }   finally {
-                setLoading(false);
-            }
         }
     };
 
     const cancel = () => {
-        reset();
-
+        setTabCurrent("contractor");
         onClose();
     };
 
-    const alterTab = async (tab: "contractor" | "recipient" | "contract", isMessage: boolean = false, saveTab: boolean = false) => {
+    const alterTab = async (tab: "contractor" | "responsible" | "recipient" | "contract" | "contact" | "attachment", isMessage: boolean = false, saveTab: boolean = false) => {
         setTabCurrent(tab);
     };
 
-    useEffect(() => {
-        reset();
+    const onSelectType = useCallback((type: string) => {
+        if (!type) return;
 
-        setTabCurrent("contractor");
+        let newTabs = [
+            { key: 'contractor', title: 'Contratante' },
+            { key: 'recipient', title: 'Beneficiários' },
+            { key: 'contract', title: 'Contratos' },
+            { key: 'contact', title: 'Contatos' },
+            { key: 'attachment', title: 'Anexos' },
+        ];
 
-        if(body) {
-            if(body.effectiveDate) {
-                body.effectiveDate = body.effectiveDate.toString().split('T')[0];
-            };
-
-            reset(body);
+        if (type === "B2B") {
+            newTabs.splice(1, 0, { key: 'responsible', title: 'Dados do Responsável' });
         };
-    }, [body]);
+
+        setTab(prev => {
+            if (JSON.stringify(prev) === JSON.stringify(newTabs)) return prev;
+            return newTabs;
+        });
+    }, []);
+
+    const onSuccess = (isSuccess: boolean, newBody: TCustomerContractor) => {
+        if(isSuccess) {
+            setCurrentBody(newBody);
+            if (!id) return;
+            getById(id);
+        };
+    };
+
+    useEffect(() => {
+        setCurrentBody(ResetCustomerContractor);
+
+        if (!id) return;
+        getById(id);
+    }, [id]);
 
     return (
         <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
@@ -196,19 +112,41 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
 
                         {
                             tabCurrent == "contractor" &&
-                            <ModalContractor onSelectValue={onSelectValue} body={body} onClose={cancel}/> 
+                            <ModalContractor onSuccess={onSuccess} onSelectType={onSelectType} onSelectValue={onSelectValue} body={currentBody} onClose={cancel}/> 
+                        }
+                        
+                        {
+                            tabCurrent == "responsible" &&
+                            <ModalResponsible parentId={id} body={currentBody} onClose={cancel}/> 
                         }
 
                         {
                             tabCurrent == "recipient" &&
-                            <ModalRecipient isOpen={isOpen} contractorType={body.type} contractorId={body.id} onClose={cancel} />
+                            <ModalRecipient isOpen={isOpen} contractorType={currentBody.type} contractorId={currentBody.id!} onClose={cancel} />
                         }
 
                         
                         {
                             tabCurrent == "contract" &&
-                            <ModalContract planId={body.planId} contractorType={body.type} contractorId={body.id} onClose={cancel}/> 
+                            <ModalContract planId={currentBody.planId} contractorType={currentBody.type} contractorId={currentBody.id!} onClose={cancel}/> 
                         }
+                       
+                        {
+                            tabCurrent == "contact" &&
+                            <ModalContact parentId={id}/> 
+                        }
+                        
+                        {
+                            tabCurrent == "attachment" &&
+                            <ModalAttachment parentId={id}/> 
+                        }
+
+                        <div className="flex justify-end mb-2">
+                            {
+                                ["contact", "attachment"].includes(tabCurrent) &&
+                                <Button click={cancel} text="Fechar" theme="primary-light" styleClassBtn=""/>
+                            }
+                        </div>
                     </DialogPanel>
                 </div>
             </div>

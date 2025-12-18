@@ -17,6 +17,7 @@ import { TSeller } from "@/types/masterData/seller/seller.type";
 import { ResetCustomerRecipient, TRecipient } from "@/types/masterData/customers/customerRecipient.type";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { TPlan } from "@/types/masterData/plans/plans.type";
+import { toast } from "react-toastify";
 
 type TProp = {
     isOpen: boolean;
@@ -38,8 +39,12 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     
 
     const onSubmit: SubmitHandler<TRecipient> = async (body: TRecipient) => {
-        body.contractorId = contractorId;
+        if(!contractorId) return toast.warn("Contratante é obrigatório", { theme: 'colored'});
 
+        body.contractorId = contractorId;
+        if(body.dateOfBirth) body.dateOfBirth = new Date(body.dateOfBirth);
+        if(!body.dateOfBirth) body.dateOfBirth = null;
+        
         if(!body.id) {
             await create(body);
         } else {
@@ -53,13 +58,8 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     const create = async (body: TRecipient) => {
         try {
             body.address.parent = "contract";
-            if(body.dateOfBirth) {
-                body.dateOfBirth = new Date(body.dateOfBirth);
-            };
             const { status, data} = await api.post('/customer-recipients', body, configApi());
-
             resolveResponse({status, ...data});
-            // onSelectValue(true)
         } catch (error) {
             resolveResponse(error);
         }
@@ -67,13 +67,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
 
     const update = async (body: TRecipient) => {
         try {
-            if(body.dateOfBirth) {
-                body.dateOfBirth = new Date(body.dateOfBirth);
-            };
-
             const { status, data} = await api.put(`/customer-recipients`, body, configApi());
-
-            // onSelectValue(true)
             resolveResponse({status, ...data});
         } catch (error) {
             resolveResponse(error);
@@ -182,7 +176,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
             setLoading(true);
             const {data} = await api.get(`/customer-recipients?deleted=false&contractorId=${contractorId}&orderBy=createdAt&sort=desc&pageSize=100&pageNumber=1`, configApi());
             const result = data.result;
-            setCustomerRecipient(result.data);
+            setCustomerRecipient(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -199,21 +193,18 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     };
     
     const getDestroy = (id: string) => {
-        console.log(id)
         setCureentId(id);
         setModalDelete(true);
     };
     
     useEffect(() => {
-        console.log(contractorId)
         reset();
-
         setTabCurrent("data");
         getSelectOrigin();
         getSelectPlan();
         getSelectGender();
         getRecipient();
-    }, [isOpen]);
+    }, []);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="card-modal">
@@ -268,6 +259,16 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                         }
                     </select>
                 </div>               
+                {
+                    contractorType == "B2B" &&
+                    <div className={`flex flex-col mb-2`}>
+                        <label className={`label slim-label-primary`}>Vínculo</label>
+                        <select className="select slim-select-primary" {...register("bond")}>
+                            <option value="Titular">Titular</option>                       
+                            <option value="Dependente">Dependente</option>                       
+                        </select>
+                    </div>               
+                }
                 <div className={`flex flex-col mb-2`}>
                     <label className={`label slim-label-primary`}>CEP</label>
                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e, '')} {...register("address.zipCode", {minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
@@ -296,7 +297,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                     <label className={`label slim-label-primary`}>Complemento</label>
                     <input {...register("address.complement")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col col-span-3 mb-2`}>
+                <div className={`flex flex-col ${contractorType == "B2B" ? 'col-span-2' : 'col-span-3'} mb-2`}>
                     <label className={`label slim-label-primary`}>Observações</label>
                     <input {...register("notes")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>               

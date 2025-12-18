@@ -18,6 +18,7 @@ import { TContract } from "@/types/contract/contract.type";
 import { MdEdit } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
 import { ModalDelete } from "@/components/Global/ModalDelete";
+import { toast } from "react-toastify";
 
 type TProp = {
     onClose: () => void;
@@ -45,9 +46,12 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
     const { register, handleSubmit, reset, getValues, watch, formState: { errors }} = useForm<TCustomerContract>();
     const type = watch("type");
 
-    const onSubmit: SubmitHandler<TCustomerContract> = async (body: TCustomerContract) => {    
+    const onSubmit: SubmitHandler<TCustomerContract> = async (body: TCustomerContract) => {  
+        if(!contractorId) return toast.warn("Contratante é obrigatório", { theme: 'colored'});
+
         if(!body.dueDate) body.dueDate = null;   
         if(!body.endRecurrence) body.endRecurrence = null;   
+        if(!body.saleDate) body.saleDate = null;   
 
         if(!body.id) {
             await create(body);
@@ -85,7 +89,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
             setLoading(true);
             const {data} = await api.get(`/customer-contracts?deleted=false&contractorId=${contractorId}&orderBy=code&sort=desc&pageSize=100&pageNumber=1`, configApi());
             const result = data.result;
-            setCustomerContract(result.data);
+            setCustomerContract(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -109,7 +113,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
         const currentContract = {...contract}
         if(currentContract.saleDate) currentContract.saleDate = currentContract.saleDate.split("T")[0];
         if(currentContract.dueDate) currentContract.dueDate = currentContract.dueDate.split("T")[0];
-        console.log(currentContract.value)
+
         currentContract.value = convertNumberMoney(currentContract.value);
         
         reset(currentContract);
@@ -129,7 +133,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
             setLoading(true);
             const {data} = await api.get(`/generic-tables/table/categoria-contrato-cliente`, configApi());
             const result = data.result;
-            setCategory(result.data);
+            setCategory(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -142,7 +146,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
             setLoading(true);
             const {data} = await api.get(`/sellers?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1`, configApi());
             const result = data.result;
-            setSeller(result.data);
+            setSeller(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -155,7 +159,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
             setLoading(true);
             const {data} = await api.get(`/generic-tables/table/centro-custo`, configApi());
             const result = data.result;
-            setCostCenter(result.data);
+            setCostCenter(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -168,7 +172,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
             setLoading(true);
             const {data} = await api.get(`/generic-tables/table/forma-pagamento`, configApi());
             const result = data.result;
-            setPaymentMethod(result.data);
+            setPaymentMethod(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -181,7 +185,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
             setLoading(true);
             const {data} = await api.get(`/generic-tables/table/conta-recebimento-contrato-cliente`, configApi());
             const result = data.result;
-            setReceiptAccount(result.data);
+            setReceiptAccount(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -194,6 +198,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
             setLoading(true);
             const {data} = await api.get(`/customer-recipients?deleted=false&contractorId=${contractorId}&orderBy=createdAt&sort=desc&pageSize=100&pageNumber=1`, configApi());
             const result = data.result;
+            console.log(result.data ?? [])
             const serviceModuleId: string[] = [];
 
             result.data.map((x: any) => {
@@ -214,9 +219,10 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
     const getSelectServiceModule = async (serviceModuleListId: string) => {
         try {
             setLoading(true);
+            console.log(serviceModuleListId)
             const {data} = await api.get(`/service-modules?deleted=false&in$id=${serviceModuleListId}&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1`, configApi());
             const result = data.result;
-            setServiceModule(result.data);
+            setServiceModule(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -251,8 +257,6 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
             if(module) {
                 const newBody = {...getValues()};
                 newBody.value = convertNumberMoney(module.cost);
-                console.log(module.cost)
-                console.log(watch("serviceModuleId"))
                 reset(newBody);
             };
         };

@@ -22,6 +22,7 @@ import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { convertNumberMoney } from "@/utils/convert.util";
 import { ModalCustomer } from "@/components/MasterData/Customer/Modal";
+import { modalAtom } from "@/jotai/global/modal.jotai";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -32,9 +33,10 @@ const columns: {key: string; title: string}[] = [
 
 export default function Customer() {
   const [_, setLoading] = useAtom(loadingAtom);
-  const [modal, setModal] = useState<boolean>(false);
+  const [modal, setModal] = useAtom(modalAtom);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
+  const [id, setId] = useState<string>("");
   const [currentBody, setCurrentBody] = useState<any>({
     id: "",
     name: "",
@@ -72,6 +74,7 @@ export default function Customer() {
     if(body) {
       const newBody = {...body}
       setCurrentBody(newBody);
+      setId(body.id);
     };
     
     setTypeModal(action);
@@ -99,10 +102,12 @@ export default function Customer() {
     getAll();
   }, []);
 
-  const handleReturnModal = async (isSuccess: boolean) => {
+  const handleReturnModal = async (isSuccess: boolean, id: string) => {
+    setId(id);
+    console.log(id)
+
     if(isSuccess) {
-      console.log("teste")
-      // setModal(false); 
+      setTypeModal("edit");
       await getAll();
     }
   };
@@ -133,6 +138,7 @@ export default function Customer() {
     });
 
     setModal(false);
+    setId("");
   };
 
   return (
@@ -210,7 +216,7 @@ export default function Customer() {
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={resetModal}
               onSelectValue={handleReturnModal}
-              body={currentBody}
+              id={id}
             />      
 
             <ModalDelete 
