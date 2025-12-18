@@ -53,14 +53,14 @@ export const ModalAccountsReceivable = ({title, isOpen, setIsOpen, onClose, onSe
     };
 
     const cancel = () => {
-        reset({
-            id: "",
-            paymentMethod: "",
-            category: "",
-            contract: "",
-            costCenter: "",
-            createdAt: ""
-        });
+        // reset({
+        //     id: "",
+        //     paymentMethod: "",
+        //     category: "",
+        //     contract: "",
+        //     costCenter: "",
+        //     createdAt: ""
+        // });
 
         onClose();
     };
@@ -82,7 +82,7 @@ export const ModalAccountsReceivable = ({title, isOpen, setIsOpen, onClose, onSe
 
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 mb-2">
-                                <InputForm {...register("contract")} styleClass="flex flex-1" placeholder="Digite" name="contract" title="Contrato" type="text" />
+                                {/* <InputForm {...register("contract")} styleClass="flex flex-1" placeholder="Digite" name="contract" title="Contrato" type="text" />
                                 
                                 <SelectForm {...register("category")} styleClass="flex flex-1" name="category" title="Categoria">
                                     <option value="">SELECIONE...</option>
@@ -104,7 +104,7 @@ export const ModalAccountsReceivable = ({title, isOpen, setIsOpen, onClose, onSe
                                     <option value="004">Dinheiro</option>
                                     <option value="005">Transferência</option>
                                     <option value="006">Outras Forma de Pagamento</option>
-                                </SelectForm>                 
+                                </SelectForm>                  */}
                             </div>                          
                             <div className="flex justify-end gap-2 w-12/12 mt-3">
                                 <button type="button" onClick={cancel} className="slim-btn slim-btn-primary-light">Cancelar</button>
