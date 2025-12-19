@@ -144,7 +144,7 @@ export default function Professional() {
 
   return (
     <>
-      <Autorization />
+      
       {
         userLogger ?
         <>
@@ -209,7 +209,7 @@ export default function Professional() {
                 </DataTable>
 
                 <NotData />
-                <Pagination passPage={passPage} />
+                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 
