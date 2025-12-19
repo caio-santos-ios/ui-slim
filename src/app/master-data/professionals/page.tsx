@@ -27,7 +27,7 @@ const columns: {key: string; title: string}[] = [
   { key: "name", title: "Nome" },
   { key: "email", title: "E-mail" },
   { key: "phone", title: "Telefone" },
-  { key: "typeName", title: "Tipo de Profissão" },
+  { key: "typeName", title: "Tipo de Profissional" },
   { key: "specialtyName", title: "Especialidade" },
   { key: "registrationName", title: "Registro" },
   { key: "number", title: "Código" },
@@ -53,7 +53,7 @@ export default function Professional() {
 
       setPagination({
         currentPage: result.currentPage,
-        data: result.data,
+        data: result.data ?? [],
         sizePage: result.pageSize,
         totalPages: result.totalCount
       });
@@ -144,7 +144,7 @@ export default function Professional() {
 
   return (
     <>
-      
+      <Autorization />
       {
         userLogger ?
         <>
