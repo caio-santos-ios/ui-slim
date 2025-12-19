@@ -289,7 +289,7 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                         <option value="">Selecione</option>
                                         {
                                             type.map((x: any, i: number) => (
-                                                <option key={i} value={x.id}>{x.description}</option>
+                                                <option key={i} value={x.code}>{x.description}</option>
                                             ))
                                         }
                                     </select>
@@ -300,7 +300,7 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                         <option value="">Selecione</option>
                                         {
                                             specialty.map((x: any, i: number) => (
-                                                <option key={i} value={x.id}>{x.description}</option>
+                                                <option key={i} value={x.code}>{x.description}</option>
                                             ))
                                         }
                                     </select>
@@ -311,7 +311,7 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                         <option value="">Selecione</option>
                                         {
                                             registration.map((x: any, i: number) => (
-                                                <option key={i} value={x.id}>{x.description}</option>
+                                                <option key={i} value={x.code}>{x.description}</option>
                                             ))
                                         }
                                     </select>
