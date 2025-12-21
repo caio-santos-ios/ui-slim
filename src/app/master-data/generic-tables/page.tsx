@@ -22,6 +22,8 @@ import { ModalDelete } from "@/components/Global/ModalDelete";
 import { ModalGenericTable } from "@/components/MasterData/GenericTable/Modal";
 import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
+import { IconEdit } from "@/components/Global/IconEdit";
+import { IconDelete } from "@/components/Global/IconDelete";
 
 const columns: any[] = [
   { key: "table", title: "Tabela" },
@@ -32,7 +34,7 @@ export default function Dashboard() {
   const [_, setLoading] = useAtom(loadingAtom);
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
-  const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
+  const [typeModal, setTypeModal] = useState<"create" | "edit" | "delete">("create");
   const [currentBody, setCurrentBody] = useState<TGenericTable>();
 
 
@@ -58,13 +60,18 @@ export default function Dashboard() {
     }
   };
 
-  const openModal = (action: "create" | "edit" = "create", body?: TGenericTable) => {
+  const openModal = (action: "create" | "edit" | "delete" = "create", body?: TGenericTable) => {
     if(body) {
       setCurrentBody({...body});
     };
+
     
     setTypeModal(action);
-    setModal(true);
+    if(action == "delete") {
+      setModalDelete(true)
+    } else {
+      setModal(true);
+    }
   };
   
   const openModalDelete = (body: TGenericTable) => {
@@ -151,32 +158,39 @@ export default function Dashboard() {
                   }
                 </ul>
 
-                <DataTable columns={columns}>
-                  <>
-                    {
-                      pagination.data.map((x: any, i: number) => {
-                        return (
-                          <tr key={i}>
-                            {columns.map((col: any) => (
-                              <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
-                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : (x as any)[col.key]}
-                              </td>        
-                            ))}   
-                            <td className="text-center">
-                              <div className="flex justify-center gap-2">
-                                <MdEdit  onClick={() => openModal("edit", x)} /> 
-                                <FaTrash onClick={() => openModalDelete(x)} />
-                              </div>
-                            </td>         
-                          </tr>
-                        )
-                      })
-                    }
-                  </>
-                </DataTable>
+                <div className="grid grid-cols-1 gap-2 mb-2">
+                  <div className="w-full overflow-x-auto hidden lg:block">
+                      <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Tabela</th>
+                              <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
+                            </tr>
+                          </thead>
+  
+                          <tbody className="bg-white divide-y divide-gray-100">
+                            {
+                              pagination.data.map((x: any) => {
+                                  return (
+                                    <tr key={x.id}>
+                                      <td className="px-4 py-2">{x.table}</td>
+                                      
+                                      <td className="p-2">
+                                        <div className="flex gap-3">
+                                          <IconEdit action="edit" obj={x} getObj={openModal}/>
+                                          <IconDelete obj={x} getObj={openModal}/>                                                
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  )
+                              })
+                            }
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
 
                 <NotData />
-                {/* <Pagination passPage={() => {}} /> */}
               </SlimContainer>
             </div>
 

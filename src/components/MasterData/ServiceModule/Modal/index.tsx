@@ -4,45 +4,58 @@ import "./style.css";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { configApi, resolveResponse } from "@/service/config.service";
-import { api } from "@/service/api.service";
-import { useEffect, useState } from "react";
+import { api, uriBase } from "@/service/api.service";
+import { useEffect } from "react";
 import { Button } from "@/components/Global/Button";
-import { maskCPF, maskMoney, maskPhone } from "@/utils/mask.util";
-import axios from "axios";
+import { maskMoney } from "@/utils/mask.util";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
 import { toast } from "react-toastify";
-import { validatorCPF } from "@/utils/validator.utils";
-import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
-import { convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
+import { ResetServiceModule, TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
+import { convertStringMoney } from "@/utils/convert.util";
 
 type TProp = {
     title: string;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     onClose: () => void;
-    onSelectValue: (isSuccess: boolean) => void;
-    body?: TServiceModule
+    onSelectValue: (isSuccess: boolean, onCloseModal?: boolean) => void;
+    body?: TServiceModule;
 }
 
 export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectValue, body}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
-    const { register, handleSubmit, reset, getValues, formState: { errors }} = useForm<TServiceModule>();
-    const [type, setType] = useState([]);
-    const [specialty, setSpecialty] = useState([]);
-    const [registration, setRegistration] = useState([]);
+    const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TServiceModule>();
+    const currentImage = watch("uri");
 
     const onSubmit: SubmitHandler<TServiceModule> = async (body: TServiceModule) => {
+        const formBody = new FormData();
+        const cost: any = convertStringMoney(body.cost.toString());
+        const price: any = convertStringMoney(body.price.toString());
+
+        formBody.append("description", body.description);
+        formBody.append("active", body.active);
+        formBody.append("cost", body.cost);
+        formBody.append("name", body.name);
+        formBody.append("cost", cost);
+        formBody.append("price", price);
+        formBody.append("uri", body.uri);
+
+        const attachment: any = document.querySelector('#image');
+        if (attachment.files[0]) formBody.append('image', attachment.files[0]);
+        
         if(!body.id) {
-          await create(body);
+            await create(formBody);
         } else {
-          await update(body);
+            formBody.append("uri", body.image);
+            formBody.append("id", body.id);
+            await update(formBody);
         }
     };
 
-    const create = async (body: TServiceModule) => {
+    const create = async (form: FormData) => {
         try {
-            const { status, data} = await api.post(`/service-modules`, {...body, cost: convertStringMoney(body.cost.toString())}, configApi());
+            const { status, data} = await api.post(`/service-modules`, form, configApi(false));
             resolveResponse({status, ...data});
             cancel();
             onSelectValue(true);
@@ -51,9 +64,9 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
         }
     };
       
-    const update = async (body: TServiceModule) => {
+    const update = async (form: FormData) => {
         try {
-            const { status, data} = await api.put(`/service-modules`, {...body, cost: convertStringMoney(body.cost.toString())}, configApi());
+            const { status, data} = await api.put(`/service-modules`, form, configApi(false));
             resolveResponse({status, ...data});
             cancel();
             onSelectValue(true);
@@ -62,34 +75,56 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
         }
     };
 
+    const updateImage = async (form: FormData) => {
+        try {
+            const { status, data} = await api.put(`/service-modules/save-image`, form, configApi(false));
+            resolveResponse({status, ...data});
+
+            const newImage = data.result.data.image;
+
+            setValue("uri", newImage);
+            onSelectValue(true, false);
+        } catch (error) {
+            resolveResponse(error);
+        }
+    };
+
     const cancel = () => {
-        reset({
-            id: "",
-            name:"",
-            description: "",
-            cost: 0,
-            active: true
-        });
+        reset(ResetServiceModule);
 
         onClose();
     };
 
+    const validatedImage = (uri: string) =>  {
+        if(!uri) return '/assets/images/notImage.png';
+
+        return `${uriBase}/${uri}`;
+    };
+
     useEffect(() => {
-        reset({
-            id: "",
-            name:"",
-            description: "",
-            cost: 0,
-            active: true
-        });
+        reset(ResetServiceModule);
 
         if(body?.id) {
             reset(body);
         };
     }, [body]);
 
+    useEffect(() => {
+        const attachment: any = document.querySelector('#image');
+        if(attachment) {
+            if(attachment.files.length > 0) {
+                const formBody = new FormData();
+                
+                if (attachment.files[0]) formBody.append('image', attachment.files[0]);
+                if(body?.id) {
+                    formBody.append("id", body.id);
+                };
+                updateImage(formBody);
+            };
+        };
+    }, [watch("image")]);
+
     const validatedField = () => {
-        console.log(errors)
         const errorPriority = [
             "name",
             "cost",
@@ -128,16 +163,29 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="grid grid-cols-1 lg:grid-cols-6 gap-2 mb-2">
-                                <div className={`flex flex-col col-span-4 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Nome</label>
-                                    <input {...register("name", {required: "Nome é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                </div>                                              
-                                <div className={`flex flex-col col-span-2 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Custo</label>
-                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("cost")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                </div>                                
-                                <div className={`flex flex-col col-span-5 mb-2`}>
+                            <div className="grid grid-cols-1 lg:grid-cols-8 gap-2 mb-2">                                    
+                                <div className={`flex flex-col col-span-3 justify-center items-center`}>
+                                    <label htmlFor="image" className={`label slim-label-primary w-42 h-42 object-cover cursor-pointer`}>
+                                        <img className="w-full h-full object-cover rounded-full" src={validatedImage(currentImage)} alt="foto do plano" />
+                                        <input hidden id="image" {...register("image")} type="file" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    </label>
+                                </div>
+    
+                                <div className={`flex flex-col col-span-5`}>
+                                    <div className="flex flex-col mb-2">
+                                        <label className={`label slim-label-primary`}>Nome</label>
+                                        <input {...register("name", {required: "Nome é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    </div>
+                                    <div className={`flex flex-col mb-2`}>
+                                        <label className={`label slim-label-primary`}>Custo</label>
+                                        <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("cost", {required: "Custo é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    </div>  
+                                    <div className={`flex flex-col mb-2`}>
+                                        <label className={`label slim-label-primary`}>Preço</label>
+                                        <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("price", {required: "Preço é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    </div>      
+                                </div>
+                                <div className={`flex flex-col col-span-7 mb-2`}>
                                     <label className={`label slim-label-primary`}>Descrição</label>
                                     <input {...register("description", {required: "Descrição é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>   
@@ -147,7 +195,7 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
                                         <input {...register("active")} type="checkbox"/>
                                         <span className="slider"></span>
                                     </label>
-                                </div>                              
+                                </div>                                 
                             </div>                          
                                                    
                             <div className="flex justify-end gap-2 w-12/12 mt-3">

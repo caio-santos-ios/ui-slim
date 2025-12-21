@@ -13,12 +13,16 @@ import { TSeller } from "@/types/masterData/seller/seller.type";
 import { ResetCustomerContract, TCustomerContract } from "@/types/masterData/customers/customerContract.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 import { maskDate, maskMoney } from "@/utils/mask.util";
-import { convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
+import { convertMoneyToNumber, convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
 import { TContract } from "@/types/contract/contract.type";
 import { MdEdit } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { toast } from "react-toastify";
+import { TPlan } from "@/types/masterData/plans/plans.type";
+import MultiSelect from "@/components/Global/MultiSelect";
+import { IconEdit } from "@/components/Global/IconEdit";
+import { IconDelete } from "@/components/Global/IconDelete";
 
 type TProp = {
     onClose: () => void;
@@ -27,31 +31,31 @@ type TProp = {
     planId: string;
 }
 
-export const ModalContract = ({contractorId, contractorType, planId, onClose}: TProp) => {
+export const ModalContract = ({contractorId, contractorType, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [currentId, setCureentId] = useState<string>("");
-    const [origins, setOrigin] = useState<TGenericTable[]>([]);
-    const [genders, setGender] = useState<TGenericTable[]>([]);
-
     const [categories, setCategory] = useState<TGenericTable[]>([]);
     const [costCenters, setCostCenter] = useState<TGenericTable[]>([]);
     const [paymentMethods, setPaymentMethod] = useState<TGenericTable[]>([]);
     const [receiptAccounts, setReceiptAccount] = useState<TGenericTable[]>([]);
     const [sellers, setSeller] = useState<TSeller[]>([]);
     const [serviceModule, setServiceModule] = useState<TServiceModule[]>([]);
+    const [plans, setPlan] = useState<TPlan[]>([]);
+    const [modules, setModules] = useState<TServiceModule[]>([]);
     const [customerContracts, setCustomerContract] = useState<TCustomerContract[]>([]);
 
     const [tabCurrent, setTabCurrent] = useState<"data" | "dataResponsible" | "contact" | "seller" | "attachment" | "dataBank">("data")
-    const { register, handleSubmit, reset, getValues, watch, formState: { errors }} = useForm<TCustomerContract>();
-    const type = watch("type");
+    const { register, handleSubmit, reset, getValues, setValue, watch, formState: { errors }} = useForm<TCustomerContract>();
+    const serviceModuleIds = watch("serviceModuleIds");
 
     const onSubmit: SubmitHandler<TCustomerContract> = async (body: TCustomerContract) => {  
         if(!contractorId) return toast.warn("Contratante é obrigatório", { theme: 'colored'});
-
+        
         if(!body.dueDate) body.dueDate = null;   
         if(!body.endRecurrence) body.endRecurrence = null;   
         if(!body.saleDate) body.saleDate = null;   
+        body.serviceModuleIds = modules.map(x => x.id!);
 
         if(!body.id) {
             await create(body);
@@ -62,7 +66,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
 
     const create = async (body: TCustomerContract) => {
         try {
-            const { status, data} = await api.post('/customer-contracts', {...body, contractorId, value: convertStringMoney(body.value.toString())}, configApi());
+            const { status, data} = await api.post('/customer-contracts', {...body, contractorId, total: convertStringMoney(body.total.toString()), subTotal: convertStringMoney(body.subTotal.toString()), discount: convertStringMoney(body.discount.toString())}, configApi());
 
             resolveResponse({status, ...data});
             cancel();
@@ -74,7 +78,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
 
     const update = async (body: TCustomerContract) => {
         try {
-            const { status, data} = await api.put(`/customer-contracts`, {...body, contractorId, value: convertStringMoney(body.value.toString())}, configApi());
+            const { status, data} = await api.put(`/customer-contracts`, {...body, contractorId, total: convertStringMoney(body.total.toString()), subTotal: convertStringMoney(body.subTotal.toString()), discount: convertStringMoney(body.discount.toString())}, configApi());
 
             resolveResponse({status, ...data});
             cancel();
@@ -89,6 +93,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
             setLoading(true);
             const {data} = await api.get(`/customer-contracts?deleted=false&contractorId=${contractorId}&orderBy=code&sort=desc&pageSize=100&pageNumber=1`, configApi());
             const result = data.result;
+
             setCustomerContract(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
@@ -109,14 +114,18 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
         }
     };
 
-    const getCurrentBody = (contract: TCustomerContract) => {
+    const getCurrentBody = (action: "create" | "edit" = "create", contract: TCustomerContract) => {
         const currentContract = {...contract}
         if(currentContract.saleDate) currentContract.saleDate = currentContract.saleDate.split("T")[0];
         if(currentContract.dueDate) currentContract.dueDate = currentContract.dueDate.split("T")[0];
 
-        currentContract.value = convertNumberMoney(currentContract.value);
-        
+        currentContract.total = convertNumberMoney(currentContract.total);
+        currentContract.subTotal = convertNumberMoney(currentContract.subTotal);
+        currentContract.discount = convertNumberMoney(currentContract.discount);
         reset(currentContract);
+
+        setModules(currentContract.serviceModuleIds);
+        setValue("serviceModuleIds", currentContract.serviceModuleIds);
     };
     
     const getDestroy = (id: string) => {
@@ -193,22 +202,12 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
         }
     };
 
-    const getRecipient = async () => {
+    const getSelectPlan = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/customer-recipients?deleted=false&contractorId=${contractorId}&orderBy=createdAt&sort=desc&pageSize=100&pageNumber=1`, configApi());
+            const {data} = await api.get(`/plans?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1&in$type=${contractorType},B2B e B2C`, configApi());
             const result = data.result;
-            console.log(result.data ?? [])
-            const serviceModuleId: string[] = [];
-
-            result.data.map((x: any) => {
-                if(!serviceModuleId.find(serviceModuleId => serviceModuleId === x.serviceModuleId))
-                {    
-                    serviceModuleId.push(x.serviceModuleId);
-                };
-            });
-
-            await getSelectServiceModule(serviceModuleId.join(","));         
+            setPlan(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -216,11 +215,10 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
         }
     };
 
-    const getSelectServiceModule = async (serviceModuleListId: string) => {
+    const getSelectServiceModule = async (planId: string) => {
         try {
             setLoading(true);
-            console.log(serviceModuleListId)
-            const {data} = await api.get(`/service-modules?deleted=false&in$id=${serviceModuleListId}&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1`, configApi());
+            const {data} = await api.get(`/service-modules?deleted=false&planId=${planId}&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1`, configApi());
             const result = data.result;
             setServiceModule(result.data ?? []);
         } catch (error) {
@@ -230,16 +228,24 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
         }
     };
     
+    const selectModule = (module: TServiceModule[]) => {
+        const value = module.reduce((value: number, x: TServiceModule) => value + parseFloat(x.price), 0);
+        setValue("subTotal", convertNumberMoney(value));
+        setValue("total", convertNumberMoney(value));
+        calcultedTotal();
+        setModules(module)
+    };
+    
     useEffect(() => {
         reset(ResetCustomerContract);
         setTabCurrent("data");
 
         getContract();
-        getRecipient();
         getSelectCategory();
         getSelectCostCenter();
         getSelectPaymentMethod();
         getSelectReceiptAccount();
+        getSelectPlan();
         getSelectSeller();
     }, []);
 
@@ -249,18 +255,83 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
             newBody.paymentCondition = "Parcelado";
             reset(newBody);
         };
-    }, [watch("type")])
+    }, [watch("type")]);
     
     useEffect(() => {
-        if(watch("type") == "Recorrente") {
-            const module = serviceModule.find(x => x.id == watch("serviceModuleId"));
-            if(module) {
-                const newBody = {...getValues()};
-                newBody.value = convertNumberMoney(module.cost);
-                reset(newBody);
-            };
+        const total = !watch("total") ? 0 : convertMoneyToNumber(watch("total"));
+        const valueParc = !watch("valueParc") ? 0 : convertMoneyToNumber(watch("valueParc"));
+        const installments = watch("paymentInstallmentQuantity");
+        
+        if(total > 0  || valueParc > 0) {
+            if(total > 0) {
+                const parcelValueRaw = Math.trunc((total / installments) * 100) / 100;
+
+                const parcelValueFormatted = convertNumberMoney(parcelValueRaw);
+
+                setValue("valueParc", parcelValueFormatted);
+            }
         };
-    }, [watch("serviceModuleId")])
+    }, [watch("paymentInstallmentQuantity")]);
+
+    useEffect(() => {
+        if(watch("planId")) {
+            getSelectServiceModule(watch("planId"));
+        };
+    }, [watch("planId")]);
+
+    useEffect(() => {
+        if(watch("paymentCondition") == "Parcelado") {
+            const total = convertMoneyToNumber(watch("total"));
+            const installments = Number(watch("paymentInstallmentQuantity")) || 1;
+
+            const parcelValueRaw = Math.trunc((total / installments) * 100) / 100;
+
+            const parcelValueFormatted = convertNumberMoney(parcelValueRaw);
+
+            setValue("valueParc", parcelValueFormatted);
+        };
+    }, [watch("paymentCondition")])
+
+    const inputValue = (e: React.ChangeEvent<HTMLInputElement>, input: "total" | "subTotal" | "discount" | "valueParc") => {
+        maskMoney(e);
+
+        const paymentCondition = watch("paymentCondition");
+        
+        if (paymentCondition === "Parcelado") {
+            if (input === "total") {
+                const total = convertMoneyToNumber(e.target.value);
+                const installments = Number(watch("paymentInstallmentQuantity")) || 1;
+
+                const parcelValueRaw = Math.trunc((total / installments) * 100) / 100;
+
+                const parcelValueFormatted = convertNumberMoney(parcelValueRaw);
+
+                setValue("valueParc", parcelValueFormatted);
+            } else {
+                const valueParc = convertMoneyToNumber(e.target.value);
+                const installments = Number(watch("paymentInstallmentQuantity")) || 1;
+
+                const parcelValueRaw = Math.trunc((valueParc * installments) * 100) / 100;
+
+                const parcelValueFormatted = convertNumberMoney(parcelValueRaw);
+
+                setValue("total", parcelValueFormatted);
+            }
+        };
+
+        calcultedTotal(input == "discount" ? convertMoneyToNumber(e.target.value) : null);
+    };
+
+    const calcultedTotal = (valueDiscount?: number | null) => {
+        const subTotal = convertMoneyToNumber(watch("subTotal"));
+
+        if(subTotal > 0) {
+            const discount = valueDiscount ? valueDiscount : convertMoneyToNumber(watch("discount"));
+            const calculted = subTotal - discount!;
+
+            setValue("total", calculted >= 0 ? convertNumberMoney(calculted) : '0,00')
+        };    
+    };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="card-modal">
@@ -279,76 +350,9 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
                 {
                     watch("type") == "Recorrente" &&
                     <>
-                        <div className={`flex flex-col col-span-2 mb-2`}>
-                            <label className={`label slim-label-primary`}>Repetir Venda</label>
-                            <select className="select slim-select-primary" {...register("recurrencePeriod")}>
-                                <option value="Mensal">Mensal</option>
-                                <option value="Semanal">Semanal</option>
-                                <option value="Anual">Anual</option>
-                            </select>
-                        </div>
-                        <div className={`flex flex-col col-span-2 mb-2`}>
-                            <label className={`label slim-label-primary`}>Dia da Venda</label>
-                            {
-                                watch("recurrencePeriod") == "Anual" ?
-                                <input {...register("recurrence")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
-                                :                        
-                                <select className="select slim-select-primary" {...register("recurrence")}>
-                                    {
-                                        watch("recurrencePeriod") == "Mensal" &&
-                                        <>
-                                            <option value="01">01</option>
-                                            <option value="02">02</option>
-                                            <option value="03">03</option>
-                                            <option value="04">04</option>
-                                            <option value="05">05</option>
-                                            <option value="06">06</option>
-                                            <option value="07">07</option>
-                                            <option value="08">08</option>
-                                            <option value="09">09</option>
-                                            <option value="10">10</option>
-                                            <option value="11">11</option>
-                                            <option value="12">12</option>
-                                            <option value="13">13</option>
-                                            <option value="14">14</option>
-                                            <option value="15">15</option>
-                                            <option value="16">16</option>
-                                            <option value="17">17</option>
-                                            <option value="18">18</option>
-                                            <option value="19">19</option>
-                                            <option value="20">20</option>
-                                            <option value="21">21</option>
-                                            <option value="22">22</option>
-                                            <option value="23">23</option>
-                                            <option value="24">24</option>
-                                            <option value="25">25</option>
-                                            <option value="26">26</option>
-                                            <option value="27">27</option>
-                                            <option value="28">28</option>
-                                            <option value="29">29</option>
-                                            <option value="30">30</option>
-                                            <option value="31">31</option>
-                                        </>
-                                    }
-                                    {
-                                        watch("recurrencePeriod") == "Semanal" &&
-                                        <>
-                                            <option value="01">Segunda-feira</option>
-                                            <option value="02">Terça-feira</option>
-                                            <option value="03">Quarta-feira</option>
-                                            <option value="04">Quinta-feira</option>
-                                            <option value="05">Sexta-feira</option>
-                                            <option value="06">Sábado</option>
-                                            <option value="07">Domingo</option>                             
-                                        </>
-                                    }               
-
-                                </select>     
-                            }
-                        </div>
-                        <div className={`flex flex-col col-span-2 mb-2`}>
+                        <div className={`flex flex-col col-span-1 mb-2`}>
                             <label className={`label slim-label-primary`}>Data do Término</label>
-                            <input {...register("dueDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
+                            <input {...register("endRecurrence")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                         </div>  
                     </>
                 }
@@ -384,20 +388,39 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
                     </select>
                 </div>   
                 <div className={`flex flex-col col-span-2 mb-2`}>
-                    <label className={`label slim-label-primary`}>Módulo de Serviços</label>
-                    <select className="select slim-select-primary" {...register("serviceModuleId")}>
+                    <label className={`label slim-label-primary`}>Planos</label>
+                    <select className="select slim-select-primary" {...register("planId")}>
                         <option value="">Selecione</option>
                         {
-                            serviceModule.map((x: any) => {
+                            plans.map((x: any) => {
                                 return <option key={x.id} value={x.id}>{x.name}</option>
                             })
                         }
                     </select>
                 </div> 
                 <div className={`flex flex-col col-span-2 mb-2`}>
-                    <label className={`label slim-label-primary`}>Valor</label>
-                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("value")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                    <label className={`label slim-label-primary`}>Módulo de Serviços</label>
+                    <MultiSelect maxSelected={1} descriptionSelectedMax="Módulos de Serviço Selecionados" value={serviceModuleIds ?? []} onChange={(items) => selectModule(items)} options={serviceModule} labelKey="name" valueKey="id" />
                 </div> 
+                <div className={`flex flex-col ${watch("paymentCondition") == "Parcelado" ? 'col-span-1' : 'col-span-1'} mb-2`}>
+                    <label className={`label slim-label-primary`}>Sub Total</label>
+                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => inputValue(e, 'subTotal')} {...register("subTotal")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                </div> 
+                <div className={`flex flex-col ${watch("paymentCondition") == "Parcelado" ? 'col-span-1' : 'col-span-1'} mb-2`}>
+                    <label className={`label slim-label-primary`}>Desconto</label>
+                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => inputValue(e, 'discount')} {...register("discount")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                </div> 
+                <div className={`flex flex-col ${watch("paymentCondition") == "Parcelado" ? 'col-span-1' : 'col-span-2'} mb-2`}>
+                    <label className={`label slim-label-primary`}>Total</label>
+                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => inputValue(e, 'total')} {...register("total")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                </div> 
+                {
+                    watch("paymentCondition") == "Parcelado" &&
+                    <div className={`flex flex-col col-span-1 mb-2`}>
+                        <label className={`label slim-label-primary`}>Valor da Parcela</label>
+                        <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => inputValue(e, 'valueParc')} {...register("valueParc")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                    </div> 
+                }
                 <div className={`flex flex-col col-span-2 mb-2`}>
                     <label className={`label slim-label-primary`}>Forma de Pagameto</label>
                     <select className="select slim-select-primary" {...register("paymentMethod")}>
@@ -535,7 +558,7 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
 
             <div className="flex justify-end gap-2 w-12/12 mt-3 mb-4">
                 <Button type="button" click={cancel} text="Cancelar" theme="primary-light" styleClassBtn=""/>
-                <Button type="submit" text="Salvar" theme="primary" styleClassBtn=""/>
+                <Button type="submit" text={watch("id") ? 'Salvar' : 'Adicionar'} theme="primary" styleClassBtn=""/>
             </div>
 
             <div className="grid grid-cols-1 gap-2 mb-2">
@@ -543,12 +566,14 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Ações</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>N° da Venda</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>N° do Contrato</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data da Venda</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Valor</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Sub Total</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Disconto</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Total</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Categoria</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Condição de Pagamento</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Condição de Pagamento</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
                             </tr>
                         </thead>
 
@@ -557,21 +582,19 @@ export const ModalContract = ({contractorId, contractorType, planId, onClose}: T
                                 customerContracts.map((x: any) => {
                                     return (
                                         <tr key={x.id}>
-                                            <td className="p-2">
-                                                <div className="flex gap-3">
-                                                    <div onClick={() => getCurrentBody(x)} className="cursor-pointer text-yellow-400 hover:text-yellow-500">
-                                                        <MdEdit />
-                                                    </div>
-                                                    <div onClick={() => getDestroy(x.id!)} className="cursor-pointer text-red-400 hover:text-red-500">
-                                                        <FaTrash />
-                                                    </div>
-                                                </div>
-                                            </td>
                                             <td className="px-4 py-2">{x.code}</td>
                                             <td className="px-4 py-2">{maskDate(x.saleDate)}</td>
-                                            <td className="px-4 py-2">{convertNumberMoney(x.value)}</td>
+                                            <td className="px-4 py-2">{convertNumberMoney(x.subTotal)}</td>
+                                            <td className="px-4 py-2">{convertNumberMoney(x.discount)}</td>
+                                            <td className="px-4 py-2">{convertNumberMoney(x.total)}</td>
                                             <td className="px-4 py-2">{x.categoryDescription}</td>
                                             <td className="px-4 py-2">{x.paymentCondition}</td>
+                                            <td className="p-2">
+                                                <div className="flex gap-3">
+                                                    <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
+                                                    <IconDelete obj={x} getObj={getDestroy}/>                                                
+                                                </div>
+                                            </td>
                                         </tr>
                                     )
                                 })

@@ -9,8 +9,12 @@ export type TCustomerContract = {
     category: string;
     costCenter: string;
     sellerId: string;
-    serviceModuleId: string;
-    value: any;
+    planId: string;
+    serviceModuleIds: any[];
+    subTotal: any;
+    total: any;
+    discount: any;
+    valueParc: any;
     paymentMethod: string;
     receiptAccount: string;
     paymentCondition: string;
@@ -39,8 +43,12 @@ export const ResetCustomerContract: TCustomerContract = {
     category: "",
     costCenter: "",
     sellerId: "",
-    serviceModuleId: "",
-    value: "",
+    planId: "",
+    serviceModuleIds: [],
+    subTotal: 0,
+    total: 0,
+    discount: 0,
+    valueParc: "",
     paymentMethod: "",
     receiptAccount: "",
     paymentCondition: "À Vista",

@@ -89,10 +89,8 @@ export const maskAgency = (
 ) => {
   let value = event.target.value.replace(/\D/g, '');
 
-  // máximo: 5 dígitos (4 + DV)
   value = value.slice(0, 5);
 
-  // aplica máscara
   if (value.length > 4) {
     value = value.replace(/^(\d{4})(\d)$/, '$1-$2');
   }
@@ -105,13 +103,24 @@ export const maskAccount = (
 ) => {
   let value = event.target.value.replace(/\D/g, '');
 
-  // máximo: 13 dígitos (12 + DV)
   value = value.slice(0, 13);
 
-  // separa DV
   if (value.length > 5) {
     value = value.replace(/^(\d{5,12})(\d)$/, '$1-$2');
   }
 
   event.target.value = value;
+};
+
+// FORMATED //
+export const formattedMoney = (value: string) => {
+  if (!value) return "0,00";
+  
+  value = value.slice(0, 15);
+  console.log(parseFloat(value))
+  const cents = (parseInt(value, 10) / 100).toFixed(2);
+
+  return cents
+    .replace(".", ",")                
+    .replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
 };

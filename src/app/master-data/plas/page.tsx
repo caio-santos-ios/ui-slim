@@ -6,29 +6,24 @@ import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { FaTrash } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
-import { MenuItem } from '@headlessui/react';
-import { maskDate } from "@/utils/mask.util";
 import { Autorization } from "@/components/Global/Autorization";
 import { Header } from "@/components/Global/Header";
 import { SideMenu } from "@/components/Global/SideMenu";
 import { SlimContainer } from "@/components/Global/SlimContainer";
-import { Card } from "@/components/Global/Card";
-import DataTable from "@/components/Global/Table";
 import { NotData } from "@/components/Global/NotData";
-import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
-import { convertNumberMoney } from "@/utils/convert.util";
-import { TPlan } from "@/types/masterData/plans/plans.type";
+import { ResetPlan, TPlan } from "@/types/masterData/plans/plans.type";
 import { ModalPlan } from "@/components/MasterData/Plan/Modal";
+import { IconEdit } from "@/components/Global/IconEdit";
+import { IconDelete } from "@/components/Global/IconDelete";
+import { convertInputStringMoney } from "@/utils/convert.util";
+import { CardImage } from "@/components/MasterData/Plan/CardImage";
 
 const columns: {key: string; title: string}[] = [
   { key: "name", title: "Nome" },
   { key: "description", title: "Descrição" },
   { key: "price", title: "Preço" },
-  { key: "serviceModule", title: "Módulo de Serviço" },
   { key: "active", title: "Status" },
   { key: "createdAt", title: "Data de Cadastro" },
 ];
@@ -40,14 +35,13 @@ export default function Plan() {
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
   const [currentBody, setCurrentBody] = useState<TPlan>();
 
-
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
  
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/plans?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/plans?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -93,23 +87,17 @@ export default function Plan() {
     getAll();
   }, []);
 
-  const handleReturnModal = async (isSuccess: boolean) => {
+  const handleReturnModal = async (isSuccess: boolean, onCloseModal: boolean = true) => {
     if(isSuccess) {
-      setModal(false); 
+      if(onCloseModal) {
+        setModal(false); 
+      };
       await getAll();
     }
   };
 
   const resetModal = () => {
-    setCurrentBody({
-      id: "",
-      name: "",
-      price: 0,
-      type: "",
-      description: "",
-      serviceModuleId: "",
-      active: true
-    });
+    setCurrentBody(ResetPlan);
 
     setModal(false);
   };
@@ -146,56 +134,27 @@ export default function Plan() {
                   </>
                 }>
 
-                <ul className="grid gap-2 slim-list-card lg:hidden">
-                  {
-                    pagination.data.map((x: TPlan, i: number) => {
-                      return (
-                        <Card key={i}
-                          buttons={
-                            <>
-                              <MenuItem>
-                                <button onClick={() => openModal("edit", x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Editar</button>
-                              </MenuItem>
-                              <MenuItem>
-                                <button onClick={() => openModalDelete(x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Excluír</button>
-                              </MenuItem>
-                            </>
-                          }
-                        >
-                          <p>Nome: <span className="font-bold">{x.name}</span></p>
-                          <p>Preço: <span className="font-bold">{x.price}</span></p>
-                        </Card>                       
-                      )
-                    })
-                  }
-                </ul>
-
-                <DataTable columns={columns}>
-                  <>
+                {
+                  pagination.data.length > 0 &&
+                  <ul className="grid grid-cols-1 lg:grid-cols-4 gap-2 slim-list-card">
                     {
-                      pagination.data.map((x: any, i: number) => {
+                      pagination.data.map((x: TPlan, i: number) => {
                         return (
-                          <tr key={i}>
-                            {columns.map((col: any) => (
-                              <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
-                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "price" ? convertNumberMoney(x.price) : (x as any)[col.key]}
-                              </td>        
-                            ))}   
-                            <td className="text-center">
-                              <div className="flex justify-center gap-2">
-                                <MdEdit  onClick={() => openModal("edit", x)} /> 
-                                <FaTrash onClick={() => openModalDelete(x)} />
+                          <CardImage key={x.id} uriImage={x.image} alt="foto do plano" title={x.name} cost={x.cost} price={x.price} description={x.description}>
+                            <div className="place-self-end-safe">
+                              <div className="flex gap-3">
+                                <IconEdit action="edit" obj={x} getObj={openModal} />
+                                <IconDelete obj={x} getObj={openModalDelete} />
                               </div>
-                            </td>         
-                          </tr>
-                        )
+                            </div>
+                          </CardImage>
+                        )                  
                       })
                     }
-                  </>
-                </DataTable>
-
+                  </ul>
+                }                
                 <NotData />
-                <Pagination passPage={passPage} />
+                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 

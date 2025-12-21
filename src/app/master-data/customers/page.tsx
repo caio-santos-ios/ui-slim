@@ -23,6 +23,8 @@ import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { convertNumberMoney } from "@/utils/convert.util";
 import { ModalCustomer } from "@/components/MasterData/Customer/Modal";
 import { modalAtom } from "@/jotai/global/modal.jotai";
+import { IconEdit } from "@/components/Global/IconEdit";
+import { IconDelete } from "@/components/Global/IconDelete";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -104,8 +106,6 @@ export default function Customer() {
 
   const handleReturnModal = async (isSuccess: boolean, id: string) => {
     setId(id);
-    console.log(id)
-
     if(isSuccess) {
       setTypeModal("edit");
       await getAll();
@@ -195,8 +195,8 @@ export default function Customer() {
                             ))}   
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
-                                <MdEdit  onClick={() => openModal("edit", x)} /> 
-                                <FaTrash onClick={() => openModalDelete(x)} />
+                                <IconEdit action="edit" obj={x} getObj={openModal}/>
+                                <IconDelete obj={x} getObj={openModalDelete}/>
                               </div>
                             </td>         
                           </tr>
@@ -207,7 +207,7 @@ export default function Customer() {
                 </DataTable>
 
                 <NotData />
-                <Pagination passPage={passPage} />
+                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 

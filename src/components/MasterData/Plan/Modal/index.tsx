@@ -4,7 +4,7 @@ import "./style.css";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { configApi, resolveResponse } from "@/service/config.service";
-import { api } from "@/service/api.service";
+import { api, uriBase } from "@/service/api.service";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/Global/Button";
 import { maskMoney } from "@/utils/mask.util";
@@ -12,35 +12,58 @@ import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
 import { toast } from "react-toastify";
 import { convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
-import { TPlan } from "@/types/masterData/plans/plans.type";
+import { ResetPlan, TPlan } from "@/types/masterData/plans/plans.type";
+import MultiSelect from "@/components/Global/MultiSelect";
+import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 
 type TProp = {
     title: string;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     onClose: () => void;
-    onSelectValue: (isSuccess: boolean) => void;
+    onSelectValue: (isSuccess: boolean, onCloseModal?: boolean) => void;
     body?: TPlan
 }
 
 export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, body}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
-    const [type, setType] = useState([]);
-    
-    const { register, handleSubmit, reset, formState: { errors }} = useForm<TPlan>();
-
+    const [serviceModules, setServiceModule] = useState([]);
+    const [modules, setModules] = useState<TServiceModule[]>([]);
+    const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TPlan>();
+    const currentImage = watch("uri");
 
     const onSubmit: SubmitHandler<TPlan> = async (body: TPlan) => {
+        body.serviceModuleIds = modules.map(x => x.id!);
+
+        const formBody = new FormData();
+        const cost: any = convertStringMoney(body.cost.toString());
+        const price: any = convertStringMoney(body.price.toString());
+
+        formBody.append("description", body.description);
+        formBody.append("active", body.active);
+        formBody.append("cost", body.cost);
+        formBody.append("name", body.name);
+        formBody.append("cost", cost);
+        formBody.append("price", price);
+        formBody.append("type", body.type);
+        formBody.append("uri", body.uri);
+        formBody.append("serviceModuleIds", body.serviceModuleIds);
+
+        const attachment: any = document.querySelector('#image');
+        if (attachment.files[0]) formBody.append('image', attachment.files[0]);
+        
         if(!body.id) {
-          await create(body);
+            await create(formBody);
         } else {
-          await update(body);
+            formBody.append("uri", body.image);
+            formBody.append("id", body.id);
+            await update(formBody);
         }
     };
 
-    const create = async (body: TPlan) => {
+    const create = async (form: FormData) => {
         try {
-            const { status, data} = await api.post(`/plans`, {...body, price: convertStringMoney(body.price.toString())}, configApi());
+            const { status, data} = await api.post(`/plans`, form, configApi(false));
             resolveResponse({status, ...data});
             cancel();
             onSelectValue(true);
@@ -49,12 +72,26 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
         }
     };
       
-    const update = async (body: TPlan) => {
+    const update = async (form: FormData) => {
         try {
-            const { status, data} = await api.put(`/plans`, {...body, price: convertStringMoney(body.price.toString())}, configApi());
+            const { status, data} = await api.put(`/plans`, form, configApi(false));
             resolveResponse({status, ...data});
             cancel();
             onSelectValue(true);
+        } catch (error) {
+            resolveResponse(error);
+        }
+    };
+    
+    const updateImage = async (form: FormData) => {
+        try {
+            const { status, data} = await api.put(`/plans/save-image`, form, configApi(false));
+            resolveResponse({status, ...data});
+
+            const newImage = data.result.data.image;
+
+            setValue("uri", newImage);
+            onSelectValue(true, false);
         } catch (error) {
             resolveResponse(error);
         }
@@ -72,12 +109,12 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
         onClose();
     };
 
-    const getSelectService = async () => {
+    const getSelectServiceModule = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/service-modules?deleted=false&pageSize=10&pageNumber=1`, configApi());
+            const {data} = await api.get(`/service-modules?planId=&deleted=false&pageSize=100&pageNumber=1`, configApi());
             const result = data.result;    
-            setType(result.data);
+            setServiceModule(result.data);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -85,23 +122,29 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
         }
     };
 
+    const selectModule = (module: TServiceModule[]) => {
+        setModules(module)
+    };
+
+    const validatedImage = (uri: string) =>  {
+        if(!uri) return '/assets/images/notImage.png';
+
+        return `${uriBase}/${uri}`;
+    };
+
     useEffect(() => {
-        reset({
-            id: "",
-            name:"",
-            description: "",
-            price: 0,
-            active: true
-        });
+        reset(ResetPlan);
 
         if(body) {
             body.price = convertNumberMoney(body.price);
+            body.cost = convertNumberMoney(body.cost);
             reset(body);
+            setModules(body.serviceModuleIds);
         };
     }, [body]);
     
     useEffect(() => {
-        getSelectService();
+        getSelectServiceModule();
     }, []);
 
     const validatedField = () => {
@@ -133,6 +176,21 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
         }
     };
 
+    useEffect(() => {
+        const attachment: any = document.querySelector('#image');
+        if(attachment) {
+            if(attachment.files.length > 0) {
+                const formBody = new FormData();
+                
+                if (attachment.files[0]) formBody.append('image', attachment.files[0]);
+                if(body?.id) {
+                    formBody.append("id", body.id);
+                };
+                updateImage(formBody);
+            };
+        };
+    }, [watch("image")]);
+
     return (
         <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto container-modal">
@@ -143,15 +201,28 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="grid grid-cols-1 lg:grid-cols-6 gap-2 mb-2">
-                                <div className={`flex flex-col col-span-4 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Nome</label>
-                                    <input {...register("name", {required: "Nome é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                </div>                                              
-                                <div className={`flex flex-col col-span-2 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Valor</label>
-                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("price", {required: "Valor é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                </div>      
+                            <div className="grid grid-cols-1 lg:grid-cols-8 gap-2 mb-2">
+                                <div className={`flex flex-col col-span-3 justify-center items-center`}>
+                                    <label htmlFor="image" className={`label slim-label-primary w-42 h-42 object-cover cursor-pointer`}>
+                                        <img className="w-full h-full object-cover rounded-full" src={validatedImage(currentImage)} alt="foto do plano" />
+                                        <input hidden id="image" {...register("image")} type="file" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    </label>
+                                </div>
+
+                                <div className={`flex flex-col col-span-5`}>
+                                    <div className="flex flex-col mb-2">
+                                        <label className={`label slim-label-primary`}>Nome</label>
+                                        <input {...register("name", {required: "Nome é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    </div>
+                                    <div className={`flex flex-col mb-2`}>
+                                        <label className={`label slim-label-primary`}>Custo</label>
+                                        <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("cost", {required: "Custo é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    </div>  
+                                    <div className={`flex flex-col mb-2`}>
+                                        <label className={`label slim-label-primary`}>Preço</label>
+                                        <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("price", {required: "Preço é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    </div>      
+                                </div>                                         
                                 <div className={`flex flex-col col-span-3 mb-2`}>
                                     <label className={`label slim-label-primary`}>Tipo</label>
                                     <select className="select slim-select-primary" {...register("type", {required: "Tipo é obrigatório"})}>
@@ -161,18 +232,11 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
                                         <option value="B2B e B2C">B2B e B2C</option>                                       
                                     </select>
                                 </div>                            
-                                <div className={`flex flex-col col-span-3 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Módulo de Serviço</label>
-                                    <select className="select slim-select-primary" {...register("serviceModuleId", {required: "Módulo de Serviço é obrigatório"})}>
-                                        <option value="">Selecione</option>
-                                        {
-                                            type.map((x: any, i: number) => (
-                                                <option key={i} value={x.id}>{x.name}</option>
-                                            ))
-                                        }
-                                    </select>
-                                </div>                            
                                 <div className={`flex flex-col col-span-5 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Módulo de Serviço</label>                                  
+                                    <MultiSelect maxSelected={3} descriptionSelectedMax="Módulos Selecionados" value={body?.serviceModuleIds ?? []} onChange={(items) => selectModule(items)} options={serviceModules} labelKey="name" valueKey="id" />
+                                </div>                            
+                                <div className={`flex flex-col col-span-7 mb-2`}>
                                     <label className={`label slim-label-primary`}>Descrição</label>
                                     <input {...register("description", {required: "Descrição é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>   

@@ -17,7 +17,6 @@ export type TCustomerContractor = {
     notes: string;
     origin: string;
     sellerId: string;
-    planId: string;
     typePlan: string;
     dateOfBirth: any | null;
     gender: string;
@@ -41,7 +40,6 @@ export const ResetCustomerContractor: TCustomerContractor = {
     notes: "",   
     origin: "",   
     sellerId: "", 
-    planId: "", 
     typePlan: "", 
     dateOfBirth: null,
     responsible: {

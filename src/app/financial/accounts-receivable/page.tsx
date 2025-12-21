@@ -23,7 +23,7 @@ export default function AccountsReceivable() {
   const getAll = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get(`/accounts-receivable?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const { data } = await api.get(`/accounts-receivable?deleted=false&orderBy=createdAt&sort=desc&pageSize=15&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -38,6 +38,10 @@ export default function AccountsReceivable() {
       setLoading(false);
     }
   };
+
+  const onSelectValue = async (isSuccess: boolean) => {
+    await getAll();
+  }
 
   useEffect(() => {
     getAll();
@@ -62,9 +66,9 @@ export default function AccountsReceivable() {
                 }>
 
 
-                <TableAccountReceivable list={pagination.data} />
+                <TableAccountReceivable list={pagination.data} onSelectValue={onSelectValue} />
                 <NotData />
-                <Pagination passPage={() => {}} />
+                <Pagination passPage={getAll} />
               </SlimContainer>
             </div>
           </main>

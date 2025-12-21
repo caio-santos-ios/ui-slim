@@ -60,7 +60,6 @@ export const ModalAttachment = ({parentId}: TProp) => {
     
     const update = async (form: FormData) => {
         try {
-            console.log(form)
             const { status, data} = await api.put(`/attachments`, form, configApi(false));
             cancel();
             resolveResponse({status, ...data});
@@ -104,7 +103,6 @@ export const ModalAttachment = ({parentId}: TProp) => {
     };
 
     useEffect(() => {
-        console.log(parentId)
         getAll();
     }, []);
 

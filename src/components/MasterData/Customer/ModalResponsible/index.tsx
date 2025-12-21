@@ -18,9 +18,10 @@ type TProp = {
     onClose: () => void;
     body?: TCustomerContractor;
     parentId: string;
+    onSuccess: (isSuccess: boolean, body: TCustomerContractor) => void;
 }
 
-export const ModalResponsible = ({body, parentId, onClose}: TProp) => {
+export const ModalResponsible = ({body, parentId, onSuccess, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
     const [genders, setGender] = useState<any[]>([]);
     const { register, handleSubmit, reset, getValues, watch, formState: { errors }} = useForm<TCustomerContractor>({
@@ -43,6 +44,7 @@ export const ModalResponsible = ({body, parentId, onClose}: TProp) => {
 
             const { status, data} = await api.put(`/customers`, body, configApi());
             resolveResponse({status, ...data});
+            onSuccess(true, data.result.data);
         } catch (error) {
             resolveResponse(error);
         }

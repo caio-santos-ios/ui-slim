@@ -23,7 +23,7 @@ const columns: any[] = [
 type TProp = {
     title: string;
     isOpen: boolean;
-    action: "create" | "edit";
+    action: "create" | "edit" | "delete";
     setIsOpen: (isOpen: boolean) => void;
     onClose: () => void;
     onSelectValue: (isSuccess: boolean) => void;

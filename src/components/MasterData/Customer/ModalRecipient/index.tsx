@@ -162,8 +162,8 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         try {
             setLoading(true);
             const {data} = await api.get(`/plans?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1&type=${contractorType}`, configApi());
-            const result = data.result;
-            setPlan(result.data);
+            // const result = data.result;
+            // setPlan(result.data ?? []);;
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -313,13 +313,13 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Ações</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Nome</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Nome</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>CPF</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data de Nascimento</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Gênero</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Telefone</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>E-mail</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>E-mail</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
                             </tr>
                         </thead>
 
@@ -328,6 +328,13 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                                 customerRecipients.map((x: any) => {
                                     return (
                                         <tr key={x.id}>
+                                           
+                                            <td className="px-4 py-2">{x.name}</td>
+                                            <td className="px-4 py-2">{x.cpf}</td>
+                                            <td className="px-4 py-2">{maskDate(x.dateOfBirth)}</td>
+                                            <td className="px-4 py-2">{x.genderDescription}</td>
+                                            <td className="px-4 py-2">{x.phone}</td>
+                                            <td className="px-4 py-2">{x.email}</td>
                                             <td className="p-2">
                                                 <div className="flex gap-3">
                                                     <div onClick={() => getCurrentBody(x)} className="cursor-pointer text-yellow-400 hover:text-yellow-500">
@@ -338,12 +345,6 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-2">{x.name}</td>
-                                            <td className="px-4 py-2">{x.cpf}</td>
-                                            <td className="px-4 py-2">{maskDate(x.dateOfBirth)}</td>
-                                            <td className="px-4 py-2">{x.genderDescription}</td>
-                                            <td className="px-4 py-2">{x.phone}</td>
-                                            <td className="px-4 py-2">{x.email}</td>
                                         </tr>
                                     )
                                 })

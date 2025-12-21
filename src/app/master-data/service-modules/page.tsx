@@ -20,9 +20,12 @@ import { NotData } from "@/components/Global/NotData";
 import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
-import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
+import { ResetServiceModule, TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 import { ModalServiceModule } from "@/components/MasterData/ServiceModule/Modal";
 import { convertNumberMoney } from "@/utils/convert.util";
+import { CardImage } from "@/components/MasterData/Plan/CardImage";
+import { IconEdit } from "@/components/Global/IconEdit";
+import { IconDelete } from "@/components/Global/IconDelete";
 
 const columns: {key: string; title: string}[] = [
   { key: "name", title: "Nome" },
@@ -37,14 +40,7 @@ export default function ServiceModules() {
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
-  const [currentBody, setCurrentBody] = useState<TServiceModule>({
-    id: "",
-    name: "",
-    description: "",
-    active: true,
-    cost: 0
-  });
-
+  const [currentBody, setCurrentBody] = useState<TServiceModule>(ResetServiceModule);
 
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
@@ -52,7 +48,7 @@ export default function ServiceModules() {
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/service-modules?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/service-modules?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -101,9 +97,11 @@ export default function ServiceModules() {
     getAll();
   }, []);
 
-  const handleReturnModal = async (isSuccess: boolean) => {
+  const handleReturnModal = async (isSuccess: boolean, onCloseModal: boolean = true) => {
     if(isSuccess) {
-      setModal(false); 
+      if(onCloseModal) {
+        setModal(false); 
+      }; 
       await getAll();
     }
   };
@@ -123,13 +121,7 @@ export default function ServiceModules() {
   };
 
   const resetModal = () => {
-    setCurrentBody({
-      id: "",
-      name: "",
-      description: "",
-      active: true,
-      cost: 0
-    });
+    setCurrentBody(ResetServiceModule);
 
     setModal(false);
   };
@@ -152,56 +144,26 @@ export default function ServiceModules() {
                   </>
                 }>
 
-                <ul className="grid gap-2 slim-list-card lg:hidden">
-                  {
-                    pagination.data.map((x: TServiceModule, i: number) => {
-                      return (
-                        <Card key={i}
-                          buttons={
-                            <>
-                              <MenuItem>
-                                <button onClick={() => openModal("edit", x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Editar</button>
-                              </MenuItem>
-                              <MenuItem>
-                                <button onClick={() => openModalDelete(x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Excluír</button>
-                              </MenuItem>
-                            </>
-                          }
-                        >
-                          <p>Nome: <span className="font-bold">{x.name}</span></p>
-                          <p>Custo: <span className="font-bold">{x.cost}</span></p>
-                        </Card>                       
-                      )
-                    })
-                  }
-                </ul>
-
-                <DataTable columns={columns}>
-                  <>
+                {
+                  pagination.data.length > 0 &&
+                  <ul className="grid grid-cols-1 lg:grid-cols-4 gap-2 slim-list-card">
                     {
-                      pagination.data.map((x: any, i: number) => {
+                      pagination.data.map((x: TServiceModule, i: number) => {
                         return (
-                          <tr key={i}>
-                            {columns.map((col: any) => (
-                              <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
-                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "cost" ? convertNumberMoney(x.cost) : (x as any)[col.key]}
-                              </td>        
-                            ))}   
-                            <td className="text-center">
-                              <div className="flex justify-center gap-2">
-                                <MdEdit  onClick={() => openModal("edit", x)} /> 
-                                <FaTrash onClick={() => openModalDelete(x)} />
+                          <CardImage key={x.id} uriImage={x.image} alt="foto do módulo" title={x.name} cost={x.cost} price={x.price} description={x.description}>
+                            <div className="place-self-end-safe">
+                              <div className="flex gap-3">
+                                <IconEdit action="edit" obj={x} getObj={openModal} />
+                                <IconDelete obj={x} getObj={openModalDelete} />
                               </div>
-                            </td>         
-                          </tr>
-                        )
+                            </div>
+                          </CardImage>
+                        )                  
                       })
                     }
-                  </>
-                </DataTable>
-
+                  </ul>
+                }
                 <NotData />
-                <Pagination passPage={passPage} />
               </SlimContainer>
             </div>
 

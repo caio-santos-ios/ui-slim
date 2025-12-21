@@ -69,7 +69,6 @@ export const ModalContact = ({parentId}: TProp) => {
         try {
             const {data} = await api.get(`/contacts?deleted=false&pageSize=100&pageNumber=1&sort=createdAt&orderBy=createdAt&parentId=${parentId}&parent=customer`, configApi());
             const result = data.result;
-            console.log(result.data)
             setContact(result.data);
         } catch (error) {
             resolveResponse(error);
@@ -124,7 +123,6 @@ export const ModalContact = ({parentId}: TProp) => {
     };
 
     useEffect(() => {
-        console.log(parentId)
         getAll();
         getSelectDepartament();
         getSelectPosition();

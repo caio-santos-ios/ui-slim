@@ -83,6 +83,24 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
             setCurrentBody(newBody);
             if (!id) return;
             getById(id);
+
+            let newTabs = [
+                { key: 'contractor', title: 'Contratante' },
+                { key: 'recipient', title: 'Beneficiários' },
+                { key: 'contract', title: 'Contratos' },
+                { key: 'contact', title: 'Contatos' },
+                { key: 'attachment', title: 'Anexos' },
+            ];
+
+            if (currentBody.type === "B2B") {
+                newTabs.splice(1, 0, { key: 'responsible', title: 'Dados do Responsável' });
+            };
+            
+            const index = newTabs.findIndex((x: any) => x.key == tabCurrent);
+            if(index >= 0 && index < newTabs.length) {
+                const newTab: any = newTabs[index + 1];
+                setTabCurrent(newTab.key)
+            };
         };
     };
 
@@ -117,7 +135,7 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
                         
                         {
                             tabCurrent == "responsible" &&
-                            <ModalResponsible parentId={id} body={currentBody} onClose={cancel}/> 
+                            <ModalResponsible onSuccess={onSuccess} parentId={id} body={currentBody} onClose={cancel}/> 
                         }
 
                         {

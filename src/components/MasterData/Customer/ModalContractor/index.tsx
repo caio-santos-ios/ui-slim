@@ -14,7 +14,8 @@ import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type
 import { TCustomerContractor } from "@/types/masterData/customers/customer.type";
 import { TSeller } from "@/types/masterData/seller/seller.type";
 import { TPlan } from "@/types/masterData/plans/plans.type";
-import { convertStringMoney } from "@/utils/convert.util";
+import { convertMoneyToNumber, convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
+import { toast } from "react-toastify";
 
 type TProp = {
     onClose: () => void;
@@ -58,6 +59,9 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
 
         if(body.minimumValue) body.minimumValue = convertStringMoney(body.minimumValue);
         if(!body.minimumValue) body.minimumValue = 0;
+        if(body.type == "B2B") {
+            if(body.minimumValue < 1) return toast.warn("Fatura Mínima não pode ser menor que R$ 1,00", {theme: 'colored'});
+        };
 
         if(!body.id) {
             await create(body);
@@ -81,8 +85,8 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
     const update = async (body: TCustomerContractor) => {
         try {
             const { status, data} = await api.put(`/customers`, body, configApi());
-
             onSelectValue(true, data.result.data.id);
+            onSuccess(true, data.result.data);
             resolveResponse({status, ...data});
         } catch (error) {
             resolveResponse(error);
@@ -212,7 +216,7 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
             const {data} = await api.get(`/plans?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1&in$type=${body?.type},B2B e B2C`, configApi());
             const result = data.result;
 
-            setPlan(result.data);
+            setPlan(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -241,6 +245,8 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
 
         if (data.effectiveDate) data.effectiveDate = data.effectiveDate.toString().split('T')[0];
         if (data.dateOfBirth) data.dateOfBirth = data.dateOfBirth.toString().split('T')[0];
+        data.minimumValue = convertNumberMoney(body.minimumValue);
+
         if(body.id) {
             reset(data);
         };
@@ -303,10 +309,6 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                             <label className={`label slim-label-primary`}>Vigência</label>
                             <input {...register("effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                         </div>
-                        <div className={`flex flex-col col-span-2 mb-2`}>
-                            <label className={`label slim-label-primary`}>Valor</label>
-                            <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("minimumValue")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                        </div>
                     </>
                 }
                 {
@@ -360,16 +362,9 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                             </select>
                         </div>  
                         <div className={`flex flex-col mb-2`}>
-                            <label className={`label slim-label-primary`}>Plano</label>
-                            <select {...register("planId")} className="select slim-select-primary">
-                                <option value="">Selecione</option>
-                                {
-                                    plans.map((x: any) => {
-                                        return <option key={x.id} value={x.id}>{x.name}</option>
-                                    })
-                                }
-                            </select>
-                        </div>   
+                            <label className={`label slim-label-primary`}>Fatura Mínima</label>
+                            <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("minimumValue")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                        </div>  
                     </>
                     : 
                     <div className={`flex flex-col mb-2`}>
@@ -399,15 +394,15 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                     <label className={`label slim-label-primary`}>Bairro</label>
                     <input {...register("address.neighborhood")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col col-span-2 mb-2`}>
+                <div className={`flex flex-col ${type == "B2B" ? 'col-span-1' : 'col-span-2'} mb-2`}>
                     <label className={`label slim-label-primary`}>Cidade</label>
                     <input {...register("address.city")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col mb-2 ${type == "B2B" ? 'col-span-1' : 'col-span-1'}`}>
+                <div className={`flex flex-col mb-2 col-span-1`}>
                     <label className={`label slim-label-primary`}>Estado</label>
                     <input {...register("address.state")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col ${type == "B2B" ? 'col-span-5' : 'col-span-2'} mb-2`}>
+                <div className={`flex flex-col ${type == "B2B" ? 'col-span-3' : 'col-span-2'} mb-2`}>
                     <label className={`label slim-label-primary`}>Complemento</label>
                     <input {...register("address.complement")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
