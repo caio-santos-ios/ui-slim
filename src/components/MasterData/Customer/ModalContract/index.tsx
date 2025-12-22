@@ -28,7 +28,6 @@ type TProp = {
     onClose: () => void;
     contractorId: string;
     contractorType: string;
-    planId: string;
 }
 
 export const ModalContract = ({contractorId, contractorType, onClose}: TProp) => {

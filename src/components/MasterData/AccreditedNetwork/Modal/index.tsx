@@ -5,16 +5,14 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useCallback, useEffect, useState } from "react";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
-import { ModalRecipient } from "../ModalRecipient";
-import { ModalContract } from "../ModalContract";
-import { ModalContractor } from "../ModalContractor";
 import { ModalResponsible } from "../ModalResponsible";
-import { ResetCustomerContractor, TCustomerContractor } from "@/types/masterData/customers/customer.type";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { ModalContact } from "../ModalContact";
 import { Button } from "@/components/Global/Button";
 import { ModalAttachment } from "../ModalAttachment";
+import { ModalData } from "../ModalData";
+import { ResetAccreditedNetwork, TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
 
 type TProp = {
     title: string;
@@ -25,20 +23,23 @@ type TProp = {
     id: string;
 }
 
-export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue, id}: TProp) => {
+type TTabs = "data" | "responsible" | "contact" | "attachment";
+
+export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSelectValue, id}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
-    const [tabCurrent, setTabCurrent] = useState<"contractor" | "responsible" | "recipient" | "contract" | "contact" | "attachment">("contractor")
-    const [currentBody, setCurrentBody] = useState<TCustomerContractor>(ResetCustomerContractor);
+    const [tabCurrent, setTabCurrent] = useState<TTabs>("data")
+    const [currentBody, setCurrentBody] = useState<TAccreditedNetwork>(ResetAccreditedNetwork);
     const [tabs, setTab] = useState<{key: string, title: string}[]>([
-        { key: 'contractor', title: 'Contratante' },
-        { key: 'recipient', title: 'Beneficiários' },
-        { key: 'contract', title: 'Contratos' },
+        { key: 'data', title: 'Dados Gerais' },
+        { key: 'responsible', title: 'Dados do Responsável' },
+        { key: 'contact', title: 'Contatos' },
+        { key: 'attachment', title: 'Anexos' },
     ]);
     
     const getById = async (id: string) => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/customers/${id}`, configApi());
+            const {data} = await api.get(`/accredited-networks/${id}`, configApi());
             const result = data.result;
             setCurrentBody(result.data)
         } catch (error) {
@@ -49,11 +50,11 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
     };
 
     const cancel = () => {
-        setTabCurrent("contractor");
+        setTabCurrent("data");
         onClose();
     };
 
-    const alterTab = async (tab: "contractor" | "responsible" | "recipient" | "contract" | "contact" | "attachment", isMessage: boolean = false, saveTab: boolean = false) => {
+    const alterTab = async (tab: TTabs, isMessage: boolean = false, saveTab: boolean = false) => {
         setTabCurrent(tab);
     };
 
@@ -61,16 +62,11 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
         if (!type) return;
 
         let newTabs = [
-            { key: 'contractor', title: 'Contratante' },
-            { key: 'recipient', title: 'Beneficiários' },
-            { key: 'contract', title: 'Contratos' },
+            { key: 'data', title: 'Dados Gerais' },
+            { key: 'responsible', title: 'Dados do Responsável' },
             { key: 'contact', title: 'Contatos' },
             { key: 'attachment', title: 'Anexos' },
         ];
-
-        if (type === "B2B") {
-            newTabs.splice(1, 0, { key: 'responsible', title: 'Dados do Responsável' });
-        };
 
         setTab(prev => {
             if (JSON.stringify(prev) === JSON.stringify(newTabs)) return prev;
@@ -78,34 +74,31 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
         });
     }, []);
 
-    const onSuccess = (isSuccess: boolean, newBody: TCustomerContractor) => {
+    const onSuccess = (isSuccess: boolean, newBody: TAccreditedNetwork) => {
         if(isSuccess) {
             setCurrentBody(newBody);
             if (!id) return;
             getById(id);
 
-            let newTabs = [
-                { key: 'contractor', title: 'Contratante' },
-                { key: 'recipient', title: 'Beneficiários' },
-                { key: 'contract', title: 'Contratos' },
+            let newTabs: {key: string, title: string}[] = [
+                { key: 'data', title: 'Dados Gerais' },
+                { key: 'responsible', title: 'Dados do Responsável' },
                 { key: 'contact', title: 'Contatos' },
                 { key: 'attachment', title: 'Anexos' },
             ];
 
-            if (currentBody.type === "B2B") {
-                newTabs.splice(1, 0, { key: 'responsible', title: 'Dados do Responsável' });
-            };
-            
             const index = newTabs.findIndex((x: any) => x.key == tabCurrent);
             if(index >= 0 && index < newTabs.length) {
                 const newTab: any = newTabs[index + 1];
                 setTabCurrent(newTab.key)
             };
+
+            onSelectValue(true, "");
         };
     };
 
     useEffect(() => {
-        setCurrentBody(ResetCustomerContractor);
+        setCurrentBody(ResetAccreditedNetwork);
 
         if (!id) return;
         getById(id);
@@ -129,26 +122,15 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
                         </div>                        
 
                         {
-                            tabCurrent == "contractor" &&
-                            <ModalContractor onSuccess={onSuccess} onSelectType={onSelectType} onSelectValue={onSelectValue} body={currentBody} onClose={cancel}/> 
+                            tabCurrent == "data" &&
+                            <ModalData onSuccess={onSuccess} onSelectType={onSelectType} onSelectValue={onSelectValue} body={currentBody} onClose={cancel}/> 
                         }
                         
                         {
                             tabCurrent == "responsible" &&
                             <ModalResponsible onSuccess={onSuccess} parentId={id} body={currentBody} onClose={cancel}/> 
                         }
-
-                        {
-                            tabCurrent == "recipient" &&
-                            <ModalRecipient isOpen={isOpen} contractorType={currentBody.type} contractorId={currentBody.id!} onClose={cancel} />
-                        }
-
-                        
-                        {
-                            tabCurrent == "contract" &&
-                            <ModalContract contractorType={currentBody.type} contractorId={currentBody.id!} onClose={cancel}/> 
-                        }
-                       
+   
                         {
                             tabCurrent == "contact" &&
                             <ModalContact parentId={id}/> 

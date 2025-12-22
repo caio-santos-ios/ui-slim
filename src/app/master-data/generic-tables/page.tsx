@@ -158,37 +158,35 @@ export default function Dashboard() {
                   }
                 </ul>
 
-                <div className="grid grid-cols-1 gap-2 mb-2">
-                  <div className="w-full overflow-x-auto hidden lg:block">
-                      <table className="min-w-full divide-y divide-gray-200">
-                          <thead className="bg-gray-50">
-                            <tr>
-                              <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Tabela</th>
-                              <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
-                            </tr>
-                          </thead>
-  
-                          <tbody className="bg-white divide-y divide-gray-100">
-                            {
-                              pagination.data.map((x: any) => {
-                                  return (
-                                    <tr key={x.id}>
-                                      <td className="px-4 py-2">{x.table}</td>
-                                      
-                                      <td className="p-2">
-                                        <div className="flex gap-3">
-                                          <IconEdit action="edit" obj={x} getObj={openModal}/>
-                                          <IconDelete obj={x} getObj={openModal}/>                                                
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  )
-                              })
-                            }
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
+                <div className="slim-container-table w-full">
+                  <table className="min-w-full divide-y slim-table">
+                    <thead className="slim-table-thead">
+                      <tr>
+                        <th scope="col" className={`px-4 py-3 text-left tracking-wider rounded-tl-xl`}>Tabela</th>
+                        <th scope="col" className={`px-4 py-3 text-left tracking-wider rounded-tr-xl`}>Ações</th>
+                      </tr>
+                    </thead>
+
+                    <tbody className="bg-white divide-y divide-gray-100">
+                      {
+                        pagination.data.map((x: any) => {
+                            return (
+                              <tr key={x.table}>
+                                <td className="px-4 py-2">{x.table}</td>
+                                
+                                <td className="p-2">
+                                  <div className="flex gap-3">
+                                    <IconEdit action="edit" obj={x} getObj={openModal}/>
+                                    <IconDelete obj={x} getObj={openModal}/>                                                
+                                  </div>
+                                </td>
+                              </tr>
+                            )
+                        })
+                      }
+                    </tbody>
+                  </table>
+                </div>
 
                 <NotData />
               </SlimContainer>

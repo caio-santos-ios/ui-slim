@@ -1,0 +1,13 @@
+.container-modal {
+    background-color: rgba(248, 248, 248, 0.46);
+}
+
+.header-modal {
+    color: var(--primary-color);
+}
+
+.list-attachment {
+    padding: 1rem 0;
+    /* max-height: calc(100dvh - 22rem); */
+    overflow-y: auto;
+}

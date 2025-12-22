@@ -116,7 +116,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 code: '21',
                 isOpen: true,
                 subMenu: [],
-                description: 'Rede Creadenciada',
+                description: 'Rede Credenciada',
                 icon: '',
                 link: 'master-data/accredited-network',
                 padding: 'px-4',
