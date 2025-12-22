@@ -185,7 +185,7 @@ export default function Commissions() {
                 </DataTable>
 
                 <NotData />
-                <Pagination passPage={passPage} />
+                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 

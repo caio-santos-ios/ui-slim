@@ -204,7 +204,7 @@ export default function Billing() {
                 </DataTable>
 
                 <NotData />
-                <Pagination passPage={passPage} />
+                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 

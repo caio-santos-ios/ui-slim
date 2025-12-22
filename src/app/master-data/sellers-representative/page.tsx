@@ -184,7 +184,7 @@ export default function Seller() {
                 </DataTable>
 
                 <NotData />
-                <Pagination passPage={passPage} />
+                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 
