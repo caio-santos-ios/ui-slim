@@ -7,8 +7,6 @@ import { TAccountsReceivable } from "@/types/accountsReceivable/accountsReceivab
 import { configApi, resolveResponse } from "@/service/config.service";
 import { api } from "@/service/api.service";
 import { useEffect } from "react";
-import { InputForm } from "@/components/Global/InputForm";
-import { SelectForm } from "@/components/Global/SelectForm";
 
 type TProp = {
     title: string;

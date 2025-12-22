@@ -1,8 +1,8 @@
 .slim-container-table {
     max-height: calc(100dvh - (var(--height-header) +  7rem));
     overflow-y: auto;
-    border: 1px solid #dbdbdb;
-    border-radius: .76rem .76rem 0 0;
+    /* border: 1px solid #dbdbdb; */
+    /* border-radius: .76rem .76rem 0 0; */
 }
 
 .slim-table {
@@ -13,6 +13,6 @@
 .slim-table-thead {
     position: sticky;
     top: 0;
-    background-color: var(--primary-color);
-    color: white;
+    /* background-color: var(--primary-color); */
+    /* color: white; */
 }

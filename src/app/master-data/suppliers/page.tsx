@@ -1,12 +1,12 @@
 "use client";
 
 import { ModalAccountsPayable } from "@/components/AccountsPayable/Modal";
-import { TableAccountPayable } from "@/components/AccountsPayable/Table";
 import { Autorization } from "@/components/Global/Autorization";
 import { Header } from "@/components/Global/Header";
 import { NotData } from "@/components/Global/NotData";
 import { SideMenu } from "@/components/Global/SideMenu";
 import { SlimContainer } from "@/components/Global/SlimContainer";
+import { TableSupplier } from "@/components/MasterData/Supplier/Table";
 import { userLoggerAtom } from "@/jotai/auth/auth.jotai";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { modalAtom } from "@/jotai/global/modal.jotai";
@@ -16,7 +16,7 @@ import { configApi, resolveResponse } from "@/service/config.service";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 
-export default function AccountsPayable() {
+export default function Supplier() {
   const [userLogger] = useAtom(userLoggerAtom);
   const [modal, setModal] = useAtom(modalAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
@@ -25,7 +25,7 @@ export default function AccountsPayable() {
   const getAll = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get(`/accounts-payable?deleted=false&orderBy=createdAt&sort=desc&pageSize=15&pageNumber=${pagination.currentPage}`, configApi());
+      const { data } = await api.get(`/suppliers?deleted=false&orderBy=createdAt&sort=desc&pageSize=15&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -60,14 +60,14 @@ export default function AccountsPayable() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Contas a Pagar" breadcrumpIcon="PiMoneyFill"
+              <SlimContainer breadcrump="Fornecedores" breadcrumpIcon="MdLocalShipping"
                 buttons={
                   <>
                     <button onClick={() => setModal(true)} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                   </>
                 }>
 
-                <TableAccountPayable list={pagination.data} handleReturnModal={handleReturnModal} />
+                <TableSupplier list={pagination.data} handleReturnModal={handleReturnModal} />
                 <NotData />
               </SlimContainer>
             </div>

@@ -1,52 +1,70 @@
 "use client";
 
 import { ModalDelete } from "@/components/Global/ModalDelete";
-import { TAccountsReceivable } from "@/types/accountsReceivable/accountsReceivable.type";
+import { TAccountsPayable } from "@/types/accountsPayable/accountsPayable.type";
 import { convertNumberMoney } from "@/utils/convert.util";
 import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { MdEdit, MdTaskAlt } from "react-icons/md";
-import { ModalLowAccountsReceivable } from "../ModalLow";
+import { ModalLowAccountsPayable } from "../ModalLow";
 import { maskDate } from "@/utils/mask.util";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { IconLow } from "../IconLow";
+import { ModalAccountsPayable } from "../Modal";
 
 type TProp = {
-    list: TAccountsReceivable[],
-    onSelectValue: (isSuccess: boolean) => void;
+    list: TAccountsPayable[],
+    handleReturnModal: (isSuccess: boolean) => void;
 }
 
-export const TableAccountReceivable = ({list, onSelectValue}: TProp) => {
+export const TableAccountPayable = ({list, handleReturnModal}: TProp) => {
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [modal, setModal] = useState<boolean>(false);
-    const [currentBody, setCurrentBody] = useState<TAccountsReceivable>();
+    const [modalLow, setModalLow] = useState<boolean>(false);
+    const [id, setId] = useState<string>("")
+    const [currentBody, setCurrentBody] = useState<TAccountsPayable>();
 
-    const getCurrentBody = (action: string, body: TAccountsReceivable, ) => {
+    const getCurrentBody = (action: string, body: TAccountsPayable, ) => {
         const currentContract = {...body}        
         setCurrentBody(currentContract);
+        if(action == "edit") {
+            setId(body.id!)
+            setModal(true)
+        };
         
         if(action == "low") {
-            setModal(true)
+            setModalLow(true)
         };
     };
     
-    const getDestroy = (body: TAccountsReceivable) => {
+    const getDestroy = (body: TAccountsPayable) => {
         setCurrentBody(body);
         setModalDelete(true);
     };
 
     const destroy = async () => {
         try {
-            const { status } = await api.delete(`/accounts-receivable/${currentBody!.id}`, configApi());
+            const { status } = await api.delete(`/accounts-payable/${currentBody!.id}`, configApi());
             resolveResponse({status, message: "Excluído com sucesso"});
             setModalDelete(false);
-            onSelectValue(true);
+            handleReturnModal(true);
         } catch (error) {
             resolveResponse(error);
         }
+    };
+
+    const onClose = () => {
+        setId("");
+        setModal(false);
+        setModalLow(false);
+        handleReturnModal(true);
+    };
+
+    const handleReturn = () => {
+        onClose();
     };
 
     const convertStatus = (lowValue: any, balance: any) => {
@@ -64,14 +82,13 @@ export const TableAccountReceivable = ({list, onSelectValue}: TProp) => {
                         <thead className="bg-gray-50 slim-table-thead">
                             <tr>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Status</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Cliente</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>N° do Contrato</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>N° da Venda</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Fornecedor</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Código</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Sub Total</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Multa</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Juros</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Total</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Recebido</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Pago</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Saldo</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Categoria</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Centro de Custo</th>
@@ -86,8 +103,7 @@ export const TableAccountReceivable = ({list, onSelectValue}: TProp) => {
                                     return (
                                         <tr key={x.id}>                                            
                                             <td className="px-4 py-2">{convertStatus(x.lowValue, x.balance)}</td>
-                                            <td className="px-4 py-2">{x.customerName}</td>
-                                            <td className="px-4 py-2">{x.contractCode}</td>
+                                            <td className="px-4 py-2">{x.supplierName}</td>
                                             <td className="px-4 py-2">{x.code}</td>
                                             <td className="px-4 py-2">{convertNumberMoney(x.value)}</td>
                                             <td className="px-4 py-2">{convertNumberMoney(x.fines)}</td>
@@ -117,16 +133,25 @@ export const TableAccountReceivable = ({list, onSelectValue}: TProp) => {
                 </div>
             }
 
-            <ModalLowAccountsReceivable
-                title='Baixa Contas a Receber'
-                isOpen={modal} setIsOpen={() => setModalDelete(!modal)} 
+            <ModalAccountsPayable
+                title='Editar Conta a Pagar' 
+                isOpen={modal} setIsOpen={() => setModal(modal)} 
+                onClose={onClose}
+                handleReturnModal={handleReturn}
+                body={currentBody}
+                id={id}
+            />     
+
+            <ModalLowAccountsPayable
+                title='Baixa Contas a Pagar'
+                isOpen={modalLow} setIsOpen={() => setModalLow(!modalLow)} 
                 onClose={() => setModal(false)}
-                onSelectValue={onSelectValue}
+                handleReturnModal={handleReturn}
                 body={currentBody!}
             />  
 
             <ModalDelete
-                title='Excluír Contas a Receber'
+                title='Excluír Contas a Pagar'
                 isOpen={modalDelete} setIsOpen={() => setModalDelete(!modalDelete)} 
                 onClose={() => setModalDelete(false)}
                 onSelectValue={destroy}

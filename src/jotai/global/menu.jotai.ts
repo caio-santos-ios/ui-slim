@@ -142,6 +142,16 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 padding: 'px-4',
                 authorized: true,
             },            
+            {
+                code: '24',
+                isOpen: true,
+                subMenu: [],
+                description: 'Fornecedores',
+                icon: '',
+                link: 'master-data/suppliers',
+                padding: 'px-4',
+                authorized: true,
+            },            
         ],
     },
     {
@@ -176,7 +186,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 description: 'Contas a Pagar',
                 // icon: 'PiMoneyFill',
                 icon: '',
-                link: '',
+                link: 'financial/accounts-payable',
                 padding: 'px-8'
             }
         ],

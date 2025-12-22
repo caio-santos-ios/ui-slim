@@ -68,7 +68,7 @@ export default function AccountsReceivable() {
 
                 <TableAccountReceivable list={pagination.data} onSelectValue={onSelectValue} />
                 <NotData />
-                <Pagination passPage={getAll} />
+                {/* <Pagination passPage={getAll} /> */}
               </SlimContainer>
             </div>
           </main>
