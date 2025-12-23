@@ -74,7 +74,7 @@ export default function Supplier() {
           </main>
 
           <ModalAccountsPayable
-            title='Inserir Conta a Pagar' 
+            title='Inserir Fornecedor' 
             isOpen={modal} setIsOpen={() => setModal(modal)} 
             onClose={() => setModal(false)}
             handleReturnModal={handleReturnModal}

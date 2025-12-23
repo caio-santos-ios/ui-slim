@@ -124,3 +124,15 @@ export const formattedMoney = (value: string) => {
     .replace(".", ",")                
     .replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
 };
+
+export const formattedCPF = (value: string): string => {
+  if (!value) return "";
+
+  const onlyDigits = value.replace(/\D/g, "");
+
+  return onlyDigits
+    .replace(/(\d{3})(\d)/, "$1.$2")       
+    .replace(/(\d{3})(\d)/, "$1.$2")       
+    .replace(/(\d{3})(\d{1,2})$/, "$1-$2") 
+    .substring(0, 14);                     
+};

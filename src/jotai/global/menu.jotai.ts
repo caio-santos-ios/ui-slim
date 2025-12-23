@@ -18,7 +18,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 subMenu: [],
                 description: 'Usuários',
                 icon: '',
-                link: '',
+                link: 'master-data/users',
                 padding: 'px-4',
                 authorized: true,
             },     
@@ -160,17 +160,48 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
         authorized: true,
         subMenu: [
             {
-                code: '21',
+                code: '22',
                 isOpen: false,
                 subMenu: [],
-                description: 'Contratos',
-                // icon: 'FaFileContract',
+                description: 'Presencial',
+                // icon: 'FaMoneyBillTrendUp',
                 icon: '',
-                link: '',
+                link: 'services/in-person',
                 padding: 'px-8'
             },
             {
-                code: '22',
+                code: '23',
+                isOpen: false,
+                subMenu: [],
+                description: 'Telemedicina',
+                // icon: 'PiMoneyFill',
+                icon: '',
+                link: 'services/telemedicine',
+                padding: 'px-8'
+            }
+        ],
+        description: 'Atendimentos',
+        icon: 'MdChat',
+        link: '',
+        padding: 'px-2'
+    },
+    {
+        code: '3',
+        isOpen: true,
+        authorized: true,
+        subMenu: [
+            // {
+            //     code: '31',
+            //     isOpen: false,
+            //     subMenu: [],
+            //     description: 'Contratos',
+            //     // icon: 'FaFileContract',
+            //     icon: '',
+            //     link: '',
+            //     padding: 'px-8'
+            // },
+            {
+                code: '32',
                 isOpen: false,
                 subMenu: [],
                 description: 'Contas a Receber',
@@ -180,7 +211,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 padding: 'px-8'
             },
             {
-                code: '23',
+                code: '33',
                 isOpen: false,
                 subMenu: [],
                 description: 'Contas a Pagar',
@@ -190,80 +221,6 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 padding: 'px-8'
             }
         ],
-        // subMenu: [
-        //     {
-        //         code: '21',
-        //         isOpen: true,
-        //         authorized: true,
-        //         description: 'Cadastros',
-        //         icon: 'FiGrid',
-        //         link: '',
-        //         padding: 'px-4',
-        //     },
-        //     {
-        //         code: '22',
-        //         isOpen: true,
-        //         authorized: true,
-        //         subMenu: [
-        //             {
-        //                 code: '1210',
-        //                 subMenu: [],
-        //                 description: 'Inadimplentes',
-        //                 icon: 'PiNotepadFill',
-        //                 link: '',
-        //                 padding: 'px-8'
-        //             },
-        //             {
-        //                 code: '1220',
-        //                 subMenu: [],
-        //                 description: 'Fluxo de Caixa',
-        //                 icon: 'FaCashRegister',
-        //                 link: '',
-        //                 padding: 'px-8'
-        //             },
-        //             {
-        //                 code: '1230',
-        //                 subMenu: [],
-        //                 description: 'DRE',
-        //                 icon: 'IoStatsChart',
-        //                 link: '',
-        //                 padding: 'px-8'
-        //             },
-        //             {
-        //                 code: '1240',
-        //                 subMenu: [],
-        //                 description: 'Faturamento',
-        //                 icon: 'FaFileInvoiceDollar',
-        //                 link: '',
-        //                 padding: 'px-8'
-        //             }
-        //         ],
-        //         description: 'Relatórios',
-        //         icon: 'BsFileEarmarkBarGraphFill',
-        //         link: '',
-        //         padding: 'px-4'
-        //     },
-        //     {
-        //         code: '23',
-        //         isOpen: true,
-        //         authorized: true,
-        //         subMenu: [],
-        //         description: 'Importações',
-        //         icon: 'FaFileImport',
-        //         link: '',
-        //         padding: 'px-4'
-        //     },
-        //     {
-        //         code: '24',
-        //         isOpen: true,
-        //         authorized: true,
-        //         subMenu: [],
-        //         description: 'Baixas',
-        //         icon: 'BsCalendarCheckFill',
-        //         link: '',
-        //         padding: 'px-4'
-        //     }
-        // ],
         description: 'Financeiro',
         icon: 'BsCashCoin',
         link: '',

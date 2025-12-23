@@ -15,7 +15,10 @@ import { useAtom } from "jotai";
 import { TSupplier } from "@/types/masterData/supplier/supplier.type";
 import { maskMoney } from "@/utils/mask.util";
 import { Button } from "@/components/Global/Button";
-import { convertInputStringMoney, convertStringMoney } from "@/utils/convert.util";
+import { convertStringMoney } from "@/utils/convert.util";
+import { FaCirclePlus } from "react-icons/fa6";
+import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
+import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
 
 type TProp = {
     title: string;
@@ -29,6 +32,8 @@ type TProp = {
 
 export const ModalAccountsPayable = ({title, isOpen, setIsOpen, onClose, handleReturnModal, body, id}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
+    const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
+    const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
     const [categories, setCategory] = useState<TGenericTable[]>([]);
     const [costCenters, setCostCenter] = useState<TGenericTable[]>([]);
     const [paymentMethods, setPaymentMethod] = useState<TGenericTable[]>([]);
@@ -138,7 +143,7 @@ export const ModalAccountsPayable = ({title, isOpen, setIsOpen, onClose, handleR
             setLoading(true);
             const {data} = await api.get(`/accounts-payable/${id}`, configApi());
             const result = data.result;
-            console.log(result.data)
+
             reset({
                 ...result.data,
                 dueDate: result.data.dueDate ? result.data.dueDate.split("T")[0] : null,
@@ -152,11 +157,20 @@ export const ModalAccountsPayable = ({title, isOpen, setIsOpen, onClose, handleR
         }
     };
 
-    useEffect(() => {
+    const genericTable = (table: string) => {
+        setModalGenericTable(true);
+        setTableGenericTable(table);
+    };
+
+    const onReturnGeneric = () => {
         getSelectSupplier();
         getSelectCategory();
         getSelectCostCenter();
         getSelectPaymentMethod();
+    };
+
+    useEffect(() => {
+        onReturnGeneric();
     }, []);
 
     useEffect(() => {
@@ -169,7 +183,7 @@ export const ModalAccountsPayable = ({title, isOpen, setIsOpen, onClose, handleR
         <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto container-modal">
                 <div className="flex min-h-full items-center justify-center p-4">
-                    <DialogPanel transition className="w-full max-w-3xl rounded-xl bg-gray-300 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
+                    <DialogPanel transition className="w-full max-w-4xl rounded-xl bg-gray-300 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
                         <div className="bg-red mb-4 border-b-3 header-modal">
                             <DialogTitle as="h1" className="text-xl font-bold primary-color">{title}</DialogTitle>
                         </div>
@@ -188,7 +202,7 @@ export const ModalAccountsPayable = ({title, isOpen, setIsOpen, onClose, handleR
                                     </select>
                                 </div>
                                 <div className={`flex flex-col col-span-2 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Categoria</label>
+                                    <label className={`label slim-label-primary flex gap-1 items-center`}>Categoria <span onClick={() => genericTable("categoria-despesas")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                                     <select className="select slim-select-primary" {...register("category")}>
                                         <option value="">Selecione</option>
                                         {
@@ -199,7 +213,7 @@ export const ModalAccountsPayable = ({title, isOpen, setIsOpen, onClose, handleR
                                     </select>
                                 </div>
                                 <div className={`flex flex-col col-span-2 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Centro de Custo</label>
+                                    <label className={`label slim-label-primary flex gap-1 items-center`}>Centro de Custo <span onClick={() => genericTable("centro-custo")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                                     <select className="select slim-select-primary" {...register("costCenter")}>
                                         <option value="">Selecione</option>
                                         {
@@ -210,7 +224,7 @@ export const ModalAccountsPayable = ({title, isOpen, setIsOpen, onClose, handleR
                                     </select>
                                 </div>
                                 <div className={`flex flex-col col-span-2 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Forma de Pagameto</label>
+                                    <label className={`label slim-label-primary flex gap-1 items-center`}>Forma de Pagameto <span onClick={() => genericTable("forma-pagamento")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                                     <select className="select slim-select-primary" {...register("paymentMethod")}>
                                         <option value="">Selecione</option>
                                         {
@@ -321,6 +335,8 @@ export const ModalAccountsPayable = ({title, isOpen, setIsOpen, onClose, handleR
                                 <Button type="submit" text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>
+
+                        <ModalGenericTable onReturn={onReturnGeneric} />
                     </DialogPanel>
                 </div>
             </div>

@@ -7,3 +7,13 @@ export type TGenericTable = {
     active: boolean;
     items: any[]
 }
+
+export const ResetGenericTable = {
+    id: "",
+    table: "",
+    code: "",
+    description: "",
+    createdAt: "",
+    active: true,
+    items: []
+}

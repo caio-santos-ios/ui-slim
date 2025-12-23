@@ -16,6 +16,9 @@ import { TSeller } from "@/types/masterData/seller/seller.type";
 import { TPlan } from "@/types/masterData/plans/plans.type";
 import { convertMoneyToNumber, convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
 import { toast } from "react-toastify";
+import { FaCirclePlus } from "react-icons/fa6";
+import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
+import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
 
 type TProp = {
     onClose: () => void;
@@ -27,6 +30,9 @@ type TProp = {
 
 export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
+    const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
+    const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
+
     const [origins, setOrigin] = useState<TGenericTable[]>([]);
     const [genders, setGender] = useState<TGenericTable[]>([]);
     const [sellers, setSeller] = useState<TSeller[]>([]);
@@ -224,6 +230,17 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
         }
     };
 
+    const genericTable = (table: string) => {
+        setModalGenericTable(true);
+        setTableGenericTable(table);
+    };
+
+    const onReturnGeneric = () => {
+        getSelectGender();
+        getSelectOrigin();
+        getSelectSegment();
+    };
+
     useEffect(() => {
         if (type) {
             onSelectType(type);
@@ -231,10 +248,9 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
     }, [type, onSelectType]);
     
     useEffect(() => {
-        getSelectGender();
-        getSelectOrigin();
+        onReturnGeneric();
+
         getSelectSeller();
-        getSelectSegment();
         getSelectPlan();
     }, []);
     
@@ -319,7 +335,7 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                             <input {...register("dateOfBirth")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                         </div>
                         <div className={`flex flex-col mb-2`}>
-                            <label className={`label slim-label-primary`}>Gênero</label>
+                            <label className={`label slim-label-primary flex gap-1 items-center`}>Gênero <span onClick={() => genericTable("genero")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                             <select className="select slim-select-primary" {...register("gender")}>
                                 <option value="">Selecione</option>
                                 {
@@ -332,7 +348,7 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                     </>
                 }
                 <div className={`flex flex-col mb-2`}>
-                    <label className={`label slim-label-primary`}>Origem</label>
+                    <label className={`label slim-label-primary flex gap-1 items-center`}>Origem <span onClick={() => genericTable("origem-contratante-cliente")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                     <select {...register("origin")} className="select slim-select-primary">
                         <option value="">Selecione</option>
                         {
@@ -353,7 +369,7 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                     type == "B2B" ?
                     <>
                         <div className={`flex flex-col mb-2`}>
-                            <label className={`label slim-label-primary`}>Segmento</label>
+                            <label className={`label slim-label-primary flex gap-1 items-center`}>Segmento <span onClick={() => genericTable("segmento-contratante-cliente")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                             <select {...register("segment")} className="select slim-select-primary">
                                 <option value="">Selecione</option>
                                 {
@@ -416,6 +432,8 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                 <Button type="button" click={cancel} text="Cancelar" theme="primary-light" styleClassBtn=""/>
                 <Button type="submit" text="Salvar" theme="primary" styleClassBtn=""/>
             </div>
+
+            <ModalGenericTable onReturn={onReturnGeneric} />
         </form>
     )
 }

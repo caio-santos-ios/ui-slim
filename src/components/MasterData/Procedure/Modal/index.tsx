@@ -206,8 +206,8 @@ export const ModalProcedure = ({title, isOpen, setIsOpen, onClose, onSelectValue
                             </div>                          
                                                    
                             <div className="flex justify-end gap-2 w-12/12 mt-3">
-                                <button type="button" onClick={cancel} className="slim-btn slim-btn-primary-light">Cancelar</button>
-                                <Button click={validatedField} text="Salvar" theme="primary" styleClassBtn=""/>
+                                <Button click={cancel} text="Cancelar" theme="primary-light" styleClassBtn=""/>
+                                <Button type="submit" click={validatedField} text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>
                     </DialogPanel>
