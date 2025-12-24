@@ -6,18 +6,11 @@ import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { FaTrash } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
-import { MenuItem } from '@headlessui/react';
-import { maskDate } from "@/utils/mask.util";
 import { Autorization } from "@/components/Global/Autorization";
 import { Header } from "@/components/Global/Header";
 import { SideMenu } from "@/components/Global/SideMenu";
 import { SlimContainer } from "@/components/Global/SlimContainer";
-import { Card } from "@/components/Global/Card";
-import DataTable from "@/components/Global/Table";
 import { NotData } from "@/components/Global/NotData";
-import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { ResetServiceModule, TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
@@ -26,14 +19,7 @@ import { convertNumberMoney } from "@/utils/convert.util";
 import { CardImage } from "@/components/MasterData/Plan/CardImage";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
-
-const columns: {key: string; title: string}[] = [
-  { key: "name", title: "Nome" },
-  { key: "description", title: "Descrição" },
-  { key: "cost", title: "Custo" },
-  { key: "active", title: "Status" },
-  { key: "createdAt", title: "Data de Cadastro" },
-];
+import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 export default function ServiceModules() {
   const [_, setLoading] = useAtom(loadingAtom);
@@ -94,7 +80,9 @@ export default function ServiceModules() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "14")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean, onCloseModal: boolean = true) => {
@@ -140,7 +128,10 @@ export default function ServiceModules() {
               <SlimContainer breadcrump="Módulos de Serviços" breadcrumpIcon="MdApps"
                 buttons={
                   <>
+                  {
+                    permissionCreate("1", "14") &&
                     <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                  }
                   </>
                 }>
 
@@ -153,8 +144,14 @@ export default function ServiceModules() {
                           <CardImage key={x.id} uriImage={x.image} alt="foto do módulo" title={x.name} cost={x.cost} price={x.price} description={x.description}>
                             <div className="place-self-end-safe">
                               <div className="flex gap-3">
-                                <IconEdit action="edit" obj={x} getObj={openModal} />
-                                <IconDelete obj={x} getObj={openModalDelete} />
+                                {
+                                  permissionUpdate("1", "14") &&
+                                  <IconEdit action="edit" obj={x} getObj={openModal} />
+                                }
+                                {
+                                  permissionDelete("1", "14") &&
+                                  <IconDelete obj={x} getObj={openModalDelete} />
+                                }
                               </div>
                             </div>
                           </CardImage>

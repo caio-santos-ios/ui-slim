@@ -27,6 +27,7 @@ import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { TableInPerson } from "@/components/Services/InPerson/Table";
 import { ModalInPerson } from "@/components/Services/InPerson/Modal";
+import { permissionCreate, permissionRead } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -103,7 +104,9 @@ export default function Customer() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("2", "B22")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async () => {
@@ -153,7 +156,10 @@ export default function Customer() {
               <SlimContainer breadcrump="Presencial" breadcrumpIcon="MdPersonPinCircle"
                 buttons={
                   <>
-                    <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                  {
+                      permissionCreate("2", "B22") &&
+                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }
                   </>
                 }>
 

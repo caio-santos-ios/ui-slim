@@ -17,11 +17,11 @@ import { SlimContainer } from "@/components/Global/SlimContainer";
 import { Card } from "@/components/Global/Card";
 import DataTable from "@/components/Global/Table";
 import { NotData } from "@/components/Global/NotData";
-import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { ModalCommissions } from "@/components/MasterData/Commissions/Modal";
 import { ResetCommissions, TCommissions } from "@/types/masterData/commissions/commissions.type";
+import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Razão Social" },
@@ -46,7 +46,7 @@ export default function Commissions() {
       setLoading(true);
       const {data} = await api.get(`/seller-representatives?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
-      console.log(result.data[0])
+
       setPagination({
         currentPage: result.currentPage,
         data: result.data,
@@ -88,7 +88,9 @@ export default function Commissions() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "20")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean) => {
@@ -132,7 +134,10 @@ export default function Commissions() {
               <SlimContainer breadcrump="Comissões" breadcrumpIcon="MdPercent"
                 buttons={
                   <>
-                    <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    {
+                      permissionCreate("1", "20") &&
+                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }
                   </>
                 }>
 
@@ -173,8 +178,14 @@ export default function Commissions() {
                             ))}   
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
+                                {
+                                  permissionUpdate("1", "20") &&
                                 <MdEdit  onClick={() => openModal("edit", x)} /> 
+                                }
+                                {
+                                  permissionDelete("1", "20") &&
                                 <FaTrash onClick={() => openModalDelete(x)} />
+                                }
                               </div>
                             </td>         
                           </tr>

@@ -17,6 +17,9 @@ import { ModalDelete } from "@/components/Global/ModalDelete";
 import { toast } from "react-toastify";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
+import { FaCirclePlus } from "react-icons/fa6";
+import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
+import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
 
 type TProp = {
     parentId: string;
@@ -24,6 +27,8 @@ type TProp = {
 
 export const ModalContact = ({parentId}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
+    const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
+    const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [departaments, setDepartament] = useState<TGenericTable[]>([]);
     const [positions, setPosition] = useState<TGenericTable[]>([]);
@@ -123,11 +128,19 @@ export const ModalContact = ({parentId}: TProp) => {
         }
     };
 
-    useEffect(() => {
-        getAll();
+    const onReturnGeneric = () => {
         getSelectDepartament();
         getSelectPosition();
-        console.log(parentId)
+    };
+
+    const genericTable = (table: string) => {
+        setModalGenericTable(true);
+        setTableGenericTable(table);
+    };
+
+    useEffect(() => {
+        getAll();
+        onReturnGeneric();
     }, []);
 
     return (
@@ -151,7 +164,7 @@ export const ModalContact = ({parentId}: TProp) => {
                         <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("whatsapp")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                     </div>
                     <div className={`flex flex-col col-span-2 mb-2`}>
-                        <label className={`label slim-label-primary`}>Departamento</label>
+                        <label className={`label slim-label-primary flex gap-1 items-center`}>Departamento <span onClick={() => genericTable("departamento-contato")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                         <select className="select slim-select-primary" {...register("department")}>
                             <option value="">Selecione</option>
                             {
@@ -162,7 +175,7 @@ export const ModalContact = ({parentId}: TProp) => {
                         </select>
                     </div>
                     <div className={`flex flex-col col-span-2 mb-2`}>
-                        <label className={`label slim-label-primary`}>Função</label>
+                        <label className={`label slim-label-primary flex gap-1 items-center`}>Função <span onClick={() => genericTable("funcao-contato")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                         <select className="select slim-select-primary" {...register("position")}>
                             <option value="">Selecione</option>
                             {
@@ -215,6 +228,8 @@ export const ModalContact = ({parentId}: TProp) => {
                 onClose={() => setModalDelete(false)}
                 onSelectValue={destroyContact}
             />
+
+            <ModalGenericTable onReturn={onReturnGeneric} />
         </>
     )
 }

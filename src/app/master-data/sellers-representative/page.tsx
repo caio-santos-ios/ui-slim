@@ -17,11 +17,11 @@ import { SlimContainer } from "@/components/Global/SlimContainer";
 import { Card } from "@/components/Global/Card";
 import DataTable from "@/components/Global/Table";
 import { NotData } from "@/components/Global/NotData";
-import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { ModalSellerRepresentative } from "@/components/MasterData/SellersRepresentative/Modal";
 import { ResetSellerRepresentative, TSellerRepresentative } from "@/types/masterData/sellerRepresentative/sellerRepresentative.type";
+import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Razão Social" },
@@ -46,7 +46,7 @@ export default function Seller() {
       setLoading(true);
       const {data} = await api.get(`/seller-representatives?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
-      console.log(result.data[0])
+
       setPagination({
         currentPage: result.currentPage,
         data: result.data,
@@ -88,7 +88,9 @@ export default function Seller() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "19")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean) => {
@@ -132,7 +134,10 @@ export default function Seller() {
               <SlimContainer breadcrump="Representantes" breadcrumpIcon="MdGroups"
                 buttons={
                   <>
-                    <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    {
+                      permissionCreate("1", "19") &&
+                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }
                   </>
                 }>
 
@@ -172,8 +177,14 @@ export default function Seller() {
                             ))}   
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
-                                <MdEdit  onClick={() => openModal("edit", x)} /> 
-                                <FaTrash onClick={() => openModalDelete(x)} />
+                                {
+                                  permissionUpdate("1", "19") &&
+                                  <MdEdit  onClick={() => openModal("edit", x)} /> 
+                                }
+                                {
+                                  permissionDelete("1", "19") &&
+                                  <FaTrash onClick={() => openModalDelete(x)} />
+                                }
                               </div>
                             </td>         
                           </tr>

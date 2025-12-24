@@ -23,6 +23,7 @@ import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { convertNumberMoney } from "@/utils/convert.util";
 import { TProcedure } from "@/types/masterData/procedure/procedure.type";
 import { ModalProcedure } from "@/components/MasterData/Procedure/Modal";
+import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "code", title: "Código" },
@@ -91,7 +92,9 @@ export default function Procedure() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "16")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean) => {
@@ -144,7 +147,10 @@ export default function Procedure() {
               <SlimContainer breadcrump="Procedimentos" breadcrumpIcon="MdChecklist"
                 buttons={
                   <>
-                    <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                  {
+                      permissionCreate("1", "16") &&
+                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }
                   </>
                 }>
 
@@ -185,8 +191,14 @@ export default function Procedure() {
                             ))}   
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
-                                <MdEdit  onClick={() => openModal("edit", x)} /> 
-                                <FaTrash onClick={() => openModalDelete(x)} />
+                                {
+                                  permissionUpdate("1", "16") &&
+                                  <MdEdit  onClick={() => openModal("edit", x)} /> 
+                                }
+                                {
+                                  permissionDelete("1", "16") &&
+                                  <FaTrash onClick={() => openModalDelete(x)} />
+                                }
                               </div>
                             </td>         
                           </tr>

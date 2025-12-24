@@ -24,6 +24,7 @@ import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
+import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: any[] = [
   { key: "table", title: "Tabela" },
@@ -92,7 +93,9 @@ export default function Dashboard() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "23")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean) => {
@@ -130,7 +133,10 @@ export default function Dashboard() {
               <SlimContainer breadcrump="Tabelas Genérica" breadcrumpIcon="LiaTableSolid"
                 buttons={
                   <>
-                    <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                  {
+                    permissionCreate("1", "23") &&
+                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }
                   </>
                 }>
 
@@ -158,26 +164,32 @@ export default function Dashboard() {
                   }
                 </ul>
 
-                <div className="slim-container-table w-full">
-                  <table className="min-w-full divide-y slim-table">
-                    <thead className="slim-table-thead">
+                <div className="slim-container-table w-full bg-white shadow-sm">
+                  <table className="min-w-full divide-y slim-table divide-gray-200">
+                    <thead className="slim-table-thead bg-gray-50">
                       <tr>
                         <th scope="col" className={`px-4 py-3 text-left tracking-wider rounded-tl-xl`}>Tabela</th>
-                        <th scope="col" className={`px-4 py-3 text-left tracking-wider rounded-tr-xl`}>Ações</th>
+                        <th scope="col" className={`px-4 py-3 text-center tracking-wider rounded-tr-xl`}>Ações</th>
                       </tr>
                     </thead>
 
                     <tbody className="bg-white divide-y divide-gray-100">
                       {
-                        pagination.data.map((x: any) => {
+                        pagination.data.map((x: any, i: number) => {
                             return (
-                              <tr key={x.table}>
+                              <tr key={i}>
                                 <td className="px-4 py-2">{x.table}</td>
                                 
                                 <td className="p-2">
-                                  <div className="flex gap-3">
-                                    <IconEdit action="edit" obj={x} getObj={openModal}/>
-                                    <IconDelete obj={x} getObj={openModal}/>                                                
+                                  <div className="flex justify-center gap-3">
+                                    {
+                                      permissionUpdate("1", "23") &&
+                                      <IconEdit action="edit" obj={x} getObj={openModal}/>
+                                    }
+                                    {
+                                      permissionDelete("1", "23") &&
+                                      <IconDelete obj={x} getObj={openModal}/>                                                
+                                    }
                                   </div>
                                 </td>
                               </tr>

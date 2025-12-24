@@ -6,27 +6,21 @@ import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { FaTrash } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
-import { MenuItem } from '@headlessui/react';
 import { maskDate } from "@/utils/mask.util";
 import { Autorization } from "@/components/Global/Autorization";
 import { Header } from "@/components/Global/Header";
 import { SideMenu } from "@/components/Global/SideMenu";
 import { SlimContainer } from "@/components/Global/SlimContainer";
-import { Card } from "@/components/Global/Card";
-import DataTable from "@/components/Global/Table";
 import { NotData } from "@/components/Global/NotData";
-import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { convertNumberMoney } from "@/utils/convert.util";
-import { ModalCustomer } from "@/components/MasterData/Customer/Modal";
 import { modalAtom } from "@/jotai/global/modal.jotai";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { ModalAccreditedNetwork } from "@/components/MasterData/AccreditedNetwork/Modal";
 import { ResetAccreditedNetwork, TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
+import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -103,7 +97,9 @@ export default function AccreditedNetwork() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "21")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean, id: string) => {
@@ -149,15 +145,17 @@ export default function AccreditedNetwork() {
               <SlimContainer breadcrump="Rede Credenciada" breadcrumpIcon="MdHub"
                 buttons={
                   <>
-                    <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
-                  </>
+{
+                      permissionCreate("1", "21") &&
+                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }                  </>
                 }>
 
                 {
                   pagination.data.length > 0 &&
-                  <div className="slim-container-table w-full">
-                    <table className="min-w-full divide-y slim-table">
-                      <thead className="slim-table-thead">
+                  <div className="slim-container-table w-full bg-white shadow-sm">
+                    <table className="min-w-full divide-y slim-table divide-gray-200">
+                      <thead className="slim-table-thead bg-gray-50">
                         <tr>
                           <th scope="col" className={`px-4 py-3 text-left tracking-wider rounded-tl-xl`}>Razão Social</th>
                           <th scope="col" className={`px-4 py-3 text-left tracking-wider`}>Nome Fantasia</th>
@@ -181,8 +179,14 @@ export default function AccreditedNetwork() {
                                   
                                   <td className="p-2">
                                     <div className="flex gap-3">
-                                      <IconEdit action="edit" obj={x} getObj={openModal}/>
-                                      <IconDelete obj={x} getObj={openModal}/>                                                
+                                      {
+                                        permissionUpdate("1", "21") &&
+                                        <IconEdit action="edit" obj={x} getObj={openModal}/>
+                                      }
+                                      {
+                                        permissionDelete("1", "21") &&
+                                        <IconDelete obj={x} getObj={openModal}/>                                                
+                                      }
                                     </div>
                                   </td>
                                 </tr>

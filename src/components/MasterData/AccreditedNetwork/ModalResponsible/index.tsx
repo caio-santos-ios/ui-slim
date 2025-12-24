@@ -14,6 +14,9 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { ResetAccreditedNetwork, TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
 import { convertStringMoney } from "@/utils/convert.util";
+import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
+import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
+import { FaCirclePlus } from "react-icons/fa6";
 
 type TProp = {
     onClose: () => void;
@@ -24,6 +27,8 @@ type TProp = {
 
 export const ModalResponsible = ({body, parentId, onSuccess, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
+    const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
+    const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
     const [genders, setGender] = useState<any[]>([]);
     const { register, handleSubmit, reset, getValues, watch, formState: { errors }} = useForm<TAccreditedNetwork>({
         defaultValues: ResetAccreditedNetwork
@@ -115,8 +120,18 @@ export const ModalResponsible = ({body, parentId, onSuccess, onClose}: TProp) =>
         }
     };
     
-    useEffect(() => {
+    
+    const genericTable = (table: string) => {
+        setModalGenericTable(true);
+        setTableGenericTable(table);
+    };
+
+    const onReturnGeneric = () => {
         getSelectGender();
+    };
+    
+    useEffect(() => {
+        onReturnGeneric();
 
         if(body) {      
             if(body.responsible.dateOfBirth) body.responsible.dateOfBirth = body.responsible.dateOfBirth.toString().split('T')[0];
@@ -169,8 +184,8 @@ export const ModalResponsible = ({body, parentId, onSuccess, onClose}: TProp) =>
                     <label className={`label slim-label-primary`}>WhatsApp</label>
                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("responsible.whatsapp")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col col-span-2 mb-2`}>
-                    <label className={`label slim-label-primary`}>Gênero</label>
+                <div className={`flex flex-col mb-2`}>
+                    <label className={`label slim-label-primary flex gap-1 items-center`}>Gênero <span onClick={() => genericTable("genero")} className="pr-2 cursor-pointer"><FaCirclePlus /></span> </label>
                     <select className="select slim-select-primary" {...register("responsible.gender")}>
                         <option value="">Selecione</option>
                         {
@@ -179,8 +194,8 @@ export const ModalResponsible = ({body, parentId, onSuccess, onClose}: TProp) =>
                             })
                         }
                     </select>
-                </div>
-                    <div className={`flex flex-col mb-2`}>
+                </div>    
+                <div className={`flex flex-col mb-2`}>
                     <label className={`label slim-label-primary`}>Data de Nascimento</label>
                     <input {...register("responsible.dateOfBirth")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
@@ -222,6 +237,8 @@ export const ModalResponsible = ({body, parentId, onSuccess, onClose}: TProp) =>
                 <button type="button" onClick={cancel} className="slim-btn slim-btn-primary-light">Cancelar</button>
                 <Button type="submit" text="Salvar" theme="primary" styleClassBtn=""/>
             </div>
+
+            <ModalGenericTable onReturn={onReturnGeneric} />
         </form>
     )
 }

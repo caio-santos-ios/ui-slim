@@ -18,6 +18,9 @@ import { ResetCustomerRecipient, TRecipient } from "@/types/masterData/customers
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { TPlan } from "@/types/masterData/plans/plans.type";
 import { toast } from "react-toastify";
+import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
+import { FaCirclePlus } from "react-icons/fa6";
+import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
 
 type TProp = {
     isOpen: boolean;
@@ -28,6 +31,8 @@ type TProp = {
 
 export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
+    const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
+    const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [origins, setOrigin] = useState<TGenericTable[]>([]);
     const [genders, setGender] = useState<TGenericTable[]>([]);
@@ -197,13 +202,22 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         setModalDelete(true);
     };
     
+    const genericTable = (table: string) => {
+        setModalGenericTable(true);
+        setTableGenericTable(table);
+    };
+
+    const onReturnGeneric = () => {
+        getSelectOrigin();
+        getSelectGender();
+    };
+    
     useEffect(() => {
         reset();
         setTabCurrent("data");
-        getSelectOrigin();
         getSelectPlan();
-        getSelectGender();
         getRecipient();
+        onReturnGeneric();
     }, []);
 
     return (
@@ -238,7 +252,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                     <input {...register("dateOfBirth")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
                 <div className={`flex flex-col mb-2`}>
-                    <label className={`label slim-label-primary`}>Gênero</label>
+                    <label className={`label slim-label-primary flex gap-1 items-center`}>Gênero <span onClick={() => genericTable("genero")} className="pr-2 cursor-pointer"><FaCirclePlus /></span> </label>
                     <select className="select slim-select-primary" {...register("gender")}>
                         <option value="">Selecione</option>
                         {
@@ -363,7 +377,9 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                 isOpen={modalDelete} setIsOpen={() => setModalDelete(!modalDelete)} 
                 onClose={() => setModalDelete(false)}
                 onSelectValue={destroy}
-            />   
+            />  
+
+            <ModalGenericTable onReturn={onReturnGeneric} /> 
         </form>
     )
 }

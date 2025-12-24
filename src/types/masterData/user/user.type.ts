@@ -10,11 +10,15 @@ export type TUser = {
         create: boolean;
         update: boolean;
         delete: boolean;
-    }
+    },
+    admin: boolean;
+    blocked: boolean;
+    password: string;
 }
 
-export type TSubModule = {
-
+export type TUserPhoto = {
+    id?: string;
+    image: any;
 }
 
 export const ResetUser: TUser = {
@@ -29,5 +33,8 @@ export const ResetUser: TUser = {
         create: false,
         update: false,
         delete: false,
-    }
+    },
+    admin: false,
+    blocked: false,
+    password: ""
 }

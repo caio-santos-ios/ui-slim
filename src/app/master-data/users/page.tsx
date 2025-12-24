@@ -18,6 +18,7 @@ import { TableInPerson } from "@/components/Services/InPerson/Table";
 import { ModalInPerson } from "@/components/Services/InPerson/Modal";
 import { ModalUser } from "@/components/MasterData/User/Modal";
 import { TableUser } from "@/components/MasterData/User/Table";
+import { permissionCreate, permissionRead } from "@/utils/permission.util";
 
 export default function User() {
   const [_, setLoading] = useAtom(loadingAtom);
@@ -40,7 +41,6 @@ export default function User() {
         totalPages: result.totalCount
       });
     } catch (error) {
-      console.log(error)
       resolveResponse(error);
     } finally {
       setLoading(false);
@@ -61,7 +61,9 @@ export default function User() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "11")) {
+      getAll();
+    };
   }, []);
 
   return (
@@ -78,7 +80,10 @@ export default function User() {
               <SlimContainer breadcrump="Usuários" breadcrumpIcon="FaUsers"
                 buttons={
                   <>
-                    <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    {
+                      permissionCreate("1", "11") &&
+                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }
                   </>
                 }>
 
@@ -90,7 +95,7 @@ export default function User() {
             <ModalUser
               title='Inserir Usuário' 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
-              onClose={() => {}}
+              onClose={() => setModal(false)}
               handleReturnModal={handleReturnModal}
               id={id}
             />  

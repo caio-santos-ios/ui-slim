@@ -14,6 +14,7 @@ import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { IconLow } from "../IconLow";
 import { ModalAccountsPayable } from "../Modal";
+import { permissionDelete, permissionUpdate } from "@/utils/permission.util";
 
 type TProp = {
     list: TAccountsPayable[],
@@ -117,11 +118,17 @@ export const TableAccountPayable = ({list, handleReturnModal}: TProp) => {
                                             <td className="p-2">
                                                 <div className="flex justify-center gap-3">
                                                     {
-                                                        convertStatus(x.lowValue, x.balance) != "Pago" &&
+                                                        convertStatus(x.lowValue, x.balance) != "Pago" && permissionUpdate("3", "C33") &&
                                                         <IconLow action="low" obj={x} getObj={getCurrentBody}/>
                                                     }
+                                                    {
+                                                        permissionUpdate("3", "C33") &&
                                                     <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
+                                                    }
+                                                    {
+                                                        permissionDelete("3", "C33") &&
                                                     <IconDelete obj={x} getObj={getDestroy}/>                                                   
+                                                    }
                                                 </div>
                                             </td>
                                         </tr>

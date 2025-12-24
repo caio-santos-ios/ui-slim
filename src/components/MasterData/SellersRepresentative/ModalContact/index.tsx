@@ -11,6 +11,9 @@ import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
 import { ResetContact, TContact } from "@/types/masterData/contact/contact.type";
 import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
+import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
+import { FaCirclePlus } from "react-icons/fa6";
+import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
 
 type TProp = {
     onResult: () => void;
@@ -21,6 +24,8 @@ type TProp = {
 
 export const ModalContact = ({onResult, body, parent, parentId}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
+    const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
+    const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
     const [departaments, setDepartament] = useState<TGenericTable[]>([]);
     const [positions, setPosition] = useState<TGenericTable[]>([]);
     
@@ -73,7 +78,7 @@ export const ModalContact = ({onResult, body, parent, parentId}: TProp) => {
 
     const getSelectDepartament = async () => {
         try {
-            const {data} = await api.get(`/generic-tables/table/departamento-contato-representante`, configApi());
+            const {data} = await api.get(`/generic-tables/table/departamento-contato`, configApi());
             const result = data.result;
             setDepartament(result.data);
         } catch (error) {
@@ -84,7 +89,7 @@ export const ModalContact = ({onResult, body, parent, parentId}: TProp) => {
     const getSelectPosition = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/generic-tables/table/funcao-contato-representante`, configApi());
+            const {data} = await api.get(`/generic-tables/table/funcao-contato`, configApi());
             const result = data.result;
             setPosition(result.data);
         } catch (error) {
@@ -94,11 +99,19 @@ export const ModalContact = ({onResult, body, parent, parentId}: TProp) => {
         }
     };
 
-    useEffect(() => {
-        reset(ResetContact);
-
+    const onReturnGeneric = () => {
         getSelectDepartament();
         getSelectPosition();
+    };
+
+    const genericTable = (table: string) => {
+        setModalGenericTable(true);
+        setTableGenericTable(table);
+    };
+
+    useEffect(() => {
+        reset(ResetContact);
+        onReturnGeneric();
 
         if(body) {
             reset(body);
@@ -125,7 +138,7 @@ export const ModalContact = ({onResult, body, parent, parentId}: TProp) => {
                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("whatsapp")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
                 <div className={`flex flex-col col-span-2 mb-2`}>
-                    <label className={`label slim-label-primary`}>Departamento</label>
+                    <label className={`label slim-label-primary flex gap-1 items-center`}>Departamento <span onClick={() => genericTable("departamento-contato")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                     <select className="select slim-select-primary" {...register("department")}>
                         <option value="">Selecione</option>
                         {
@@ -136,7 +149,7 @@ export const ModalContact = ({onResult, body, parent, parentId}: TProp) => {
                     </select>
                 </div>
                 <div className={`flex flex-col col-span-2 mb-2`}>
-                    <label className={`label slim-label-primary`}>Função</label>
+                    <label className={`label slim-label-primary flex gap-1 items-center`}>Função <span onClick={() => genericTable("funcao-contato")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                     <select className="select slim-select-primary" {...register("position")}>
                         <option value="">Selecione</option>
                         {
@@ -153,6 +166,8 @@ export const ModalContact = ({onResult, body, parent, parentId}: TProp) => {
                     <Button type="submit" text={watch("id") ? 'Salvar' : 'Adicionar'} theme="primary" styleClassBtn=""/>
                 </div> 
             </div>
+
+            <ModalGenericTable onReturn={onReturnGeneric} />
         </form>
     )
 }

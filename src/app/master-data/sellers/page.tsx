@@ -17,12 +17,12 @@ import { SlimContainer } from "@/components/Global/SlimContainer";
 import { Card } from "@/components/Global/Card";
 import DataTable from "@/components/Global/Table";
 import { NotData } from "@/components/Global/NotData";
-import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { convertNumberMoney } from "@/utils/convert.util";
 import { ResetSeller, TSeller } from "@/types/masterData/seller/seller.type";
 import { ModalSeller } from "@/components/MasterData/Seller/Modal";
+import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "name", title: "Nome" },
@@ -90,7 +90,9 @@ export default function Seller() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "18")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean) => {
@@ -134,7 +136,10 @@ export default function Seller() {
               <SlimContainer breadcrump="Vendedores" breadcrumpIcon="MdPeopleAlt"
                 buttons={
                   <>
-                    <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    {
+                      permissionCreate("1", "18") &&
+                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }
                   </>
                 }>
 
@@ -174,8 +179,14 @@ export default function Seller() {
                             ))}   
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
-                                <MdEdit  onClick={() => openModal("edit", x)} /> 
-                                <FaTrash onClick={() => openModalDelete(x)} />
+                                {
+                                  permissionUpdate("1", "18") &&
+                                  <MdEdit  onClick={() => openModal("edit", x)} /> 
+                                }
+                                {
+                                  permissionDelete("1", "18") &&
+                                  <FaTrash onClick={() => openModalDelete(x)} />
+                                }
                               </div>
                             </td>         
                           </tr>

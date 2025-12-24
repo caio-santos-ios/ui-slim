@@ -7,4 +7,10 @@ export type TMenuRoutine = {
     icon: string;
     link: string;
     padding: string;
+    permissions?: {
+        create: boolean;
+        read: boolean;
+        update: boolean;
+        delete: boolean;
+    }
 }

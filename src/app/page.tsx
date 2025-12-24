@@ -29,6 +29,9 @@ export default function Home() {
 
       localStorage.setItem("token", data.data.token);
       localStorage.setItem("name", data.data.name);
+      localStorage.setItem("admin", data.data.admin);
+      localStorage.setItem("photo", data.data.photo);
+      localStorage.setItem("modules", JSON.stringify(data.data.modules));
       router.push("/dashboard");
     } catch (error) {
       resolveResponse(error);

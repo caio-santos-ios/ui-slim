@@ -6,178 +6,276 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
     {
         code: '1',
         isOpen: true,
-        authorized: true,
+        authorized: false,
         description: 'Cadastro',
         icon: 'FiGrid',
         link: '',
         padding: 'px-2',
         subMenu: [
             {
-                code: '11',
+                code: 'A11',
                 isOpen: true,
                 subMenu: [],
                 description: 'Usuários',
                 icon: '',
                 link: 'master-data/users',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },     
             {
-                code: '12',
+                code: 'A12',
                 isOpen: true,
                 subMenu: [],
                 description: 'Clientes',
                 icon: '',
                 link: 'master-data/customers',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },
             {
-                code: '13',
+                code: 'A13',
                 isOpen: true,
                 subMenu: [],
                 description: 'Profissionais',
                 icon: '',
                 link: 'master-data/professionals',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },
             {
-                code: '14',
+                code: 'A14',
                 isOpen: true,
                 subMenu: [],
                 description: 'Módulo de Serviços',
                 icon: '',
                 link: 'master-data/service-modules',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },
             {
-                code: '15',
+                code: 'A15',
                 isOpen: true,
                 subMenu: [],
                 description: 'Planos',
                 icon: '',
                 link: 'master-data/plas',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },
             {
-                code: '16',
+                code: 'A16',
                 isOpen: true,
                 subMenu: [],
                 description: 'Procedimentos',
                 icon: '',
                 link: 'master-data/procedures',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },
             {
-                code: '17',
+                code: 'A17',
                 isOpen: true,
                 subMenu: [],
                 description: 'Faturamento',
                 icon: '',
                 link: 'master-data/billings',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },
             {
-                code: '18',
+                code: 'A18',
                 isOpen: true,
                 subMenu: [],
                 description: 'Vendedores',
                 icon: '',
                 link: 'master-data/sellers',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },
             {
-                code: '19',
+                code: 'A19',
                 isOpen: true,
                 subMenu: [],
                 description: 'Representantes',
                 icon: '',
                 link: 'master-data/sellers-representative',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },
             {
-                code: '20',
+                code: 'A20',
                 isOpen: true,
                 subMenu: [],
                 description: 'Comissões',
                 icon: '',
                 link: 'master-data/commissions',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },       
             {
-                code: '21',
+                code: 'A21',
                 isOpen: true,
                 subMenu: [],
                 description: 'Rede Credenciada',
                 icon: '',
                 link: 'master-data/accredited-network',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },            
+            // {
+            //     code: 'A22',
+            //     isOpen: true,
+            //     subMenu: [],
+            //     description: 'Tabelas de Importação',
+            //     icon: '',
+            //     link: 'master-data/imports',
+            //     padding: 'px-4',
+            //     authorized: false,
+            //     permissions: {
+            //         create: false,
+            //         update: false,
+            //         read: false,
+            //         delete: false
+            //     }
+            // },            
             {
-                code: '22',
-                isOpen: true,
-                subMenu: [],
-                description: 'Tabelas de Importação',
-                icon: '',
-                link: 'master-data/imports',
-                padding: 'px-4',
-                authorized: true,
-            },            
-            {
-                code: '23',
+                code: 'A23',
                 isOpen: true,
                 subMenu: [],
                 description: 'Tabelas Genérica',
                 icon: '',
                 link: 'master-data/generic-tables',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },            
             {
-                code: '24',
+                code: 'A24',
                 isOpen: true,
                 subMenu: [],
                 description: 'Fornecedores',
                 icon: '',
                 link: 'master-data/suppliers',
                 padding: 'px-4',
-                authorized: true,
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },            
         ],
     },
     {
         code: '2',
         isOpen: true,
-        authorized: true,
+        authorized: false,
         subMenu: [
             {
-                code: '22',
+                code: 'B22',
                 isOpen: false,
+                authorized: false,
                 subMenu: [],
                 description: 'Presencial',
                 // icon: 'FaMoneyBillTrendUp',
                 icon: '',
                 link: 'services/in-person',
-                padding: 'px-8'
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },
             {
-                code: '23',
+                code: 'B23',
                 isOpen: false,
+                authorized: false,
                 subMenu: [],
                 description: 'Telemedicina',
                 // icon: 'PiMoneyFill',
                 icon: '',
                 link: 'services/telemedicine',
-                padding: 'px-8'
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             }
         ],
         description: 'Atendimentos',
@@ -188,37 +286,41 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
     {
         code: '3',
         isOpen: true,
-        authorized: true,
+        authorized: false,
         subMenu: [
-            // {
-            //     code: '31',
-            //     isOpen: false,
-            //     subMenu: [],
-            //     description: 'Contratos',
-            //     // icon: 'FaFileContract',
-            //     icon: '',
-            //     link: '',
-            //     padding: 'px-8'
-            // },
             {
-                code: '32',
+                code: 'C32',
                 isOpen: false,
+                authorized: false,
                 subMenu: [],
                 description: 'Contas a Receber',
                 // icon: 'FaMoneyBillTrendUp',
                 icon: '',
                 link: 'financial/accounts-receivable',
-                padding: 'px-8'
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             },
             {
-                code: '33',
+                code: 'C33',
                 isOpen: false,
+                authorized: false,
                 subMenu: [],
                 description: 'Contas a Pagar',
                 // icon: 'PiMoneyFill',
                 icon: '',
                 link: 'financial/accounts-payable',
-                padding: 'px-8'
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             }
         ],
         description: 'Financeiro',

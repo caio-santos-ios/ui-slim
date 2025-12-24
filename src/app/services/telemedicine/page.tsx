@@ -26,6 +26,7 @@ import { modalAtom } from "@/jotai/global/modal.jotai";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { TableTelemedicine } from "@/components/Services/Telemedicine/Table";
+import { permissionRead } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -61,7 +62,9 @@ export default function Customer() {
   };
 
   useEffect(() => {
-    getAll();
+    if(permissionRead("2", "B23")) {
+      getAll();
+    };
   }, []);
 
   const passPage = async (action: "previous" | "next") => {
@@ -90,11 +93,7 @@ export default function Customer() {
 
             <div className="slim-container w-full">
               <SlimContainer breadcrump="Telemedicina" breadcrumpIcon="MdVideoCall"
-                buttons={
-                  <>
-                    {/* <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button> */}
-                  </>
-                }>
+                buttons={<></>}>
 
                 <TableTelemedicine list={pagination.data} />
                 <NotData />

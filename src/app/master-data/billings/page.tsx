@@ -17,20 +17,16 @@ import { SlimContainer } from "@/components/Global/SlimContainer";
 import { Card } from "@/components/Global/Card";
 import DataTable from "@/components/Global/Table";
 import { NotData } from "@/components/Global/NotData";
-import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
-import { TBilling } from "@/types/masterData/billing/billing.type";
+import { ResteBilling, TBilling } from "@/types/masterData/billing/billing.type";
 import { ModalBilling } from "@/components/MasterData/Billing/Modal";
 import { convertNumberMoney } from "@/utils/convert.util";
+import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "name", title: "Nome" },
   { key: "description", title: "Descrição" },
-  { key: "start", title: "Inicio da Realização" },
-  { key: "end", title: "Fim da Realização" },
-  { key: "deliveryDate", title: "Data Entrega de Faturamento" },
-  { key: "billingDate", title: "Data de Faturamento" },
   { key: "createdAt", title: "Data de Cadastro" },
 ];
 
@@ -39,15 +35,7 @@ export default function Billing() {
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
-  const [currentBody, setCurrentBody] = useState<TBilling>({
-    id: "",
-    name: "",
-    description: "",
-    start: "",
-    end: "",
-    deliveryDate: "",
-    billingDate: ""
-  });
+  const [currentBody, setCurrentBody] = useState<TBilling>(ResteBilling);
 
 
   const [userLogger] = useAtom(userLoggerAtom);
@@ -100,7 +88,9 @@ export default function Billing() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "17")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean) => {
@@ -125,15 +115,7 @@ export default function Billing() {
   };
 
   const resetModal = () => {
-    setCurrentBody({
-      id: "",
-      name: "",
-      description: "",
-      start: "",
-      end: "",
-      deliveryDate: "",
-      billingDate: ""
-    });
+    setCurrentBody(ResteBilling);
 
     setModal(false);
   };
@@ -152,7 +134,10 @@ export default function Billing() {
               <SlimContainer breadcrump="Faturamento" breadcrumpIcon="MdReceiptLong"
                 buttons={
                   <>
-                    <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                  {
+                    permissionCreate("1", "17") &&
+                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }
                   </>
                 }>
 
@@ -192,8 +177,14 @@ export default function Billing() {
                             ))}   
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
-                                <MdEdit  onClick={() => openModal("edit", x)} /> 
-                                <FaTrash onClick={() => openModalDelete(x)} />
+                                {
+                                  permissionUpdate("1", "A17") &&
+                                  <MdEdit  onClick={() => openModal("edit", x)} /> 
+                                }
+                                {
+                                  permissionDelete("1", "A17") &&
+                                  <FaTrash onClick={() => openModalDelete(x)} />
+                                }
                               </div>
                             </td>         
                           </tr>
@@ -204,7 +195,6 @@ export default function Billing() {
                 </DataTable>
 
                 <NotData />
-                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 

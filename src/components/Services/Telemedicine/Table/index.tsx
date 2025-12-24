@@ -5,6 +5,7 @@ import { useState } from "react";
 import { formattedCPF } from "@/utils/mask.util";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
+import { permissionUpdate } from "@/utils/permission.util";
 
 type TProp = {
     list: TAccountsPayable[],
@@ -89,10 +90,13 @@ export const TableTelemedicine = ({list}: TProp) => {
                                             <td className="px-4 py-2">{formattedCPF(x.cpf)}</td>
                                             <td className="px-4 py-2">{x.name}</td>
                                             <td className="px-4 py-2">
-                                                <label className="slim-switch">
-                                                    <input checked={x.status} onChange={() => updateInactive(x.id)} type="checkbox"/>
-                                                    <span className="slider"></span>
-                                                </label>
+                                                {
+                                                    permissionUpdate("2", "B23") &&
+                                                    <label className="slim-switch">
+                                                        <input checked={x.status} onChange={() => updateInactive(x.id)} type="checkbox"/>
+                                                        <span className="slider"></span>
+                                                    </label>
+                                                }
                                             </td>
                                         </tr>
                                     )

@@ -12,6 +12,7 @@ import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { paginationAtom } from "@/jotai/global/pagination.jotai";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
+import { permissionRead } from "@/utils/permission.util";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 
@@ -44,7 +45,9 @@ export default function AccountsReceivable() {
   }
 
   useEffect(() => {
-    getAll();
+    if(permissionRead("3", "C32")) {
+      getAll();
+    };
   }, [])
 
   return (

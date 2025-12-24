@@ -2,16 +2,14 @@
 
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { TAccountsPayable } from "@/types/accountsPayable/accountsPayable.type";
-import { convertNumberMoney } from "@/utils/convert.util";
 import { useState } from "react";
-import { FaTrash } from "react-icons/fa";
-import { MdEdit, MdTaskAlt } from "react-icons/md";
 import { maskDate } from "@/utils/mask.util";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { ModalSupplier } from "../Modal";
+import { permissionDelete, permissionUpdate } from "@/utils/permission.util";
 
 type TProp = {
     list: TAccountsPayable[],
@@ -65,12 +63,6 @@ export const TableSupplier = ({list, handleReturnModal}: TProp) => {
         onClose();
     };
 
-    const convertStatus = (lowValue: any, balance: any) => {
-        if(parseFloat(balance) == 0) return "Pago";
-        if(parseFloat(lowValue) > 0) return "Pago Parcial";
-        return "Pendente";
-    };
-
     return (
         <>
             {
@@ -95,9 +87,15 @@ export const TableSupplier = ({list, handleReturnModal}: TProp) => {
                                             <td className="px-4 py-2">{x.corporateName}</td>
                                             <td className="px-4 py-2">{maskDate(x.createdAt)}</td>
                                             <td className="p-2">
-                                                <div className="flex justify-center gap-3">                                                    
-                                                    <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
-                                                    <IconDelete obj={x} getObj={getDestroy}/>                                                   
+                                                <div className="flex justify-center gap-3">       
+                                                    {
+                                                        permissionUpdate("1", "24") &&
+                                                        <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
+                                                    }   
+                                                    {
+                                                        permissionDelete("1", "24") &&
+                                                        <IconDelete obj={x} getObj={getDestroy}/>                                                   
+                                                    }                                          
                                                 </div>
                                             </td>
                                         </tr>

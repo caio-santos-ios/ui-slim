@@ -17,11 +17,11 @@ import { SlimContainer } from "@/components/Global/SlimContainer";
 import { Card } from "@/components/Global/Card";
 import DataTable from "@/components/Global/Table";
 import { NotData } from "@/components/Global/NotData";
-import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { ModalProfessional } from "@/components/MasterData/Professional/Modal";
 import { TProfessional } from "@/types/masterData/professional/professional.type";
+import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "name", title: "Nome" },
@@ -91,7 +91,9 @@ export default function Professional() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "13")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean) => {
@@ -156,33 +158,12 @@ export default function Professional() {
               <SlimContainer breadcrump="Profissionais" breadcrumpIcon="FaUserTie"
                 buttons={
                   <>
+                  {
+                    permissionCreate("1", "13") &&
                     <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                  }
                   </>
                 }>
-
-                <ul className="grid gap-2 slim-list-card lg:hidden">
-                  {
-                    pagination.data.map((x: TProfessional, i: number) => {
-                      return (
-                        <Card key={i}
-                          buttons={
-                            <>
-                              <MenuItem>
-                                <button onClick={() => openModal("edit", x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Editar</button>
-                              </MenuItem>
-                              <MenuItem>
-                                <button onClick={() => openModalDelete(x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Excluír</button>
-                              </MenuItem>
-                            </>
-                          }
-                        >
-                          <p>Nome: <span className="font-bold">{x.name}</span></p>
-                          <p>Tipo de Profissional: <span className="font-bold">{maskDate(x.type)}</span></p>
-                        </Card>                       
-                      )
-                    })
-                  }
-                </ul>
 
                 <DataTable columns={columns}>
                   <>
@@ -197,8 +178,14 @@ export default function Professional() {
                             ))}   
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
-                                <MdEdit  onClick={() => openModal("edit", x)} /> 
-                                <FaTrash onClick={() => openModalDelete(x)} />
+                                {
+                                  permissionUpdate("1", "13") &&
+                                  <MdEdit  onClick={() => openModal("edit", x)} /> 
+                                }
+                                {
+                                  permissionDelete("1", "13") &&
+                                  <FaTrash onClick={() => openModalDelete(x)} />
+                                }
                               </div>
                             </td>         
                           </tr>

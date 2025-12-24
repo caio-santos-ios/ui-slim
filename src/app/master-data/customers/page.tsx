@@ -25,6 +25,7 @@ import { ModalCustomer } from "@/components/MasterData/Customer/Modal";
 import { modalAtom } from "@/jotai/global/modal.jotai";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
+import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -101,7 +102,9 @@ export default function Customer() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "12")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean, id: string) => {
@@ -155,7 +158,10 @@ export default function Customer() {
               <SlimContainer breadcrump="Clientes" breadcrumpIcon="MdPerson"
                 buttons={
                   <>
-                    <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    {
+                      permissionCreate("1", "12") &&
+                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }
                   </>
                 }>
 
@@ -195,8 +201,14 @@ export default function Customer() {
                             ))}   
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
-                                <IconEdit action="edit" obj={x} getObj={openModal}/>
-                                <IconDelete obj={x} getObj={openModalDelete}/>
+                                {
+                                  permissionUpdate("1", "12") &&
+                                  <IconEdit action="edit" obj={x} getObj={openModal}/>
+                                }
+                                {
+                                  permissionDelete("1", "12") &&
+                                  <IconDelete obj={x} getObj={openModalDelete}/>
+                                }
                               </div>
                             </td>         
                           </tr>

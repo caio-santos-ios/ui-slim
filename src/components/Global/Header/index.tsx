@@ -8,16 +8,43 @@ import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { HiMenuAlt2 } from "react-icons/hi";
 import { IoMdClose } from "react-icons/io";
+import { Button } from "../Button";
+import { api, uriBase } from "@/service/api.service";
+import { loadingAtom } from "@/jotai/global/loading.jotai";
+import { configApi, resolveResponse } from "@/service/config.service";
 
 export const Header = () => {
+    const [_, setLoading] = useAtom(loadingAtom);
     const [isOpenMenu, setIsOpenMenu] = useAtom(menuOpenAtom)
-    const [name, setName] = useState("");
+    const [name, setName] = useState<string>("");
+    const [photo, setPhoto] = useState<string>("");
+    const [__, setUserAdmin] = useState(false);
+    const [sincron, setSincron] = useState<boolean>(false)
+
+    const sincLogged = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/users/logged`, configApi());
+            const result = data.result;
+            localStorage.setItem("photo", JSON.stringify(result.data.photo));
+            localStorage.setItem("admin", JSON.stringify(result.data.admin));
+            localStorage.setItem("modules", JSON.stringify(result.data.modules));
+            setSincron(false);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         const name = localStorage.getItem("name");
-        if(name) {
-            setName(name);
-        }
+        const admin = localStorage.getItem("admin");
+        const photo = localStorage.getItem("photo");
+
+        if(admin) setUserAdmin(admin == "true");
+        if(name) setName(name);
+        if(photo) setPhoto(JSON.parse(photo));
     }, [])
 
     return (
@@ -36,10 +63,23 @@ export const Header = () => {
             />
 
             <div className="flex items-center gap-3 container-profile-header">
-                <FaUserCircle size={50} />
+                <div className="relative">
+                    {
+                        photo ? 
+                        <img className="rounded-full object-cover h-18" src={`${uriBase}/${photo}`} alt="" />
+                        :
+                        <FaUserCircle onClick={() => setSincron(!sincron)} size={50} />
+                    }
+                    {
+                        sincron &&
+                        <div className="absolute -right-8">
+                            <Button click={sincLogged} text="Sincronizar" />
+                        </div>
+                    }
+                </div>
+
                 <div>
                     <h4 className="text-lg font-semibold hidden lg:block">{name}</h4>
-                    <span className="text-md text-gray-500 hidden lg:block">Administrador</span>
                 </div>                
             </div>
         </header>

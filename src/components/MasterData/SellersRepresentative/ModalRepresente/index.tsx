@@ -18,6 +18,9 @@ import { FaTrash } from "react-icons/fa";
 import axios from "axios";
 import { ResetAttachment, TAttachment } from "@/types/masterData/attachment/attachment.type";
 import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
+import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
+import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
+import { FaCirclePlus } from "react-icons/fa6";
 
 type TProp = {
     // title: string;
@@ -31,6 +34,8 @@ type TProp = {
 
 export const ModalRepresente = ({body, tab, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
+    const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
+    const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
     const [genders, setGender] = useState<any[]>([]);
     const [typePix, setTypePix] = useState<any[]>([]);
     const [tabCurrent, setTabCurrent] = useState<"data" | "dataResponsible" | "contact" | "seller" | "attachment" | "dataBank">("data")
@@ -244,12 +249,22 @@ export const ModalRepresente = ({body, tab, onClose}: TProp) => {
         }
     };
 
+    const onReturnGeneric = () => {
+        getSelectGender();
+        getSelectTypePix();
+    };
+    
+    const genericTable = (table: string) => {
+        setModalGenericTable(true);
+        setTableGenericTable(table);
+    };
+
+
     useEffect(() => {
         reset(ResetSellerRepresentative);
 
         setTabCurrent("data");
-        getSelectGender();
-        getSelectTypePix();
+        onReturnGeneric();
 
         if(body) {
             body.effectiveDate = body.effectiveDate.toString().split('T')[0];
@@ -358,7 +373,7 @@ export const ModalRepresente = ({body, tab, onClose}: TProp) => {
                         <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("responsible.whatsapp")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                     </div>
                     <div className={`flex flex-col col-span-2 mb-2`}>
-                        <label className={`label slim-label-primary`}>Gênero</label>
+                        <label className={`label slim-label-primary flex gap-1 items-center`}>Gênero <span onClick={() => genericTable("genero")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                         <select className="select slim-select-primary" {...register("responsible.gender")}>
                             <option value="">Selecione</option>
                             {
@@ -449,6 +464,8 @@ export const ModalRepresente = ({body, tab, onClose}: TProp) => {
                 <button type="button" onClick={cancel} className="slim-btn slim-btn-primary-light">Cancelar</button>
                 <Button type="submit" text="Salvar" theme="primary" styleClassBtn=""/>
             </div>
+
+            <ModalGenericTable onReturn={onReturnGeneric} /> 
         </form>
     )
 }

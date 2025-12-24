@@ -8,13 +8,15 @@ import { api } from "@/service/api.service";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/Global/Button";
 import { TProfessional } from "@/types/masterData/professional/professional.type";
-import { withMask } from "use-mask-input";
 import { maskCPF, maskPhone, maskZipCode } from "@/utils/mask.util";
 import axios from "axios";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
 import { toast } from "react-toastify";
 import { validatorCPF } from "@/utils/validator.utils";
+import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
+import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
+import { FaCirclePlus } from "react-icons/fa6";
 
 type TProp = {
     title: string;
@@ -27,6 +29,8 @@ type TProp = {
 
 export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectValue, body}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
+    const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
+    const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
     const { register, handleSubmit, reset, getValues, formState: { errors }} = useForm<TProfessional>();
     const [type, setType] = useState([]);
     const [specialty, setSpecialty] = useState([]);
@@ -181,10 +185,19 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
         };
     }, [body]);
 
-    useEffect(() => {
+    const onReturnGeneric = () => {
         getSelectType();
         getSelectSpecialty();
         getSelectRegistration();
+    };
+    
+    const genericTable = (table: string) => {
+        setModalGenericTable(true);
+        setTableGenericTable(table);
+    };
+
+    useEffect(() => {
+        onReturnGeneric();
     }, []);
 
     const validatedField = () => {
@@ -284,7 +297,7 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                 </div>                                
                                 
                                 <div className={`flex flex-col mb-2`}>
-                                    <label className={`label slim-label-primary`}>Tipo de Profissional</label>
+                                    <label className={`label slim-label-primary flex gap-1 items-center`}>Tipo de Profissional <span onClick={() => genericTable("tipo-profissional")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                                     <select className="select slim-select-primary" {...register("type", {required: "Tipo de Profissional é obrigatório"})}>
                                         <option value="">Selecione</option>
                                         {
@@ -295,7 +308,7 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                     </select>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
-                                    <label className={`label slim-label-primary`}>Especialidade</label>
+                                    <label className={`label slim-label-primary flex gap-1 items-center`}>Especialidade <span onClick={() => genericTable("especialidade-profissional")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                                     <select className="select slim-select-primary" {...register("specialty", {required: "Especialidade é obrigatória"})}>
                                         <option value="">Selecione</option>
                                         {
@@ -306,7 +319,7 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                     </select>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
-                                    <label className={`label slim-label-primary`}>Registro</label>
+                                    <label className={`label slim-label-primary flex gap-1 items-center`}>Registro <span onClick={() => genericTable("registro-profissional")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                                     <select className="select slim-select-primary" {...register("registration", {required: "Registro é obrigatório"})}>
                                         <option value="">Selecione</option>
                                         {
@@ -327,6 +340,8 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                 <Button type="submit" click={validatedField} text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>
+
+                        <ModalGenericTable onReturn={onReturnGeneric} /> 
                     </DialogPanel>
                 </div>
             </div>

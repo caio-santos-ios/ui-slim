@@ -9,6 +9,7 @@ import { configApi, resolveResponse } from "@/service/config.service";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { ModalInPerson } from "../Modal";
+import { permissionDelete, permissionUpdate } from "@/utils/permission.util";
 
 type TProp = {
     list: TAccountsPayable[],
@@ -86,9 +87,15 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                             <td className="px-4 py-2">{maskDate(x.date)}</td>
                                             <td className="px-4 py-2">{x.responsiblePayment}</td>
                                             <td className="p-2">
-                                                <div className="flex justify-center gap-3">                                                    
+                                                <div className="flex justify-center gap-3">              
+                                                    {
+                                                        permissionUpdate("2", "B22") &&
                                                     <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
+                                                    }                             
+                                                    {
+                                                        permissionDelete("2", "B22") &&
                                                     <IconDelete obj={x} getObj={getDestroy}/>                                                   
+                                                    }         
                                                 </div>
                                             </td>
                                         </tr>

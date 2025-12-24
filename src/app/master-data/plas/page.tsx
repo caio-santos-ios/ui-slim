@@ -17,16 +17,8 @@ import { ResetPlan, TPlan } from "@/types/masterData/plans/plans.type";
 import { ModalPlan } from "@/components/MasterData/Plan/Modal";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
-import { convertInputStringMoney } from "@/utils/convert.util";
 import { CardImage } from "@/components/MasterData/Plan/CardImage";
-
-const columns: {key: string; title: string}[] = [
-  { key: "name", title: "Nome" },
-  { key: "description", title: "Descrição" },
-  { key: "price", title: "Preço" },
-  { key: "active", title: "Status" },
-  { key: "createdAt", title: "Data de Cadastro" },
-];
+import { permissionCreate, permissionRead } from "@/utils/permission.util";
 
 export default function Plan() {
   const [_, setLoading] = useAtom(loadingAtom);
@@ -84,7 +76,9 @@ export default function Plan() {
   };
   
   useEffect(() => {
-    getAll();
+    if(permissionRead("1", "15")) {
+      getAll();
+    };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean, onCloseModal: boolean = true) => {
@@ -130,7 +124,10 @@ export default function Plan() {
               <SlimContainer breadcrump="Planos" breadcrumpIcon="MdPriceChange"
                 buttons={
                   <>
-                    <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    {
+                      permissionCreate("1", "15") &&
+                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }
                   </>
                 }>
 

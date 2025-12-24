@@ -13,6 +13,7 @@ import { modalAtom } from "@/jotai/global/modal.jotai";
 import { paginationAtom } from "@/jotai/global/pagination.jotai";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
+import { permissionCreate, permissionRead } from "@/utils/permission.util";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 
@@ -46,7 +47,9 @@ export default function AccountsPayable() {
   };
 
   useEffect(() => {
-    getAll();
+    if(permissionRead("3", "C33")) {
+      getAll();
+    };
   }, [])
   
   return (
@@ -63,7 +66,10 @@ export default function AccountsPayable() {
               <SlimContainer breadcrump="Contas a Pagar" breadcrumpIcon="PiMoneyFill"
                 buttons={
                   <>
-                    <button onClick={() => setModal(true)} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    {
+                      permissionCreate("3", "C32") &&
+                      <button onClick={() => setModal(true)} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
+                    }
                   </>
                 }>
 

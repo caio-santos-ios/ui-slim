@@ -1,15 +1,16 @@
 "use client";
 
 import { ModalDelete } from "@/components/Global/ModalDelete";
-import { convertNumberMoney } from "@/utils/convert.util";
 import { useState } from "react";
-import { maskDate } from "@/utils/mask.util";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { ModalUser } from "../Modal";
 import { TUser } from "@/types/masterData/user/user.type";
+import { permissionDelete, permissionUpdate } from "@/utils/permission.util";
+import { IconEditPhoto } from "../IconEditPhoto";
+import { ModalPhoto } from "../ModalPhoto";
 
 type TProp = {
     list: TUser[],
@@ -19,19 +20,18 @@ type TProp = {
 export const TableUser = ({list, handleReturnModal}: TProp) => {
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [modal, setModal] = useState<boolean>(false);
-    const [modalLow, setModalLow] = useState<boolean>(false);
+    const [modalUpdatePhoto, setModalUpdatePhoto] = useState<boolean>(false);
     const [id, setId] = useState<string>("")
 
     const getCurrentBody = (action: string, body: TUser, ) => {
-        const currentContract = {...body}        
+        setId(body.id!);
 
         if(action == "edit") {
-            setId(body.id!)
             setModal(true)
         };
-        
-        if(action == "low") {
-            setModalLow(true)
+
+        if(action == "editPhoto") {
+            setModalUpdatePhoto(true);
         };
     };
     
@@ -53,7 +53,7 @@ export const TableUser = ({list, handleReturnModal}: TProp) => {
     const onClose = () => {
         setId("");
         setModal(false);
-        setModalLow(false);
+        setModalUpdatePhoto(false);
         handleReturnModal(true);
     };
 
@@ -65,12 +65,14 @@ export const TableUser = ({list, handleReturnModal}: TProp) => {
         <>
             {
                 list.length > 0 &&
-                <div className="slim-container-table w-full">
+                <div className="slim-container-table w-full bg-white shadow-sm">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50 slim-table-thead">
                             <tr>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Nome</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>E-mail</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Admin</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Bloqueado</th>
                                 <th scope="col" className={`px-4 py-3 text-center text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
                             </tr>
                         </thead>
@@ -82,10 +84,22 @@ export const TableUser = ({list, handleReturnModal}: TProp) => {
                                         <tr key={x.id}>                                            
                                             <td className="px-4 py-2">{x.name}</td>
                                             <td className="px-4 py-2">{x.email}</td>
+                                            <td className="px-4 py-2">{x.admin ? "Sim" : "Não"}</td>
+                                            <td className="px-4 py-2">{x.blocked ? "Sim" : "Não"}</td>
                                             <td className="p-2">
-                                                <div className="flex justify-center gap-3">                                                    
-                                                    <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
-                                                    <IconDelete obj={x} getObj={getDestroy}/>                                                   
+                                                <div className="flex justify-center gap-3">
+                                                    {
+                                                        permissionUpdate("1", "11") &&
+                                                        <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
+                                                    }                                                    
+                                                    {
+                                                        permissionUpdate("1", "11") &&
+                                                        <IconEditPhoto action="editPhoto" obj={x} getObj={getCurrentBody}/>
+                                                    }                                                    
+                                                    {
+                                                        permissionDelete("1", "11") &&
+                                                        <IconDelete obj={x} getObj={getDestroy}/>                                                   
+                                                    }
                                                 </div>
                                             </td>
                                         </tr>
@@ -100,6 +114,13 @@ export const TableUser = ({list, handleReturnModal}: TProp) => {
             <ModalUser
                 title='Editar Usuário' 
                 isOpen={modal} setIsOpen={() => setModal(modal)} 
+                onClose={onClose}
+                handleReturnModal={handleReturn}
+                id={id}
+            />     
+            
+            <ModalPhoto
+                isOpen={modalUpdatePhoto} setIsOpen={() => setModalUpdatePhoto(modalUpdatePhoto)} 
                 onClose={onClose}
                 handleReturnModal={handleReturn}
                 id={id}

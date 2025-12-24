@@ -23,6 +23,9 @@ import { TPlan } from "@/types/masterData/plans/plans.type";
 import MultiSelect from "@/components/Global/MultiSelect";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
+import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
+import { FaCirclePlus } from "react-icons/fa6";
+import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
 
 type TProp = {
     onClose: () => void;
@@ -32,6 +35,8 @@ type TProp = {
 
 export const ModalContract = ({contractorId, contractorType, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
+    const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
+    const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [currentId, setCureentId] = useState<string>("");
     const [categories, setCategory] = useState<TGenericTable[]>([]);
@@ -234,16 +239,24 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
         calcultedTotal();
         setModules(module)
     };
-    
-    useEffect(() => {
-        reset(ResetCustomerContract);
-        setTabCurrent("data");
 
-        getContract();
+    const genericTable = (table: string) => {
+        setModalGenericTable(true);
+        setTableGenericTable(table);
+    };
+
+    const onReturnGeneric = () => {
         getSelectCategory();
         getSelectCostCenter();
         getSelectPaymentMethod();
         getSelectReceiptAccount();
+    };
+    
+    useEffect(() => {
+        reset(ResetCustomerContract);
+        setTabCurrent("data");
+        onReturnGeneric();
+        getContract();
         getSelectPlan();
         getSelectSeller();
     }, []);
@@ -356,7 +369,7 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
                     </>
                 }
                 <div className={`flex flex-col col-span-2 mb-2`}>
-                    <label className={`label slim-label-primary`}>Categoria</label>
+                    <label className={`label slim-label-primary flex gap-1 items-center`}>Categoria <span onClick={() => genericTable("categoria-contrato-cliente")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                     <select className="select slim-select-primary" {...register("category")}>
                         <option value="">Selecione</option>
                         {
@@ -367,7 +380,7 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
                     </select>
                 </div>
                 <div className={`flex flex-col col-span-2 mb-2`}>
-                    <label className={`label slim-label-primary`}>Centro de Custo</label>
+                    <label className={`label slim-label-primary flex gap-1 items-center`}>Centro de Custo <span onClick={() => genericTable("centro-custo")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                     <select className="select slim-select-primary" {...register("costCenter")}>
                         <option value="">Selecione</option>
                         {
@@ -421,7 +434,7 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
                     </div> 
                 }
                 <div className={`flex flex-col col-span-2 mb-2`}>
-                    <label className={`label slim-label-primary`}>Forma de Pagameto</label>
+                    <label className={`label slim-label-primary flex gap-1 items-center`}>Forma de Pagameto <span onClick={() => genericTable("forma-pagamento")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                     <select className="select slim-select-primary" {...register("paymentMethod")}>
                         <option value="">Selecione</option>
                         {
@@ -432,7 +445,7 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
                     </select>
                 </div>      
                 <div className={`flex flex-col col-span-2 mb-2`}>
-                    <label className={`label slim-label-primary`}>Conta de Recebimento</label>
+                    <label className={`label slim-label-primary flex gap-1 items-center`}>Conta de Recebimento <span onClick={() => genericTable("conta-recebimento-contrato-cliente")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
                     <select className="select slim-select-primary" {...register("receiptAccount")}>
                         <option value="">Selecione</option>
                         {
@@ -613,6 +626,8 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
                 onClose={() => setModalDelete(false)}
                 onSelectValue={destroy}
             />   
+
+            <ModalGenericTable onReturn={onReturnGeneric} /> 
         </form>
     )
 }
