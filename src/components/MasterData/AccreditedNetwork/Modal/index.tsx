@@ -28,7 +28,7 @@ type TTabs = "data" | "responsible" | "contact" | "attachment";
 export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSelectValue, id}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
     const [tabCurrent, setTabCurrent] = useState<TTabs>("data")
-    const [currentBody, setCurrentBody] = useState<TAccreditedNetwork>(ResetAccreditedNetwork);
+    // const [currentBody, setCurrentBody] = useState<TAccreditedNetwork>(ResetAccreditedNetwork);
     const [tabs, setTab] = useState<{key: string, title: string}[]>([
         { key: 'data', title: 'Dados Gerais' },
         { key: 'responsible', title: 'Dados do Responsável' },
@@ -36,18 +36,18 @@ export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSel
         { key: 'attachment', title: 'Anexos' },
     ]);
     
-    const getById = async (id: string) => {
-        try {
-            setLoading(true);
-            const {data} = await api.get(`/accredited-networks/${id}`, configApi());
-            const result = data.result;
-            setCurrentBody(result.data)
-        } catch (error) {
-            resolveResponse(error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // const getById = async (id: string) => {
+    //     try {
+    //         setLoading(true);
+    //         const {data} = await api.get(`/accredited-networks/${id}`, configApi());
+    //         const result = data.result;
+    //         setCurrentBody(result.data)
+    //     } catch (error) {
+    //         resolveResponse(error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const cancel = () => {
         setTabCurrent("data");
@@ -76,9 +76,9 @@ export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSel
 
     const onSuccess = (isSuccess: boolean, newBody: TAccreditedNetwork) => {
         if(isSuccess) {
-            setCurrentBody(newBody);
+            // setCurrentBody(newBody);
             if (!id) return;
-            getById(id);
+            // getById(id);
 
             let newTabs: {key: string, title: string}[] = [
                 { key: 'data', title: 'Dados Gerais' },
@@ -98,10 +98,10 @@ export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSel
     };
 
     useEffect(() => {
-        setCurrentBody(ResetAccreditedNetwork);
+        // setCurrentBody(ResetAccreditedNetwork);
 
-        if (!id) return;
-        getById(id);
+        // if (!id) return;
+        // getById(id);
     }, [id]);
 
     return (
@@ -123,12 +123,12 @@ export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSel
 
                         {
                             tabCurrent == "data" &&
-                            <ModalData onSuccess={onSuccess} onSelectType={onSelectType} onSelectValue={onSelectValue} body={currentBody} onClose={cancel}/> 
+                            <ModalData id={id} onSuccess={onSuccess} onSelectType={onSelectType} onSelectValue={onSelectValue} onClose={cancel}/> 
                         }
                         
                         {
                             tabCurrent == "responsible" &&
-                            <ModalResponsible onSuccess={onSuccess} parentId={id} body={currentBody} onClose={cancel}/> 
+                            <ModalResponsible id={id} onSuccess={onSuccess} onClose={cancel}/> 
                         }
    
                         {

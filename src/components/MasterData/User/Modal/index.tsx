@@ -102,7 +102,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
     const create = async (body: any) => {
         try {
             const { status, data} = await api.post(`/users`, body, configApi());
-            console.log(data)
             resolveResponse({status, ...data});
             cancel();
         } catch (error) {
@@ -180,13 +179,15 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
     }, [watch("subModule")]);
 
     useEffect(() => {
-        if(id) {
-            const admin = localStorage.getItem("admin");
-            if(admin) setUserAdmin(admin == "true");
-
+        if(id) {            
             getById(id);
         };
     }, [id]);
+    
+    useEffect(() => {
+        const admin = localStorage.getItem("admin");
+        if(admin) setUserAdmin(admin == "true");
+    }, [])
 
     return (
         <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
@@ -207,7 +208,7 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                     <label className={`label slim-label-primary`}>E-mail</label>
                                     <input {...register("email", { pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>
-                                {
+                                {/* {
                                     !watch("id") &&
                                     <div className={`flex flex-col col-span-2`}>
                                         <label className="slim-label-primary" htmlFor="password">Senha</label>
@@ -219,7 +220,7 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                             }
                                         </div>
                                     </div>
-                                }
+                                } */}
                                 {
                                     userAdmin &&
                                     <div className={`flex flex-col mb-2`}>
@@ -230,7 +231,8 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                         </label>
                                     </div>  
                                 }
-                                <div className={`flex flex-col ${watch("id") ? `col-span-6` : `col-span-4`} mb-2`}>
+                                <div className={`flex flex-col mb-2`}>
+                                {/* <div className={`flex flex-col ${watch("id") ? `col-span-6` : `col-span-4`} mb-2`}> */}
                                     <label className={`label slim-label-primary`}>Bloqueado</label>
                                     <label className="slim-switch">
                                         <input {...register("blocked")} type="checkbox"/>

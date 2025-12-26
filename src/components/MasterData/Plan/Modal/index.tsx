@@ -33,7 +33,7 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
     const currentImage = watch("uri");
 
     const onSubmit: SubmitHandler<TPlan> = async (body: TPlan) => {
-        body.serviceModuleIds = modules.map(x => x.id!);
+        body.serviceModuleIds = modules.map(x => x.id!).join(",");
 
         const formBody = new FormData();
         const cost: any = convertStringMoney(body.cost.toString());
@@ -47,7 +47,9 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
         formBody.append("price", price);
         formBody.append("type", body.type);
         formBody.append("uri", body.uri);
-        formBody.append("serviceModuleIds", body.serviceModuleIds);
+        if(body.serviceModuleIds) {
+            formBody.append("listServiceModuleIds", body.serviceModuleIds);
+        };
 
         const attachment: any = document.querySelector('#image');
         if (attachment.files[0]) formBody.append('image', attachment.files[0]);
@@ -98,21 +100,14 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
     };
 
     const cancel = () => {
-        reset({
-            id: "",
-            name:"",
-            description: "",
-            price: 0,
-            active: true
-        });
-
+        reset({...ResetPlan, serviceModuleIds: []});
         onClose();
     };
 
     const getSelectServiceModule = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/service-modules?planId=&deleted=false&pageSize=100&pageNumber=1`, configApi());
+            const {data} = await api.get(`/service-modules?deleted=false&pageSize=100&pageNumber=1`, configApi());
             const result = data.result;    
             setServiceModule(result.data);
         } catch (error) {
@@ -136,6 +131,7 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
         reset(ResetPlan);
 
         if(body) {
+            console.log(body)
             body.price = convertNumberMoney(body.price);
             body.cost = convertNumberMoney(body.cost);
             reset(body);

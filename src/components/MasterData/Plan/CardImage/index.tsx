@@ -18,7 +18,6 @@ type TProp = {
 export const CardImage = ({children, title, cost, price, description, uriImage, alt}: TProp) => {
     const validatedImage = (uri: string) =>  {
         if(!uri) return '/assets/images/notImage.png';
-        console.log(`${uriBase}/${uri}`)
 
         return `${uriBase}/${uri}`;
     };

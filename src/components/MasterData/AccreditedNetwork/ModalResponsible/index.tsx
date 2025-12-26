@@ -20,26 +20,25 @@ import { FaCirclePlus } from "react-icons/fa6";
 
 type TProp = {
     onClose: () => void;
-    body?: TAccreditedNetwork;
-    parentId: string;
+    id: string;
     onSuccess: (isSuccess: boolean, body: TAccreditedNetwork) => void;
 }
 
-export const ModalResponsible = ({body, parentId, onSuccess, onClose}: TProp) => {
+export const ModalResponsible = ({id, onSuccess, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
     const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
     const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
     const [genders, setGender] = useState<any[]>([]);
-    const { register, handleSubmit, reset, getValues, watch, formState: { errors }} = useForm<TAccreditedNetwork>({
+    const { register, handleSubmit, reset, getValues, watch, setValue, formState: { errors }} = useForm<TAccreditedNetwork>({
         defaultValues: ResetAccreditedNetwork
     });
 
     const onSubmit: SubmitHandler<TAccreditedNetwork> = async (body: TAccreditedNetwork) => {
-        if(!parentId) return toast.warn("Dados Gerais é obrigatório", { theme: 'colored'});
+        if(!id) return toast.warn("Dados Gerais é obrigatório", { theme: 'colored'});
 
         if(body.responsible.dateOfBirth) body.responsible.dateOfBirth = new Date(body.responsible.dateOfBirth);
         body.responsible.address.parent = "accredited-network-responsible";
-        body.responsible.address.parentId = parentId;
+        body.responsible.address.parentId = id;
 
         if(body.consumptionLimit) body.consumptionLimit = convertStringMoney(body.consumptionLimit);
         if(!body.consumptionLimit) body.consumptionLimit = 0;
@@ -130,15 +129,22 @@ export const ModalResponsible = ({body, parentId, onSuccess, onClose}: TProp) =>
         getSelectGender();
     };
     
-    useEffect(() => {
-        onReturnGeneric();
-
-        if(body) {      
-            if(body.responsible.dateOfBirth) body.responsible.dateOfBirth = body.responsible.dateOfBirth.toString().split('T')[0];
-
-            reset(body);
-        };
-    }, [body]);
+    const getById = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/accredited-networks/${id}`, configApi());
+            const result = data.result;
+            console.log(result.data.responsible)
+            setValue("responsible", {
+                ...result.data.responsible,
+                dateOfBirth: result.data.responsible.dateOfBirth.toString().split('T')[0]
+            });            
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         if(errors.responsible?.email) {
@@ -150,12 +156,15 @@ export const ModalResponsible = ({body, parentId, onSuccess, onClose}: TProp) =>
             toast.warn(errors.responsible?.cpf.message, { theme: 'colored'});
             return;
         };
-       
-        if(errors.responsible?.address?.zipCode) {
-            toast.warn(errors.responsible?.address?.zipCode.message, { theme: 'colored'});
-            return;
+    }, [errors.responsible?.email, errors.responsible?.cpf]);
+
+    useEffect(() => {
+        onReturnGeneric();
+
+        if(id) {
+            getById();
         };
-    }, [errors.responsible?.email, errors.responsible?.cpf, errors.responsible?.address?.zipCode])
+    }, [id]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -201,7 +210,7 @@ export const ModalResponsible = ({body, parentId, onSuccess, onClose}: TProp) =>
                 </div>
                 <div className={`flex flex-col mb-2`}>
                     <label className={`label slim-label-primary`}>CEP</label>
-                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e, 'responsible')} {...register("responsible.address.zipCode", {required: "CEP é obrigatório", minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e, 'responsible')} {...register("responsible.address.zipCode")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
                 <div className={`flex flex-col mb-2`}>
                     <label className={`label slim-label-primary`}>Número</label>

@@ -7,6 +7,7 @@ export type TServiceModule = {
     active: any;
     image: any;
     uri: string;
+    type: "" | "B2B" | "B2C" | "B2B e B2C";
 }
 
 export const ResetServiceModule: TServiceModule = {
@@ -17,5 +18,6 @@ export const ResetServiceModule: TServiceModule = {
     description: "",
     active: true,
     image: "",
-    uri: ""
+    uri: "",
+    type: ""
 }

@@ -2,7 +2,7 @@
 
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { useState } from "react";
-import { api } from "@/service/api.service";
+import { api, uriBase } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
@@ -37,11 +37,12 @@ export const TableUser = ({list, handleReturnModal}: TProp) => {
     
     const getDestroy = (body: TUser) => {
         setModalDelete(true);
+        setId(body.id!)
     };
 
     const destroy = async () => {
         try {
-            const { status } = await api.delete(`/accounts-payable/${id}`, configApi());
+            const { status } = await api.delete(`/users/${id}`, configApi());
             resolveResponse({status, message: "Excluído com sucesso"});
             setModalDelete(false);
             handleReturnModal(true);
@@ -59,6 +60,12 @@ export const TableUser = ({list, handleReturnModal}: TProp) => {
 
     const handleReturn = () => {
         onClose();
+    };
+
+    const validatedImage = (uri: string) =>  {
+        if(!uri) return '/assets/images/notImage.png';
+
+        return `${uriBase}/${uri}`;
     };
 
     return (
@@ -82,7 +89,13 @@ export const TableUser = ({list, handleReturnModal}: TProp) => {
                                 list.map((x: any) => {
                                     return (
                                         <tr key={x.id}>                                            
-                                            <td className="px-4 py-2">{x.name}</td>
+                                            <td className="px-4 py-2">
+                                                <div className="flex items-center gap-2">
+
+                                                    <img className="w-20 h-20 max-h-56 object-cover rounded-full" src={validatedImage(x.photo)} alt="foto do usuário" />
+                                                    {x.name}
+                                                </div>
+                                            </td>
                                             <td className="px-4 py-2">{x.email}</td>
                                             <td className="px-4 py-2">{x.admin ? "Sim" : "Não"}</td>
                                             <td className="px-4 py-2">{x.blocked ? "Sim" : "Não"}</td>

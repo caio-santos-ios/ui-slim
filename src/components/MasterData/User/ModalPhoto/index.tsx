@@ -90,7 +90,7 @@ export const ModalPhoto = ({isOpen, setIsOpen, onClose, handleReturnModal, id}: 
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 mb-4">
                                 <div className={`flex flex-col col-span-3 justify-center items-center`}>
-                                    <img className="w-full h-full max-h-56 object-cover rounded-xl" src={validatedImage(uri)} alt="foto do plano" />
+                                    <img className="w-full h-full max-h-56 object-cover rounded-xl" src={validatedImage(uri)} alt="foto do usuário" />
                                 </div>
                                 
                                 <div className={`flex flex-col col-span-3`}>

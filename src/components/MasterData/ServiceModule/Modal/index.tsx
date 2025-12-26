@@ -40,6 +40,7 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
         formBody.append("cost", cost);
         formBody.append("price", price);
         formBody.append("uri", body.uri);
+        formBody.append("type", body.type);
 
         const attachment: any = document.querySelector('#image');
         if (attachment.files[0]) formBody.append('image', attachment.files[0]);
@@ -184,6 +185,15 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
                                         <label className={`label slim-label-primary`}>Preço</label>
                                         <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("price", {required: "Preço é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                     </div>      
+                                    <div className={`flex flex-col col-span-3 mb-2`}>
+                                        <label className={`label slim-label-primary`}>Tipo</label>
+                                        <select className="select slim-select-primary" {...register("type", {required: "Tipo é obrigatório"})}>
+                                            <option value="">Selecione</option>                                       
+                                            <option value="B2B">B2B</option>                                       
+                                            <option value="B2C">B2C</option>                                       
+                                            <option value="B2B e B2C">B2B e B2C</option>                                       
+                                        </select>
+                                    </div>     
                                 </div>
                                 <div className={`flex flex-col col-span-7 mb-2`}>
                                     <label className={`label slim-label-primary`}>Descrição</label>

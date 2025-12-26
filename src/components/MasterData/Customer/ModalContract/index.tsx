@@ -219,10 +219,10 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
         }
     };
 
-    const getSelectServiceModule = async (planId: string) => {
+    const getSelectServiceModule = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/service-modules?deleted=false&planId=${planId}&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1`, configApi());
+            const {data} = await api.get(`/service-modules?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1&in$type=${contractorType},B2B e B2C`, configApi());
             const result = data.result;
             setServiceModule(result.data ?? []);
         } catch (error) {
@@ -258,6 +258,7 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
         onReturnGeneric();
         getContract();
         getSelectPlan();
+        getSelectServiceModule();
         getSelectSeller();
     }, []);
 
@@ -285,11 +286,11 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
         };
     }, [watch("paymentInstallmentQuantity")]);
 
-    useEffect(() => {
-        if(watch("planId")) {
-            getSelectServiceModule(watch("planId"));
-        };
-    }, [watch("planId")]);
+    // useEffect(() => {
+    //     if(watch("planId")) {
+    //         getSelectServiceModule(watch("planId"));
+    //     };
+    // }, [watch("planId")]);
 
     useEffect(() => {
         if(watch("paymentCondition") == "Parcelado") {

@@ -91,7 +91,7 @@ export default function Plan() {
   };
 
   const resetModal = () => {
-    setCurrentBody(ResetPlan);
+    setCurrentBody({...ResetPlan, serviceModuleIds: []});
 
     setModal(false);
   };

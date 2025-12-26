@@ -15,24 +15,21 @@ import { TSeller } from "@/types/masterData/seller/seller.type";
 import { TPlan } from "@/types/masterData/plans/plans.type";
 import { convertMoneyToNumber, convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
 import { toast } from "react-toastify";
-import { TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
+import { ResetAccreditedNetwork, TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
 
 type TProp = {
     onClose: () => void;
     onSelectValue: (isSuccess: boolean, id: string) => void;
     onSelectType: (type: string) => void;
     onSuccess: (isSuccess: boolean, body: TAccreditedNetwork) => void;
-    body: TAccreditedNetwork;
+    id: string;
 }
 
-export const ModalData = ({body, onSelectValue, onSuccess, onClose}: TProp) => {
+export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
     const [tradingTables, setTradingTable] = useState<TGenericTable[]>([]);
     const { register, handleSubmit, reset, getValues, formState: { errors }} = useForm<TAccreditedNetwork>({
-        defaultValues: {
-            ...body,
-            effectiveDate: !body.effectiveDate ? null : body.effectiveDate.toString().split('T')[0],
-        }
+        defaultValues: ResetAccreditedNetwork
     });
 
     const onSubmit: SubmitHandler<TAccreditedNetwork> = async (body: TAccreditedNetwork) => {
@@ -152,16 +149,34 @@ export const ModalData = ({body, onSelectValue, onSuccess, onClose}: TProp) => {
             setLoading(false);
         }
     };
+
+    const getById = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/accredited-networks/${id}`, configApi());
+            const result = data.result;
+
+            reset({
+                ...result.data,
+                consumptionLimit: convertNumberMoney(result.data.consumptionLimit),
+                effectiveDate: result.data.effectiveDate.toString().split('T')[0]
+            });
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
         
     useEffect(() => {
         getSelectTradingTable();
     }, []);
-    
+
     useEffect(() => {
-        if (body.effectiveDate) body.effectiveDate = body.effectiveDate.toString().split('T')[0];
-        body.consumptionLimit = convertNumberMoney(body.consumptionLimit);
-        reset(body);
-    }, [body]);
+        if(id) {
+            getById();
+        };
+    }, [id]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="card-modal">
