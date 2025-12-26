@@ -12,50 +12,6 @@ type TProp = {
 }
 
 export const TableTelemedicine = ({list}: TProp) => {
-    const [modalDelete, setModalDelete] = useState<boolean>(false);
-    const [modal, setModal] = useState<boolean>(false);
-    const [modalLow, setModalLow] = useState<boolean>(false);
-    const [id, setId] = useState<string>("")
-    const [currentBody, setCurrentBody] = useState<TAccountsPayable>();
-
-    const getCurrentBody = (action: string, body: TAccountsPayable, ) => {
-        const currentContract = {...body}        
-        setCurrentBody(currentContract);
-        if(action == "edit") {
-            setId(body.id!)
-            setModal(true)
-        };
-        
-        if(action == "low") {
-            setModalLow(true)
-        };
-    };
-    
-    const getDestroy = (body: TAccountsPayable) => {
-        setCurrentBody(body);
-        setModalDelete(true);
-    };
-
-    const destroy = async () => {
-        try {
-            const { status } = await api.delete(`/accounts-payable/${currentBody!.id}`, configApi());
-            resolveResponse({status, message: "Excluído com sucesso"});
-            setModalDelete(false);
-        } catch (error) {
-            resolveResponse(error);
-        }
-    };
-
-    const onClose = () => {
-        setId("");
-        setModal(false);
-        setModalLow(false);
-    };
-
-    const handleReturn = () => {
-        onClose();
-    };
-
     const updateInactive = async (id: string) => {
         try {
             console.log(id)
