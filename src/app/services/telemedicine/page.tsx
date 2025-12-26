@@ -49,10 +49,10 @@ export default function Customer() {
       const result = data.result;
 
       setPagination({
-        currentPage: result.currentPage,
+        currentPage: 1,
         data: result.data,
-        sizePage: result.pageSize,
-        totalPages: result.totalCount
+        sizePage: 10,
+        totalPages: 10
       });
     } catch (error) {
       resolveResponse(error);
@@ -66,20 +66,6 @@ export default function Customer() {
       getAll();
     };
   }, []);
-
-  const passPage = async (action: "previous" | "next") => {
-    if(pagination.totalPages == 1) return;
-    
-    if(action === 'previous' && pagination.currentPage > 1) {
-      pagination.currentPage -= 1;
-      await getAll();
-    };
-
-    if(action === 'next' && pagination.currentPage > pagination.totalPages) {
-      pagination.currentPage -= 1;
-      await getAll();
-    };
-  };
 
   return (
     <>
