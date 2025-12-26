@@ -26,8 +26,8 @@ export const Header = () => {
             setLoading(true);
             const {data} = await api.get(`/users/logged`, configApi());
             const result = data.result;
-            localStorage.setItem("photo", JSON.stringify(result.data.photo));
-            localStorage.setItem("admin", JSON.stringify(result.data.admin));
+            localStorage.setItem("photo", result.data.photo);
+            localStorage.setItem("admin", result.data.admin);
             localStorage.setItem("modules", JSON.stringify(result.data.modules));
             setSincron(false);
         } catch (error) {
@@ -44,7 +44,7 @@ export const Header = () => {
 
         if(admin) setUserAdmin(admin == "true");
         if(name) setName(name);
-        if(photo) setPhoto(JSON.parse(photo));
+        if(photo) setPhoto(photo);
     }, [])
 
     return (
@@ -66,7 +66,7 @@ export const Header = () => {
                 <div className="relative">
                     {
                         photo ? 
-                        <img className="rounded-full object-cover h-18" src={`${uriBase}/${photo}`} alt="" />
+                        <img onClick={() => setSincron(!sincron)} className="rounded-full object-cover h-18" src={`${uriBase}/${photo}`} alt="" />
                         :
                         <FaUserCircle onClick={() => setSincron(!sincron)} size={50} />
                     }
