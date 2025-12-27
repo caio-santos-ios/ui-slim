@@ -286,12 +286,6 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
         };
     }, [watch("paymentInstallmentQuantity")]);
 
-    // useEffect(() => {
-    //     if(watch("planId")) {
-    //         getSelectServiceModule(watch("planId"));
-    //     };
-    // }, [watch("planId")]);
-
     useEffect(() => {
         if(watch("paymentCondition") == "Parcelado") {
             const total = convertMoneyToNumber(watch("total"));

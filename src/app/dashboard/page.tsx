@@ -1,21 +1,53 @@
 "use client";
 
+import { FirstCard } from "@/components/Dashboard/FirstCard";
+import { RecentPatient } from "@/components/Dashboard/RecentPatient";
 import { Autorization } from "@/components/Global/Autorization";
 import { Header } from "@/components/Global/Header";
-import { NotData } from "@/components/Global/NotData";
+import { Loading } from "@/components/Global/Loading";
 import { SideMenu } from "@/components/Global/SideMenu";
 import { SlimContainer } from "@/components/Global/SlimContainer";
 import { userLoggerAtom } from "@/jotai/auth/auth.jotai";
+import { loadingAtom } from "@/jotai/global/loading.jotai";
+import { api } from "@/service/api.service";
+import { configApi, resolveResponse } from "@/service/config.service";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 
 export default function Dashboard() {
   const [userLogger] = useAtom(userLoggerAtom);
-  const [name, setName] = useState("");
+  const [_, setLoading] = useAtom(loadingAtom);  
+  const [cardFirst, setCardFirst] = useState<any>({});
+  const [recentPatient, setRecentPatient] = useState<any[]>([]);
+
+  const getCards = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get(`/dashboard/first-card`, configApi());
+      const result = data.result.data;
+      setCardFirst(result.data)
+    } catch (error) {
+      resolveResponse(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const getRecentPatient = async () => {
+    try {
+      const { data } = await api.get(`/dashboard/recent-patients`, configApi());
+      const result = data.result.data;
+      setRecentPatient(result)
+    } catch (error) {
+      resolveResponse(error);
+    } finally {
+      setLoading(false)
+    }
+  };
 
   useEffect(() => {
-    const name = localStorage.getItem("name");
-    if(name) setName(name);
+    getCards();
+    // getRecentPatient();
   }, [])
 
   return (
@@ -32,26 +64,8 @@ export default function Dashboard() {
               <SlimContainer breadcrump="Dashboard" breadcrumpIcon="FaMoneyBillTrendUp"
                 buttons={<></>}>
 
-                  <ul className="grid grid-cols-4 gap-6">
-                    <li className="p-4 bg-gray-100 shadow-lg shadow-gray-500/50 rounded-md">
-                      <p className="font-semibold text-lg text-gray-500">Total de Clientes</p>
-                      <strong>100.000</strong>
-                    </li>
-                    <li className="p-4 bg-gray-100 shadow-lg shadow-gray-500/50 rounded-md">
-                      <p className="font-semibold text-lg text-gray-500">Total de Beneficiários</p>
-                      <strong>100.000</strong>
-                    </li>                    
-                    {/* <li className="p-4 bg-gray-100 shadow-lg shadow-gray-500/50 rounded-md">
-                      <p className="font-semibold text-lg text-gray-500">Total de Clientes</p>
-                      <strong>100.000</strong>
-                    </li>
-                    <li className="p-4 bg-gray-100 shadow-lg shadow-gray-500/50 rounded-md">
-                      <p className="font-semibold text-lg text-gray-500">Total de Clientes</p>
-                      <strong>100.000</strong>
-                    </li>                     */}
-                  </ul>
-                  
-                  {/* <NotData /> */}
+                <FirstCard cardFirst={cardFirst} />  
+                <RecentPatient recentPatients={recentPatient} />  
               </SlimContainer>
             </div>
           </main>

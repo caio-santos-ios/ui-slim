@@ -17,7 +17,7 @@ export const SlimContainer = ({children, buttons, breadcrump, breadcrumpIcon}: T
     const IconComponent = breadcrumpIcon ? icons[breadcrumpIcon] : null;
     
     return (
-        <div className="slim-bg-tree slim-container">
+        <div className="slim-container">
             <div className="container-breadcrump">
                 <div className="breadcrump">
                     {IconComponent && <IconComponent size={18} />}

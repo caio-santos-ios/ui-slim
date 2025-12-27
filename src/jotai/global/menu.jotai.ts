@@ -236,6 +236,22 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                     delete: false
                 }
             },            
+            {
+                code: 'A25',
+                isOpen: true,
+                subMenu: [],
+                description: 'Tabela de Negociação',
+                icon: '',
+                link: 'master-data/trading-tables',
+                padding: 'px-4',
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },            
         ],
     },
     {

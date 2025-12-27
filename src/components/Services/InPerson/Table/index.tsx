@@ -68,10 +68,10 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Beneficiário</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Unidade Credenciada</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Módulo de Serviço</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Procedimento</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Responsável pelo Pagamento</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Status</th>
+                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
                             </tr>
                         </thead>
 
@@ -83,9 +83,9 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                             <td className="px-4 py-2">{x.recipientDescription}</td>
                                             <td className="px-4 py-2">{x.accreditedNetworkDescription}</td>
                                             <td className="px-4 py-2">{x.serviceModuleDescription}</td>
-                                            <td className="px-4 py-2">{x.procedureDescription}</td>
                                             <td className="px-4 py-2">{maskDate(x.date)}</td>
                                             <td className="px-4 py-2">{x.responsiblePayment}</td>
+                                            <td className="px-4 py-2">{x.status}</td>
                                             <td className="p-2">
                                                 <div className="flex justify-center gap-3">              
                                                     {

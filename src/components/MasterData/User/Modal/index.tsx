@@ -88,7 +88,9 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
             id: body.id,
             modules: body.modules,
             name: body.name,
-            email: body.email
+            email: body.email,
+            admin: body.admin,
+            blocked: body.blocked
         };
         
         if(!body.id) {

@@ -3,11 +3,12 @@ export type TInPerson = {
     recipientId: string;
     accreditedNetworkId: string;
     serviceModuleId: string;
-    procedureId: string;
+    procedureIds: string[];
     date: any;
     hour: string;
     responsiblePayment: string;
     status: string;
+    value: any;
 }
 
 export const ResetInPerson: TInPerson = {
@@ -15,9 +16,10 @@ export const ResetInPerson: TInPerson = {
     recipientId: "",
     accreditedNetworkId: "",
     serviceModuleId: "",
-    procedureId: "",
+    procedureIds: [],
     date: "",
     hour: "",
     responsiblePayment: "Pasbem",
-    status: ""
+    status: "",
+    value: 0
 }

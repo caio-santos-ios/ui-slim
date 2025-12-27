@@ -6,18 +6,18 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { api } from "@/service/api.service";
 import { useEffect, useState } from "react";
-import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
 import { Button } from "@/components/Global/Button";
-import { convertStringMoney } from "@/utils/convert.util";
-import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
 import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
 import { ResetInPerson, TInPerson } from "@/types/service/inPerson/inPerson.type";
 import { TRecipient } from "@/types/masterData/customers/customerRecipient.type";
 import { TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 import { TProcedure } from "@/types/masterData/procedure/procedure.type";
+import { maskMoney } from "@/utils/mask.util";
+import { convertInputStringMoney, convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
+import MultiSelect from "@/components/Global/MultiSelect";
 
 type TProp = {
     title: string;
@@ -30,21 +30,26 @@ type TProp = {
 
 export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnModal, id}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
-    const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
-    const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
-
     const [recipient, setRecipient] = useState<TRecipient[]>([]);
     const [accreditedNetworks, setAccreditedNetwork] = useState<TAccreditedNetwork[]>([]);
     const [serviceModules, setServiceModule] = useState<TServiceModule[]>([]);
     const [produceres, setProcedure] = useState<TProcedure[]>([]);
+    const [listProduceres, setListProcedure] = useState<TProcedure[]>([]);
+    const [myProcedures, setMyProcedure] = useState<TProcedure[]>([]);
 
-    const { register, handleSubmit, reset, watch, formState: { errors }} = useForm<TInPerson>({
+    const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TInPerson>({
         defaultValues: ResetInPerson
     });
 
     const onSubmit: SubmitHandler<TInPerson> = async (body: TInPerson) => {
         if(!body.date) body.date = null;   
 
+        const list: any = myProcedures.map(x => x.id);
+        body.procedureIds = list;
+
+        if(!body.value) body.value = 0;
+        if(body.value) body.value = convertStringMoney(body.value);
+        
         if(!body.id) {
           await create(body);
         } else {
@@ -90,6 +95,7 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
                 date: result.data.date ? result.data.date.split("T")[0] : null
             });
 
+            setMyProcedure(result.data.procedureIds);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -148,21 +154,44 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
             setLoading(false);
         }
     };
-   
-    const genericTable = (table: string) => {
-        setModalGenericTable(true);
-        setTableGenericTable(table);
+
+    const selectModule = (module: TProcedure[]) => {
+        setMyProcedure(module)
     };
 
-    const onReturnGeneric = () => {
+    useEffect(() => {
+        if(watch("procedureIds")) {
+            const accreditedNetwork: any = accreditedNetworks.find(x => x.id == watch("accreditedNetworkId"));
+            if(accreditedNetwork) {
+                const procedureByServiceModule = accreditedNetwork.tradingTableItems.find((x: any) => x.serviceModuleId == watch("serviceModuleId"));
+               setValue("value", convertNumberMoney(procedureByServiceModule.total))
+            };
+        };
+    }, [watch("procedureIds")]);
+    
+    useEffect(() => {
+        if(watch("serviceModuleId")) {
+            const accreditedNetwork: any = accreditedNetworks.find(x => x.id == watch("accreditedNetworkId"));
+            if(accreditedNetwork) {
+                const procedureByServiceModuleId = accreditedNetwork.tradingTableItems.filter((x: any) => x.serviceModuleId == watch("serviceModuleId"));
+
+                const newProcedures = procedureByServiceModuleId.map((x: any) => ({
+                    ...x,
+                    id: x.procedureId,
+                    name: produceres.find(p => p.id == x.procedureId) ? produceres.find(p => p.id == x.procedureId)?.name : ""
+                }));
+
+                setListProcedure(newProcedures);
+            };
+        };
+    }, [watch("serviceModuleId")]);
+
+    useEffect(() => {
+        reset(ResetInPerson);
         getSelectRecipient();
         getSelectAccreditedNetwork();
         getSelectServiceModule();
         getSelectProcedure();
-    };
-
-    useEffect(() => {
-        onReturnGeneric();
     }, []);
 
     useEffect(() => {
@@ -215,16 +244,9 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
                                         }
                                     </select>
                                 </div>
-                                <div className={`flex flex-col col-span-2 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Procedimento</label>
-                                    <select className="select slim-select-primary" {...register("procedureId")}>
-                                        <option value="">Selecione</option>
-                                        {
-                                            produceres.map((x: any) => {
-                                                return <option key={x.id} value={x.id}>{x.name}</option>
-                                            })
-                                        }
-                                    </select>
+                                <div className={`flex flex-col col-span-4 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Procedimento</label>                                    
+                                    <MultiSelect maxSelected={3} descriptionSelectedMax="Procedimentos Selecionados" value={myProcedures ?? []} onChange={(items) => selectModule(items)} options={listProduceres} labelKey="name" valueKey="id" />
                                 </div>
                                 <div className={`flex flex-col col-span-1 mb-2`}>
                                     <label className={`label slim-label-primary`}>Data</label>
@@ -241,14 +263,16 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
                                         <option value="Contratante">Contratante</option>
                                     </select>
                                 </div>
+                                <div className={`flex flex-col col-span-2 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Valor</label>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("value")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div> 
                             </div>                          
                             <div className="flex justify-end gap-2 w-12/12 mt-3">
-                                <Button type="button" click={onClose} text="Fechar" theme="primary-light" styleClassBtn=""/>
+                                <Button type="button" click={cancel} text="Fechar" theme="primary-light" styleClassBtn=""/>
                                 <Button type="submit" text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>
-
-                        <ModalGenericTable onReturn={onReturnGeneric} />
                     </DialogPanel>
                 </div>
             </div>

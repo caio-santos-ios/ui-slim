@@ -55,12 +55,14 @@ export const Header = () => {
                 }               
             </div>
 
-            <Image
-                src="/assets/images/logo.png"
-                alt="Logo"
-                width={150}
-                height={150}
-            />
+            <a href="dashboard">
+                <Image
+                    src="/assets/images/logo.png"
+                    alt="Logo"
+                    width={150}
+                    height={150}
+                />
+            </a>
 
             <div className="flex items-center gap-3 container-profile-header">
                 <div className="relative">

@@ -16,6 +16,7 @@ import { TPlan } from "@/types/masterData/plans/plans.type";
 import { convertMoneyToNumber, convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
 import { toast } from "react-toastify";
 import { ResetAccreditedNetwork, TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
+import { TTradingTable } from "@/types/masterData/tradingTable/tradingTable.type";
 
 type TProp = {
     onClose: () => void;
@@ -27,7 +28,7 @@ type TProp = {
 
 export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
-    const [tradingTables, setTradingTable] = useState<TGenericTable[]>([]);
+    const [tradingTables, setTradingTable] = useState<TTradingTable[]>([]);
     const { register, handleSubmit, reset, getValues, formState: { errors }} = useForm<TAccreditedNetwork>({
         defaultValues: ResetAccreditedNetwork
     });
@@ -140,7 +141,7 @@ export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
     const getSelectTradingTable = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/generic-tables/table/tabela-negociacao`, configApi());
+            const {data} = await api.get(`/trading-tables/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
             const result = data.result;
             setTradingTable(result.data);
         } catch (error) {
@@ -218,8 +219,8 @@ export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
                     <select {...register("tradingTable")} className="select slim-select-primary">
                         <option value="">Selecione</option>
                         {
-                            tradingTables.map((x: TGenericTable) => {
-                                return <option key={x.id} value={x.code}>{x.description}</option>
+                            tradingTables.map((x: TTradingTable) => {
+                                return <option key={x.id} value={x.id}>{x.name}</option>
                             })
                         }
                         

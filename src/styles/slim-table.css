@@ -3,11 +3,13 @@
     overflow-y: auto;
     /* border: 1px solid #dbdbdb; */
     /* border-radius: .76rem .76rem 0 0; */
+    border-radius: 0.75rem 0.75rem 0 0;
 }
 
 .slim-table {
     position: relative;
     width: 100%;
+    border-radius: 0.75rem;
 }
 
 .slim-table-thead {
