@@ -16,7 +16,7 @@ import { TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accredi
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 import { TProcedure } from "@/types/masterData/procedure/procedure.type";
 import { maskMoney } from "@/utils/mask.util";
-import { convertInputStringMoney, convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
+import { convertInputStringMoney, convertMoneyToNumber, convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
 import MultiSelect from "@/components/Global/MultiSelect";
 
 type TProp = {
@@ -92,7 +92,8 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
 
             reset({
                 ...result.data,
-                date: result.data.date ? result.data.date.split("T")[0] : null
+                date: result.data.date ? result.data.date.split("T")[0] : null,
+                value: convertNumberMoney(result.data.value)
             });
 
             setMyProcedure(result.data.procedureIds);
@@ -157,17 +158,11 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
 
     const selectModule = (module: TProcedure[]) => {
         setMyProcedure(module)
+        const total = module.reduce((value: number, x: any) => value + convertMoneyToNumber(x.total), 0);
+        console.log(total)
+        console.log(module)
+        setValue("value", convertNumberMoney(total));
     };
-
-    useEffect(() => {
-        if(watch("procedureIds")) {
-            const accreditedNetwork: any = accreditedNetworks.find(x => x.id == watch("accreditedNetworkId"));
-            if(accreditedNetwork) {
-                const procedureByServiceModule = accreditedNetwork.tradingTableItems.find((x: any) => x.serviceModuleId == watch("serviceModuleId"));
-               setValue("value", convertNumberMoney(procedureByServiceModule.total))
-            };
-        };
-    }, [watch("procedureIds")]);
     
     useEffect(() => {
         if(watch("serviceModuleId")) {
