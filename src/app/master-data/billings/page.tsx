@@ -23,6 +23,8 @@ import { ResteBilling, TBilling } from "@/types/masterData/billing/billing.type"
 import { ModalBilling } from "@/components/MasterData/Billing/Modal";
 import { convertNumberMoney } from "@/utils/convert.util";
 import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
+import { IconEdit } from "@/components/Global/IconEdit";
+import { IconDelete } from "@/components/Global/IconDelete";
 
 const columns: {key: string; title: string}[] = [
   { key: "name", title: "Nome" },
@@ -88,32 +90,18 @@ export default function Billing() {
   };
   
   useEffect(() => {
-    if(permissionRead("1", "17")) {
+    if(permissionRead("1", "A17")) {
       getAll();
     };
   }, []);
 
   const handleReturnModal = async (isSuccess: boolean) => {
     if(isSuccess) {
-      setModal(false); 
+      // setModal(false); 
       await getAll();
     }
   };
   
-  const passPage = async (action: "previous" | "next") => {
-    if(pagination.totalPages == 1) return;
-    
-    if(action === 'previous' && pagination.currentPage > 1) {
-      pagination.currentPage -= 1;
-      await getAll();
-    };
-
-    if(action === 'next' && pagination.currentPage > pagination.totalPages) {
-      pagination.currentPage -= 1;
-      await getAll();
-    };
-  };
-
   const resetModal = () => {
     setCurrentBody(ResteBilling);
 
@@ -176,15 +164,15 @@ export default function Billing() {
                               </td>        
                             ))}   
                             <td className="text-center">
-                              <div className="flex justify-center gap-2">
-                                {
-                                  permissionUpdate("1", "A17") &&
-                                  <MdEdit  onClick={() => openModal("edit", x)} /> 
-                                }
-                                {
-                                  permissionDelete("1", "A17") &&
-                                  <FaTrash onClick={() => openModalDelete(x)} />
-                                }
+                              <div className="flex justify-center gap-3">
+                                  {
+                                    permissionUpdate("1", "A17") &&
+                                    <IconEdit action="edit" obj={x} getObj={openModal}/>
+                                  }                                                                                                       
+                                  {
+                                    permissionDelete("1", "A17") &&
+                                    <IconDelete obj={x} getObj={openModalDelete}/>                                                   
+                                  }
                               </div>
                             </td>         
                           </tr>
@@ -203,7 +191,8 @@ export default function Billing() {
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={resetModal}
               onSelectValue={handleReturnModal}
-              body={currentBody}
+              // body={currentBody}
+              id={currentBody.id!}
             />      
 
             <ModalDelete 

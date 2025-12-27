@@ -10,6 +10,11 @@ import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { ModalInPerson } from "../Modal";
 import { permissionDelete, permissionUpdate } from "@/utils/permission.util";
+import { IconDownload } from "../IconDownload";
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import { ProcedureSinglePDF } from "../PDF";
+import { IconStatus } from "../IconStatus";
+import { ModalInPersonStatus } from "../ModalStatus";
 
 type TProp = {
     list: TAccountsPayable[],
@@ -19,15 +24,21 @@ type TProp = {
 export const TableInPerson = ({list, handleReturnModal}: TProp) => {
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [modal, setModal] = useState<boolean>(false);
+    const [modalStatus, setModalStatus] = useState<boolean>(false);
     const [id, setId] = useState<string>("")
     const [currentBody, setCurrentBody] = useState<TAccountsPayable>();
 
     const getCurrentBody = (action: string, body: TAccountsPayable, ) => {
         const currentContract = {...body}        
         setCurrentBody(currentContract);
+        setId(body.id!)
+        
         if(action == "edit") {
-            setId(body.id!)
             setModal(true)
+        };
+
+        if(action == "alterStatus") {
+            setModalStatus(true);
         };
     };
     
@@ -45,11 +56,24 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
             resolveResponse(error);
         }
     };
-    
+
+    const normalizeStatus = (status: string) => {
+        switch(status) {
+            case "Solicitada": return "bg-gray-300 text-gray-700";
+            case "Agendada": return "bg-blue-300 text-blue-700";
+            case "Em Andamento": return "bg-yellow-300 text-yellow-700";
+            case "Realizada": return "bg-green-300 text-green-700";
+            case "Cancelada - Cliente": return "bg-red-300 text-red-700";
+            case "Cancelada - Pasbem": return "bg-red-300 text-red-700";
+            case "Cancelada - Credenciada": return "bg-red-300 text-red-700";
+        }
+    };
+
     const onClose = () => {
         setId("");
         setModal(false);
         setModalDelete(false);
+        setModalStatus(false);
         handleReturnModal();
     };
 
@@ -85,16 +109,38 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                             <td className="px-4 py-2">{x.serviceModuleDescription}</td>
                                             <td className="px-4 py-2">{maskDate(x.date)}</td>
                                             <td className="px-4 py-2">{x.responsiblePayment}</td>
-                                            <td className="px-4 py-2">{x.status}</td>
+                                            <td className="px-4 py-2">
+                                                <span className={`${normalizeStatus(x.status)} py-1 px-2 rounded-lg font-bold`}>
+                                                    {x.status}
+                                                </span>
+                                            </td>
                                             <td className="p-2">
                                                 <div className="flex justify-center gap-3">              
                                                     {
                                                         permissionUpdate("2", "B22") &&
-                                                    <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
+                                                        <PDFDownloadLink 
+                                                        document={
+                                                            <ProcedureSinglePDF 
+                                                            recipient={x.recipientDescription} 
+                                                            accreditedNetwork={x.accreditedNetworkDescription}
+                                                            value={x.value}
+                                                            responsiblePayment={x.responsiblePayment}/>
+                                                        } 
+                                                        fileName={`comprovante-${Date.now()}.pdf`}>
+                                                            <IconDownload />
+                                                        </PDFDownloadLink>
+                                                    }                             
+                                                    {
+                                                        permissionUpdate("2", "B22") &&
+                                                        <IconStatus action="alterStatus" obj={x} getObj={getCurrentBody}/>
+                                                    }                             
+                                                    {
+                                                        permissionUpdate("2", "B22") &&
+                                                        <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
                                                     }                             
                                                     {
                                                         permissionDelete("2", "B22") &&
-                                                    <IconDelete obj={x} getObj={getDestroy}/>                                                   
+                                                        <IconDelete obj={x} getObj={getDestroy}/>                                                   
                                                     }         
                                                 </div>
                                             </td>
@@ -108,6 +154,14 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                     <ModalInPerson
                         title='Editar Atendimento Presencial' 
                         isOpen={modal} setIsOpen={() => setModal(modal)} 
+                        onClose={onClose}
+                        handleReturnModal={handleReturn}
+                        id={id}
+                    />     
+                    
+                    <ModalInPersonStatus
+                        title='Editar Status' 
+                        isOpen={modalStatus} setIsOpen={() => setModalStatus(modalStatus)} 
                         onClose={onClose}
                         handleReturnModal={handleReturn}
                         id={id}

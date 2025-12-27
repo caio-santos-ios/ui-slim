@@ -133,7 +133,7 @@ export default function Plan() {
 
                 {
                   pagination.data.length > 0 &&
-                  <ul className="grid grid-cols-1 lg:grid-cols-4 gap-2 slim-list-card">
+                  <ul className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2 slim-list-card">
                     {
                       pagination.data.map((x: TPlan, i: number) => {
                         return (
@@ -151,7 +151,6 @@ export default function Plan() {
                   </ul>
                 }                
                 <NotData />
-                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 

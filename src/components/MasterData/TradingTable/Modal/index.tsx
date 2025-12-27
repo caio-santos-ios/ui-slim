@@ -57,6 +57,7 @@ export const ModalTradingTable = ({title, isOpen, setIsOpen, onClose, handleRetu
                 procedureId: body.procedureId,
                 subTotal: convertMoneyToNumber(body.subTotal),
                 discount: convertMoneyToNumber(body.discount),
+                discountPercentage: convertMoneyToNumber(body.discountPercentage),
                 total: convertMoneyToNumber(body.total)
             });
         } else {
@@ -67,6 +68,7 @@ export const ModalTradingTable = ({title, isOpen, setIsOpen, onClose, handleRetu
                 procedureId: body.procedureId,
                 subTotal: convertMoneyToNumber(body.subTotal),
                 discount: convertMoneyToNumber(body.discount),
+                discountPercentage: convertMoneyToNumber(body.discountPercentage),
                 total: convertMoneyToNumber(body.total)
             };
         };
@@ -84,6 +86,7 @@ export const ModalTradingTable = ({title, isOpen, setIsOpen, onClose, handleRetu
             const { status, data} = await api.post(`/trading-tables`, body, configApi());
             const result = data.result;
 
+            setValue("discountPercentage", 0);
             getById(result.data.id);
             setValue("id", result.data.id);
             resolveResponse({status, ...data});
@@ -105,12 +108,12 @@ export const ModalTradingTable = ({title, isOpen, setIsOpen, onClose, handleRetu
             setValue("procedureId", "");
             setValue("subTotal", 0);
             setValue("discount", 0);
+            setValue("discountPercentage", 0);
             setValue("total", 0);
         } catch (error) {
             resolveResponse(error);
         }
     };
-
     
     const getById = async (id: string) => {
         try {
@@ -118,8 +121,10 @@ export const ModalTradingTable = ({title, isOpen, setIsOpen, onClose, handleRetu
             const {data} = await api.get(`/trading-tables/${id}`, configApi());
             const result = data.result;
             reset(result.data);
+
             setValue("subTotal", convertStringMoney(result.data.subTotal));
             setValue("discount", convertStringMoney(result.data.discount));
+            setValue("discountPercentage", result.data.discountPercentage);
             setValue("total", convertStringMoney(result.data.total));
         } catch (error) {
             resolveResponse(error);
@@ -134,6 +139,7 @@ export const ModalTradingTable = ({title, isOpen, setIsOpen, onClose, handleRetu
         setValue("procedureId", item.procedureId);
         setValue("subTotal", convertNumberMoney(item.subTotal));
         setValue("discount", convertNumberMoney(item.discount));
+        setValue("discountPercentage", convertNumberMoney(item.discountPercentage));
         setValue("total", convertNumberMoney(item.total));
     };
     
@@ -196,15 +202,49 @@ export const ModalTradingTable = ({title, isOpen, setIsOpen, onClose, handleRetu
         return procedure ? procedure.name : "";
     };
 
+    const calculatedPercentage = (e: React.ChangeEvent<HTMLInputElement>) => {
+        maskMoney(e);
+        const value = e.target.value;
+        if(value) {
+            const discount = convertMoneyToNumber(value);
+            const subTotal = convertMoneyToNumber(watch("subTotal"));
+            const percentage = (discount / subTotal) * 100;
+
+            const total = subTotal - discount;
+            setValue("total", total >= 0 ? convertNumberMoney(total) : 0);
+            setValue("discountPercentage", percentage > 100 ? 100 : Math.trunc(percentage * 100) / 100);
+        };
+    };
+
+    const calculatedValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if(value) {
+            const discount = convertMoneyToNumber(value);
+            const subTotal = convertMoneyToNumber(watch("subTotal"));
+            const partialValue = (subTotal * discount) / 100;
+            const total = subTotal - partialValue;
+            
+            setValue("total", total >= 0 ? convertNumberMoney(total) : "0,00");
+            setValue("discount", partialValue > total ? subTotal : convertNumberMoney(partialValue));
+        }
+    };
+
     useEffect(() => {
         if(watch("subTotal")) {
             const subTotal = convertMoneyToNumber(watch("subTotal"));
             const discount = convertMoneyToNumber(watch("discount"));
-            const total = subTotal - discount;
+            const discountPercentage = convertMoneyToNumber(watch("discountPercentage"));
 
-            setValue("total", total >= 0 ? convertNumberMoney(total) : 0);
+            const percentage = (discount / subTotal) * 100;
+
+            // console.log(discount)
+            // console.log(discountPercentage)
+            // if(discount)
+            // const total = subTotal - discount;
+
+            // setValue("total", total >= 0 ? convertNumberMoney(total) : 0);
         };
-    }, [watch("subTotal"), watch("discount")]);
+    }, [watch("subTotal"), watch("discount"), watch("discountPercentage")]);
 
     useEffect(() => {
         getSelectServiceModule();
@@ -259,9 +299,13 @@ export const ModalTradingTable = ({title, isOpen, setIsOpen, onClose, handleRetu
                                     <label className={`label slim-label-primary`}>SubTotal</label>
                                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("subTotal")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>  
-                                <div className={`flex flex-col col-span-2 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Desconto</label>
-                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("discount")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                <div className={`flex flex-col col-span-1 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Desconto R$</label>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => calculatedPercentage(e)} {...register("discount")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                </div>  
+                                <div className={`flex flex-col col-span-1 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Desconto %</label>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => calculatedValue(e)} {...register("discountPercentage")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>  
                                 <div className={`flex flex-col col-span-2 mb-2`}>
                                     <label className={`label slim-label-primary`}>Total</label>

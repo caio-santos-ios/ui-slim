@@ -17,6 +17,7 @@ import { convertMoneyToNumber, convertNumberMoney, convertStringMoney } from "@/
 import { toast } from "react-toastify";
 import { ResetAccreditedNetwork, TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
 import { TTradingTable } from "@/types/masterData/tradingTable/tradingTable.type";
+import { TBilling } from "@/types/masterData/billing/billing.type";
 
 type TProp = {
     onClose: () => void;
@@ -29,6 +30,7 @@ type TProp = {
 export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
     const [tradingTables, setTradingTable] = useState<TTradingTable[]>([]);
+    const [billings, setBilling] = useState<TBilling[]>([]);
     const { register, handleSubmit, reset, getValues, formState: { errors }} = useForm<TAccreditedNetwork>({
         defaultValues: ResetAccreditedNetwork
     });
@@ -150,6 +152,19 @@ export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
             setLoading(false);
         }
     };
+    
+    const getSelectBilling = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/billings/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
+            const result = data.result;
+            setBilling(result.data);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const getById = async () => {
         try {
@@ -171,6 +186,7 @@ export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
         
     useEffect(() => {
         getSelectTradingTable();
+        getSelectBilling();
     }, []);
 
     useEffect(() => {
@@ -226,7 +242,19 @@ export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
                         
                     </select>
                 </div>   
-                <div className={`flex flex-col mb-2`}>
+                <div className={`flex flex-col col-span-2 mb-2`}>
+                    <label className={`label slim-label-primary`}>Faturamento</label>
+                    <select {...register("billingId")} className="select slim-select-primary">
+                        <option value="">Selecione</option>
+                        {
+                            billings.map((x: TBilling) => {
+                                return <option key={x.id} value={x.id}>{x.name}</option>
+                            })
+                        }
+                        
+                    </select>
+                </div>   
+                <div className={`flex flex-col col-span-2 mb-2`}>
                     <label className={`label slim-label-primary`}>CEP</label>
                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e, '')} {...register("address.zipCode", {minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
@@ -250,7 +278,7 @@ export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
                     <label className={`label slim-label-primary`}>Estado</label>
                     <input {...register("address.state")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col col-span-3 mb-2`}>
+                <div className={`flex flex-col col-span-7 mb-2`}>
                     <label className={`label slim-label-primary`}>Complemento</label>
                     <input {...register("address.complement")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>

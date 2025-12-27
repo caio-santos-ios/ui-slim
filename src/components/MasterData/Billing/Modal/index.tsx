@@ -5,12 +5,16 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { api } from "@/service/api.service";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/Global/Button";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
 import { toast } from "react-toastify";
-import { ResteBilling, TBilling, TBillingItem } from "@/types/masterData/billing/billing.type";
+import { ResteBilling, ResteBillingItem, TBilling, TBillingItem } from "@/types/masterData/billing/billing.type";
+import { permissionDelete, permissionUpdate } from "@/utils/permission.util";
+import { IconEdit } from "@/components/Global/IconEdit";
+import { IconDelete } from "@/components/Global/IconDelete";
+import { useEffect, useState } from "react";
+import { ModalDelete } from "@/components/Global/ModalDelete";
 
 type TProp = {
     title: string;
@@ -18,18 +22,32 @@ type TProp = {
     setIsOpen: (isOpen: boolean) => void;
     onClose: () => void;
     onSelectValue: (isSuccess: boolean) => void;
-    body?: TBilling
+    id: string
 }
 
-export const ModalBilling = ({title, isOpen, setIsOpen, onClose, onSelectValue, body}: TProp) => {
+export const ModalBilling = ({title, isOpen, setIsOpen, onClose, onSelectValue, id}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
-    const { register, handleSubmit, reset, getValues, formState: { errors }} = useForm<TBilling>();
+    const { register, handleSubmit, reset, getValues, setValue, watch, formState: { errors }} = useForm<TBilling>();
+    const [modalDelete, setModalDelete] = useState<boolean>(false);
+    const items = watch("items") ?? [];
 
     const onSubmit: SubmitHandler<TBilling> = async (body: TBilling) => {
+        if(!body.name) return toast.warning("Nome é obrigatório", {theme: 'colored'});
+        if(!body.description) return toast.warning("Descrição é obrigatório", {theme: 'colored'});
+        if(!body.item.start) return toast.warning("Inicio da Realização é obrigatório", {theme: 'colored'});
+        if(!body.item.end) return toast.warning("Fim da Realização é obrigatório", {theme: 'colored'});
+        if(!body.item.deliveryDate) return toast.warning("Data Entrega de Faturamento é obrigatório", {theme: 'colored'});
+        if(!body.item.billingDate) return toast.warning("Data de Pagamento é obrigatório", {theme: 'colored'});
+
         const myItem = {...body.item};
 
-        myItem.item = (body.items.length + 1).toString();
-        body.items.push(myItem);
+        if(!myItem.item) {
+            myItem.item = (body.items.length + 1).toString();
+            body.items.push(myItem);
+        } else {
+            const index = body.items.findIndex(x => x.item == myItem.item);
+            body.items[index] = myItem;
+        };
         
         if(!body.id) {
           await create(body);
@@ -41,9 +59,14 @@ export const ModalBilling = ({title, isOpen, setIsOpen, onClose, onSelectValue, 
     const create = async (body: TBilling) => {
         try {
             const { status, data} = await api.post(`/billings`, body, configApi());
+            const result = data.result;
+
             resolveResponse({status, ...data});
-            reset(ResteBilling);
+            setValue("item", ResteBillingItem)
             onSelectValue(true);
+
+            setValue("item", ResteBillingItem)
+            getById(result.data.id);
         } catch (error) {
             resolveResponse(error);
         }
@@ -52,11 +75,27 @@ export const ModalBilling = ({title, isOpen, setIsOpen, onClose, onSelectValue, 
     const update = async (body: TBilling) => {
         try {
             const { status, data} = await api.put(`/billings`, body, configApi());
+            const result = data.result;
+
             resolveResponse({status, ...data});
-            reset(ResteBilling);
             onSelectValue(true);
+            setValue("item", ResteBillingItem)
+            getById(result.data.id);
         } catch (error) {
             resolveResponse(error);
+        }
+    };
+
+    const getById = async (id: string) => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/billings/${id}`, configApi());
+            const result = data.result;
+            reset(result.data);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -100,13 +139,27 @@ export const ModalBilling = ({title, isOpen, setIsOpen, onClose, onSelectValue, 
         event.target.value = formatted;
     };
 
-    useEffect(() => {
-        reset(ResteBilling);
+    const getCurrentBody = (action: string, item: any) => {
+        setValue("item", item);
+    };
+    
+    const getDestroy = (item: any) => {
+        setValue("item.item", item.item);
+        setModalDelete(true);
+    };
 
-        if(body?.id) {
-            reset(body);
-        };
-    }, [body]);
+    const destroyItem = async () => {
+        const newItems = items.filter(x => x.item != watch("item.item"));
+
+        setValue("items", newItems);
+        await update({...getValues()});
+        setModalDelete(false);
+    };
+    
+    useEffect(() => {
+        if(!id) return;
+        getById(id);
+    }, [id]);
 
     return (
         <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
@@ -143,12 +196,12 @@ export const ModalBilling = ({title, isOpen, setIsOpen, onClose, onSelectValue, 
                                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskDayMonth(e)} {...register("item.deliveryDate")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                
                                 <div className={`flex flex-col col-span-2 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Data de Faturamento</label>
+                                    <label className={`label slim-label-primary`}>Data de Pagamento</label>
                                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskDayMonth(e)} {...register("item.billingDate")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>           
                             </div>                          
                             {
-                                body!.items.length > 0 &&
+                                items.length > 0 &&
                                 <div className="slim-container-table w-full bg-white shadow-sm">
                                     <table className="min-w-full divide-y divide-gray-200">
                                         <thead className="bg-gray-50 slim-table-thead">
@@ -156,14 +209,14 @@ export const ModalBilling = ({title, isOpen, setIsOpen, onClose, onSelectValue, 
                                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Inicio da Realização</th>
                                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Fim da Realização</th>
                                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data Entrega de Faturamento</th>
-                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data de Faturamento</th>
-                                                {/* <th scope="col" className={`px-4 py-3 text-center text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th> */}
+                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data de Pagamento</th>
+                                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
                                             </tr>
                                         </thead>
                 
                                         <tbody className="bg-white divide-y divide-gray-100">
                                             {
-                                                body?.items.map((x: TBillingItem) => {
+                                                items.map((x: TBillingItem) => {
                                                     return (
                                                         <tr key={x.item}>                                            
                                                             <td className="px-4 py-2">{x.start}</td>
@@ -172,18 +225,14 @@ export const ModalBilling = ({title, isOpen, setIsOpen, onClose, onSelectValue, 
                                                             <td className="px-4 py-2">{x.billingDate}</td>
                                                             <td className="p-2">
                                                                 <div className="flex justify-center gap-3">
-                                                                    {/* {
-                                                                        permissionUpdate("1", "11") &&
-                                                                        <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
-                                                                    }                                                    
                                                                     {
                                                                         permissionUpdate("1", "11") &&
-                                                                        <IconEditPhoto action="editPhoto" obj={x} getObj={getCurrentBody}/>
-                                                                    }                                                    
+                                                                        <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
+                                                                    }                                                                                                       
                                                                     {
                                                                         permissionDelete("1", "11") &&
                                                                         <IconDelete obj={x} getObj={getDestroy}/>                                                   
-                                                                    } */}
+                                                                    }
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -200,6 +249,13 @@ export const ModalBilling = ({title, isOpen, setIsOpen, onClose, onSelectValue, 
                                 <Button type="submit" text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>
+
+                        <ModalDelete 
+                            title='Excluír Item'
+                            isOpen={modalDelete} setIsOpen={() => setModalDelete(modalDelete)} 
+                            onClose={() => setModalDelete(false)}
+                            onSelectValue={destroyItem}
+                        />
                     </DialogPanel>
                 </div>
             </div>

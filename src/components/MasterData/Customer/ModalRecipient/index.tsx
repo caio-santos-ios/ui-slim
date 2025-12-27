@@ -167,8 +167,8 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         try {
             setLoading(true);
             const {data} = await api.get(`/plans?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1&type=${contractorType}`, configApi());
-            // const result = data.result;
-            // setPlan(result.data ?? []);;
+            const result = data.result;
+            setPlan(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {

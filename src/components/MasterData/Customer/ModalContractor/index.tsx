@@ -180,7 +180,7 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
     const getSelectSeller = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/sellers?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1`, configApi());
+            const {data} = await api.get(`/sellers/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
             const result = data.result;
             setSeller(result.data ?? []);
         } catch (error) {

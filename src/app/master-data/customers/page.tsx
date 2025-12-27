@@ -28,9 +28,11 @@ import { IconDelete } from "@/components/Global/IconDelete";
 import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
-  { key: "corporateName", title: "Contratante" },
+  { key: "recipientCode", title: "ID" },
+  { key: "recipientName", title: "Beneficiário" },
+  { key: "recipientCPF", title: "CPF" },
   { key: "type", title: "Tipo de Cliente" },
-  { key: "document", title: "Documento" },
+  { key: "typePlan", title: "Tipo de Plano" },
   { key: "createdAt", title: "Data de Cadastro" },
 ];
 
@@ -59,7 +61,7 @@ export default function Customer() {
       setLoading(true);
       const {data} = await api.get(`/customers?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
-
+      console.log(result.data[1])
       setPagination({
         currentPage: result.currentPage,
         data: result.data,
@@ -102,7 +104,7 @@ export default function Customer() {
   };
   
   useEffect(() => {
-    if(permissionRead("1", "12")) {
+    if(permissionRead("1", "A12")) {
       getAll();
     };
   }, []);
@@ -219,7 +221,6 @@ export default function Customer() {
                 </DataTable>
 
                 <NotData />
-                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 

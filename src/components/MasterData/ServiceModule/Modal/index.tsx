@@ -30,15 +30,12 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
 
     const onSubmit: SubmitHandler<TServiceModule> = async (body: TServiceModule) => {
         const formBody = new FormData();
-        const cost: any = convertStringMoney(body.cost.toString());
-        const price: any = convertStringMoney(body.price.toString());
 
         formBody.append("description", body.description);
         formBody.append("active", body.active);
         formBody.append("cost", body.cost);
+        formBody.append("price", body.price);
         formBody.append("name", body.name);
-        formBody.append("cost", cost);
-        formBody.append("price", price);
         formBody.append("uri", body.uri);
         formBody.append("type", body.type);
 

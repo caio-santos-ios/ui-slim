@@ -6,6 +6,7 @@ export type TTradingTable = {
     procedureId: string;
     subTotal: any;
     discount: any;
+    discountPercentage: any;
     total: any;
     items: TTradingTableItem[]
 }
@@ -18,6 +19,7 @@ export const ResetTradingTable: TTradingTable = {
     procedureId: "",
     subTotal: 0,
     discount: 0,
+    discountPercentage: 0,
     total: 0,
     items: []
 }
@@ -28,6 +30,7 @@ export type TTradingTableItem = {
     procedureId: string;
     subTotal: any;
     discount: any;
+    discountPercentage: any;
     total: any;
 }
 
@@ -37,5 +40,6 @@ export const ResetTradingTableItem: TTradingTableItem = {
     procedureId: "",
     subTotal: 0,
     discount: 0,
+    discountPercentage: 0,
     total: 0
 }

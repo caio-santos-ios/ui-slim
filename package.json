@@ -12,6 +12,7 @@
     "@headlessui/react": "^2.2.9",
     "@maskito/core": "^5.0.0",
     "@maskito/react": "^5.0.0",
+    "@react-pdf/renderer": "^4.3.1",
     "axios": "^1.13.2",
     "cookie": "^1.1.1",
     "jotai": "^2.15.2",

@@ -10,6 +10,7 @@ export type TAccreditedNetwork = {
     email: string;
     notes: string;
     serviceModuleId: string;
+    billingId: string;
     effectiveDate?: any;
     consumptionLimit: any;
     tradingTable: string;
@@ -27,6 +28,7 @@ export const ResetAccreditedNetwork: TAccreditedNetwork = {
     email: "",
     notes: "",
     serviceModuleId: "",
+    billingId: "",
     effectiveDate: "",
     consumptionLimit: 0,
     tradingTable: "",

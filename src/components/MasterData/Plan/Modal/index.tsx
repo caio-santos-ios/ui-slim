@@ -36,15 +36,12 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
         body.serviceModuleIds = modules.map(x => x.id!).join(",");
 
         const formBody = new FormData();
-        const cost: any = convertStringMoney(body.cost.toString());
-        const price: any = convertStringMoney(body.price.toString());
 
         formBody.append("description", body.description);
         formBody.append("active", body.active);
         formBody.append("cost", body.cost);
+        formBody.append("price", body.price);
         formBody.append("name", body.name);
-        formBody.append("cost", cost);
-        formBody.append("price", price);
         formBody.append("type", body.type);
         formBody.append("uri", body.uri);
         if(body.serviceModuleIds) {

@@ -45,10 +45,9 @@ export default function Procedure() {
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
  
-  const getAll = async () => {
+  const getAll = async (queryString: string = "") => {
     try {
-      setLoading(true);
-      const {data} = await api.get(`/procedures?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/procedures?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}${queryString}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -59,8 +58,6 @@ export default function Procedure() {
       });
     } catch (error) {
       resolveResponse(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -119,18 +116,17 @@ export default function Procedure() {
     setModal(false);
   };
   
-  const passPage = async (action: "previous" | "next") => {
-    if(pagination.totalPages == 1) return;
-    
-    if(action === 'previous' && pagination.currentPage > 1) {
-      pagination.currentPage -= 1;
-      await getAll();
-    };
+  const search = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    let firstSearch = ``;
 
-    if(action === 'next' && pagination.currentPage > pagination.totalPages) {
-      pagination.currentPage -= 1;
-      await getAll();
+    if(value) {
+      firstSearch = `&regex$or$code=${value}&regex$or$name=${value}&regex$or$description=${value}&regex$or$_service_module.name=${value}`;
+    } else {
+      firstSearch = "";
     };
+    
+    await getAll(firstSearch);
   };
 
   return (
@@ -147,36 +143,17 @@ export default function Procedure() {
               <SlimContainer breadcrump="Procedimentos" breadcrumpIcon="MdChecklist"
                 buttons={
                   <>
-                  {
+                    {
                       permissionCreate("1", "16") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
                   </>
+                }
+                inputSearch={
+                  <>
+                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => search(e)} className="border border-gray-400 w-96 h-8" type="text" placeholder="Busca rápida" />
+                  </>
                 }>
-
-                <ul className="grid gap-2 slim-list-card lg:hidden">
-                  {
-                    pagination.data.map((x: TProcedure, i: number) => {
-                      return (
-                        <Card key={i}
-                          buttons={
-                            <>
-                              <MenuItem>
-                                <button onClick={() => openModal("edit", x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Editar</button>
-                              </MenuItem>
-                              <MenuItem>
-                                <button onClick={() => openModalDelete(x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Excluír</button>
-                              </MenuItem>
-                            </>
-                          }
-                        >
-                          <p>Código: <span className="font-bold">{x.code}</span></p>
-                          <p>Nome: <span className="font-bold">{x.name}</span></p>
-                        </Card>                       
-                      )
-                    })
-                  }
-                </ul>
 
                 <DataTable columns={columns}>
                   <>

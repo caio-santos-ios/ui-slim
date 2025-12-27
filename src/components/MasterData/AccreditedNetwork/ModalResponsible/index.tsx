@@ -134,7 +134,7 @@ export const ModalResponsible = ({id, onSuccess, onClose}: TProp) => {
             setLoading(true);
             const {data} = await api.get(`/accredited-networks/${id}`, configApi());
             const result = data.result;
-            console.log(result.data.responsible)
+
             setValue("responsible", {
                 ...result.data.responsible,
                 dateOfBirth: result.data.responsible.dateOfBirth.toString().split('T')[0]

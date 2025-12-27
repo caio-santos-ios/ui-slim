@@ -33,6 +33,7 @@ export const TableTelemedicine = ({list}: TProp) => {
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Data de Nascimento</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>CPF</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Nome</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Ativo no PasBem</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Status</th>
                             </tr>
                         </thead>
@@ -45,6 +46,9 @@ export const TableTelemedicine = ({list}: TProp) => {
                                             <td className="px-4 py-2">{x.dateOfBirth}</td>
                                             <td className="px-4 py-2">{formattedCPF(x.cpf)}</td>
                                             <td className="px-4 py-2">{x.name}</td>
+                                            <td className="px-4 py-2">
+                                                <span className={`${x.system ? 'bg-green-300 text-green-800' : 'bg-red-300 text-red-800'} py-1 px-5 rounded-lg font-semibold`}>{x.system ? 'SIM' : 'NÃO'}</span>                                                
+                                            </td>
                                             <td className="px-4 py-2">
                                                 {
                                                     permissionUpdate("2", "B23") &&
