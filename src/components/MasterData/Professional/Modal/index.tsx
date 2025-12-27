@@ -257,19 +257,19 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                 </div>                                
                                 <div className={`flex flex-col col-span-2 mb-2`}>
                                     <label className={`label slim-label-primary`}>E-mail</label>
-                                    <input {...register("email", {required: "E-mail é obrigatório", pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("email", {pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Telefone</label>
-                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("phone", {required: "Telefone é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskPhone(e)} {...register("phone")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>CPF</label>
-                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskCPF(e)} {...register("cpf", {required: "CPF é obrigatório", validate: value => validatorCPF(value) || "CPF inválido"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskCPF(e)} {...register("cpf", {validate: value => validatorCPF(value) || "CPF inválido"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>CEP</label>
-                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e)} {...register("address.zipCode", {required: "CEP é obrigatório", minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e)} {...register("address.zipCode")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Número</label>
@@ -320,7 +320,7 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary flex gap-1 items-center`}>Registro <span onClick={() => genericTable("registro-profissional")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
-                                    <select className="select slim-select-primary" {...register("registration", {required: "Registro é obrigatório"})}>
+                                    <select className="select slim-select-primary" {...register("registration")}>
                                         <option value="">Selecione</option>
                                         {
                                             registration.map((x: any, i: number) => (
@@ -331,7 +331,7 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                 </div>                    
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Código</label>
-                                    <input {...register("number", {required: "Código é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("number")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>             
                             </div>                          
                                                    
