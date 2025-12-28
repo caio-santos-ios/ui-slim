@@ -48,7 +48,7 @@ export default function Supplier() {
   };
 
   useEffect(() => {
-    if(permissionRead("1", "24")) {
+    if(permissionRead("1", "A24")) {
       getAll();
     };
   }, []);
@@ -68,7 +68,7 @@ export default function Supplier() {
                 buttons={
                   <>
                   {
-                      permissionCreate("1", "24") &&
+                      permissionCreate("1", "A24") &&
                       <button onClick={() => setModal(true)} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
                   </>

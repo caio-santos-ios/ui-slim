@@ -93,7 +93,7 @@ export default function Dashboard() {
   };
   
   useEffect(() => {
-    if(permissionRead("1", "23")) {
+    if(permissionRead("1", "A23")) {
       getAll();
     };
   }, []);
@@ -134,7 +134,7 @@ export default function Dashboard() {
                 buttons={
                   <>
                   {
-                    permissionCreate("1", "23") &&
+                    permissionCreate("1", "A23") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
                   </>
@@ -183,11 +183,11 @@ export default function Dashboard() {
                                 <td className="p-2">
                                   <div className="flex justify-center gap-3">
                                     {
-                                      permissionUpdate("1", "23") &&
+                                      permissionUpdate("1", "A23") &&
                                       <IconEdit action="edit" obj={x} getObj={openModal}/>
                                     }
                                     {
-                                      permissionDelete("1", "23") &&
+                                      permissionDelete("1", "A23") &&
                                       <IconDelete obj={x} getObj={openModal}/>                                                
                                     }
                                   </div>

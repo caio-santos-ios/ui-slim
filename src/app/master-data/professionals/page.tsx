@@ -91,7 +91,7 @@ export default function Professional() {
   };
   
   useEffect(() => {
-    if(permissionRead("1", "13")) {
+    if(permissionRead("1", "A13")) {
       getAll();
     };
   }, []);
@@ -159,7 +159,7 @@ export default function Professional() {
                 buttons={
                   <>
                   {
-                    permissionCreate("1", "13") &&
+                    permissionCreate("1", "A13") &&
                     <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                   }
                   </>
@@ -179,11 +179,11 @@ export default function Professional() {
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
                                 {
-                                  permissionUpdate("1", "13") &&
+                                  permissionUpdate("1", "A13") &&
                                   <MdEdit  onClick={() => openModal("edit", x)} /> 
                                 }
                                 {
-                                  permissionDelete("1", "13") &&
+                                  permissionDelete("1", "A13") &&
                                   <FaTrash onClick={() => openModalDelete(x)} />
                                 }
                               </div>

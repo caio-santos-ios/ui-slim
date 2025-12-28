@@ -80,7 +80,7 @@ export default function ServiceModules() {
   };
   
   useEffect(() => {
-    if(permissionRead("1", "14")) {
+    if(permissionRead("1", "A14")) {
       getAll();
     };
   }, []);
@@ -129,7 +129,7 @@ export default function ServiceModules() {
                 buttons={
                   <>
                   {
-                    permissionCreate("1", "14") &&
+                    permissionCreate("1", "A14") &&
                     <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                   }
                   </>
@@ -145,11 +145,11 @@ export default function ServiceModules() {
                             <div className="place-self-end-safe">
                               <div className="flex gap-3">
                                 {
-                                  permissionUpdate("1", "14") &&
+                                  permissionUpdate("1", "A14") &&
                                   <IconEdit action="edit" obj={x} getObj={openModal} />
                                 }
                                 {
-                                  permissionDelete("1", "14") &&
+                                  permissionDelete("1", "A14") &&
                                   <IconDelete obj={x} getObj={openModalDelete} />
                                 }
                               </div>

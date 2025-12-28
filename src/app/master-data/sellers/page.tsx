@@ -90,7 +90,7 @@ export default function Seller() {
   };
   
   useEffect(() => {
-    if(permissionRead("1", "18")) {
+    if(permissionRead("1", "A18")) {
       getAll();
     };
   }, []);
@@ -137,34 +137,11 @@ export default function Seller() {
                 buttons={
                   <>
                     {
-                      permissionCreate("1", "18") &&
+                      permissionCreate("1", "A18") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
                   </>
                 }>
-
-                <ul className="grid gap-2 slim-list-card lg:hidden">
-                  {
-                    pagination.data.map((x: TSeller, i: number) => {
-                      return (
-                        <Card key={i}
-                          buttons={
-                            <>
-                              <MenuItem>
-                                <button onClick={() => openModal("edit", x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Editar</button>
-                              </MenuItem>
-                              <MenuItem>
-                                <button onClick={() => openModalDelete(x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Excluír</button>
-                              </MenuItem>
-                            </>
-                          }
-                        >
-                          <p>Nome: <span className="font-bold">{x.name}</span></p>
-                        </Card>                       
-                      )
-                    })
-                  }
-                </ul>
 
                 <DataTable columns={columns}>
                   <>
@@ -180,11 +157,11 @@ export default function Seller() {
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
                                 {
-                                  permissionUpdate("1", "18") &&
+                                  permissionUpdate("1", "A18") &&
                                   <MdEdit  onClick={() => openModal("edit", x)} /> 
                                 }
                                 {
-                                  permissionDelete("1", "18") &&
+                                  permissionDelete("1", "A18") &&
                                   <FaTrash onClick={() => openModalDelete(x)} />
                                 }
                               </div>

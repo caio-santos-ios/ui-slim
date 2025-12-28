@@ -86,11 +86,11 @@ export const TableTradingTable = ({list, handleReturnModal}: TProp) => {
                                             <td className="p-2">
                                                 <div className="flex justify-center gap-3">       
                                                     {
-                                                        permissionUpdate("1", "24") &&
+                                                        permissionUpdate("1", "A24") &&
                                                         <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
                                                     }   
                                                     {
-                                                        permissionDelete("1", "24") &&
+                                                        permissionDelete("1", "A24") &&
                                                         <IconDelete obj={x} getObj={getDestroy}/>                                                   
                                                     }                                          
                                                 </div>

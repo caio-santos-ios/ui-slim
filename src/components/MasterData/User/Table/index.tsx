@@ -102,15 +102,15 @@ export const TableUser = ({list, handleReturnModal}: TProp) => {
                                             <td className="p-2">
                                                 <div className="flex justify-center gap-3">
                                                     {
-                                                        permissionUpdate("1", "11") &&
+                                                        permissionUpdate("1", "A11") &&
                                                         <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
                                                     }                                                    
                                                     {
-                                                        permissionUpdate("1", "11") &&
+                                                        permissionUpdate("1", "A11") &&
                                                         <IconEditPhoto action="editPhoto" obj={x} getObj={getCurrentBody}/>
                                                     }                                                    
                                                     {
-                                                        permissionDelete("1", "11") &&
+                                                        permissionDelete("1", "A11") &&
                                                         <IconDelete obj={x} getObj={getDestroy}/>                                                   
                                                     }
                                                 </div>

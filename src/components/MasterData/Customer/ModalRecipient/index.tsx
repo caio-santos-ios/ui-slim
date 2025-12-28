@@ -222,6 +222,53 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="card-modal">
+            
+            <div className="grid grid-cols-1 gap-2 mb-2">
+                <div className="w-full overflow-x-auto hidden lg:block">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Nome</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>CPF</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data de Nascimento</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Gênero</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Telefone</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>E-mail</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
+                            </tr>
+                        </thead>
+
+                        <tbody className="bg-white divide-y divide-gray-100">
+                            {
+                                customerRecipients.map((x: any) => {
+                                    return (
+                                        <tr key={x.id}>
+                                           
+                                            <td className="px-4 py-2">{x.name}</td>
+                                            <td className="px-4 py-2">{x.cpf}</td>
+                                            <td className="px-4 py-2">{maskDate(x.dateOfBirth)}</td>
+                                            <td className="px-4 py-2">{x.genderDescription}</td>
+                                            <td className="px-4 py-2">{x.phone}</td>
+                                            <td className="px-4 py-2">{x.email}</td>
+                                            <td className="p-2">
+                                                <div className="flex gap-3">
+                                                    <div onClick={() => getCurrentBody(x)} className="cursor-pointer text-yellow-400 hover:text-yellow-500">
+                                                        <MdEdit />
+                                                    </div>
+                                                    <div onClick={() => getDestroy(x.id)} className="cursor-pointer text-red-400 hover:text-red-500">
+                                                        <FaTrash />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-6 gap-2 mb-2">
                 <div className={`flex flex-col mb-2`}>
                     <label className={`label slim-label-primary`}>CPF</label>
@@ -320,52 +367,6 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
             <div className="flex justify-end gap-2 w-12/12 mt-3 mb-4">
                 <Button type="button" click={cancel} text="Cancelar" theme="primary-light" styleClassBtn=""/>
                 <Button type="submit" text={`${watch("id") ? 'Salvar' : 'Adicionar'}`} theme="primary" styleClassBtn=""/>
-            </div>
-
-            <div className="grid grid-cols-1 gap-2 mb-2">
-                <div className="w-full overflow-x-auto hidden lg:block">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Nome</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>CPF</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data de Nascimento</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Gênero</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Telefone</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>E-mail</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
-                            </tr>
-                        </thead>
-
-                        <tbody className="bg-white divide-y divide-gray-100">
-                            {
-                                customerRecipients.map((x: any) => {
-                                    return (
-                                        <tr key={x.id}>
-                                           
-                                            <td className="px-4 py-2">{x.name}</td>
-                                            <td className="px-4 py-2">{x.cpf}</td>
-                                            <td className="px-4 py-2">{maskDate(x.dateOfBirth)}</td>
-                                            <td className="px-4 py-2">{x.genderDescription}</td>
-                                            <td className="px-4 py-2">{x.phone}</td>
-                                            <td className="px-4 py-2">{x.email}</td>
-                                            <td className="p-2">
-                                                <div className="flex gap-3">
-                                                    <div onClick={() => getCurrentBody(x)} className="cursor-pointer text-yellow-400 hover:text-yellow-500">
-                                                        <MdEdit />
-                                                    </div>
-                                                    <div onClick={() => getDestroy(x.id)} className="cursor-pointer text-red-400 hover:text-red-500">
-                                                        <FaTrash />
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                            }
-                        </tbody>
-                    </table>
-                </div>
             </div>
             
             <div className="flex justify-end gap-2 w-12/12 mt-3 mb-4">

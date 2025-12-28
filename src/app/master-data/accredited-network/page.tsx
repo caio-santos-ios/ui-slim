@@ -97,7 +97,7 @@ export default function AccreditedNetwork() {
   };
   
   useEffect(() => {
-    if(permissionRead("1", "21")) {
+    if(permissionRead("1", "A21")) {
       getAll();
     };
   }, []);
@@ -146,7 +146,7 @@ export default function AccreditedNetwork() {
                 buttons={
                   <>
 {
-                      permissionCreate("1", "21") &&
+                      permissionCreate("1", "A21") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }                  </>
                 }>
@@ -180,11 +180,11 @@ export default function AccreditedNetwork() {
                                   <td className="p-2">
                                     <div className="flex gap-3">
                                       {
-                                        permissionUpdate("1", "21") &&
+                                        permissionUpdate("1", "A21") &&
                                         <IconEdit action="edit" obj={x} getObj={openModal}/>
                                       }
                                       {
-                                        permissionDelete("1", "21") &&
+                                        permissionDelete("1", "A21") &&
                                         <IconDelete obj={x} getObj={openModal}/>                                                
                                       }
                                     </div>

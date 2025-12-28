@@ -89,7 +89,7 @@ export default function Procedure() {
   };
   
   useEffect(() => {
-    if(permissionRead("1", "16")) {
+    if(permissionRead("1", "A16")) {
       getAll();
     };
   }, []);
@@ -144,14 +144,17 @@ export default function Procedure() {
                 buttons={
                   <>
                     {
-                      permissionCreate("1", "16") &&
+                      permissionCreate("1", "A16") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
                   </>
                 }
                 inputSearch={
                   <>
-                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => search(e)} className="border border-gray-400 w-96 h-8" type="text" placeholder="Busca rápida" />
+                    {
+                      permissionRead("1", "A16") && 
+                      <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => search(e)} className="border border-gray-400 w-96 h-8" type="text" placeholder="Busca rápida" />
+                    }
                   </>
                 }>
 
@@ -169,11 +172,11 @@ export default function Procedure() {
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
                                 {
-                                  permissionUpdate("1", "16") &&
+                                  permissionUpdate("1", "A16") &&
                                   <MdEdit  onClick={() => openModal("edit", x)} /> 
                                 }
                                 {
-                                  permissionDelete("1", "16") &&
+                                  permissionDelete("1", "A16") &&
                                   <FaTrash onClick={() => openModalDelete(x)} />
                                 }
                               </div>

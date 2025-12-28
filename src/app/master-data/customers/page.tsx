@@ -61,7 +61,7 @@ export default function Customer() {
       setLoading(true);
       const {data} = await api.get(`/customers?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
-      console.log(result.data[1])
+
       setPagination({
         currentPage: result.currentPage,
         data: result.data,

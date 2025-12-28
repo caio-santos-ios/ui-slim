@@ -18,7 +18,7 @@ import { ModalPlan } from "@/components/MasterData/Plan/Modal";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { CardImage } from "@/components/MasterData/Plan/CardImage";
-import { permissionCreate, permissionRead } from "@/utils/permission.util";
+import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 export default function Plan() {
   const [_, setLoading] = useAtom(loadingAtom);
@@ -76,7 +76,7 @@ export default function Plan() {
   };
   
   useEffect(() => {
-    if(permissionRead("1", "15")) {
+    if(permissionRead("1", "A15")) {
       getAll();
     };
   }, []);
@@ -125,7 +125,7 @@ export default function Plan() {
                 buttons={
                   <>
                     {
-                      permissionCreate("1", "15") &&
+                      permissionCreate("1", "A15") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
                   </>
@@ -140,8 +140,14 @@ export default function Plan() {
                           <CardImage key={x.id} uriImage={x.image} alt="foto do plano" title={x.name} cost={x.cost} price={x.price} description={x.description}>
                             <div className="place-self-end-safe">
                               <div className="flex gap-3">
-                                <IconEdit action="edit" obj={x} getObj={openModal} />
-                                <IconDelete obj={x} getObj={openModalDelete} />
+                                {
+                                  permissionUpdate("1", "A15") &&
+                                  <IconEdit action="edit" obj={x} getObj={openModal} />
+                                }
+                                {
+                                  permissionDelete("1", "A15") &&
+                                  <IconDelete obj={x} getObj={openModalDelete} />
+                                }
                               </div>
                             </div>
                           </CardImage>

@@ -88,7 +88,7 @@ export default function Commissions() {
   };
   
   useEffect(() => {
-    if(permissionRead("1", "20")) {
+    if(permissionRead("1", "A20")) {
       getAll();
     };
   }, []);
@@ -135,7 +135,7 @@ export default function Commissions() {
                 buttons={
                   <>
                     {
-                      permissionCreate("1", "20") &&
+                      permissionCreate("1", "A20") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
                   </>
@@ -179,11 +179,11 @@ export default function Commissions() {
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
                                 {
-                                  permissionUpdate("1", "20") &&
+                                  permissionUpdate("1", "A20") &&
                                 <MdEdit  onClick={() => openModal("edit", x)} /> 
                                 }
                                 {
-                                  permissionDelete("1", "20") &&
+                                  permissionDelete("1", "A20") &&
                                 <FaTrash onClick={() => openModalDelete(x)} />
                                 }
                               </div>

@@ -123,7 +123,7 @@ export default function Billing() {
                 buttons={
                   <>
                   {
-                    permissionCreate("1", "17") &&
+                    permissionCreate("1", "A17") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
                   </>
@@ -191,7 +191,6 @@ export default function Billing() {
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={resetModal}
               onSelectValue={handleReturnModal}
-              // body={currentBody}
               id={currentBody.id!}
             />      
 
