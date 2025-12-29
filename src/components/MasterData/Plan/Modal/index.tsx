@@ -11,7 +11,7 @@ import { maskMoney } from "@/utils/mask.util";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
 import { toast } from "react-toastify";
-import { convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
+import { convertMoneyToNumber, convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
 import { ResetPlan, TPlan } from "@/types/masterData/plans/plans.type";
 import MultiSelect from "@/components/Global/MultiSelect";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
@@ -34,13 +34,12 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
 
     const onSubmit: SubmitHandler<TPlan> = async (body: TPlan) => {
         body.serviceModuleIds = modules.map(x => x.id!).join(",");
-
         const formBody = new FormData();
 
         formBody.append("description", body.description);
         formBody.append("active", body.active);
-        formBody.append("cost", body.cost);
-        formBody.append("price", body.price);
+        formBody.append("cost", convertMoneyToNumber(body.cost) as any);
+        formBody.append("price", convertMoneyToNumber(body.price) as any);
         formBody.append("name", body.name);
         formBody.append("type", body.type);
         formBody.append("uri", body.uri);
@@ -128,7 +127,6 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
         reset(ResetPlan);
 
         if(body) {
-            console.log(body)
             body.price = convertNumberMoney(body.price);
             body.cost = convertNumberMoney(body.cost);
             reset(body);
