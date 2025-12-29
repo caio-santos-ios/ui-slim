@@ -12,7 +12,7 @@ import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
 import { toast } from "react-toastify";
 import { ResetServiceModule, TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
-import { convertStringMoney } from "@/utils/convert.util";
+import { convertMoneyToNumber, convertStringMoney } from "@/utils/convert.util";
 
 type TProp = {
     title: string;
@@ -33,8 +33,8 @@ export const ModalServiceModule = ({title, isOpen, setIsOpen, onClose, onSelectV
 
         formBody.append("description", body.description);
         formBody.append("active", body.active);
-        formBody.append("cost", body.cost);
-        formBody.append("price", body.price);
+        formBody.append("cost", convertMoneyToNumber(body.cost) as any);
+        formBody.append("price", convertMoneyToNumber(body.price) as any);
         formBody.append("name", body.name);
         formBody.append("uri", body.uri);
         formBody.append("type", body.type);
