@@ -27,12 +27,22 @@ import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
-const columns: {key: string; title: string}[] = [
-  { key: "recipientCode", title: "ID" },
-  { key: "recipientName", title: "Beneficiário" },
-  { key: "recipientCPF", title: "CPF" },
+const columns1: {key: string; title: string}[] = [
+  { key: "corporateName", title: "Contratante" },
+  { key: "document", title: "CNPJ/CPF" },
+  { key: "type", title: "Tipo de Cliente" },
+  { key: "effectiveDate", title: "Data da Vigência" },
+  { key: "createdAt", title: "Data de Cadastro" },
+];
+
+const columns2: {key: string; title: string}[] = [
+  { key: "code", title: "ID" },
+  { key: "name", title: "Beneficiário" },
+  { key: "cpf", title: "CPF" },
   { key: "type", title: "Tipo de Cliente" },
   { key: "typePlan", title: "Tipo de Plano" },
+  { key: "bond", title: "Vínculo" },
+  { key: "effectiveDate", title: "Data da Vigência" },
   { key: "createdAt", title: "Data de Cadastro" },
 ];
 
@@ -51,15 +61,16 @@ export default function Customer() {
     deliveryDate: "",
     billingDate: ""
   });
-
+  const [vision, setVision] = useState<string>("contractor");
+  const [columns, setCollumns] = useState<any[]>(columns1);
 
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
  
-  const getAll = async () => {
+  const getAll = async (uri: string = "customers") => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/customers?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -79,7 +90,7 @@ export default function Customer() {
     if(body) {
       const newBody = {...body}
       setCurrentBody(newBody);
-      setId(body.id);
+      setId(vision == "contractor" ? body.id : body.contractorId);
     };
     
     setTypeModal(action);
@@ -93,7 +104,8 @@ export default function Customer() {
 
   const destroy = async () => {
     try {
-      const { status } = await api.delete(`/customers/${currentBody?.id}`, configApi());
+      const uri = vision == "contractor" ? "customers" : "customer-recipients";
+      const { status } = await api.delete(`/${uri}/${currentBody?.id}`, configApi());
       resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
       resetModal();
@@ -101,6 +113,13 @@ export default function Customer() {
     } catch (error) {
       resolveResponse(error);
     }
+  };
+
+  const checked = async () => {
+    setVision(vision == "contractor" ? "recipient" : "contractor");
+    setCollumns(vision == "contractor" ? columns2 : columns1);
+    const uri = vision == "contractor" ? "customer-recipients" : "customers";
+    await getAll(uri);
   };
   
   useEffect(() => {
@@ -161,34 +180,21 @@ export default function Customer() {
                 buttons={
                   <>
                     {
-                      permissionCreate("1", "12") &&
+                      permissionUpdate("1", "A12") &&
+                      <div className={`flex items-end`}>
+                          <span className="mr-2 font-bold">VISÃO: {vision == "contractor" ? "Contratante" : "Beneficiário"}</span>
+                          <label className="slim-switch">
+                            <input onChange={async () => checked()} type="checkbox"/>
+                            <span className="slider-default"></span>
+                          </label>
+                      </div>   
+                    }
+                    {
+                      permissionCreate("1", "A12") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
                   </>
                 }>
-
-                <ul className="grid gap-2 slim-list-card lg:hidden">
-                  {
-                    pagination.data.map((x: any, i: number) => {
-                      return (
-                        <Card key={i}
-                          buttons={
-                            <>
-                              <MenuItem>
-                                <button onClick={() => openModal("edit", x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Editar</button>
-                              </MenuItem>
-                              <MenuItem>
-                                <button onClick={() => openModalDelete(x)} className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-focus:bg-white/10">Excluír</button>
-                              </MenuItem>
-                            </>
-                          }
-                        >
-                          <p>Nome: <span className="font-bold">{x.name}</span></p>
-                        </Card>                       
-                      )
-                    })
-                  }
-                </ul>
 
                 <DataTable columns={columns}>
                   <>
@@ -198,17 +204,18 @@ export default function Customer() {
                           <tr key={i}>
                             {columns.map((col: any) => (
                               <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
-                                {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "cost" ? convertNumberMoney(x.cost) : (x as any)[col.key]}
+                                {col.key == 'createdAt' || col.key == 'effectiveDate' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "cost" ? convertNumberMoney(x.cost) : (x as any)[col.key]}
                               </td>        
-                            ))}   
+                            ))}  
+
                             <td className="text-center">
                               <div className="flex justify-center gap-2">
                                 {
-                                  permissionUpdate("1", "12") &&
+                                  permissionUpdate("1", "A12") &&
                                   <IconEdit action="edit" obj={x} getObj={openModal}/>
                                 }
                                 {
-                                  permissionDelete("1", "12") &&
+                                  permissionDelete("1", "A12") &&
                                   <IconDelete obj={x} getObj={openModalDelete}/>
                                 }
                               </div>

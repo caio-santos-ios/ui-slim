@@ -15,9 +15,13 @@ export type TRecipient = {
     notes: string;
     contractorId: string;
     bond: string;
+    subTotal: any;
+    total: any;
+    discount: any;
+    discountPercentage: any;
 }
 
-export const ResetCustomerRecipient = {
+export const ResetCustomerRecipient: TRecipient = {
     id: "",
     name: "",
     cpf: "",
@@ -30,6 +34,10 @@ export const ResetCustomerRecipient = {
     email: "",
     planId: "",
     notes: "",
-    contractId: "",
-    bond: ""
+    contractorId: "",
+    bond: "",
+    discount: 0,
+    discountPercentage: 0,
+    subTotal: 0,
+    total: 0
 }

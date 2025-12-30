@@ -6,7 +6,7 @@ import { configApi, resolveResponse } from "@/service/config.service";
 import { api } from "@/service/api.service";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/Global/Button";
-import { maskCNPJ, maskCPF, maskDate, maskPhone } from "@/utils/mask.util";
+import { maskCNPJ, maskCPF, maskDate, maskMoney, maskPhone } from "@/utils/mask.util";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
 import { MdEdit } from "react-icons/md";
@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
 import { FaCirclePlus } from "react-icons/fa6";
 import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
+import { convertInputStringMoney, convertMoneyToNumber, convertNumberMoney } from "@/utils/convert.util";
 
 type TProp = {
     isOpen: boolean;
@@ -40,7 +41,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     const [customerRecipients, setCustomerRecipient] = useState<any[]>([]);
     const [currentId, setCureentId] = useState<string>("");
     const [tabCurrent, setTabCurrent] = useState<"data" | "dataResponsible" | "contact" | "seller" | "attachment" | "dataBank">("data")
-    const { register, handleSubmit, reset, getValues, watch, formState: { errors }} = useForm<TRecipient>();
+    const { register, handleSubmit, reset, getValues, watch, setValue, formState: { errors }} = useForm<TRecipient>();
     
 
     const onSubmit: SubmitHandler<TRecipient> = async (body: TRecipient) => {
@@ -49,6 +50,10 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         body.contractorId = contractorId;
         if(body.dateOfBirth) body.dateOfBirth = new Date(body.dateOfBirth);
         if(!body.dateOfBirth) body.dateOfBirth = null;
+        body.subTotal = convertMoneyToNumber(body.subTotal),
+        body.discount = convertMoneyToNumber(body.discount),
+        // body.discountPercentage = convertMoneyToNumber(body.discountPercentage),
+        body.total = convertMoneyToNumber(body.total)
         
         if(!body.id) {
             await create(body);
@@ -193,7 +198,10 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         if(recipient.dateOfBirth) {
             recipient.dateOfBirth = recipient.dateOfBirth.split("T")[0];
         };
-
+        recipient.subTotal = convertNumberMoney(recipient.subTotal);
+        recipient.total = convertNumberMoney(recipient.total);
+        recipient.discount = convertNumberMoney(recipient.discount);
+        
         reset(recipient);
     };
     
@@ -211,6 +219,44 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         getSelectOrigin();
         getSelectGender();
     };
+
+    const calculatedPercentage = (e: React.ChangeEvent<HTMLInputElement>) => {
+        maskMoney(e);
+        const value = e.target.value;
+        if(value) {
+            const discount = convertMoneyToNumber(value);
+            const subTotal = convertMoneyToNumber(watch("subTotal"));
+            const percentage = (discount / subTotal) * 100;
+
+            const total = subTotal - discount;
+            setValue("total", total >= 0 ? convertNumberMoney(total) : 0);
+            setValue("discountPercentage", percentage > 100 ? 100 : Math.trunc(percentage * 100) / 100);
+        };
+    };
+
+    const calculatedValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if(value) {
+            const discount = convertMoneyToNumber(value);
+            const subTotal = convertMoneyToNumber(watch("subTotal"));
+            const partialValue = (subTotal * discount) / 100;
+            const total = subTotal - partialValue;
+            
+            setValue("total", total >= 0 ? convertNumberMoney(total) : "0,00");
+            setValue("discount", partialValue > total ? subTotal : convertNumberMoney(partialValue));
+        }
+    };
+
+    useEffect(() => {
+        if(watch("subTotal")) {
+            const subTotal = convertMoneyToNumber(watch("subTotal"));
+            const discount = convertMoneyToNumber(watch("discount"));
+   
+            const total = subTotal - discount;
+
+            setValue("total", total >= 0 ? convertNumberMoney(total) : 0);
+        };
+    }, [watch("subTotal")]);
     
     useEffect(() => {
         reset();
@@ -319,17 +365,30 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                             })
                         }
                     </select>
-                </div>               
-                {
-                    contractorType == "B2B" &&
-                    <div className={`flex flex-col mb-2`}>
-                        <label className={`label slim-label-primary`}>Vínculo</label>
-                        <select className="select slim-select-primary" {...register("bond")}>
-                            <option value="Titular">Titular</option>                       
-                            <option value="Dependente">Dependente</option>                       
-                        </select>
-                    </div>               
-                }
+                </div>              
+                <div className={`flex flex-col mb-2`}>
+                    <label className={`label slim-label-primary`}>Vínculo</label>
+                    <select className="select slim-select-primary" {...register("bond")}>
+                        <option value="Titular">Titular</option>                       
+                        <option value="Dependente">Dependente</option>                       
+                    </select>
+                </div>   
+                <div className={`flex flex-col col-span-1 mb-2`}>
+                    <label className={`label slim-label-primary`}>SubTotal</label>
+                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("subTotal")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                </div>  
+                <div className={`flex flex-col col-span-1 mb-2`}>
+                    <label className={`label slim-label-primary`}>Desconto R$</label>
+                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => calculatedPercentage(e)} {...register("discount")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                </div>  
+                <div className={`flex flex-col col-span-1 mb-2`}>
+                    <label className={`label slim-label-primary`}>Desconto %</label>
+                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => calculatedValue(e)} {...register("discountPercentage")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                </div>  
+                <div className={`flex flex-col col-span-1 mb-2`}>
+                    <label className={`label slim-label-primary`}>Total</label>
+                    <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("total")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                </div>             
                 <div className={`flex flex-col mb-2`}>
                     <label className={`label slim-label-primary`}>CEP</label>
                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e, '')} {...register("address.zipCode", {minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
@@ -354,11 +413,11 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                     <label className={`label slim-label-primary`}>Estado</label>
                     <input {...register("address.state")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col col-span-2 mb-2`}>
+                <div className={`flex flex-col ${contractorType == "B2B" ? 'col-span-2' : 'col-span-6'} mb-2`}>
                     <label className={`label slim-label-primary`}>Complemento</label>
                     <input {...register("address.complement")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col ${contractorType == "B2B" ? 'col-span-2' : 'col-span-3'} mb-2`}>
+                <div className={`flex flex-col ${contractorType == "B2B" ? 'col-span-2' : 'col-span-6'} mb-2`}>
                     <label className={`label slim-label-primary`}>Observações</label>
                     <input {...register("notes")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>               

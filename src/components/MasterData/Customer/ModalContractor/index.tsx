@@ -60,7 +60,7 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
         if(body.dateOfBirth) {
             body.dateOfBirth = new Date(body.dateOfBirth);
         } else {
-            body.dateOfBirth = null;
+            delete body.dateOfBirth;
         };
 
         if(body.minimumValue) body.minimumValue = convertStringMoney(body.minimumValue);
@@ -317,16 +317,11 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                 <div className={`flex flex-col ${type == "B2B" ? 'col-span-2' : 'col-span-3'} mb-2`}>
                     <label className={`label slim-label-primary`}>E-mail</label>
                     <input {...register("email", { pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                </div>                
+                <div className={`flex flex-col col-span-1 mb-2`}>
+                    <label className={`label slim-label-primary`}>Vigência</label>
+                    <input {...register("effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                {
-                    type == "B2B" &&
-                    <>
-                        <div className={`flex flex-col col-span-1 mb-2`}>
-                            <label className={`label slim-label-primary`}>Vigência</label>
-                            <input {...register("effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
-                        </div>
-                    </>
-                }
                 {
                     type == "B2C" &&
                     <>
@@ -402,7 +397,7 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                     <label className={`label slim-label-primary`}>Número</label>
                     <input {...register("address.number")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col ${type == "B2B" ? 'col-span-3' : 'col-span-4'} mb-2`}>
+                <div className={`flex flex-col ${type == "B2B" ? 'col-span-3' : 'col-span-3'} mb-2`}>
                     <label className={`label slim-label-primary`}>Rua</label>
                     <input {...register("address.street")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
