@@ -74,7 +74,7 @@ export default function AccreditedNetwork() {
       setCurrentBody(newBody);
       setId(body.id);
     };
-    
+
     setTypeModal(action);
     setModal(true);
   };
@@ -185,7 +185,7 @@ export default function AccreditedNetwork() {
                                       }
                                       {
                                         permissionDelete("1", "A21") &&
-                                        <IconDelete obj={x} getObj={openModal}/>                                                
+                                        <IconDelete obj={x} getObj={openModalDelete}/>                                                
                                       }
                                     </div>
                                   </td>

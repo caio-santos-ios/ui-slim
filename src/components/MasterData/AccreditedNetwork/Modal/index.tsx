@@ -13,6 +13,7 @@ import { Button } from "@/components/Global/Button";
 import { ModalAttachment } from "../ModalAttachment";
 import { ModalData } from "../ModalData";
 import { ResetAccreditedNetwork, TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
+import { ModalTradingTable } from "../ModalTradingTable";
 
 type TProp = {
     title: string;
@@ -23,7 +24,7 @@ type TProp = {
     id: string;
 }
 
-type TTabs = "data" | "responsible" | "contact" | "attachment";
+type TTabs = "data" | "responsible" | "tradingTable" | "contact" | "attachment";
 
 export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSelectValue, id}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
@@ -32,6 +33,7 @@ export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSel
     const [tabs, setTab] = useState<{key: string, title: string}[]>([
         { key: 'data', title: 'Dados Gerais' },
         { key: 'responsible', title: 'Dados do Responsável' },
+        { key: 'tradingTable', title: 'Tabela de Negociação' },
         { key: 'contact', title: 'Contatos' },
         { key: 'attachment', title: 'Anexos' },
     ]);
@@ -131,6 +133,11 @@ export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSel
                             <ModalResponsible id={id} onSuccess={onSuccess} onClose={cancel}/> 
                         }
    
+                        {
+                            tabCurrent == "tradingTable" &&
+                            <ModalTradingTable parentId={id}/> 
+                        }
+
                         {
                             tabCurrent == "contact" &&
                             <ModalContact parentId={id}/> 

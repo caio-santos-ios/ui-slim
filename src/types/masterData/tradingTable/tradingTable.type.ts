@@ -8,7 +8,8 @@ export type TTradingTable = {
     discount: any;
     discountPercentage: any;
     total: any;
-    items: TTradingTableItem[]
+    items: TTradingTableItem[],
+    accreditedNetworkId: string;
 }
 
 export const ResetTradingTable: TTradingTable = {
@@ -21,7 +22,8 @@ export const ResetTradingTable: TTradingTable = {
     discount: 0,
     discountPercentage: 0,
     total: 0,
-    items: []
+    items: [],
+    accreditedNetworkId: ""
 }
 
 export type TTradingTableItem = {
