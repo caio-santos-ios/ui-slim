@@ -115,6 +115,7 @@ export const ResetSellerRepresentative: TSellerRepresentative = {
         notes: "",
         parentId: "",
         parent: "",
+        effectiveDate: ""
     },
     bank: {
         bank: "Conta Corrente",

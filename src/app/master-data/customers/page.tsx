@@ -6,18 +6,13 @@ import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { FaTrash } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
-import { MenuItem } from '@headlessui/react';
 import { maskDate } from "@/utils/mask.util";
 import { Autorization } from "@/components/Global/Autorization";
 import { Header } from "@/components/Global/Header";
 import { SideMenu } from "@/components/Global/SideMenu";
 import { SlimContainer } from "@/components/Global/SlimContainer";
-import { Card } from "@/components/Global/Card";
 import DataTable from "@/components/Global/Table";
 import { NotData } from "@/components/Global/NotData";
-import { Pagination } from "@/components/Global/Pagination";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { convertNumberMoney } from "@/utils/convert.util";
@@ -67,10 +62,9 @@ export default function Customer() {
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
  
-  const getAll = async (uri: string = "customers") => {
+  const getAll = async (uri: string = "customers", queryString: string = "") => {
     try {
-      setLoading(true);
-      const {data} = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}${queryString}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -81,8 +75,6 @@ export default function Customer() {
       });
     } catch (error) {
       resolveResponse(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -109,7 +101,7 @@ export default function Customer() {
       resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
       resetModal();
-      await getAll();
+      await getAll(uri);
     } catch (error) {
       resolveResponse(error);
     }
@@ -124,7 +116,9 @@ export default function Customer() {
   
   useEffect(() => {
     if(permissionRead("1", "A12")) {
+      setLoading(true);
       getAll();
+      setLoading(false);
     };
   }, []);
 
@@ -136,20 +130,6 @@ export default function Customer() {
     }
   };
   
-  const passPage = async (action: "previous" | "next") => {
-    if(pagination.totalPages == 1) return;
-    
-    if(action === 'previous' && pagination.currentPage > 1) {
-      pagination.currentPage -= 1;
-      await getAll();
-    };
-
-    if(action === 'next' && pagination.currentPage > pagination.totalPages) {
-      pagination.currentPage -= 1;
-      await getAll();
-    };
-  };
-
   const resetModal = () => {
     setCurrentBody({
       id: "",
@@ -163,6 +143,24 @@ export default function Customer() {
 
     setModal(false);
     setId("");
+  };
+
+  const search = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    let firstSearch = ``;
+    const uri = vision == "contractor" ? "customers" : "customer-recipients";
+
+    if(value) {
+      firstSearch =
+      vision == "contractor" ?
+      `&regex$or$corporateName=${value}&regex$or$document=${value}&regex$or$type=${value}`
+      :
+      `&regex$or$code=${value}&regex$or$name=${value}&regex$or$cpf=${value}&regex$or$_customer.typePlan=${value}&regex$or$_customer.type=${value}&regex$or$bond=${value}`
+    } else {
+      firstSearch = "";
+    };
+    
+    await getAll(uri, firstSearch);
   };
 
   return (
@@ -193,8 +191,16 @@ export default function Customer() {
                       permissionCreate("1", "A12") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
-                  </>
-                }>
+                  </>}
+                  // inputSearch={
+                  //   <>
+                  //     {
+                  //       permissionRead("1", "A16") && 
+                  //       <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => search(e)} className="border border-gray-400 w-96 h-8" type="text" placeholder="Busca rápida" />
+                  //     }
+                  //   </>
+                  // }
+                  >
 
                 <DataTable columns={columns}>
                   <>

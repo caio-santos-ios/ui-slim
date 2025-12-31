@@ -2,11 +2,9 @@
 
 import "./style.css";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
-import { api } from "@/service/api.service";
-import { configApi, resolveResponse } from "@/service/config.service";
 import { ModalContact } from "../ModalContact";
 import { Button } from "@/components/Global/Button";
 import { ModalAttachment } from "../ModalAttachment";

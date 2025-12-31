@@ -12,6 +12,7 @@ export type TRecipient = {
     whatsapp: string;
     email: string;
     planId: string;
+    serviceModuleIds: any[];
     notes: string;
     contractorId: string;
     bond: string;
@@ -33,6 +34,7 @@ export const ResetCustomerRecipient: TRecipient = {
     whatsapp: "",
     email: "",
     planId: "",
+    serviceModuleIds: [],
     notes: "",
     contractorId: "",
     bond: "",

@@ -8,6 +8,7 @@ import * as Tb from "react-icons/tb";
 import * as Bs from "react-icons/bs";
 import * as Io5 from "react-icons/io5";
 import * as Lia from "react-icons/lia";
+import * as Ri from "react-icons/ri";
 
 import { atom } from "jotai";
 
@@ -20,7 +21,8 @@ const iconsMap: any = {
     ...Tb,
     ...Bs,
     ...Io5,
-    ...Lia
+    ...Lia,
+    ...Ri
 };
 
 export const iconAtom = atom<any>(iconsMap);

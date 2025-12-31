@@ -12,6 +12,7 @@ export type TSupplier = {
     stateRegistration: string;
     municipalRegistration: string;
     notes: string;
+    effectiveDate: any;
 }
 
 export const ResetSupplier: TSupplier = {
@@ -36,4 +37,5 @@ export const ResetSupplier: TSupplier = {
     stateRegistration: "",
     municipalRegistration: "",
     notes: "",
+    effectiveDate: null
 }

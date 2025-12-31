@@ -36,6 +36,7 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
     const [produceres, setProcedure] = useState<TProcedure[]>([]);
     const [listProduceres, setListProcedure] = useState<TProcedure[]>([]);
     const [myProcedures, setMyProcedure] = useState<TProcedure[]>([]);
+    const [currentAccreditedNetwork, setCurrentAccreditedNetwork] = useState<any[]>([]);
 
     const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TInPerson>({
         defaultValues: ResetInPerson
@@ -89,7 +90,7 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
             setLoading(true);
             const {data} = await api.get(`/in-persons/${id}`, configApi());
             const result = data.result;
-
+            console.log(result.data)
             reset({
                 ...result.data,
                 date: result.data.date ? result.data.date.split("T")[0] : null,
@@ -155,31 +156,40 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
             setLoading(false);
         }
     };
+    
+    const getByAccreditedNetworkId = async (accreditedNetworkId: string) => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/trading-tables/accredited-network/${accreditedNetworkId}`, configApi());
+            const result = data.result;
+            setCurrentAccreditedNetwork(result.data.items ?? []);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const selectModule = (module: TProcedure[]) => {
         setMyProcedure(module)
         const total = module.reduce((value: number, x: any) => value + convertMoneyToNumber(x.total), 0);
-        console.log(total)
-        console.log(module)
         setValue("value", convertNumberMoney(total));
     };
     
     useEffect(() => {
-        if(watch("serviceModuleId")) {
-            const accreditedNetwork: any = accreditedNetworks.find(x => x.id == watch("accreditedNetworkId"));
-            if(accreditedNetwork) {
-                const procedureByServiceModuleId = accreditedNetwork.tradingTableItems.filter((x: any) => x.serviceModuleId == watch("serviceModuleId"));
+        if(watch("accreditedNetworkId")) {
+            const accreditedNetworkId = watch("accreditedNetworkId");
+            getByAccreditedNetworkId(accreditedNetworkId);
 
-                const newProcedures = procedureByServiceModuleId.map((x: any) => ({
-                    ...x,
-                    id: x.procedureId,
-                    name: produceres.find(p => p.id == x.procedureId) ? produceres.find(p => p.id == x.procedureId)?.name : ""
-                }));
-
-                setListProcedure(newProcedures);
-            };
+            const procedureByServiceModuleId: any[] = currentAccreditedNetwork.filter((x: any) => x.serviceModuleId == watch("serviceModuleId"));
+            const newProcedures = procedureByServiceModuleId.map((x: any) => ({
+                ...x,
+                id: x.procedureId,
+                name: produceres.find(p => p.id == x.procedureId) ? produceres.find(p => p.id == x.procedureId)?.name : ""
+            }));                    
+            setListProcedure(newProcedures);
         };
-    }, [watch("serviceModuleId")]);
+    }, [watch("serviceModuleId"), watch("accreditedNetworkId")]);
 
     useEffect(() => {
         reset(ResetInPerson);

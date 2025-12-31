@@ -11,6 +11,7 @@ export type TSeller = {
     notes: string;
     parentId: string;
     parent: string;
+    effectiveDate: any;
 }
 
 export const ResetSeller: TSeller = {
@@ -34,5 +35,6 @@ export const ResetSeller: TSeller = {
     notes: "",
     parentId: "",
     parent: "",
-    id: ""
+    id: "",
+    effectiveDate: ""
 }

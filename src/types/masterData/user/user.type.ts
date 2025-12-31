@@ -14,6 +14,7 @@ export type TUser = {
     admin: boolean;
     blocked: boolean;
     password: string;
+    effectiveDate: any;
 }
 
 export type TUserPhoto = {
@@ -36,5 +37,6 @@ export const ResetUser: TUser = {
     },
     admin: false,
     blocked: false,
-    password: ""
+    password: "",
+    effectiveDate: ""
 }

@@ -73,6 +73,7 @@ export const TableSupplier = ({list, handleReturnModal}: TProp) => {
                             <tr>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Tipo</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Nome</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data da Vigência</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data de Criação</th>
                                 <th scope="col" className={`px-4 py-3 text-center text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
                             </tr>
@@ -85,6 +86,7 @@ export const TableSupplier = ({list, handleReturnModal}: TProp) => {
                                         <tr key={x.id}>                                            
                                             <td className="px-4 py-2">{x.type == "F" ? "Pessoa Fisica" : "Pessoa Juridica"}</td>
                                             <td className="px-4 py-2">{x.corporateName}</td>
+                                            <td className="px-4 py-2">{maskDate(x.effectiveDate)}</td>
                                             <td className="px-4 py-2">{maskDate(x.createdAt)}</td>
                                             <td className="p-2">
                                                 <div className="flex justify-center gap-3">       

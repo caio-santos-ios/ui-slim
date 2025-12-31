@@ -292,6 +292,40 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                     read: false,
                     delete: false
                 }
+            },
+            {
+                code: 'B24',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Encaminhamentos',
+                // icon: 'PiMoneyFill',
+                icon: '',
+                link: 'services/forwardings',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
+            {
+                code: 'B25',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Agendamentos',
+                // icon: 'PiMoneyFill',
+                icon: '',
+                link: 'services/appointments',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             }
         ],
         description: 'Atendimentos',

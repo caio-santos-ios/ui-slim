@@ -46,7 +46,6 @@ export const ModalInPersonStatus = ({title, isOpen, setIsOpen, onClose, handleRe
             setLoading(true);
             const {data} = await api.get(`/in-persons/${id}`, configApi());
             const result = data.result.data;
-            console.log(result.status)
             setValue("id", result.id);
             setValue("status", result.status);
         } catch (error) {

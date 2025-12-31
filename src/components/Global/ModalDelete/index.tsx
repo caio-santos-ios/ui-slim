@@ -7,6 +7,7 @@ import { Button } from "../Button";
 
 type TProp = {
     title: string;
+    description?: string;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     onClose: () => void;
@@ -14,7 +15,7 @@ type TProp = {
     body?: TAccountsReceivable
 }
 
-export const ModalDelete = ({title, isOpen, setIsOpen, onClose, onSelectValue}: TProp) => {
+export const ModalDelete = ({title, isOpen, setIsOpen, onClose, onSelectValue, description = 'Deseja excluír esse registro?'}: TProp) => {
     const destroy = () =>{
         onSelectValue(true);
     };
@@ -27,7 +28,7 @@ export const ModalDelete = ({title, isOpen, setIsOpen, onClose, onSelectValue}: 
                         <div className="bg-red mb-4 border-b-3 header-modal">
                             <DialogTitle as="h1" className="text-xl font-bold primary-color">{title}</DialogTitle>
                         </div>
-                        <h1 className="text-lg font-bold">Deseja excluír esse registro?</h1>
+                        <h1 className="text-lg font-bold">{description}</h1>
                         <div className="flex justify-end gap-2 w-12/12 mt-3">
                             <Button theme="primary-light" text="Cancelar" click={onClose}/>
                             <Button theme="primary" text="Confirmar" click={destroy}/>

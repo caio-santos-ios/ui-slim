@@ -22,6 +22,8 @@ import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/mod
 import { FaCirclePlus } from "react-icons/fa6";
 import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
 import { convertInputStringMoney, convertMoneyToNumber, convertNumberMoney } from "@/utils/convert.util";
+import MultiSelect from "@/components/Global/MultiSelect";
+import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 
 type TProp = {
     isOpen: boolean;
@@ -40,9 +42,11 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     const [plans, setPlan] = useState<TPlan[]>([]);
     const [customerRecipients, setCustomerRecipient] = useState<any[]>([]);
     const [currentId, setCureentId] = useState<string>("");
+    const [modules, setModules] = useState<TServiceModule[]>([]);
+    const [serviceModule, setServiceModule] = useState<TServiceModule[]>([]);
     const [tabCurrent, setTabCurrent] = useState<"data" | "dataResponsible" | "contact" | "seller" | "attachment" | "dataBank">("data")
     const { register, handleSubmit, reset, getValues, watch, setValue, formState: { errors }} = useForm<TRecipient>();
-    
+    const serviceModuleIds = watch("serviceModuleIds");
 
     const onSubmit: SubmitHandler<TRecipient> = async (body: TRecipient) => {
         if(!contractorId) return toast.warn("Contratante é obrigatório", { theme: 'colored'});
@@ -50,8 +54,9 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         body.contractorId = contractorId;
         if(body.dateOfBirth) body.dateOfBirth = new Date(body.dateOfBirth);
         if(!body.dateOfBirth) body.dateOfBirth = null;
-        body.subTotal = convertMoneyToNumber(body.subTotal),
-        body.discount = convertMoneyToNumber(body.discount),
+        body.subTotal = convertMoneyToNumber(body.subTotal);
+        body.discount = convertMoneyToNumber(body.discount);
+        if(!body.discountPercentage) body.discountPercentage = 0;
         // body.discountPercentage = convertMoneyToNumber(body.discountPercentage),
         body.total = convertMoneyToNumber(body.total)
         
@@ -209,6 +214,25 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         setCureentId(id);
         setModalDelete(true);
     };
+
+    const selectModule = (module: TServiceModule[]) => {
+        const value = module.reduce((value: number, x: TServiceModule) => value + parseFloat(x.price), 0);
+        setValue("subTotal", convertNumberMoney(value));
+        setValue("total", convertNumberMoney(value));
+        calcultedTotal();
+        setModules(module)
+    };
+
+    const calcultedTotal = (valueDiscount?: number | null) => {
+        const subTotal = convertMoneyToNumber(watch("subTotal"));
+
+        if(subTotal > 0) {
+            const discount = valueDiscount ? valueDiscount : convertMoneyToNumber(watch("discount"));
+            const calculted = subTotal - discount!;
+
+            setValue("total", calculted >= 0 ? convertNumberMoney(calculted) : '0,00')
+        };    
+    };
     
     const genericTable = (table: string) => {
         setModalGenericTable(true);
@@ -365,7 +389,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                             })
                         }
                     </select>
-                </div>              
+                </div>           
                 <div className={`flex flex-col mb-2`}>
                     <label className={`label slim-label-primary`}>Vínculo</label>
                     <select className="select slim-select-primary" {...register("bond")}>
