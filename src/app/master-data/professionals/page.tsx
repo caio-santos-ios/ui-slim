@@ -20,7 +20,7 @@ import { NotData } from "@/components/Global/NotData";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { ModalProfessional } from "@/components/MasterData/Professional/Modal";
-import { TProfessional } from "@/types/masterData/professional/professional.type";
+import { ResetProfessional, TProfessional } from "@/types/masterData/professional/professional.type";
 import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
@@ -104,28 +104,7 @@ export default function Professional() {
   };
 
   const resetModal = () => {
-    setCurrentBody({
-      id: "",
-      name: "",
-      email: "",
-      phone: "",
-      cpf: "",
-      address: {
-          city: "",
-          complement: "",
-          neighborhood: "",
-          number: "",
-          parent: "",
-          parentId: "",
-          state: "",
-          street: "",
-          zipCode: ""
-      },
-      type: "",        
-      specialty: "",       
-      registration: "",     
-      number: "",
-    });
+    setCurrentBody(ResetProfessional);
 
     setModal(false);
   };
