@@ -12,22 +12,19 @@ import { SideMenu } from "@/components/Global/SideMenu";
 import { SlimContainer } from "@/components/Global/SlimContainer";
 import { NotData } from "@/components/Global/NotData";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
-import { modalAtom } from "@/jotai/global/modal.jotai";
 import { permissionCreate, permissionRead } from "@/utils/permission.util";
 import { ModalAppointment } from "@/components/Services/Appointment/Modal";
-import { TableAppointment } from "@/components/Services/Appointment/Table";
+import { TableHistoric } from "@/components/Services/Historic/Table";
 
-export default function Forwarding() {
+export default function Historic() {
   const [_, setLoading] = useAtom(loadingAtom);
-  const [modal, setModal] = useAtom(modalAtom);
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
-  const [id, setId] = useState<string>("");
  
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/appointments`, configApi());
+      const {data} = await api.get(`/historics`, configApi());
       const result = data.result;
 
       setPagination({
@@ -43,25 +40,11 @@ export default function Forwarding() {
     }
   };
 
-  const openModal = () => {
-    setId("");
-    setModal(true);
-  };
-
-  const resetModal = () => {
-    setId("")
-    setModal(false);
-  };
-
   useEffect(() => {
-    if(permissionRead("2", "B25")) {
+    if(permissionRead("2", "B26")) {
       getAll();
     };
   }, []);
-
-  const handleReturnModal = async () => {
-    await getAll();
-  };
 
   return (
     <>
@@ -74,28 +57,15 @@ export default function Forwarding() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Agendamentos" breadcrumpIcon="MdEventAvailable"
+              <SlimContainer breadcrump="Histórico" breadcrumpIcon="MdHistory"
                 buttons={
-                  <>
-                    {
-                      permissionCreate("2", "B25") &&
-                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
-                    }
-                  </>
+                  <></>
                 }>
 
                 <NotData />
-                <TableAppointment handleReturnModal={handleReturnModal} list={pagination.data} />
+                <TableHistoric list={pagination.data} />
               </SlimContainer>
-            </div>
-
-            <ModalAppointment
-              title='Inserir Agendamento' 
-              isOpen={modal} setIsOpen={() => setModal(modal)} 
-              onClose={resetModal}
-              handleReturnModal={handleReturnModal}
-              id={id}
-            />      
+            </div>   
           </main>
         </>
         :

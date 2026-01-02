@@ -1,17 +1,33 @@
-export const maskDate = (dateString: string) => {
-    if (!dateString) return "";
+export const maskDate = (dateString: string, isTime: boolean = false) => {
+  if (!dateString) return "";
 
-    const [dateArray] = dateString.split("T");
-    const [year, month, day ] = dateArray.split("-");
+  const [datePart, timePart] = dateString.split("T");
+  const [year, month, day] = datePart.split("-");
 
-    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  let hours = 0;
+  let minutes = 0;
 
-    return date.toLocaleString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-    });
-}
+  if (timePart) {
+    const [h, m] = timePart.split(":");
+    hours = parseInt(h);
+    minutes = parseInt(m);
+  }
+
+  const date = new Date(
+    parseInt(year),
+    parseInt(month) - 1,
+    parseInt(day),
+    hours,
+    minutes
+  );
+
+  return date.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    ...(isTime && { hour: "2-digit", minute: "2-digit" }), 
+  });
+};
 
 export const maskPhone = (event: React.ChangeEvent<HTMLInputElement>) => {
   let value = event.target.value.replace(/\D/g, '');

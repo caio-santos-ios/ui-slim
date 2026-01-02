@@ -326,6 +326,23 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                     read: false,
                     delete: false
                 }
+            },
+            {
+                code: 'B26',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Historico',
+                // icon: 'PiMoneyFill',
+                icon: '',
+                link: 'services/historics',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
             }
         ],
         description: 'Atendimentos',
