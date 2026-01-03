@@ -25,6 +25,18 @@ type TProp = {
     id: string;
 }
 
+const useEsc = (callback: () => void) => {
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                callback();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [callback]);
+};
+
 export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue, id}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
     const [tabCurrent, setTabCurrent] = useState<"contractor" | "responsible" | "recipient" | "contract" | "contact" | "attachment">("contractor")
@@ -103,6 +115,10 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
             };
         };
     };
+
+    useEsc(() => {
+        if (isOpen) cancel(); 
+    });
 
     useEffect(() => {
         setCurrentBody(ResetCustomerContractor);
