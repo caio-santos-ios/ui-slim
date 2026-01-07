@@ -15,6 +15,7 @@ import { configApi, resolveResponse } from "@/service/config.service";
 import { ModalContact } from "../ModalContact";
 import { Button } from "@/components/Global/Button";
 import { ModalAttachment } from "../ModalAttachment";
+import { ModalLog } from "../ModalLog";
 
 type TProp = {
     title: string;
@@ -39,7 +40,7 @@ const useEsc = (callback: () => void) => {
 
 export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue, id}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
-    const [tabCurrent, setTabCurrent] = useState<"contractor" | "responsible" | "recipient" | "contract" | "contact" | "attachment">("contractor")
+    const [tabCurrent, setTabCurrent] = useState<"contractor" | "responsible" | "recipient" | "contract" | "contact" | "attachment" | "log">("contractor")
     const [currentBody, setCurrentBody] = useState<TCustomerContractor>(ResetCustomerContractor);
     const [tabs, setTab] = useState<{key: string, title: string}[]>([
         { key: 'contractor', title: 'Contratante' },
@@ -65,7 +66,7 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
         onClose();
     };
 
-    const alterTab = async (tab: "contractor" | "responsible" | "recipient" | "contract" | "contact" | "attachment", isMessage: boolean = false, saveTab: boolean = false) => {
+    const alterTab = async (tab: "contractor" | "responsible" | "recipient" | "contract" | "contact" | "attachment" | "log", isMessage: boolean = false, saveTab: boolean = false) => {
         setTabCurrent(tab);
     };
 
@@ -78,6 +79,7 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
             { key: 'contract', title: 'Contratos' },
             { key: 'contact', title: 'Contatos' },
             { key: 'attachment', title: 'Anexos' },
+            { key: 'log', title: 'Histórico' },
         ];
 
         if (type === "B2B") {
@@ -131,12 +133,12 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
         <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto container-modal">
                 <div className="flex min-h-full items-center justify-center p-4">
-                    <DialogPanel transition className="w-full max-w-7xl rounded-xl bg-gray-300 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
+                    <DialogPanel transition className="w-full max-w-8xl rounded-xl bg-gray-300 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
                         <div className="bg-red mb-4 border-b-3 header-modal">
                             <DialogTitle as="h1" className="text-xl font-bold primary-color">{title}</DialogTitle>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 mb-2 slim-bg-primary p-2 rounded-4xl">
+                        <div className="grid grid-cols-1 lg:grid-cols-14 gap-1 mb-2 slim-bg-primary p-2 rounded-4xl">
                             {tabs.map((x: any) => (
                                 <div key={x.key} onClick={() => alterTab(x.key)} className={`col-span-2 rounded-4xl py-2 font-bold text-lg text-center cursor-pointer ${tabCurrent === x.key ? 'slim-bg-secondary' : 'slim-bg-primary'}`}>
                                     {x.title}
@@ -173,6 +175,11 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
                         {
                             tabCurrent == "attachment" &&
                             <ModalAttachment parentId={id}/> 
+                        }
+
+                        {
+                            tabCurrent == "log" &&
+                            <ModalLog onClose={cancel} parentId={id}/> 
                         }
 
                         <div className="flex justify-end mb-2">

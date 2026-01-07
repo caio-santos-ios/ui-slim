@@ -21,6 +21,7 @@ import { modalAtom } from "@/jotai/global/modal.jotai";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
+import { ModalUpdateStatus } from "@/components/MasterData/Customer/ModalUpdateStatus";
 
 const columns1: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -31,22 +32,24 @@ const columns1: {key: string; title: string}[] = [
 ];
 
 const columns2: {key: string; title: string}[] = [
+  { key: "createdAt", title: "Data de Cadastro" },
   { key: "code", title: "ID" },
   { key: "name", title: "Beneficiário" },
   { key: "cpf", title: "CPF" },
-  { key: "type", title: "Tipo de Cliente" },
   { key: "typePlan", title: "Tipo de Plano" },
-  { key: "bond", title: "Vínculo" },
+  { key: "active", title: "Status" },
   { key: "effectiveDate", title: "Data da Vigência" },
-  { key: "createdAt", title: "Data de Cadastro" },
+  { key: "bond", title: "Vínculo" },
 ];
 
 export default function Customer() {
   const [_, setLoading] = useAtom(loadingAtom);
   const [modal, setModal] = useAtom(modalAtom);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
+  const [modalUpdateStatus, setModalUpdateStatus] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
   const [id, setId] = useState<string>("");
+  const [id2, setId2] = useState<string>("");
   const [currentBody, setCurrentBody] = useState<any>({
     id: "",
     name: "",
@@ -88,6 +91,29 @@ export default function Customer() {
     setTypeModal(action);
     setModal(true);
   };
+
+  const updateStatus = async (id: string) => {
+      try {
+        await api.put(`/customer-recipients/alter-status`, {id, justification: ""}, configApi());
+        if(permissionRead("1", "A12")) {
+          setLoading(true);
+          getAll("customer-recipients");
+          setLoading(false);
+        };
+      } catch (error) {
+        resolveResponse(error);
+      }
+  };
+
+  const openModalUpdateStatus = async (body: any) => {
+    if(body.active) {
+      setId2(body.id);
+      setModalUpdateStatus(true);
+    } else {
+      console.log(body)
+      await updateStatus(body.id);
+    }
+  };
   
   const openModalDelete = (body: any) => {
     setCurrentBody(body);
@@ -126,7 +152,9 @@ export default function Customer() {
     setId(id);
     if(isSuccess) {
       setTypeModal("edit");
-      await getAll();
+      const uri = vision == "contractor" ? "customers" : "customer-recipients";
+      await getAll(uri);
+      setModalUpdateStatus(false)
     }
   };
   
@@ -142,6 +170,7 @@ export default function Customer() {
     });
 
     setModal(false);
+    setModalUpdateStatus(false);
     setId("");
   };
 
@@ -162,6 +191,12 @@ export default function Customer() {
     
     await getAll(uri, firstSearch);
   };
+
+  const nomalizeTypePlan = (typePlan: string) => {
+    if(!typePlan) return "Empresarial";
+
+    return typePlan;
+  }
 
   return (
     <>
@@ -191,16 +226,7 @@ export default function Customer() {
                       permissionCreate("1", "A12") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
-                  </>}
-                  // inputSearch={
-                  //   <>
-                  //     {
-                  //       permissionRead("1", "A16") && 
-                  //       <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => search(e)} className="border border-gray-400 w-96 h-8" type="text" placeholder="Busca rápida" />
-                  //     }
-                  //   </>
-                  // }
-                  >
+                  </>}>
 
                 <DataTable columns={columns}>
                   <>
@@ -210,7 +236,14 @@ export default function Customer() {
                           <tr key={i}>
                             {columns.map((col: any) => (
                               <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
-                                {col.key == 'createdAt' || col.key == 'effectiveDate' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "cost" ? convertNumberMoney(x.cost) : (x as any)[col.key]}
+                                {col.key == 'createdAt' || col.key == 'effectiveDate' ? maskDate((x as any)[col.key]) : col.key == 'typePlan' ? nomalizeTypePlan(x.typePlan) : col.key == "cost" ? convertNumberMoney(x.cost) : col.key == "active" ? 
+                                <div className={`flex flex-col mb-2`}>
+                                  <label className="slim-status-switch">
+                                    <input checked={x.active} onChange={() => openModalUpdateStatus(x)} type="checkbox"/>
+                                    <span className="slider"></span>
+                                  </label>
+                                </div>  
+                                : (x as any)[col.key]}
                               </td>        
                             ))}  
 
@@ -243,6 +276,13 @@ export default function Customer() {
               onClose={resetModal}
               onSelectValue={handleReturnModal}
               id={id}
+            />      
+            
+            <ModalUpdateStatus
+              isOpen={modalUpdateStatus} setIsOpen={() => setModalUpdateStatus(modalUpdateStatus)} 
+              onClose={resetModal}
+              onSelectValue={handleReturnModal}
+              id={id2}
             />      
 
             <ModalDelete 

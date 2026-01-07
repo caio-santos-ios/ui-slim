@@ -5,7 +5,20 @@
   height: 2rem;
 }
 
+.slim-status-switch {
+  position: relative;
+  display: inline-block;
+  width: 3.5rem;
+  height: 1.8rem;
+}
+
 .slim-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slim-status-switch input {
   opacity: 0;
   width: 0;
   height: 0;

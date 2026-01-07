@@ -20,6 +20,7 @@ export type TRecipient = {
     total: any;
     discount: any;
     discountPercentage: any;
+    effectiveDate: any | null;
 }
 
 export const ResetCustomerRecipient: TRecipient = {
@@ -41,5 +42,6 @@ export const ResetCustomerRecipient: TRecipient = {
     discount: 0,
     discountPercentage: 0,
     subTotal: 0,
-    total: 0
+    total: 0,
+    effectiveDate: ""
 }

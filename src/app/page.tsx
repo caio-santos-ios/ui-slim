@@ -26,12 +26,13 @@ export default function Home() {
     try {
       setIsLoading(true);
       const {data} = await api.post(`/auth/login`, body);
+      const result = data.result.data;
 
-      localStorage.setItem("token", data.data.token);
-      localStorage.setItem("name", data.data.name);
-      localStorage.setItem("admin", data.data.admin);
-      localStorage.setItem("photo", data.data.photo);
-      localStorage.setItem("modules", JSON.stringify(data.data.modules));
+      localStorage.setItem("token", result.token);
+      localStorage.setItem("name", result.name);
+      localStorage.setItem("admin", result.admin);
+      localStorage.setItem("photo", result.photo);
+      localStorage.setItem("modules", JSON.stringify(result.modules));
       router.push("/dashboard");
     } catch (error) {
       resolveResponse(error);
@@ -48,7 +49,9 @@ export default function Home() {
         <main className="h-dvh slim-bg-secondary">
           <div className="w-11/12 h-12/12 lg:max-w-md m-auto flex flex-col justify-center">
             <form onSubmit={handleSubmit(login)} className="px-3 py-6 slim-form-login shadow-gray-400 shadow-xl">
-              <Logo width={400} height={400} />
+              <div className="flex items-center justify-center">
+                <Logo width={400} height={400} />
+              </div>
               <InputForm {...register("email", { required: "E-mail é obrigatório",  pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "E-mail inválido"} })} name="email" placeholder="Digite seu e-mail" title="E-mail" themeInputStyle={`${errors.email ? 'border border-red-500' : 'primary'}`} styleClass="mb-0" />
               <div className="text-red-500 min-h-6 mb-1">{errors.email && errors.email.message}</div>
 

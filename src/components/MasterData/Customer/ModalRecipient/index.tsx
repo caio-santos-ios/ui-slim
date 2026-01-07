@@ -51,6 +51,12 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     const onSubmit: SubmitHandler<TRecipient> = async (body: TRecipient) => {
         if(!contractorId) return toast.warn("Contratante é obrigatório", { theme: 'colored'});
 
+        if(body.effectiveDate) {
+            body.effectiveDate = new Date(body.effectiveDate);
+        } else {
+            body.effectiveDate = null;
+        };
+
         body.contractorId = contractorId;
         if(body.dateOfBirth) body.dateOfBirth = new Date(body.dateOfBirth);
         if(!body.dateOfBirth) body.dateOfBirth = null;
@@ -67,7 +73,6 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         }
 
         await getRecipient();
-        cancel();
     };
 
     const create = async (body: TRecipient) => {
@@ -75,6 +80,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
             body.address.parent = "contract";
             const { status, data} = await api.post('/customer-recipients', body, configApi());
             resolveResponse({status, ...data});
+            cancel();
         } catch (error) {
             resolveResponse(error);
         }
@@ -84,6 +90,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         try {
             const { status, data} = await api.put(`/customer-recipients`, body, configApi());
             resolveResponse({status, ...data});
+            cancel();
         } catch (error) {
             resolveResponse(error);
         }
@@ -202,6 +209,10 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     const getCurrentBody = (recipient: TRecipient) => {
         if(recipient.dateOfBirth) {
             recipient.dateOfBirth = recipient.dateOfBirth.split("T")[0];
+        };
+        
+        if(recipient.effectiveDate) {
+            recipient.effectiveDate = recipient.effectiveDate.split("T")[0];
         };
         recipient.subTotal = convertNumberMoney(recipient.subTotal);
         recipient.total = convertNumberMoney(recipient.total);
@@ -367,6 +378,10 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                 <div className={`flex flex-col mb-2`}>
                     <label className={`label slim-label-primary`}>Data de Nascimento</label>
                     <input {...register("dateOfBirth")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
+                </div>
+                <div className={`flex flex-col col-span-1 mb-2`}>
+                    <label className={`label slim-label-primary`}>Vigência</label>
+                    <input {...register("effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
                 <div className={`flex flex-col mb-2`}>
                     <label className={`label slim-label-primary flex gap-1 items-center`}>Gênero <span onClick={() => genericTable("genero")} className="pr-2 cursor-pointer"><FaCirclePlus /></span> </label>

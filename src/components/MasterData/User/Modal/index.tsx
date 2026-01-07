@@ -234,7 +234,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                     </div>  
                                 }
                                 <div className={`flex flex-col mb-2`}>
-                                {/* <div className={`flex flex-col ${watch("id") ? `col-span-6` : `col-span-4`} mb-2`}> */}
                                     <label className={`label slim-label-primary`}>Bloqueado</label>
                                     <label className="slim-switch">
                                         <input {...register("blocked")} type="checkbox"/>
