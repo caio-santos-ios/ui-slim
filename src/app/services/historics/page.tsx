@@ -30,7 +30,7 @@ export default function Historic() {
       setPagination({
         currentPage: 1,
         data: result.data,
-        sizePage: 100,
+        sizePage: 10,
         totalPages: result.data.length
       });
     } catch (error) {

@@ -46,7 +46,7 @@ export default function Forwarding() {
       setPagination({
         currentPage: 1,
         data: result.data,
-        sizePage: 100,
+        sizePage: 10,
         totalPages: 100
       });
     } catch (error) {
