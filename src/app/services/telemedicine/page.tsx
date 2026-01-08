@@ -52,7 +52,7 @@ export default function Customer() {
         currentPage: 1,
         data: result.data,
         sizePage: 10,
-        totalPages: 10
+        totalPages: 100
       });
     } catch (error) {
       resolveResponse(error);
