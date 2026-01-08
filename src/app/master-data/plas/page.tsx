@@ -95,20 +95,6 @@ export default function Plan() {
 
     setModal(false);
   };
-  
-  const passPage = async (action: "previous" | "next") => {
-    if(pagination.totalPages == 1) return;
-    
-    if(action === 'previous' && pagination.currentPage > 1) {
-      pagination.currentPage -= 1;
-      await getAll();
-    };
-
-    if(action === 'next' && pagination.currentPage > pagination.totalPages) {
-      pagination.currentPage -= 1;
-      await getAll();
-    };
-  };
 
   return (
     <>

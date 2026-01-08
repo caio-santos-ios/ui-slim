@@ -15,21 +15,20 @@ export const Pagination = ({passPage}: TProp) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const totalPages = Math.ceil(pagination.totalPages / pagination.sizePage);
 
-    const page = (currentPage?: number) => {
-        if(currentPage) {
-            console.log(pagination.currentPage)
-            console.log(currentPage)
-            setCurrentPage(currentPage);
-            setPagination({
-                currentPage,
-                data: pagination.data,
-                sizePage: pagination.sizePage,
-                totalPages: pagination.totalPages
-            });
+    // const page = (currentPage?: number) => {
+    //     if(currentPage) {
 
-            passPage();
-        };
-    };
+    //         setCurrentPage(currentPage);
+    //         setPagination({
+    //             currentPage,
+    //             data: pagination.data,
+    //             sizePage: pagination.sizePage,
+    //             totalPages: pagination.totalPages
+    //         });
+
+    //         passPage();
+    //     };
+    // };
 
     return (
         <>
@@ -43,7 +42,7 @@ export const Pagination = ({passPage}: TProp) => {
                         {/* <GrPrevious onClick={() => passPage('previous')} />                         */}
                             {
                                 Array.from({length: totalPages}, (_, index) => {
-                                    return <span onClick={() => page(index + 1)} key={index} className={`cursor-pointer font-semibold px-2 py-1 rounded border ${currentPage == index + 1 ? 'bg-blue-400 text-white' : ''}`}>{index + 1}</span>
+                                    return <span onClick={() => {}} key={index} className={`cursor-pointer font-semibold px-2 py-1 rounded border ${currentPage == index + 1 ? 'bg-blue-400 text-white' : ''}`}>{index + 1}</span>
                                 })
                             }
                         {/* <GrNext onClick={() => passPage('next')} /> */}
