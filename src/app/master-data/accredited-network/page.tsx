@@ -21,6 +21,7 @@ import { IconDelete } from "@/components/Global/IconDelete";
 import { ModalAccreditedNetwork } from "@/components/MasterData/AccreditedNetwork/Modal";
 import { ResetAccreditedNetwork, TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
 import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
+import { ModalUpdateStatus } from "@/components/MasterData/AccreditedNetwork/ModalUpdateStatus";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -35,6 +36,7 @@ export default function AccreditedNetwork() {
   const [modalDelete, setModalDelete] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
   const [id, setId] = useState<string>("");
+  const [id2, setId2] = useState<string>("");
   const [currentBody, setCurrentBody] = useState<any>({
     id: "",
     name: "",
@@ -44,7 +46,7 @@ export default function AccreditedNetwork() {
     deliveryDate: "",
     billingDate: ""
   });
-
+  const [modalUpdateStatus, setModalUpdateStatus] = useState<boolean>(false);
 
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
@@ -66,6 +68,28 @@ export default function AccreditedNetwork() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const openModalUpdateStatus = async (body: any) => {
+    if(body.active) {
+      setId2(body.id);
+      setModalUpdateStatus(true);
+    } else {
+      await updateStatus(body.id);
+    }
+  };
+
+  const updateStatus = async (id: string) => {
+      try {
+        await api.put(`/accredited-networks/alter-status`, {id, justification: ""}, configApi());
+        if(permissionRead("1", "A21")) {
+          setLoading(true);
+          getAll();
+          setLoading(false);
+        };
+      } catch (error) {
+        resolveResponse(error);
+      }
   };
 
   const openModal = (action: "create" | "edit" = "create", body?: any) => {
@@ -106,28 +130,16 @@ export default function AccreditedNetwork() {
     setId(id);
     if(isSuccess) {
       setTypeModal("edit");
+      setModalUpdateStatus(false);
       await getAll();
     }
   };
   
-  const passPage = async (action: "previous" | "next") => {
-    if(pagination.totalPages == 1) return;
-    
-    if(action === 'previous' && pagination.currentPage > 1) {
-      pagination.currentPage -= 1;
-      await getAll();
-    };
-
-    if(action === 'next' && pagination.currentPage > pagination.totalPages) {
-      pagination.currentPage -= 1;
-      await getAll();
-    };
-  };
-
   const resetModal = () => {
     setCurrentBody(ResetAccreditedNetwork);
 
     setModal(false);
+    setModalUpdateStatus(false);
     setId("");
   };
 
@@ -162,6 +174,7 @@ export default function AccreditedNetwork() {
                           <th scope="col" className={`px-4 py-3 text-left tracking-wider`}>CNPJ</th>
                           <th scope="col" className={`px-4 py-3 text-left tracking-wider`}>Vigência</th>
                           <th scope="col" className={`px-4 py-3 text-left tracking-wider`}>Limite de Consumo</th>
+                          <th scope="col" className={`px-4 py-3 text-left tracking-wider`}>Status</th>
                           <th scope="col" className={`px-4 py-3 text-left tracking-wider rounded-tr-xl`}>Ações</th>
                         </tr>
                       </thead>
@@ -176,6 +189,15 @@ export default function AccreditedNetwork() {
                                   <td className="px-4 py-2">{x.cnpj}</td>
                                   <td className="px-4 py-2">{maskDate(x.effectiveDate)}</td>
                                   <td className="px-4 py-2">R$ {convertNumberMoney(x.consumptionLimit)}</td>
+                                  <td className="px-4 py-2">
+                                    <div className={`flex flex-col`}>
+                                      <label className="slim-switch">
+                                        <input checked={x.active} onChange={() => openModalUpdateStatus(x)} type="checkbox"/>
+                                        
+                                        <span className="slider"></span>
+                                      </label>
+                                    </div>  
+                                  </td>
                                   
                                   <td className="p-2">
                                     <div className="flex gap-3">
@@ -209,6 +231,13 @@ export default function AccreditedNetwork() {
               onSelectValue={handleReturnModal}
               id={id}
             />      
+
+            <ModalUpdateStatus
+              isOpen={modalUpdateStatus} setIsOpen={() => setModalUpdateStatus(modalUpdateStatus)} 
+              onClose={resetModal}
+              onSelectValue={handleReturnModal}
+              id={id2}
+            />     
 
             <ModalDelete 
               title='Excluír Rede Credenciada'

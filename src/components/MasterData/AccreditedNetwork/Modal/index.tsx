@@ -14,6 +14,7 @@ import { ModalAttachment } from "../ModalAttachment";
 import { ModalData } from "../ModalData";
 import { ResetAccreditedNetwork, TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
 import { ModalTradingTable } from "../ModalTradingTable";
+import { ModalLog } from "../ModalLog";
 
 type TProp = {
     title: string;
@@ -24,7 +25,19 @@ type TProp = {
     id: string;
 }
 
-type TTabs = "data" | "responsible" | "tradingTable" | "contact" | "attachment";
+type TTabs = "data" | "responsible" | "tradingTable" | "contact" | "attachment" | "log";
+
+const useEsc = (callback: () => void) => {
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                callback();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [callback]);
+};
 
 export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSelectValue, id}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
@@ -36,21 +49,9 @@ export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSel
         { key: 'tradingTable', title: 'Tabela de Negociação' },
         { key: 'contact', title: 'Contatos' },
         { key: 'attachment', title: 'Anexos' },
+        { key: 'log', title: 'Histórico' }
     ]);
     
-    // const getById = async (id: string) => {
-    //     try {
-    //         setLoading(true);
-    //         const {data} = await api.get(`/accredited-networks/${id}`, configApi());
-    //         const result = data.result;
-    //         setCurrentBody(result.data)
-    //     } catch (error) {
-    //         resolveResponse(error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
     const cancel = () => {
         setTabCurrent("data");
         onClose();
@@ -68,6 +69,7 @@ export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSel
             { key: 'responsible', title: 'Dados do Responsável' },
             { key: 'contact', title: 'Contatos' },
             { key: 'attachment', title: 'Anexos' },
+            { key: 'log', title: 'Histórico' },
         ];
 
         setTab(prev => {
@@ -99,12 +101,9 @@ export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSel
         };
     };
 
-    useEffect(() => {
-        // setCurrentBody(ResetAccreditedNetwork);
-
-        // if (!id) return;
-        // getById(id);
-    }, [id]);
+    useEsc(() => {
+        if (isOpen) cancel(); 
+    });
 
     return (
         <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
@@ -146,6 +145,11 @@ export const ModalAccreditedNetwork = ({title, isOpen, setIsOpen, onClose, onSel
                         {
                             tabCurrent == "attachment" &&
                             <ModalAttachment parentId={id}/> 
+                        }
+
+                        {
+                            tabCurrent == "log" &&
+                            <ModalLog onClose={cancel} parentId={id}/> 
                         }
 
                         <div className="flex justify-end mb-2">

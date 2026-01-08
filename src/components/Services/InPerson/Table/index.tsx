@@ -2,10 +2,10 @@
 
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { TAccountsPayable } from "@/types/accountsPayable/accountsPayable.type";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { maskDate } from "@/utils/mask.util";
 import { api } from "@/service/api.service";
-import { configApi, resolveResponse } from "@/service/config.service";
+import { configApi, resolveParamsRequest, resolveResponse } from "@/service/config.service";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { ModalInPerson } from "../Modal";
@@ -15,6 +15,16 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import { ProcedureSinglePDF } from "../PDF";
 import { IconStatus } from "../IconStatus";
 import { ModalInPersonStatus } from "../ModalStatus";
+import { TRecipient } from "@/types/masterData/customers/customerRecipient.type";
+import { TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
+import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
+import { TProcedure } from "@/types/masterData/procedure/procedure.type";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { ResetInPerson, ResetInPersonSearch, TInPersonSearch } from "@/types/service/inPerson/inPerson.type";
+import MultiSelect from "@/components/Global/MultiSelect";
+import { Button } from "@/components/Global/Button";
+import { loadingAtom } from "@/jotai/global/loading.jotai";
+import { useAtom } from "jotai";
 
 type TProp = {
     list: TAccountsPayable[],
@@ -22,11 +32,29 @@ type TProp = {
 }
 
 export const TableInPerson = ({list, handleReturnModal}: TProp) => {
+    const [_, setLoading] = useAtom(loadingAtom);
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [modal, setModal] = useState<boolean>(false);
     const [modalStatus, setModalStatus] = useState<boolean>(false);
     const [id, setId] = useState<string>("")
     const [currentBody, setCurrentBody] = useState<TAccountsPayable>();
+
+    const [recipient, setRecipient] = useState<TRecipient[]>([]);
+    const [accreditedNetworks, setAccreditedNetwork] = useState<TAccreditedNetwork[]>([]);
+    const [serviceModules, setServiceModule] = useState<TServiceModule[]>([]);
+    const [produceres, setProcedure] = useState<TProcedure[]>([]);
+    const [listProduceres, setListProcedure] = useState<TProcedure[]>([]);
+    const [myProcedures, setMyProcedure] = useState<TProcedure[]>([]);
+    const [currentAccreditedNetwork, setCurrentAccreditedNetwork] = useState<any[]>([]);
+
+    const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TInPersonSearch>({
+        defaultValues: ResetInPersonSearch
+    });
+
+    const onSubmit: SubmitHandler<TInPersonSearch> = async (body: TInPersonSearch) => {
+        console.log(body)
+        console.log(resolveParamsRequest(body))
+    };
 
     const getCurrentBody = (action: string, body: TAccountsPayable, ) => {
         const currentContract = {...body}        
@@ -77,6 +105,84 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
         handleReturnModal();
     };
 
+    const getSelectRecipient = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/customer-recipients/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
+            const result = data.result;
+            setRecipient(result.data ?? []);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getSelectAccreditedNetwork = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/accredited-networks/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
+            const result = data.result;
+            setAccreditedNetwork(result.data ?? []);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getSelectServiceModule = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/service-modules/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
+            const result = data.result;
+            setServiceModule(result.data ?? []);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };    
+    
+    const getByAccreditedNetworkId = async (accreditedNetworkId: string) => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/trading-tables/accredited-network/${accreditedNetworkId}`, configApi());
+            const result = data.result;
+            setCurrentAccreditedNetwork(result.data.items ?? []);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const selectModule = (module: TProcedure[]) => {
+        setMyProcedure(module)
+    };
+    
+    // useEffect(() => {
+    //     if(watch("accreditedNetworkId")) {
+    //         const accreditedNetworkId = watch("accreditedNetworkId");
+    //         getByAccreditedNetworkId(accreditedNetworkId);
+
+    //         const procedureByServiceModuleId: any[] = currentAccreditedNetwork.filter((x: any) => x.serviceModuleId == watch("serviceModuleId"));
+    //         const newProcedures = procedureByServiceModuleId.map((x: any) => ({
+    //             ...x,
+    //             id: x.procedureId,
+    //             name: produceres.find(p => p.id == x.procedureId) ? produceres.find(p => p.id == x.procedureId)?.name : ""
+    //         }));                    
+    //         setListProcedure(newProcedures);
+    //     };
+    // }, [watch("serviceModuleId"), watch("accreditedNetworkId")]);
+    
+    useEffect(() => {
+        reset(ResetInPersonSearch);
+        getSelectRecipient();
+        getSelectAccreditedNetwork();
+        getSelectServiceModule();
+    }, []);
+
     const handleReturn = () => {        
         onClose();
     };
@@ -86,6 +192,8 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
             {
                 list.length > 0 &&
                 <div className="slim-container-table w-full">
+                    
+
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50 slim-table-thead">
                             <tr>

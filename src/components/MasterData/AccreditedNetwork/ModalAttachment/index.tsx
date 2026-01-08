@@ -31,7 +31,7 @@ export const ModalAttachment = ({parentId}: TProp) => {
 
         const formBody = new FormData();
         formBody.append("type", body.type);
-        formBody.append("parent", "customer");
+        formBody.append("parent", "accredited-network");
         formBody.append("parentId", parentId);
         formBody.append("description", body.description);
         formBody.append("uri", body.uri);
@@ -70,7 +70,7 @@ export const ModalAttachment = ({parentId}: TProp) => {
 
     const getAll = async () => {
         try {
-            const {data} = await api.get(`/attachments?deleted=false&pageSize=100&pageNumber=1&sort=createdAt&orderBy=createdAt&parentId=${parentId}&parent=customer`, configApi());
+            const {data} = await api.get(`/attachments?deleted=false&pageSize=100&pageNumber=1&sort=createdAt&orderBy=createdAt&parentId=${parentId}&parent=accredited-network`, configApi());
             const result = data.result;
             setAttachment(result.data);
         } catch (error) {

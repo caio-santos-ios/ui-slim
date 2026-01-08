@@ -44,3 +44,16 @@ export const resolveResponse = (response: any) => {
     theme: 'colored'
   });
 };
+
+export const resolveParamsRequest = (params: any) => {
+  let _params = ``;
+  for (const [key, value] of Object.entries(params)) {
+    if (typeof value === 'boolean') {
+      _params += `&${key}=${value}`;
+    } else {
+      if (value) _params += `&${key}=${value}`;
+    }
+  }
+
+  return _params;
+}

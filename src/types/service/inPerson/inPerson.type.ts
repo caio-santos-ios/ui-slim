@@ -23,3 +23,21 @@ export const ResetInPerson: TInPerson = {
     status: "",
     value: 0
 }
+
+export type TInPersonSearch = {        
+    recipientId: string;
+    accreditedNetworkId: string;
+    serviceModuleId: string;
+    gte$date: any;
+    lte$date: any;
+    status: string;
+}
+
+export const ResetInPersonSearch: TInPersonSearch = {
+    recipientId: "",
+    accreditedNetworkId: "",
+    serviceModuleId: "",
+    gte$date: "",
+    lte$date: "",
+    status: "",
+}

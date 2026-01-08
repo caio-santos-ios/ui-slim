@@ -16,6 +16,7 @@ export type TAccreditedNetwork = {
     tradingTable: string;
     address: TAddress;
     responsible: TResponsible;
+    active: boolean;
 }
 
 export const ResetAccreditedNetwork: TAccreditedNetwork = {
@@ -65,6 +66,7 @@ export const ResetAccreditedNetwork: TAccreditedNetwork = {
         email: "",
         notes: "",
     },
+    active: true
 }
 
 export type TResponsible = {

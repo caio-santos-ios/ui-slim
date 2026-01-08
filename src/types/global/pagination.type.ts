@@ -1,6 +1,7 @@
 export type TPagination = {
-    data: any[];
-    totalCount: number;
-    currentPage: number;
-    pageSize: number;
+    data: any[],
+    totalPages: 100,
+    currentPage: 1,
+    sizePage: 10,
+    query?: any
 }

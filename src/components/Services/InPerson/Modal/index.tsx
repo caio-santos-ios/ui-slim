@@ -32,6 +32,7 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
     const [_, setLoading] = useAtom(loadingAtom);
     const [recipient, setRecipient] = useState<TRecipient[]>([]);
     const [accreditedNetworks, setAccreditedNetwork] = useState<TAccreditedNetwork[]>([]);
+    const [listServiceModules, setListServiceModule] = useState<TServiceModule[]>([]);
     const [serviceModules, setServiceModule] = useState<TServiceModule[]>([]);
     const [produceres, setProcedure] = useState<TProcedure[]>([]);
     const [listProduceres, setListProcedure] = useState<TProcedure[]>([]);
@@ -121,7 +122,7 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
     const getSelectAccreditedNetwork = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/accredited-networks/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
+            const {data} = await api.get(`/accredited-networks/select?deleted=false&active=true&orderBy=createdAt&sort=desc`, configApi());
             const result = data.result;
             setAccreditedNetwork(result.data ?? []);
         } catch (error) {
@@ -136,7 +137,7 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
             setLoading(true);
             const {data} = await api.get(`/service-modules/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
             const result = data.result;
-            setServiceModule(result.data ?? []);
+            setListServiceModule(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -178,8 +179,20 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
     
     useEffect(() => {
         if(watch("accreditedNetworkId")) {
+            getSelectServiceModule();
+
             const accreditedNetworkId = watch("accreditedNetworkId");
             getByAccreditedNetworkId(accreditedNetworkId);
+
+            const newListServiceModule: TServiceModule[] = [];
+            currentAccreditedNetwork.forEach(el => {
+                const module = listServiceModules.find(x => x.id == el.serviceModuleId);
+                if(module) {
+                    newListServiceModule.push(module)
+                };
+            });
+
+            setServiceModule(newListServiceModule);
 
             const procedureByServiceModuleId: any[] = currentAccreditedNetwork.filter((x: any) => x.serviceModuleId == watch("serviceModuleId"));
             const newProcedures = procedureByServiceModuleId.map((x: any) => ({
@@ -188,14 +201,18 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
                 name: produceres.find(p => p.id == x.procedureId) ? produceres.find(p => p.id == x.procedureId)?.name : ""
             }));                    
             setListProcedure(newProcedures);
-        };
+        } else {
+            setServiceModule([]);
+            setListProcedure([]);
+            setMyProcedure([]);
+        }
     }, [watch("serviceModuleId"), watch("accreditedNetworkId")]);
 
     useEffect(() => {
         reset(ResetInPerson);
         getSelectRecipient();
         getSelectAccreditedNetwork();
-        getSelectServiceModule();
+        // getSelectServiceModule();
         getSelectProcedure();
     }, []);
 

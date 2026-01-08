@@ -110,7 +110,6 @@ export default function Customer() {
       setId2(body.id);
       setModalUpdateStatus(true);
     } else {
-      console.log(body)
       await updateStatus(body.id);
     }
   };

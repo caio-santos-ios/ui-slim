@@ -12,7 +12,7 @@ export const NotData = () => {
         <>
             {
                 pagination.data.length == 0 &&
-                <div className="h-full hidden lg:flex flex-col items-center justify-center text-sm text-gray-600">
+                <div className="hidden lg:flex flex-col items-center justify-center text-sm text-gray-600">
                     <Image
                         src="/assets/images/notData.png"
                         alt="Logo"

@@ -114,7 +114,6 @@ export const ModalTradingTable = ({parentId}: TProp) => {
             const {data} = await api.get(`/trading-tables?deleted=false&pageSize=100&pageNumber=1&sort=createdAt&orderBy=createdAt&accreditedNetworkId=${parentId}`, configApi());
             const result = data.result;
             if(result.data.length > 0) {
-                console.log(result.data[0].id)
                 setValue("id", result.data[0].id);
                 setValue("name", result.data[0].name);
                 setValue("items", result.data[0].items);

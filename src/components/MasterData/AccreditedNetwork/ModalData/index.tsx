@@ -42,6 +42,9 @@ export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
         if(body.consumptionLimit) body.consumptionLimit = convertStringMoney(body.consumptionLimit);
         if(!body.consumptionLimit) body.consumptionLimit = 0;
         if(body.consumptionLimit < 1) return toast.warn("Limite de Consumo não pode ser menor que R$ 1,00", {theme: 'colored'});
+        
+        if(body.address.id == null) body.address.id = "";
+        if(body.responsible.address.id == null) body.responsible.address.id = "";
 
         if(!body.id) {
             await create(body);
@@ -230,7 +233,7 @@ export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
                     <label className={`label slim-label-primary`}>Limite de Consumo</label>
                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("consumptionLimit")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div> 
-                <div className={`flex flex-col col-span-2 mb-2`}>
+                {/* <div className={`flex flex-col col-span-2 mb-2`}>
                     <label className={`label slim-label-primary`}>Tabela de Negociação</label>
                     <select {...register("tradingTable")} className="select slim-select-primary">
                         <option value="">Selecione</option>
@@ -241,7 +244,7 @@ export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
                         }
                         
                     </select>
-                </div>   
+                </div>    */}
                 <div className={`flex flex-col col-span-2 mb-2`}>
                     <label className={`label slim-label-primary`}>Faturamento</label>
                     <select {...register("billingId")} className="select slim-select-primary">
@@ -254,7 +257,7 @@ export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
                         
                     </select>
                 </div>   
-                <div className={`flex flex-col col-span-2 mb-2`}>
+                <div className={`flex flex-col col-span-1 mb-2`}>
                     <label className={`label slim-label-primary`}>CEP</label>
                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => getAddressByZipCode(e, '')} {...register("address.zipCode", {minLength: {value: 8, message: "CEP inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
@@ -278,7 +281,7 @@ export const ModalData = ({id, onSelectValue, onSuccess, onClose}: TProp) => {
                     <label className={`label slim-label-primary`}>Estado</label>
                     <input {...register("address.state")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>
-                <div className={`flex flex-col col-span-7 mb-2`}>
+                <div className={`flex flex-col col-span-3 mb-2`}>
                     <label className={`label slim-label-primary`}>Complemento</label>
                     <input {...register("address.complement")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                 </div>

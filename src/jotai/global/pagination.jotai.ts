@@ -1,16 +1,10 @@
 import { TPagination } from "@/types/global/pagination.type";
 import { atom } from "jotai";
 
-// export const paginationAtom = atom<TPagination>({
-//     data: [],
-//     totalPages: 100,
-//     currentPage: 1,
-//     sizePage: 10
-// });
-
-export const paginationAtom = atom({
+export const paginationAtom = atom<TPagination>({
     data: [],
     totalPages: 100,
     currentPage: 1,
-    sizePage: 10 
+    sizePage: 10,
+    query: {}
 })

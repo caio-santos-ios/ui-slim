@@ -236,22 +236,22 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                     delete: false
                 }
             },            
-            {
-                code: 'A25',
-                isOpen: true,
-                subMenu: [],
-                description: 'Tabela de Negociação',
-                icon: '',
-                link: 'master-data/trading-tables',
-                padding: 'px-4',
-                authorized: false,
-                permissions: {
-                    create: false,
-                    update: false,
-                    read: false,
-                    delete: false
-                }
-            },            
+            // {
+            //     code: 'A25',
+            //     isOpen: true,
+            //     subMenu: [],
+            //     description: 'Tabela de Negociação',
+            //     icon: '',
+            //     link: 'master-data/trading-tables',
+            //     padding: 'px-4',
+            //     authorized: false,
+            //     permissions: {
+            //         create: false,
+            //         update: false,
+            //         read: false,
+            //         delete: false
+            //     }
+            // },            
         ],
     },
     {
@@ -280,45 +280,46 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 code: 'B23',
                 isOpen: false,
                 authorized: false,
-                subMenu: [],
+                subMenu: [
+                    {
+                        code: 'B24',
+                        isOpen: false,
+                        authorized: false,
+                        subMenu: [],
+                        description: 'Encaminhamentos',
+                        // icon: 'PiMoneyFill',
+                        icon: '',
+                        link: 'services/forwardings',
+                        padding: 'px-4',
+                        permissions: {
+                            create: false,
+                            update: false,
+                            read: false,
+                            delete: false
+                        }
+                    },
+                    {
+                        code: 'B25',
+                        isOpen: false,
+                        authorized: false,
+                        subMenu: [],
+                        description: 'Agendamentos',
+                        // icon: 'PiMoneyFill',
+                        icon: '',
+                        link: 'services/appointments',
+                        padding: 'px-4',
+                        permissions: {
+                            create: false,
+                            update: false,
+                            read: false,
+                            delete: false
+                        }
+                    }
+                ],
                 description: 'Telemedicina',
                 // icon: 'PiMoneyFill',
                 icon: '',
-                link: 'services/telemedicine',
-                padding: 'px-4',
-                permissions: {
-                    create: false,
-                    update: false,
-                    read: false,
-                    delete: false
-                }
-            },
-            {
-                code: 'B24',
-                isOpen: false,
-                authorized: false,
-                subMenu: [],
-                description: 'Encaminhamentos',
-                // icon: 'PiMoneyFill',
-                icon: '',
-                link: 'services/forwardings',
-                padding: 'px-4',
-                permissions: {
-                    create: false,
-                    update: false,
-                    read: false,
-                    delete: false
-                }
-            },
-            {
-                code: 'B25',
-                isOpen: false,
-                authorized: false,
-                subMenu: [],
-                description: 'Agendamentos',
-                // icon: 'PiMoneyFill',
-                icon: '',
-                link: 'services/appointments',
+                link: '',
                 padding: 'px-4',
                 permissions: {
                     create: false,
