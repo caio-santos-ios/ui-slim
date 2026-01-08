@@ -201,10 +201,10 @@ export const ModalContact = ({parentId}: TProp) => {
 
                                                 <div className="flex gap-2">
                                                     <div onClick={() => getContact(x)} className="cursor-pointer text-yellow-400 hover:text-yellow-500">
-                                                        <MdEdit />
+                                                        <MdEdit className="cursor-pointer text-yellow-400 hover:text-yellow-500" />
                                                     </div>
                                                     <div onClick={() => openModalDelete(x)} className="cursor-pointer text-red-400 hover:text-red-500">
-                                                        <FaTrash />
+                                                        <FaTrash className="cursor-pointer text-red-400 hover:text-red-500" />
                                                     </div>
                                                 </div>
                                             </div>

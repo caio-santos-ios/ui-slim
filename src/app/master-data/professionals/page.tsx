@@ -145,11 +145,11 @@ export default function Professional() {
                               <div className="flex justify-center gap-2">
                                 {
                                   permissionUpdate("1", "A13") &&
-                                  <MdEdit  onClick={() => openModal("edit", x)} /> 
+                                  <MdEdit className="cursor-pointer text-yellow-400 hover:text-yellow-500"  onClick={() => openModal("edit", x)} /> 
                                 }
                                 {
                                   permissionDelete("1", "A13") &&
-                                  <FaTrash onClick={() => openModalDelete(x)} />
+                                  <FaTrash className="cursor-pointer text-red-400 hover:text-red-500" onClick={() => openModalDelete(x)} />
                                 }
                               </div>
                             </td>         

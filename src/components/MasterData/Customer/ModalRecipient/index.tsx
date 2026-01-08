@@ -183,7 +183,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     const getSelectPlan = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/plans?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1&type=${contractorType}`, configApi());
+            const {data} = await api.get(`/plans?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1&ne$type=${contractorType == "B2B" ? "B2C" : "B2B"}`, configApi());
             const result = data.result;
             setPlan(result.data ?? []);
         } catch (error) {
@@ -334,10 +334,10 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                                             <td className="p-2">
                                                 <div className="flex gap-3">
                                                     <div onClick={() => getCurrentBody(x)} className="cursor-pointer text-yellow-400 hover:text-yellow-500">
-                                                        <MdEdit />
+                                                        <MdEdit className="cursor-pointer text-yellow-400 hover:text-yellow-500" />
                                                     </div>
                                                     <div onClick={() => getDestroy(x.id)} className="cursor-pointer text-red-400 hover:text-red-500">
-                                                        <FaTrash />
+                                                        <FaTrash className="cursor-pointer text-red-400 hover:text-red-500" />
                                                     </div>
                                                 </div>
                                             </td>

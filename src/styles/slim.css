@@ -62,19 +62,19 @@
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--primary-color);
+    background-color: #f1f1f1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--secondary-color);
+  background: var(--primary-color);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--secondary-color);
+  background: var(--primary-color);
 }

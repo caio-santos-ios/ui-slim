@@ -166,11 +166,11 @@ export default function Commissions() {
                               <div className="flex justify-center gap-2">
                                 {
                                   permissionUpdate("1", "A20") &&
-                                <MdEdit  onClick={() => openModal("edit", x)} /> 
+                                <MdEdit className="cursor-pointer text-yellow-400 hover:text-yellow-500"  onClick={() => openModal("edit", x)} /> 
                                 }
                                 {
                                   permissionDelete("1", "A20") &&
-                                <FaTrash onClick={() => openModalDelete(x)} />
+                                <FaTrash className="cursor-pointer text-red-400 hover:text-red-500" onClick={() => openModalDelete(x)} />
                                 }
                               </div>
                             </td>         

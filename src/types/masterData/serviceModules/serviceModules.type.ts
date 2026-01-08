@@ -1,5 +1,6 @@
 export type TServiceModule = {
     id?: string;
+    code: string;
     name: string;
     description: string;
     price: any;
@@ -12,6 +13,7 @@ export type TServiceModule = {
 
 export const ResetServiceModule: TServiceModule = {
     id: "",
+    code: "",
     name: "",
     price: 0,
     cost: 0,

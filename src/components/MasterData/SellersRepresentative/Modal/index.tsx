@@ -738,10 +738,10 @@ export const ModalSellerRepresentative = ({title, isOpen, setIsOpen, onClose, on
 
                                                             <div className="flex gap-2">
                                                                 <div onClick={() => getContact(x)} className="cursor-pointer text-yellow-400 hover:text-yellow-500">
-                                                                    <MdEdit />
+                                                                    <MdEdit className="cursor-pointer text-yellow-400 hover:text-yellow-500" />
                                                                 </div>
                                                                 <div onClick={() => openModalDelete(x)} className="cursor-pointer text-red-400 hover:text-red-500">
-                                                                    <FaTrash />
+                                                                    <FaTrash className="cursor-pointer text-red-400 hover:text-red-500" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -959,10 +959,10 @@ export const ModalSellerRepresentative = ({title, isOpen, setIsOpen, onClose, on
 
                                                                 <div className="flex gap-2">
                                                                     <div onClick={() => openModalContact(x)} className="cursor-pointer">
-                                                                        <MdEdit />
+                                                                        <MdEdit className="cursor-pointer text-yellow-400 hover:text-yellow-500" />
                                                                     </div>
                                                                     <div onClick={() => openModalDelete(x)} className="cursor-pointer">
-                                                                        <FaTrash />
+                                                                        <FaTrash className="cursor-pointer text-red-400 hover:text-red-500" />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1062,7 +1062,7 @@ export const ModalSellerRepresentative = ({title, isOpen, setIsOpen, onClose, on
                                                             <p><strong>Aba:</strong> {x.type}</p>
 
                                                             <div onClick={() => openModalAttachmentDelete(x)} className="cursor-pointer text-red-400 hover:text-red-500">
-                                                                <FaTrash />
+                                                                <FaTrash className="cursor-pointer text-red-400 hover:text-red-500" />
                                                             </div>
                                                         </div>
                                                         <strong>

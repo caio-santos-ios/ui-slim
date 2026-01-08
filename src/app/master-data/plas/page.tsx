@@ -19,6 +19,7 @@ import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { CardImage } from "@/components/MasterData/Plan/CardImage";
 import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
+import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 
 export default function Plan() {
   const [_, setLoading] = useAtom(loadingAtom);
@@ -90,6 +91,10 @@ export default function Plan() {
     }
   };
 
+  const normalizeModules = (modules: any) => {
+    return modules.serviceModuleIds ? `Módulos: ${modules.serviceModuleIds.map((x: TServiceModule) => x.name).join(" / ")}` : '';
+  }
+
   const resetModal = () => {
     setCurrentBody({...ResetPlan, serviceModuleIds: []});
 
@@ -119,12 +124,12 @@ export default function Plan() {
 
                 {
                   pagination.data.length > 0 &&
-                  <ul className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2 slim-list-card">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-2 slim-list-card">
                     {
                       pagination.data.map((x: TPlan, i: number) => {
                         return (
-                          <CardImage key={x.id} uriImage={x.image} alt="foto do plano" title={x.name} cost={x.cost} price={x.price} description={x.description}>
-                            <div className="place-self-end-safe">
+                          <CardImage key={x.id} id={x.code} uriImage={x.image} alt="foto do plano" title={x.name} cost={x.cost} price={x.price} description={normalizeModules(x)}>
+                            <div className="place-self-start-safebg-gray-300">
                               <div className="flex gap-3">
                                 {
                                   permissionUpdate("1", "A15") &&

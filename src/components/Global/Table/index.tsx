@@ -29,10 +29,10 @@ export default function DataTable({columns, children, isAction = true, isActive 
             {
 
                 pagination.data.length > 0 && isActive &&
-                <div className={`bg-white shadow-sm rounded-md overflow-hidden`}>
-                    <div className="w-full overflow-x-auto hidden lg:block">
+                <div className={`slim-container-table w-full`}>
+                    <div className="min-w-full divide-y divide-gray-200">
                         <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                            <thead className="bg-gray-50 slim-table-thead">
                                 <tr>
                                     {columns.map((col) => {
                                         return (

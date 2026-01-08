@@ -123,11 +123,11 @@ export default function ServiceModules() {
 
                 {
                   pagination.data.length > 0 &&
-                  <ul className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2 slim-list-card">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-2 slim-list-card">
                     {
                       pagination.data.map((x: TServiceModule, i: number) => {
                         return (
-                          <CardImage key={x.id} uriImage={x.image} alt="foto do módulo" title={x.name} cost={x.cost} price={x.price} description={x.description}>
+                          <CardImage key={x.id} id={x.code} uriImage={x.image} alt="foto do módulo" title={x.name} cost={x.cost} price={x.price} description={x.description}>
                             <div className="place-self-end-safe">
                               <div className="flex gap-3">
                                 {

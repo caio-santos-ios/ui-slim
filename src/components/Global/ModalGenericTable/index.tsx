@@ -222,8 +222,8 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
                                             ))}   
                                             <td className="text-center">
                                                 <div className="flex justify-center gap-2">
-                                                    <MdEdit  onClick={() => getItem(x)} /> 
-                                                    <FaTrash onClick={() => openModalDelete(x)} />                                                 
+                                                    <MdEdit className="cursor-pointer text-yellow-400 hover:text-yellow-500"  onClick={() => getItem(x)} /> 
+                                                    <FaTrash className="cursor-pointer text-red-400 hover:text-red-500" onClick={() => openModalDelete(x)} />                                                 
                                                 </div>
                                             </td>         
                                         </tr>

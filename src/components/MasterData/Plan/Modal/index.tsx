@@ -225,7 +225,7 @@ export const ModalPlan = ({title, isOpen, setIsOpen, onClose, onSelectValue, bod
                                 </div>                            
                                 <div className={`flex flex-col col-span-5 mb-2`}>
                                     <label className={`label slim-label-primary`}>Módulo de Serviço</label>                                  
-                                    <MultiSelect maxSelected={3} descriptionSelectedMax="Módulos Selecionados" value={body?.serviceModuleIds ?? []} onChange={(items) => selectModule(items)} options={serviceModules} labelKey="name" valueKey="id" />
+                                    <MultiSelect maxSelected={2} descriptionSelectedMax="Módulos Selecionados" value={body?.serviceModuleIds ?? []} onChange={(items) => selectModule(items)} options={serviceModules} labelKey="name" valueKey="id" />
                                 </div>                            
                                 <div className={`flex flex-col col-span-7 mb-2`}>
                                     <label className={`label slim-label-primary`}>Descrição</label>

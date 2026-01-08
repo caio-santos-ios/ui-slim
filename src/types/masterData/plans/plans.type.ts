@@ -1,5 +1,6 @@
 export type TPlan = {
     id?: string;
+    code: string;
     name: string;
     price: any;
     cost: any;
@@ -14,6 +15,7 @@ export type TPlan = {
 
 export const ResetPlan: TPlan = {
     id: "",
+    code: "",
     name: "",
     price: 0,
     cost: 0,
