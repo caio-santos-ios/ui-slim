@@ -163,7 +163,11 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
             setLoading(true);
             const {data} = await api.get(`/trading-tables/accredited-network/${accreditedNetworkId}`, configApi());
             const result = data.result;
-            setCurrentAccreditedNetwork(result.data.items ?? []);
+            if(result.data) {
+                setCurrentAccreditedNetwork(result.data.items ?? []);
+            } else {
+                setCurrentAccreditedNetwork([]);
+            }
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -178,20 +182,26 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
     };
     
     useEffect(() => {
+        setServiceModule([]);
+        setListProcedure([]);
+        setMyProcedure([]);
+        const newListServiceModule: TServiceModule[] = [];
+
         if(watch("accreditedNetworkId")) {
             getSelectServiceModule();
 
             const accreditedNetworkId = watch("accreditedNetworkId");
             getByAccreditedNetworkId(accreditedNetworkId);
 
-            const newListServiceModule: TServiceModule[] = [];
             currentAccreditedNetwork.forEach(el => {
-                const module = listServiceModules.find(x => x.id == el.serviceModuleId);
-                if(module) {
-                    newListServiceModule.push(module)
-                };
+                const existed = newListServiceModule.find(x => x.id == el.serviceModuleId);
+                if(!existed) {
+                    const module = listServiceModules.find(x => x.id == el.serviceModuleId);
+                    if(module) {
+                        newListServiceModule.push(module)
+                    };
+                }              
             });
-
             setServiceModule(newListServiceModule);
 
             const procedureByServiceModuleId: any[] = currentAccreditedNetwork.filter((x: any) => x.serviceModuleId == watch("serviceModuleId"));
@@ -201,11 +211,7 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
                 name: produceres.find(p => p.id == x.procedureId) ? produceres.find(p => p.id == x.procedureId)?.name : ""
             }));                    
             setListProcedure(newProcedures);
-        } else {
-            setServiceModule([]);
-            setListProcedure([]);
-            setMyProcedure([]);
-        }
+        };
     }, [watch("serviceModuleId"), watch("accreditedNetworkId")]);
 
     useEffect(() => {

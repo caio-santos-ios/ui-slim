@@ -83,7 +83,7 @@ export default function Customer() {
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/in-persons?deleted=false${resolveParamsRequest(pagination.query)}&orderBy=createdAt&sort=desc&pageSize=100&pageNumber=1`, configApi());
+      const {data} = await api.get(`/in-persons?deleted=false&orderBy=createdAt&sort=desc&pageSize=100&pageNumber=1`, configApi());
       const result = data.result;
 
       setPagination({
