@@ -37,6 +37,7 @@ const columns2: {key: string; title: string}[] = [
   { key: "name", title: "Beneficiário" },
   { key: "cpf", title: "CPF" },
   { key: "typePlan", title: "Tipo de Plano" },
+  { key: "planName", title: "Plano" },
   { key: "active", title: "Status" },
   { key: "effectiveDate", title: "Data da Vigência" },
   { key: "bond", title: "Vínculo" },
