@@ -161,21 +161,6 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
         setMyProcedure(module)
     };
     
-    // useEffect(() => {
-    //     if(watch("accreditedNetworkId")) {
-    //         const accreditedNetworkId = watch("accreditedNetworkId");
-    //         getByAccreditedNetworkId(accreditedNetworkId);
-
-    //         const procedureByServiceModuleId: any[] = currentAccreditedNetwork.filter((x: any) => x.serviceModuleId == watch("serviceModuleId"));
-    //         const newProcedures = procedureByServiceModuleId.map((x: any) => ({
-    //             ...x,
-    //             id: x.procedureId,
-    //             name: produceres.find(p => p.id == x.procedureId) ? produceres.find(p => p.id == x.procedureId)?.name : ""
-    //         }));                    
-    //         setListProcedure(newProcedures);
-    //     };
-    // }, [watch("serviceModuleId"), watch("accreditedNetworkId")]);
-    
     useEffect(() => {
         reset(ResetInPersonSearch);
         getSelectRecipient();
@@ -191,9 +176,7 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
         <>
             {
                 list.length > 0 &&
-                <div className="slim-container-table w-full">
-                    
-
+                <div className="slim-container-table w-full">                    
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50 slim-table-thead">
                             <tr>

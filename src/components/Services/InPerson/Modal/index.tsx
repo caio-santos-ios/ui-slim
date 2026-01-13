@@ -34,6 +34,9 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
     const [accreditedNetworks, setAccreditedNetwork] = useState<TAccreditedNetwork[]>([]);
     const [listServiceModules, setListServiceModule] = useState<TServiceModule[]>([]);
     const [serviceModules, setServiceModule] = useState<TServiceModule[]>([]);
+
+    const [serviceModulesDefault, setServiceModuleDefault] = useState<TServiceModule[]>([]);
+
     const [produceres, setProcedure] = useState<TProcedure[]>([]);
     const [listProduceres, setListProcedure] = useState<TProcedure[]>([]);
     const [myProcedures, setMyProcedure] = useState<TProcedure[]>([]);
@@ -69,7 +72,7 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
             resolveResponse(error);
         }
     };
-      
+
     const update = async (body: TInPerson) => {
         try {
             const { status, data} = await api.put(`/in-persons`, body, configApi());
@@ -137,7 +140,7 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
             setLoading(true);
             const {data} = await api.get(`/service-modules/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
             const result = data.result;
-            setListServiceModule(result.data ?? []);
+            setServiceModuleDefault(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -163,6 +166,7 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
             setLoading(true);
             const {data} = await api.get(`/trading-tables/accredited-network/${accreditedNetworkId}`, configApi());
             const result = data.result;
+            console.log(result.data)
             if(result.data) {
                 setCurrentAccreditedNetwork(result.data.items ?? []);
             } else {
@@ -182,43 +186,61 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
     };
     
     useEffect(() => {
-        setServiceModule([]);
-        setListProcedure([]);
-        setMyProcedure([]);
-        const newListServiceModule: TServiceModule[] = [];
+        const handler = async () => {
+            const networkId = watch("accreditedNetworkId");
+            const moduleId = watch("serviceModuleId");
 
-        if(watch("accreditedNetworkId")) {
-            getSelectServiceModule();
+            if (!networkId) return;
 
-            const accreditedNetworkId = watch("accreditedNetworkId");
-            getByAccreditedNetworkId(accreditedNetworkId);
+            try {
+                setLoading(true);
+                const {data} = await api.get(`/trading-tables/accredited-network/${networkId}`, configApi());
+                const result = data.result;
+                if(result.data) {
+                    const newListServiceModule: TServiceModule[] = [];
 
-            currentAccreditedNetwork.forEach(el => {
-                const existed = newListServiceModule.find(x => x.id == el.serviceModuleId);
-                if(!existed) {
-                    const module = listServiceModules.find(x => x.id == el.serviceModuleId);
-                    if(module) {
-                        newListServiceModule.push(module)
-                    };
-                }              
-            });
-            setServiceModule(newListServiceModule);
+                    result.data.items.map((x: any) => {
+                        const module = serviceModulesDefault.find(m => m.id == x.serviceModuleId);
 
-            const procedureByServiceModuleId: any[] = currentAccreditedNetwork.filter((x: any) => x.serviceModuleId == watch("serviceModuleId"));
-            const newProcedures = procedureByServiceModuleId.map((x: any) => ({
-                ...x,
-                id: x.procedureId,
-                name: produceres.find(p => p.id == x.procedureId) ? produceres.find(p => p.id == x.procedureId)?.name : ""
-            }));                    
-            setListProcedure(newProcedures);
-        };
+                        if(module) {
+                            const existed = newListServiceModule.find(nm => nm.id == x.serviceModuleId);
+                            if(!existed) {
+                                newListServiceModule.push(module);
+                            };
+                        };
+                    });
+
+                    setServiceModule(newListServiceModule);
+                    
+                    if(moduleId) {
+                        const procedureByServiceModuleId: any[] = result.data.items.filter((x: any) => x.serviceModuleId == moduleId);
+                        const newProcedures = procedureByServiceModuleId.map((x: any) => ({
+                            ...x,
+                            id: x.procedureId,
+                            name: produceres.find(p => p.id == x.procedureId) ? produceres.find(p => p.id == x.procedureId)?.name : ""
+                        }));                    
+                        setListProcedure(newProcedures);
+                    }
+                } else {
+                    setServiceModule([]);
+                    setListProcedure([]);
+                    setMyProcedure([]);
+                }
+            } catch (error) {
+                resolveResponse(error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        handler();        
     }, [watch("serviceModuleId"), watch("accreditedNetworkId")]);
 
     useEffect(() => {
         reset(ResetInPerson);
         getSelectRecipient();
         getSelectAccreditedNetwork();
-        // getSelectServiceModule();
+        getSelectServiceModule();
         getSelectProcedure();
     }, []);
 
@@ -266,8 +288,8 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
                                     <select className="select slim-select-primary" {...register("serviceModuleId")}>
                                         <option value="">Selecione</option>
                                         {
-                                            serviceModules.map((x: any) => {
-                                                return <option key={x.id} value={x.id}>{x.name}</option>
+                                            serviceModules.map((x: any, i: number) => {
+                                                return <option key={i} value={x.id}>{x.name}</option>
                                             })
                                         }
                                     </select>
