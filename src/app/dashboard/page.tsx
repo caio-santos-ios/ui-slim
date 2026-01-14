@@ -64,8 +64,9 @@ export default function Dashboard() {
               <SlimContainer breadcrump="Dashboard" breadcrumpIcon="FaMoneyBillTrendUp"
                 buttons={<></>}>
 
-                <FirstCard cardFirst={cardFirst} />  
-                <RecentPatient recentPatients={recentPatient} />  
+                {/* <FirstCard cardFirst={cardFirst} />  
+                <RecentPatient recentPatients={recentPatient} />   */}
+                <></>
               </SlimContainer>
             </div>
           </main>

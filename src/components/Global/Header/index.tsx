@@ -60,8 +60,8 @@ export const Header = () => {
                 <Image
                     src="/assets/images/logo.png"
                     alt="Logo"
-                    width={150}
-                    height={150}
+                    width={200}
+                    height={200}
                 />
             </a>
 
