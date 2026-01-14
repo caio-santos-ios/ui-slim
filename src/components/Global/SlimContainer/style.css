@@ -37,6 +37,10 @@ button {
     height: calc(100dvh - (var(--height-header) + 8rem));
 }
 
+.dark .breadcrump {
+    color: white;
+}
+
 @media (min-width: 1024px) {
     .slim-container {
         width: calc(100dvw - (var(--width-side-bar) + 2rem));

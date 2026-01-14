@@ -43,16 +43,16 @@ export const TableHistoric = ({list}: TProp) => {
             {
                 list.length > 0 &&
                 <div className="slim-container-table w-full">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50 slim-table-thead">
+                    <table className="min-w-full divide-y ">
+                        <thead className="slim-table-thead">
                             <tr>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Tabela</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Ação</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Data de criação</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Tabela</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Ação</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tr-xl`}>Data de criação</th>
                             </tr>
                         </thead>
 
-                        <tbody className="bg-white divide-y divide-gray-100">
+                        <tbody className="divide-y">
                             {
                                 list.map((x: any) => {
                                     return (

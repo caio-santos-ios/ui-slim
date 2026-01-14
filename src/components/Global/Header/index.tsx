@@ -12,6 +12,7 @@ import { Button } from "../Button";
 import { api, uriBase } from "@/service/api.service";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { configApi, resolveResponse } from "@/service/config.service";
+import { ButtonTheme } from "@/components/button-theme/ButtonTheme";
 
 export const Header = () => {
     const [_, setLoading] = useAtom(loadingAtom);
@@ -48,7 +49,7 @@ export const Header = () => {
     }, [])
 
     return (
-        <header className="flex items-center justify-between px-8 lg:px-28">
+        <header className="flex items-center justify-between px-8 lg:px-28 slim-header">
             <div className="lg:hidden" onClick={() => setIsOpenMenu(!isOpenMenu)}>
                 {
                     isOpenMenu ? <IoMdClose size={25} /> : <HiMenuAlt2 size={25} />
@@ -65,6 +66,7 @@ export const Header = () => {
             </a>
 
             <div className="flex items-center gap-3 container-profile-header">
+                <ButtonTheme />
                 <div className="relative">
                     {
                         photo ? 

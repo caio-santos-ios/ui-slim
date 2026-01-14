@@ -68,22 +68,22 @@ export const TableSupplier = ({list, handleReturnModal}: TProp) => {
             {
                 list.length > 0 &&
                 <div className="slim-container-table w-full">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50 slim-table-thead">
+                    <table className="min-w-full divide-y">
+                        <thead className="slim-table-thead">
                             <tr>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Tipo</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Nome</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data da Vigência</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data de Criação</th>
-                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Tipo</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Nome</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data da Vigência</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data de Criação</th>
+                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
                             </tr>
                         </thead>
 
-                        <tbody className="bg-white divide-y divide-gray-100">
+                        <tbody className="slim-body-table divide-y">
                             {
                                 list.map((x: any) => {
                                     return (
-                                        <tr key={x.id}>                                            
+                                        <tr className="slim-tr" key={x.id}>                                            
                                             <td className="px-4 py-2">{x.type == "F" ? "Pessoa Fisica" : "Pessoa Juridica"}</td>
                                             <td className="px-4 py-2">{x.corporateName}</td>
                                             <td className="px-4 py-2">{maskDate(x.effectiveDate)}</td>

@@ -3,7 +3,7 @@
 import { userLoggerAtom } from "@/jotai/auth/auth.jotai";
 import { paginationAtom } from "@/jotai/global/pagination.jotai";
 import { api } from "@/service/api.service";
-import { configApi, resolveResponse } from "@/service/config.service";
+import { configApi, resolveParamsRequest, resolveResponse } from "@/service/config.service";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
@@ -29,6 +29,11 @@ import { TableInPerson } from "@/components/Services/InPerson/Table";
 import { permissionCreate, permissionRead } from "@/utils/permission.util";
 import { ModalForwarding } from "@/components/Services/Forwarding/Modal";
 import { TableForwarding } from "@/components/Services/Forwarding/Table";
+import { RiCalendarScheduleFill } from "react-icons/ri";
+import { Button } from "@/components/Global/Button";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { ResetForwardingSearch, TForwardingSearch } from "@/types/service/forwarding/forwarding.type";
+import { TRecipient } from "@/types/masterData/customers/customerRecipient.type";
 
 export default function Forwarding() {
   const [_, setLoading] = useAtom(loadingAtom);
@@ -36,19 +41,25 @@ export default function Forwarding() {
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
   const [id, setId] = useState<string>("");
- 
+  const [recipient, setRecipient] = useState<TRecipient[]>([]);
+
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TForwardingSearch>({
+    defaultValues: ResetForwardingSearch
+  });
+
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/forwardings`, configApi());
+      const {data} = await api.get(`/forwardings?deleted=false${resolveParamsRequest(pagination.query)}`, configApi());
       const result = data.result;
-      console.log(result)
+
       setPagination({
         currentPage: 1,
         data: result.data,
         sizePage: 10,
         totalPages: 100
       });
+      await getSelectRecipient();
     } catch (error) {
       resolveResponse(error);
     } finally {
@@ -61,9 +72,29 @@ export default function Forwarding() {
     setModal(true);
   };
 
-  const resetModal = () => {
-    setId("")
-    setModal(false);
+  const onSubmit: SubmitHandler<TForwardingSearch> = async (body: TForwardingSearch) => {
+    setPagination({
+      currentPage: pagination.currentPage,
+      data: pagination.data,
+      sizePage: pagination.sizePage,
+      totalPages: pagination.totalPages,
+      query: body
+    })
+
+    await getAll();
+  };
+
+  const getSelectRecipient = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get(`/customer-recipients/select`, configApi());
+      const result = data.result;
+      setRecipient(result.data);
+    } catch (error) {
+      resolveResponse(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -96,19 +127,36 @@ export default function Forwarding() {
                     }
                   </>
                 }>
-
+                
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 mb-2">                    
+                    <div className={`flex flex-col col-span-3 mb-2`}>
+                      <label className={`label slim-label-primary`}>Beneficiários</label>
+                      <select className="select slim-select-primary" {...register("beneficiaryUuid")}>
+                        <option value="">Todos</option>
+                        {recipient.map((x: any) => <option key={x.id} value={x.rapidocId}>{x.name}</option>)}
+                      </select>                        
+                    </div>                            
+                    <div className={`flex flex-col col-span-2 mb-2`}>
+                      <label className={`label slim-label-primary`}>Status</label>
+                      <select className="select slim-select-primary" {...register("status")}>
+                        <option value="">Todos</option>
+                        <option value="PENDING">Pendente</option>
+                        <option value="FINISHED">Finalizado</option>
+                        <option value="NON_SCHEDULABLE">Não Programado</option>
+                        <option value="UNFINISHED">Incabado</option>
+                        <option value="CANCELED">Cancelado</option>
+                      </select>
+                    </div>                            
+                    <div className={`flex flex-col justify-end col-span-1 mb-2`}>
+                      <Button type="submit" text="Buscar" theme="primary-light" styleClassBtn=""/>
+                    </div>                                          
+                  </div>                          
+                </form>
                 <NotData />
                 <TableForwarding handleReturnModal={handleReturnModal} list={pagination.data} />
               </SlimContainer>
             </div>
-
-            <ModalForwarding
-              title='Inserir Encaminhamento' 
-              isOpen={modal} setIsOpen={() => setModal(modal)} 
-              onClose={resetModal}
-              handleReturnModal={handleReturnModal}
-              id={id}
-            />      
           </main>
         </>
         :

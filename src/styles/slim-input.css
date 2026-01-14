@@ -1,28 +1,35 @@
 input {
-    outline: none;
     border-radius: .5rem;
-    padding: .4rem .5rem;
+    border: 1px solid oklch(87.2% 0.01 258.338);
+    background-color: #e8f0fe;
+}
+
+input:focus {
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); 
+    
+    transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
 .input::placeholder {
-    opacity: 1;
+    /* opacity: 1; */
     /* font-size: .8rem; */
-    font-weight: 500;
+    /* font-weight: 500; */
 }
 
 .slim-label-primary {
-    color: var(--primary-color);
-    font-weight: 700;
+    /* color: var(--primary-color);
+    font-weight: 700; */
 }
 
 .slim-label-secondary {
-    color: var(--secondary-color);
-    font-weight: 700;
+    /* color: var(--secondary-color);
+    font-weight: 700; */
 }
 
 .slim-input-primary {
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
+    /* color: var(--primary-color);
+    border: 1px solid var(--primary-color); */
 }
 
 .slim-input-secondary {

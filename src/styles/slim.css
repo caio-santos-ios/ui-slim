@@ -5,6 +5,7 @@
 
 .slim-bg-primary-hover:hover {
     background-color: var(--primary-color-hover);
+    color: white;
     transition: 1s;
 }
 
@@ -42,7 +43,6 @@
     background-color: #9f1414;
 }
 
-
 .slim-container {
     padding: 1rem;
     width: 100dvw;
@@ -62,8 +62,8 @@
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+    width: 5px;
+    height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -71,10 +71,37 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 10px;
+    background: var(--primary-color);
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-color);
+    background: var(--primary-color);
+}
+
+.slim-container-new {
+    background-color: white;
+}
+
+/* DARK */
+.dark .slim-container-new {
+    background-color: var(--color-brand-950);
+}
+
+.dark .slim-bg-primary {
+    background-color: var(--primary-color);
+    color: var(--secondary-text-color);
+}
+
+.dark .slim-bg-primary-hover:hover {
+    background-color: var(--primary-color-hover);
+    transition: 1s;
+}
+
+.dark .slim-bg-main {
+    background-color: var(--color-brand-900);
+    opacity: 1;
+    height: calc(100dvh - var(--height-header));
+    width: 100dvw;
+    display: flex;
 }

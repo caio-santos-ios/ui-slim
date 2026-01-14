@@ -164,20 +164,20 @@ export default function Dashboard() {
                   }
                 </ul>
 
-                <div className="slim-container-table w-full bg-white shadow-sm">
-                  <table className="min-w-full divide-y slim-table divide-gray-200">
-                    <thead className="slim-table-thead bg-gray-50">
+                <div className="slim-container-table w-full">
+                  <table className="min-w-full divide-y">
+                    <thead className="slim-table-thead">
                       <tr>
                         <th scope="col" className={`px-4 py-3 text-left tracking-wider rounded-tl-xl`}>Tabela</th>
                         <th scope="col" className={`px-4 py-3 text-center tracking-wider rounded-tr-xl`}>Ações</th>
                       </tr>
                     </thead>
 
-                    <tbody className="bg-white divide-y divide-gray-100">
+                    <tbody className="slim-body-table divide-y">
                       {
                         pagination.data.map((x: any, i: number) => {
                             return (
-                              <tr key={i}>
+                              <tr className="slim-tr" key={i}>
                                 <td className="px-4 py-2">{x.table}</td>
                                 
                                 <td className="p-2">

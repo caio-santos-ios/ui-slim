@@ -15,3 +15,13 @@ export const ResetForwarding: TForwarding = {
     beneficiaryMedicalReferralUuid: "",
     approveAdditionalPayment: true
 }
+
+export type TForwardingSearch = {        
+    beneficiaryUuid: string;
+    status: string;
+}
+
+export const ResetForwardingSearch: TForwardingSearch = {
+    beneficiaryUuid: "",
+    status: "",
+}

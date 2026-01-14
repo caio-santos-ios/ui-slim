@@ -10,10 +10,10 @@ textarea {
     font-weight: 500;
 }
 
-.slim-label-primary {
+/* .slim-label-primary {
     color: var(--primary-color);
     font-weight: 700;
-}
+} */
 
 .slim-label-secondary {
     color: var(--secondary-color);

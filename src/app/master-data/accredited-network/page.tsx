@@ -165,7 +165,7 @@ export default function AccreditedNetwork() {
 
                 {
                   pagination.data.length > 0 &&
-                  <div className="slim-container-table w-full bg-white shadow-sm">
+                  <div className="slim-container-table w-full ">
                     <table className="min-w-full divide-y slim-table divide-gray-200">
                       <thead className="slim-table-thead bg-gray-50">
                         <tr>

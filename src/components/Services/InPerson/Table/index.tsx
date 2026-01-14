@@ -177,24 +177,24 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
             {
                 list.length > 0 &&
                 <div className="slim-container-table w-full">                    
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50 slim-table-thead">
+                    <table className="min-w-full divide-y">
+                        <thead className="slim-table-thead">
                             <tr>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Beneficiário</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Unidade Credenciada</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Módulo de Serviço</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Responsável pelo Pagamento</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Status</th>
-                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Beneficiário</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Unidade Credenciada</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Módulo de Serviço</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Responsável pelo Pagamento</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Status</th>
+                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
                             </tr>
                         </thead>
 
-                        <tbody className="bg-white divide-y divide-gray-100">
+                        <tbody className="slim-body-table divide-y">
                             {
                                 list.map((x: any) => {
                                     return (
-                                        <tr key={x.id}>                                            
+                                        <tr className="slim-tr" key={x.id}>                                            
                                             <td className="px-4 py-2">{x.recipientDescription}</td>
                                             <td className="px-4 py-2">{x.accreditedNetworkDescription}</td>
                                             <td className="px-4 py-2">{x.serviceModuleDescription}</td>

@@ -166,7 +166,7 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
                             tabCurrent == "contract" &&
                             <ModalContract contractorType={currentBody.type} contractorId={currentBody.id!} onClose={cancel}/> 
                         }
-                       
+
                         {
                             tabCurrent == "contact" &&
                             <ModalContact parentId={id}/> 

@@ -46,9 +46,9 @@ export default function Home() {
       <Autorization path="login" />
       {
         !userLogger &&
-        <main className="h-dvh slim-bg-secondary">
+        <main className="h-dvh slim-container-new">
           <div className="w-11/12 h-12/12 lg:max-w-md m-auto flex flex-col justify-center">
-            <form onSubmit={handleSubmit(login)} className="px-3 py-6 slim-form-login shadow-gray-400 shadow-xl">
+            <form onSubmit={handleSubmit(login)} className="px-3 py-6 slim-form-login">
               <div className="flex items-center justify-center">
                 <Logo width={400} height={400} />
               </div>
@@ -58,14 +58,16 @@ export default function Home() {
               <div className="mb-2">
                 <label className="slim-label-primary" htmlFor="password">Senha</label>
 
-                <div className={`container-password rounded-md flex items-center pr-2 ${errors.password ? 'border border-red-500 text-red-500' : 'slim-input-primary'}`}>
+                <div className={`relative container-password rounded-md flex items-center pr-2 ${errors.password ? 'border border-red-500 text-red-500' : 'slim-input-primary'}`}>
                   <input {...register("password", { required: "Senha é obrigatória" })} id="password" placeholder="Digite sua senha" className="py-[.4rem] px-2 w-full" type={`${passwordEnabled ? 'text' : 'password'}`} />
-                  {
-                    passwordEnabled ? <FaEye onClick={() => setPasswordEnabled(!passwordEnabled)} size={25}/> : <FaEyeSlash onClick={() => setPasswordEnabled(!passwordEnabled)} size={25}/>
-                  }
+                  <span className="absolute right-5">
+                    {
+                      passwordEnabled ? <FaEye onClick={() => setPasswordEnabled(!passwordEnabled)} size={20}/> : <FaEyeSlash onClick={() => setPasswordEnabled(!passwordEnabled)} size={20}/>
+                    }
+                  </span>
                 </div>
                 <div className="text-red-500 min-h-6">{errors.password && errors.password.message}</div>
-              </div>
+              </div>              
               <Button type="submit" isLoading={isLoading} text="Entrar" theme="primary" styleClassBtn="w-full p-3 mb-8"/>
 
               <div className="text-center font-normal">Esqueceu a senha? <a className="font-bold text-blue-600" href="reset-password">Recuperar senha</a></div>

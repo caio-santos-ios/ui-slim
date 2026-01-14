@@ -16,29 +16,27 @@ import { TProcedure } from "@/types/masterData/procedure/procedure.type";
 import { ResetForwarding, TForwarding } from "@/types/service/forwarding/forwarding.type";
 
 type TProp = {
-    title: string;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     onClose: () => void;
     handleReturnModal: () => void;
-    id: string;
+    obj: any;
 }
 
-export const ModalForwarding = ({title, isOpen, setIsOpen, onClose, handleReturnModal, id}: TProp) => {
+export const ModalForwarding = ({isOpen, setIsOpen, onClose, handleReturnModal, obj}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
+    const [recipient, setRecipient] = useState<TRecipient[]>([]);
     const [beneficiaryMedicalReferrals, setBeneficiaryMedicalReferral] = useState<TRecipient[]>([]);
     const [specialties, setSpecialty] = useState<any[]>([]);
     const [specialtyAvailabilities, setSpecialtyAvailabilities] = useState<any[]>([]);
 
-    const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TForwarding>({
-        defaultValues: ResetForwarding
-    });
+    const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TForwarding>({});
 
     const onSubmit: SubmitHandler<TForwarding> = async (body: TForwarding) => {      
         if(!body.id) {
-          await create(body);
+            await create(body);
         } else {
-          await update(body);
+            await update(body);
         }
     };
 
@@ -52,7 +50,7 @@ export const ModalForwarding = ({title, isOpen, setIsOpen, onClose, handleReturn
             resolveResponse(error);
         }
     };
-      
+    
     const update = async (body: TForwarding) => {
         try {
             const { status, data} = await api.put(`/forwardings`, body, configApi());
@@ -69,13 +67,29 @@ export const ModalForwarding = ({title, isOpen, setIsOpen, onClose, handleReturn
         onClose();
     };
 
+    const getSelectRecipient = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/customer-recipients/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
+            const result = data.result;
+            console.log(result)
+            setRecipient(result.data ?? []);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const getSelectBeneficiaryMedicalReferral = async () => {
         try {
             setLoading(true);
             const {data} = await api.get(`/forwardings/beneficiary-medical-referrals`, configApi());
             const result = data.result;
+            console.log(result.data)
             setBeneficiaryMedicalReferral(result.data ?? []);
         } catch (error) {
+            console.log(error)
             resolveResponse(error);
         } finally {
             setLoading(false);
@@ -108,22 +122,29 @@ export const ModalForwarding = ({title, isOpen, setIsOpen, onClose, handleReturn
         }
     };
 
-    useEffect(() => {
-        if(watch("beneficiaryMedicalReferralUuid") && watch("specialtyUuid")) {
-            if(watch("beneficiaryMedicalReferralUuid")) {
-                const beneficiary: any = beneficiaryMedicalReferrals.find(x => x.id == watch("beneficiaryMedicalReferralUuid"))
-                if(beneficiary) {
-                    getSelectSpecialtyAvailability(watch("specialtyUuid"), beneficiary.beneficiaryId);
-                    setValue("beneficiaryUuid", beneficiary.beneficiaryId);
-                };
-            };
-        };
-    }, [watch("beneficiaryMedicalReferralUuid"), watch("specialtyUuid")]);
+    // useEffect(() => {
+    //     if(watch("beneficiaryMedicalReferralUuid") && watch("specialtyUuid")) {
+    //         if(watch("beneficiaryMedicalReferralUuid")) {
+    //             const beneficiary: any = beneficiaryMedicalReferrals.find(x => x.id == watch("beneficiaryMedicalReferralUuid"))
+    //             if(beneficiary) {
+    //                 getSelectSpecialtyAvailability(watch("specialtyUuid"), beneficiary.beneficiaryId);
+    //                 setValue("beneficiaryUuid", beneficiary.beneficiaryId);
+    //             };
+    //         };
+    //     };
+    // }, [watch("beneficiaryMedicalReferralUuid"), watch("specialtyUuid")]);
 
     useEffect(() => {
-        reset(ResetForwarding);
-        getSelectBeneficiaryMedicalReferral();
-        getSelectSpecialty();
+        console.log(obj)
+        // reset({
+        //     beneficiaryMedicalReferralUuid: id,
+        //     beneficiaryUuid: recipienId,
+        //     specialtyUuid: specialtyId
+        // });
+        // console.log("teste")
+        // getSelectRecipient();
+        // getSelectBeneficiaryMedicalReferral();
+        // getSelectSpecialty();
     }, []);
 
     return (
@@ -132,7 +153,7 @@ export const ModalForwarding = ({title, isOpen, setIsOpen, onClose, handleReturn
                 <div className="flex min-h-full items-center justify-center p-4">
                     <DialogPanel transition className="w-full max-w-4xl rounded-xl bg-gray-300 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
                         <div className="bg-red mb-4 border-b-3 header-modal">
-                            <DialogTitle as="h1" className="text-xl font-bold primary-color">{title}</DialogTitle>
+                            <DialogTitle as="h1" className="text-xl font-bold primary-color">Fazer Encaminhamento</DialogTitle>
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)}>

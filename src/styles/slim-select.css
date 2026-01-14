@@ -4,16 +4,12 @@ select {
 }
 
 .label {
-    /* color: var(--primary-color); */
     font-weight: 500;
 }
 
 .select {
-    /* border: 1px solid;
-    border: 1px solid var(--primary-color); */
     border-radius: .5rem;
     padding: .45rem .5rem;
-    /* color: var(--primary-color); */
 }
 
 .select::placeholder {
@@ -28,14 +24,13 @@ input {
 
 .input::placeholder {
     opacity: 1;
-    /* font-size: .8rem; */
     font-weight: 500;
 }
 
-.slim-label-primary {
+/* .slim-label-primary {
     color: var(--primary-color);
     font-weight: 700;
-}
+} */
 
 .slim-label-secondary {
     color: var(--secondary-color);
@@ -50,4 +45,11 @@ input {
 .slim-input-secondary {
     border: 1px solid var(--secondary-color);
     color: var(--secondary-color);
+}
+
+/* DARK */
+@media (prefers-color-scheme: dark) {
+    .slim-label-primary {
+        color: white;
+    }
 }

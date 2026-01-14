@@ -15,6 +15,7 @@ import "../styles/login/login.css";
 import { ToastContainer } from "react-toastify";
 import { Loading } from "@/components/Global/Loading";
 import { HeroUIProvider } from "@heroui/react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,13 +37,15 @@ export default function RootLayout({
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Kedebideri:wght@400;500;600;700;800;900&family=Yeseva+One&display=swap" rel="stylesheet" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100`}>
-        <HeroUIProvider>          
-          <ToastContainer />
-          <Loading />
-          
-          {children}
-        </HeroUIProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
+          <HeroUIProvider>          
+            <ToastContainer />
+            <Loading />
+            
+            {children}
+          </HeroUIProvider>
+        </NextThemesProvider>
       </body>
     </html>
   );

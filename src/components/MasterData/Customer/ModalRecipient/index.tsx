@@ -45,6 +45,10 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     const [modules, setModules] = useState<TServiceModule[]>([]);
     const [serviceModule, setServiceModule] = useState<TServiceModule[]>([]);
     const [tabCurrent, setTabCurrent] = useState<"data" | "dataResponsible" | "contact" | "seller" | "attachment" | "dataBank">("data")
+    const [file, setFile] = useState<File | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const [message, setMessage] = useState('');
+
     const { register, handleSubmit, reset, getValues, watch, setValue, formState: { errors }} = useForm<TRecipient>();
     const serviceModuleIds = watch("serviceModuleIds");
 
@@ -196,7 +200,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     const getRecipient = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/customer-recipients?deleted=false&contractorId=${contractorId}&orderBy=createdAt&sort=desc&pageSize=100&pageNumber=1`, configApi());
+            const {data} = await api.get(`/customer-recipients?deleted=false&contractorId=${contractorId}&orderBy=createdAt&sort=desc&pageSize=1000&pageNumber=1`, configApi());
             const result = data.result;
             setCustomerRecipient(result.data ?? []);
         } catch (error) {
@@ -282,11 +286,45 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         }
     };
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFile(e.target.files[0]);
+            handleUpload(e.target.files[0]);
+        }
+    };
+
+    const handleUpload = async (file: any) => {
+        if (!file) {
+        alert("Por favor, selecione um arquivo primeiro.");
+            return;
+        }
+
+        setUploading(true);
+        setMessage('');
+
+        const formData = new FormData();
+        formData.append('file', file); 
+        formData.append('contractorId', contractorId); 
+
+        try {
+            const { data } = await api.put('/customer-recipients/import', formData, configApi(false));
+            toast.success(data.message, {theme: 'colored'});
+            const attachment: any = document.querySelector("#file");
+            attachment.value = "";
+            await getRecipient();
+        } catch (error: any) {
+            console.error(error);
+            setMessage(error.response?.data || "Erro ao importar arquivo.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
     useEffect(() => {
         if(watch("subTotal")) {
             const subTotal = convertMoneyToNumber(watch("subTotal"));
             const discount = convertMoneyToNumber(watch("discount"));
-   
+
             const total = subTotal - discount;
 
             setValue("total", total >= 0 ? convertNumberMoney(total) : 0);
@@ -459,7 +497,14 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                 <div className={`flex flex-col ${contractorType == "B2B" ? 'col-span-2' : 'col-span-6'} mb-2`}>
                     <label className={`label slim-label-primary`}>Observações</label>
                     <input {...register("notes")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                </div>               
+                </div>  
+                {
+                    contractorType == "B2B" &&
+                    <div className={`flex flex-col col-span-1 mb-2`}>
+                        <label className={`label slim-label-primary`}>Importação</label>
+                        <input id="file" type="file" accept=".xlsx, .xls" onChange={handleFileChange} className=""/>
+                    </div> 
+                }             
             </div>
             
             <div className="flex justify-end gap-2 w-12/12 mt-3 mb-4">

@@ -14,6 +14,19 @@
 
   --width-side-bar: 16rem;
   --height-header: 6rem;
+
+  --color-brand-25: #f2f5f8;
+  --color-brand-50: #e8edf2;
+  --color-brand-100: #cedbe6;
+  --color-brand-200: #a2bcce;
+  --color-brand-300: #6d93b0;
+  --color-brand-400: #457091;
+  --color-brand-500: #1a3a5c;
+  --color-brand-600: #163250;
+  --color-brand-700: #122942;
+  --color-brand-800: #0f2135;
+  --color-brand-900: #0c1a29;
+  --color-brand-950: #07101a;
 }
 
 @theme inline {

@@ -134,7 +134,7 @@ export default function Seller() {
                     {
                       pagination.data.map((x: any, i: number) => {
                         return (
-                          <tr key={i}>
+                          <tr className="slim-tr" key={i}>
                             {columns.map((col: any) => (
                               <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
                                 {col.key == 'createdAt' ? maskDate((x as any)[col.key]) : col.key == 'active' ? x.active ? 'Ativo' : 'Inativo' : col.key == "cost" ? convertNumberMoney(x.cost) : (x as any)[col.key]}

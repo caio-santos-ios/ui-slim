@@ -27,7 +27,7 @@ export default function User() {
 
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
- 
+
   const getAll = async () => {
     try {
       setLoading(true);

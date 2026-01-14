@@ -30,28 +30,26 @@ export default function DataTable({columns, children, isAction = true, isActive 
 
                 pagination.data.length > 0 && isActive &&
                 <div className={`slim-container-table w-full`}>
-                    <div className="min-w-full divide-y divide-gray-200">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50 slim-table-thead">
-                                <tr>
-                                    {columns.map((col) => {
-                                        return (
-                                        <th key={col.key} scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>
-                                            {col.title}
-                                        </th>
-                                        );
-                                    })}
-                                    {isAction && (
-                                        <th scope="col" className="px-4 py-3 text-center text-sm font-bold text-gray-500 tracking-wider">
-                                            Ações
-                                        </th>
-                                    )}
-                                </tr>
-                            </thead>
+                    <table className="min-w-full divide-y">
+                        <thead className="slim-table-thead">
+                            <tr>
+                                {columns.map((col) => {
+                                    return (
+                                    <th key={col.key} scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>
+                                        {col.title}
+                                    </th>
+                                    );
+                                })}
+                                {isAction && (
+                                    <th scope="col" className="px-4 py-3 text-center text-sm font-bold tracking-wider">
+                                        Ações
+                                    </th>
+                                )}
+                            </tr>
+                        </thead>
 
-                            <tbody className="bg-white divide-y divide-gray-100">{children}</tbody>
-                        </table>
-                    </div>
+                        <tbody className="bslim-body-table divide-y">{children}</tbody>
+                    </table>
                 </div>
             }
         </>

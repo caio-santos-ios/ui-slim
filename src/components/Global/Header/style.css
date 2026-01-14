@@ -3,6 +3,12 @@ header {
     height: var(--height-header);
 }
 
-.container-profile-header {
-    color: var(--primary-color);
+.slim-header {
+    color: var(--color-brand-500);
+}
+
+.dark .slim-header {
+    color: white;
+    background-color: var(--color-brand-900);
+    border-bottom: 0.5px solid oklch(92.758% 0.00592 264.656 / 0.326);
 }

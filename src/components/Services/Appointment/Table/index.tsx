@@ -5,8 +5,10 @@ import { TAccountsPayable } from "@/types/accountsPayable/accountsPayable.type";
 import { useState } from "react";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
-import { permissionDelete } from "@/utils/permission.util";
+import { permissionDelete, permissionUpdate } from "@/utils/permission.util";
 import { IconCancel } from "@/components/Global/IconCancel";
+import { IoIosVideocam } from "react-icons/io";
+import { toast } from "react-toastify";
 
 type TProp = {
     list: TAccountsPayable[],
@@ -32,6 +34,15 @@ export const TableAppointment = ({list, handleReturnModal}: TProp) => {
         }
     };
 
+    const copyToClipboard = async (url: string) => {
+        try {
+            await navigator.clipboard.writeText(url);
+            toast.success("Link copiado para a área de transferência!", {theme: 'colored'});
+        } catch (err) {
+            console.error("Erro ao copiar: ", err);
+        }
+    };
+
     const normalizeStatus = (status: string) => {
         switch(status) {
             case "SCHEDULED": return "bg-blue-300 text-blue-700";
@@ -39,7 +50,7 @@ export const TableAppointment = ({list, handleReturnModal}: TProp) => {
             default: return "";
         }
     };
-   
+
     const normalizeNameStatus = (status: string) => {
         switch(status) {
             case "SCHEDULED": return "Agendada";
@@ -58,24 +69,24 @@ export const TableAppointment = ({list, handleReturnModal}: TProp) => {
             {
                 list.length > 0 &&
                 <div className="slim-container-table w-full">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50 slim-table-thead">
+                    <table className="min-w-full divide-y">
+                        <thead className="slim-table-thead">
                             <tr>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Beneficiário</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data Atendimento</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Horário Atendimento</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Especialidade</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Profissional</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Status</th>
-                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Beneficiário</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data Atendimento</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Horário Atendimento</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Especialidade</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Profissional</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Status</th>
+                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
                             </tr>
                         </thead>
 
-                        <tbody className="bg-white divide-y divide-gray-100">
+                        <tbody className="slim-body-table divide-y">
                             {
                                 list.map((x: any) => {
                                     return (
-                                        <tr key={x.id}>                                            
+                                        <tr className="slim-tr" key={x.id}>                                            
                                             <td className="px-4 py-2">{x.recipientDescription}</td>
                                             <td className="px-4 py-2">{x.date}</td>
                                             <td className="px-4 py-2">{x.startTime} até {x.endTime}</td>
@@ -89,9 +100,13 @@ export const TableAppointment = ({list, handleReturnModal}: TProp) => {
                                             <td className="p-2">
                                                 <div className="flex justify-center gap-3">                                      
                                                     {
-                                                        permissionDelete("2", "B24") &&
+                                                        permissionDelete("2", "B24") && x.status == "SCHEDULED" &&
                                                         <IconCancel obj={x} getObj={getCancel}/>                                                   
-                                                    }         
+                                                    }  
+                                                    {
+                                                        permissionUpdate("2", "B24") && x.status == "SCHEDULED" &&
+                                                        <IoIosVideocam className="cursor-pointer text-blue-400 hover:text-blue-500" onClick={() => copyToClipboard(x.beneficiaryUrl)} />
+                                                    }           
                                                 </div>
                                             </td>
                                         </tr>

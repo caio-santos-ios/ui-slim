@@ -13,3 +13,13 @@ export const ResetAppointment: TAppointment = {
     specialtyUuid: "",
     approveAdditionalPayment: true
 }
+
+export type TAppointmentSearch = {        
+    beneficiaryUuid: string;
+    status: string;
+}
+
+export const ResetAppointmentSearch: TAppointmentSearch = {
+    beneficiaryUuid: "",
+    status: "",
+}
