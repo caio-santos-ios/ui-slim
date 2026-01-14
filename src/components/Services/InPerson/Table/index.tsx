@@ -212,10 +212,13 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                                         <PDFDownloadLink 
                                                         document={
                                                             <ProcedureSinglePDF 
-                                                            recipient={x.recipientDescription} 
-                                                            accreditedNetwork={x.accreditedNetworkDescription}
-                                                            value={x.value}
-                                                            responsiblePayment={x.responsiblePayment}/>
+                                                                recipient={x.recipientDescription} 
+                                                                cpf={x.recipientCpf}
+                                                                procedure={'teste'}
+                                                                time={x.hour}
+                                                                date={maskDate(x.date)}
+                                                                professional={''}
+                                                                accreditedNetwork={x.accreditedNetworkDescription}/>
                                                         } 
                                                         fileName={`comprovante-${Date.now()}.pdf`}>
                                                             <IconDownload />
