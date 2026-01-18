@@ -29,7 +29,7 @@ export default function DataTable({columns, children, isAction = true, isActive 
             {
 
                 pagination.data.length > 0 && isActive &&
-                <div className={`slim-container-table w-full`}>
+                <div className={`slim-container-table w-full max-h-[calc(100dvh-(var(--height-header)+7rem))]`}>
                     <table className="min-w-full divide-y">
                         <thead className="slim-table-thead">
                             <tr>
@@ -48,7 +48,7 @@ export default function DataTable({columns, children, isAction = true, isActive 
                             </tr>
                         </thead>
 
-                        <tbody className="bslim-body-table divide-y">{children}</tbody>
+                        <tbody className="slim-body-table divide-y">{children}</tbody>
                     </table>
                 </div>
             }

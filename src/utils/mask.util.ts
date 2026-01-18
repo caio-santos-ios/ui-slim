@@ -129,16 +129,17 @@ export const maskAccount = (
 };
 
 // FORMATED //
-export const formattedMoney = (value: string) => {
-  if (!value) return "0,00";
-  
-  value = value.slice(0, 15);
-  console.log(parseFloat(value))
-  const cents = (parseInt(value, 10) / 100).toFixed(2);
+export const formattedMoney = (value: any) => {
+  if (!value && value !== 0) return "0,00";
 
-  return cents
-    .replace(".", ",")                
-    .replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
+  const amount = typeof value === "string" ? parseFloat(value) : value;
+
+  if (isNaN(amount)) return "0,00";
+
+  return new Intl.NumberFormat("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
 };
 
 export const formattedCPF = (value: string): string => {

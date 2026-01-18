@@ -3,18 +3,23 @@
 import Image from "next/image"
 
 type TProp = {
-    width: number;
-    height: number
+    className?: string;
 }
-export const Logo = ({width, height}: TProp) => {
+
+export const Logo = ({className}: TProp) => {
     return (
-        <div>
-            <Image
+        <div className={`${className}`}>
+            <img
+                className="logo max-w-full max-h-full w-auto h-auto rounded-xl object-contain"
                 src="/assets/images/logo.png"
                 alt="Logo"
-                width={width}
-                height={height}
-                />
+            />
+
+            <img
+                className="logo-light max-w-full max-h-full w-auto h-auto rounded-xl object-contain"
+                src="/assets/images/logo-light.png"
+                alt="Logo"
+            />
         </div>
     )
 }

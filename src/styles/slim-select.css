@@ -27,11 +27,6 @@ input {
     font-weight: 500;
 }
 
-/* .slim-label-primary {
-    color: var(--primary-color);
-    font-weight: 700;
-} */
-
 .slim-label-secondary {
     color: var(--secondary-color);
     font-weight: 700;
@@ -47,9 +42,13 @@ input {
     color: var(--secondary-color);
 }
 
-/* DARK */
-@media (prefers-color-scheme: dark) {
-    .slim-label-primary {
-        color: white;
-    }
+.dark .slim-select-primary {
+    color: white;
+    border: 1px solid white;
+}
+
+.dark .slim-select-primary option {
+    background-color: var(--color-brand-900) !important; 
+    color: #ffffff !important;           
+    padding: 10px;
 }

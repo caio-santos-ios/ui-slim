@@ -1,26 +1,27 @@
 .slim-bg-side-bar {
     background-color: white;
     color: var(--color-brand-900);
+    border-right: 0.5px solid var(--color-brand-200);
 }
 
 .dark .slim-bg-side-bar {
     background-color: var(--color-brand-900);
     color: white;
-    border-right: 0.5px solid oklch(92.758% 0.00592 264.656 / 0.326);
+    border-right: 0.5px solid #e5e7eb53;
 }
 
 @media (max-width: 768px) {
     .open-menu {
         transition: 1s;
         width: 100dvw;
-        height: calc(100dvh - var(--height-header));
+        height: calc(100dvh);
     }
 }
 
 @media (min-width: 1024) {
     .side-bar {
         width: var(--width-side-bar);
-        max-height: calc(100dvh - var(--height-header));
+        max-height: calc(100dvh);
         overflow-y: auto;
     }
 }

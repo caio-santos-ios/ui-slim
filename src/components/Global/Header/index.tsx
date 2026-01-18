@@ -13,6 +13,7 @@ import { api, uriBase } from "@/service/api.service";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { ButtonTheme } from "@/components/button-theme/ButtonTheme";
+import { Logo } from "../logo";
 
 export const Header = () => {
     const [_, setLoading] = useAtom(loadingAtom);
@@ -56,13 +57,8 @@ export const Header = () => {
                 }               
             </div>
 
-            <a href="dashboard">
-                <Image
-                    src="/assets/images/logo.png"
-                    alt="Logo"
-                    width={200}
-                    height={200}
-                />
+            <a href="/dashboard">
+                <Logo className="h-20"/>
             </a>
 
             <div className="flex items-center gap-3 container-profile-header">

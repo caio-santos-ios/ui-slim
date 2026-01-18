@@ -11,14 +11,15 @@ type TProp = {
     inputSearch?: ReactNode;
     breadcrump: string;
     breadcrumpIcon: string;
+    className?: string;
 }
 
-export const SlimContainer = ({children, buttons, inputSearch, breadcrump, breadcrumpIcon}: TProp) => {
+export const SlimContainer = ({children, buttons, inputSearch, breadcrump, breadcrumpIcon, className}: TProp) => {
     const [icons] = useAtom<any>(iconAtom);
     const IconComponent = breadcrumpIcon ? icons[breadcrumpIcon] : null;
     
     return (
-        <div className="slim-container">
+        <div className={`slim-container ${className}`}>
             <div className="container-breadcrump">
                 <div className="breadcrump">
                     {IconComponent && <IconComponent size={18} />}

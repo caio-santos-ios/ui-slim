@@ -46,6 +46,8 @@ export const resolveResponse = (response: any) => {
 };
 
 export const resolveParamsRequest = (params: any) => {
+  if(params == undefined && params == null) return '';
+
   let _params = ``;
   for (const [key, value] of Object.entries(params)) {
     if (typeof value === 'boolean') {

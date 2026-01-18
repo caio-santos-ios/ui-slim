@@ -41,7 +41,7 @@ export default function Procedure() {
 
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
- 
+
   const getAll = async (queryString: string = "") => {
     try {
       const {data} = await api.get(`/procedures?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}${queryString}`, configApi());

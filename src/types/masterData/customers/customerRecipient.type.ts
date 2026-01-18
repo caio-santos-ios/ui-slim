@@ -45,3 +45,13 @@ export const ResetCustomerRecipient: TRecipient = {
     total: 0,
     effectiveDate: ""
 }
+
+export type TRecipientSearch = {        
+    gte$effectiveDate: any;
+    lte$effectiveDate: any;
+}
+
+export const ResetRecipientSearch: TRecipientSearch = {
+    gte$effectiveDate: "",
+    lte$effectiveDate: ""
+}

@@ -170,8 +170,8 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
         <Dialog open={modal} as="div" className="relative z-10 focus:outline-none" onClose={() => setModal(false)}>
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto container-modal">
                 <div className="flex min-h-full items-center justify-center p-4">
-                    <DialogPanel transition className="w-full max-w-2xl rounded-xl bg-gray-300 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
-                        <div className="bg-red mb-4 border-b-3 header-modal">
+                    <DialogPanel transition className="slim-modal w-full max-w-2xl rounded-xl bg-gray-300 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
+                        <div className="slim-modal-title mb-4 border-b-3">
                             <DialogTitle as="h1" className="text-xl font-bold primary-color">Tabela Genérica</DialogTitle>
                         </div>
 

@@ -63,9 +63,6 @@ export default function Dashboard() {
             <div className="slim-container w-full">
               <SlimContainer breadcrump="Dashboard" breadcrumpIcon="FaMoneyBillTrendUp"
                 buttons={<></>}>
-
-                {/* <FirstCard cardFirst={cardFirst} />  
-                <RecentPatient recentPatients={recentPatient} />   */}
                 <></>
               </SlimContainer>
             </div>

@@ -34,6 +34,8 @@ import { Button } from "@/components/Global/Button";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 import { TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
 import { TRecipient } from "@/types/masterData/customers/customerRecipient.type";
+import { IoSearch } from "react-icons/io5";
+import { TProfessional } from "@/types/masterData/professional/professional.type";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -60,30 +62,24 @@ export default function Customer() {
   const [recipient, setRecipient] = useState<TRecipient[]>([]);
   const [accreditedNetworks, setAccreditedNetwork] = useState<TAccreditedNetwork[]>([]);
   const [serviceModules, setServiceModule] = useState<TServiceModule[]>([]);
+  const [professionals, setProfessional] = useState<TProfessional[]>([]);
 
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
 
-  const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TInPersonSearch>({
+  const { register, handleSubmit, reset, watch, setValue, getValues, formState: { errors }} = useForm<TInPersonSearch>({
     defaultValues: ResetInPersonSearch
   });
 
-  const onSubmit: SubmitHandler<TInPersonSearch> = async (body: TInPersonSearch) => {
-    setPagination({
-      currentPage: pagination.currentPage,
-      data: pagination.data,
-      sizePage: pagination.sizePage,
-      totalPages: pagination.totalPages,
-      query: body
-    })
-
-    await getAll();
+  const onSubmit = async () => {
+    const search = {...getValues()};
+    await getAll(search);
   };
- 
-  const getAll = async () => {
+
+  const getAll = async (search: any) => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/in-persons?deleted=false&orderBy=createdAt&sort=desc&pageSize=100&pageNumber=1`, configApi());
+      const {data} = await api.get(`/in-persons?deleted=false${resolveParamsRequest(search)}&orderBy=createdAt&sort=desc&pageSize=100&pageNumber=1`, configApi());
       const result = data.result;
 
       setPagination({
@@ -122,7 +118,7 @@ export default function Customer() {
       resolveResponse({status, message: "Excluído com sucesso"});
       setModalDelete(false);
       resetModal();
-      await getAll();
+      await getAll(pagination.query);
     } catch (error) {
       resolveResponse(error);
     }
@@ -167,19 +163,32 @@ export default function Customer() {
       }
   };    
 
-  
+  const getSelectProfessional = async () => {
+    try {
+      setLoading(true);
+      const {data} = await api.get(`/professionals/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
+      const result = data.result;
+      setProfessional(result.data ?? []);
+    } catch (error) {
+      resolveResponse(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+    
   useEffect(() => {
     if(permissionRead("2", "B22")) {
       reset(ResetInPersonSearch);
       getSelectRecipient();
       getSelectAccreditedNetwork();
       getSelectServiceModule();
-      getAll();
+      getSelectProfessional();
+      getAll(pagination.query);
     };
   }, []);
 
   const handleReturnModal = async () => {
-    await getAll();
+    await getAll(pagination.query);
   };
 
   const resetModal = () => {
@@ -223,7 +232,7 @@ export default function Customer() {
                     <div className={`flex flex-col col-span-2 mb-2`}>
                       <label className={`label slim-label-primary`}>Beneficiário</label>
                       <select className="select slim-select-primary" {...register("recipientId")}>
-                        <option value="">Selecione</option>
+                        <option value="">Todos</option>
                         {
                           recipient.map((x: any) => {
                             return <option key={x.id} value={x.id}>{x.name}</option>
@@ -234,7 +243,7 @@ export default function Customer() {
                       <div className={`flex flex-col col-span-3 mb-2`}>
                         <label className={`label slim-label-primary`}>Unidade Credenciada</label>
                         <select className="select slim-select-primary" {...register("accreditedNetworkId")}>
-                          <option value="">Selecione</option>
+                          <option value="">Todos</option>
                           {
                             accreditedNetworks.map((x: any) => {
                               return <option key={x.id} value={x.id}>{x.corporateName}</option>
@@ -242,10 +251,21 @@ export default function Customer() {
                           }
                         </select>
                       </div>
+                      <div className={`flex flex-col col-span-3 mb-2`}>
+                        <label className={`label slim-label-primary`}>Profissional</label>
+                        <select className="select slim-select-primary" {...register("professionalId")}>
+                          <option value="">Todos</option>
+                          {
+                            professionals.map((x: any, i: number) => {
+                                return <option key={i} value={x.id}>{x.name}</option>
+                            })
+                          }
+                        </select>
+                      </div>
                       <div className={`flex flex-col col-span-2 mb-2`}>
                         <label className={`label slim-label-primary`}>Módulo de Serviço</label>
                         <select className="select slim-select-primary" {...register("serviceModuleId")}>
-                          <option value="">Selecione</option>
+                          <option value="">Todos</option>
                           {
                             serviceModules.map((x: any) => {
                               return <option key={x.id} value={x.id}>{x.name}</option>
@@ -265,16 +285,18 @@ export default function Customer() {
                           <option value="Realizada">Realizada</option>
                       </select>
                       </div>                            
-                      <div className={`flex flex-col col-span-1 mb-2`}>
+                      <div className={`flex flex-col col-span-2 mb-2`}>
                         <label className={`label slim-label-primary`}>Data Inicio</label>
                         <input {...register("gte$date")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                       </div>                                          
-                      <div className={`flex flex-col col-span-1 mb-2`}>
+                      <div className={`flex flex-col col-span-2 mb-2`}>
                         <label className={`label slim-label-primary`}>Data Fim</label>
                         <input {...register("lte$date")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
                       </div>                                          
                       <div className={`flex flex-col justify-end col-span-1 mb-2`}>
-                        <Button type="submit" text="Buscar" theme="primary-light" styleClassBtn=""/>
+                        <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">
+                          <IoSearch />
+                        </div>
                       </div>                                          
                     </div>                          
                 </form>

@@ -2,6 +2,7 @@ import { TAddress } from "../address/address.type";
 
 export type TAccreditedNetwork = {
     id?: string;
+    code: string;
     cnpj: string;
     tradeName: string;
     corporateName: string;
@@ -21,6 +22,7 @@ export type TAccreditedNetwork = {
 
 export const ResetAccreditedNetwork: TAccreditedNetwork = {
     id: "",
+    code: "",
     cnpj: "",
     tradeName: "",
     corporateName: "",
@@ -80,4 +82,14 @@ export type TResponsible = {
     whatsapp: string;
     email: string;
     notes: string;
+}
+
+export type TAccreditedNetworkSearch = {        
+    gte$effectiveDate: any;
+    lte$effectiveDate: any;
+}
+
+export const ResetAccreditedNetworkSearch: TAccreditedNetworkSearch = {
+    gte$effectiveDate: "",
+    lte$effectiveDate: "",
 }

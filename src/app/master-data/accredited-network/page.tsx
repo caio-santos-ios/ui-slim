@@ -19,9 +19,10 @@ import { modalAtom } from "@/jotai/global/modal.jotai";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { ModalAccreditedNetwork } from "@/components/MasterData/AccreditedNetwork/Modal";
-import { ResetAccreditedNetwork, TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
+import { ResetAccreditedNetwork, ResetAccreditedNetworkSearch, TAccreditedNetwork, TAccreditedNetworkSearch } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
 import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 import { ModalUpdateStatus } from "@/components/MasterData/AccreditedNetwork/ModalUpdateStatus";
+import { useForm } from "react-hook-form";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -50,11 +51,16 @@ export default function AccreditedNetwork() {
 
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
- 
-  const getAll = async () => {
+  const [queryStr, setQueryStr] = useState<string>("");
+  const [queryDateStr, setQueryDateStr] = useState<string>("");
+
+  const { register, watch } = useForm<TAccreditedNetworkSearch>({
+    defaultValues: ResetAccreditedNetworkSearch
+  });
+
+  const getAll = async (queryString: string = "", queryStringDate: string = "") => {
     try {
-      setLoading(true);
-      const {data} = await api.get(`/accredited-networks?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/accredited-networks?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}${queryString}${queryStringDate}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -65,9 +71,7 @@ export default function AccreditedNetwork() {
       });
     } catch (error) {
       resolveResponse(error);
-    } finally {
-      setLoading(false);
-    }
+    };
   };
 
   const openModalUpdateStatus = async (body: any) => {
@@ -126,6 +130,19 @@ export default function AccreditedNetwork() {
     };
   }, []);
 
+  const search = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    let firstSearch = ``;
+
+    if(value) {
+      firstSearch = `&regex$or$corporateName=${value}&regex$or$tradeName=${value}&regex$or$cnpj=${value}&regex$or$code=${value}`;
+    } else {
+      firstSearch = "";
+    };
+    setQueryStr(firstSearch);
+    await getAll(firstSearch, queryDateStr);
+  };
+
   const handleReturnModal = async (isSuccess: boolean, id: string) => {
     setId(id);
     if(isSuccess) {
@@ -143,6 +160,23 @@ export default function AccreditedNetwork() {
     setId("");
   };
 
+  useEffect(() => {
+    const startDate = watch("gte$effectiveDate");
+    const endDate = watch("lte$effectiveDate");
+
+    let firstSearch = ``;
+    if(startDate) {
+      firstSearch += `&gte$effectiveDate=${startDate}`;
+    };
+    
+    if(endDate) {
+      firstSearch += `&lte$effectiveDate=${endDate}`;
+    };
+
+    setQueryDateStr(firstSearch);
+    getAll(queryStr, firstSearch);
+  }, [watch("gte$effectiveDate"), watch("lte$effectiveDate")]);
+
   return (
     <>
       <Autorization />
@@ -157,19 +191,46 @@ export default function AccreditedNetwork() {
               <SlimContainer breadcrump="Rede Credenciada" breadcrumpIcon="MdHub"
                 buttons={
                   <>
-{
+                    {
                       permissionCreate("1", "A21") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
-                    }                  </>
+                    }                  
+                  </>
+                }
+
+                inputSearch={
+                  <>
+                    {
+                      permissionRead("1", "A16") && 
+                      <div className="grid grid-cols-4 gap-2">
+                        <div className={`flex flex-col col-span-2 mb-2`}>
+                          <label className={`label slim-label-primary`}>Busca rápida</label>
+                          <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => search(e)} className="input slim-input-primary" type="text" placeholder="Buscar..." />
+                        </div>
+                        
+                        <div className={`flex flex-col col-span-1 mb-2`}>  
+                          <label className={`label slim-label-primary`}>Inicio Vigência</label>
+                          <input {...register("gte$effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
+                        </div>                     
+                        
+                        <div className={`flex flex-col col-span-1 mb-2`}>
+                          <label className={`label slim-label-primary`}>Fim Vigência</label>
+                          <input {...register("lte$effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
+                        </div>    
+                      </div>
+                    
+                    }
+                  </>
                 }>
 
                 {
                   pagination.data.length > 0 &&
-                  <div className="slim-container-table w-full ">
-                    <table className="min-w-full divide-y slim-table divide-gray-200">
-                      <thead className="slim-table-thead bg-gray-50">
+                  <div className="slim-container-table w-full max-h-[calc(100dvh-(var(--height-header)+7rem))]">
+                    <table className="min-w-full divide-y">
+                      <thead className="slim-table-thead">
                         <tr>
-                          <th scope="col" className={`px-4 py-3 text-left tracking-wider rounded-tl-xl`}>Razão Social</th>
+                          <th scope="col" className={`px-4 py-3 text-left tracking-wider rounded-tl-xl`}>ID</th>
+                          <th scope="col" className={`px-4 py-3 text-left tracking-wider`}>Razão Social</th>
                           <th scope="col" className={`px-4 py-3 text-left tracking-wider`}>Nome Fantasia</th>
                           <th scope="col" className={`px-4 py-3 text-left tracking-wider`}>CNPJ</th>
                           <th scope="col" className={`px-4 py-3 text-left tracking-wider`}>Vigência</th>
@@ -179,11 +240,12 @@ export default function AccreditedNetwork() {
                         </tr>
                       </thead>
 
-                      <tbody className="bg-white divide-y divide-gray-100">
+                      <tbody className="slim-body-table divide-y">
                         {
                           pagination.data.map((x: TAccreditedNetwork) => {
                               return (
-                                <tr key={x.id}>
+                                <tr className="slim-tr" key={x.id}>
+                                  <td className="px-4 py-2">{x.code}</td>
                                   <td className="px-4 py-2">{x.corporateName}</td>
                                   <td className="px-4 py-2">{x.tradeName}</td>
                                   <td className="px-4 py-2">{x.cnpj}</td>

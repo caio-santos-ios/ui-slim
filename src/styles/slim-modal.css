@@ -1,0 +1,11 @@
+.slim-modal {
+    background-color: var(--color-brand-300);
+}
+
+.slim-modal-title {
+    color: var(--color-brand-500);
+}
+
+.dark .slim-modal-title {
+    color: white;
+}

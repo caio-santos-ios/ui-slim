@@ -48,6 +48,7 @@
     width: 100dvw;
 }
 
+
 .slim-list-card {
     height: calc(100dvh - var(--height-header) - 10rem);
     overflow-y: auto;
@@ -58,6 +59,10 @@
     .slim-container {
         width: calc(100dvw - var(--width-side-bar));
         padding: 1rem;
+    }
+    
+    .slim-container-customer {
+        width: calc(100dvw - var(--width-side-bar));
     }
 }
 
@@ -99,7 +104,7 @@
 }
 
 .dark .slim-bg-main {
-    background-color: var(--color-brand-900);
+    background-color: var(--color-brand-700);
     opacity: 1;
     height: calc(100dvh - var(--height-header));
     width: 100dvw;

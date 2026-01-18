@@ -50,7 +50,7 @@ export default function Home() {
           <div className="w-11/12 h-12/12 lg:max-w-md m-auto flex flex-col justify-center">
             <form onSubmit={handleSubmit(login)} className="px-3 py-6 slim-form-login">
               <div className="flex items-center justify-center">
-                <Logo width={400} height={400} />
+                <Logo className="h-42" />
               </div>
               <InputForm {...register("email", { required: "E-mail é obrigatório",  pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "E-mail inválido"} })} name="email" placeholder="Digite seu e-mail" title="E-mail" themeInputStyle={`${errors.email ? 'border border-red-500' : 'primary'}`} styleClass="mb-0" />
               <div className="text-red-500 min-h-6 mb-1">{errors.email && errors.email.message}</div>
@@ -58,7 +58,7 @@ export default function Home() {
               <div className="mb-2">
                 <label className="slim-label-primary" htmlFor="password">Senha</label>
 
-                <div className={`relative container-password rounded-md flex items-center pr-2 ${errors.password ? 'border border-red-500 text-red-500' : 'slim-input-primary'}`}>
+                <div className={`relative container-password rounded-md flex items-center ${errors.password ? 'border border-red-500 text-red-500' : 'slim-input-primary'}`}>
                   <input {...register("password", { required: "Senha é obrigatória" })} id="password" placeholder="Digite sua senha" className="py-[.4rem] px-2 w-full" type={`${passwordEnabled ? 'text' : 'password'}`} />
                   <span className="absolute right-5">
                     {

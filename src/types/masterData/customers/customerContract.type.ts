@@ -66,3 +66,13 @@ export const ResetCustomerContract: TCustomerContract = {
     billing: "01",
     notes: ""
 }
+
+export type TCustomerSearch = {        
+    gte$effectiveDate: any;
+    lte$effectiveDate: any;
+}
+
+export const ResetCustomerSearch: TCustomerSearch = {
+    gte$effectiveDate: "",
+    lte$effectiveDate: ""
+}

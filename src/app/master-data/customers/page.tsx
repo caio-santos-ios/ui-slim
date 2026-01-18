@@ -22,6 +22,8 @@ import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 import { ModalUpdateStatus } from "@/components/MasterData/Customer/ModalUpdateStatus";
+import { useForm } from "react-hook-form";
+import { ResetRecipientSearch, TRecipientSearch } from "@/types/masterData/customers/customerRecipient.type";
 
 const columns1: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -65,10 +67,16 @@ export default function Customer() {
 
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
- 
-  const getAll = async (uri: string = "customers", queryString: string = "") => {
+  const [queryStr, setQueryStr] = useState<string>("");
+  const [queryDateStr, setQueryDateStr] = useState<string>("");
+
+  const { register, watch } = useForm<TRecipientSearch>({
+    defaultValues: ResetRecipientSearch
+  });
+
+  const getAll = async (uri: string = "customers", queryString: string = "", queryStringDate: string = "") => {
     try {
-      const {data} = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}${queryString}`, configApi());
+      const {data} = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}${queryString}${queryStringDate}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -188,15 +196,33 @@ export default function Customer() {
     } else {
       firstSearch = "";
     };
-    
-    await getAll(uri, firstSearch);
+    setQueryStr(firstSearch);
+    await getAll(uri, firstSearch, queryDateStr);
   };
 
   const nomalizeTypePlan = (typePlan: string) => {
     if(!typePlan) return "Empresarial";
 
     return typePlan;
-  }
+  };
+
+  useEffect(() => {
+    const startDate = watch("gte$effectiveDate");
+    const endDate = watch("lte$effectiveDate");
+
+    let firstSearch = ``;
+    if(startDate) {
+      firstSearch += `&gte$effectiveDate=${startDate}`;
+    };
+    
+    if(endDate) {
+      firstSearch += `&lte$effectiveDate=${endDate}`;
+    };
+
+    setQueryDateStr(firstSearch);
+    const uri = vision == "contractor" ? "customers" : "customer-recipients";
+    getAll(uri, queryStr, firstSearch);
+  }, [watch("gte$effectiveDate"), watch("lte$effectiveDate")]);
 
   return (
     <>
@@ -208,7 +234,7 @@ export default function Customer() {
           <main className="slim-bg-main">
             <SideMenu />
 
-            <div className="slim-container w-full">
+            <div className="slim-container-customer h-[calc(100dvh-22rem)] w-full">
               <SlimContainer breadcrump="Clientes" breadcrumpIcon="MdPerson"
                 buttons={
                   <>
@@ -226,14 +252,39 @@ export default function Customer() {
                       permissionCreate("1", "A12") &&
                       <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
                     }
-                  </>}>
+                  </>}
+
+                  inputSearch={
+                  <>
+                    {
+                      permissionRead("1", "A16") && 
+                      <div className="grid grid-cols-4 gap-2">
+                        <div className={`flex flex-col col-span-2 mb-2`}>
+                          <label className={`label slim-label-primary`}>Busca rápida</label>
+                          <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => search(e)} className="input slim-input-primary" type="text" placeholder="Buscar..." />
+                        </div>
+                        
+                        <div className={`flex flex-col col-span-1 mb-2`}>  
+                          <label className={`label slim-label-primary`}>Inicio Vigência</label>
+                          <input {...register("gte$effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
+                        </div>                     
+                        
+                        <div className={`flex flex-col col-span-1 mb-2`}>
+                          <label className={`label slim-label-primary`}>Fim Vigência</label>
+                          <input {...register("lte$effectiveDate")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
+                        </div>    
+                      </div>
+                    
+                    }
+                  </>
+                  }>
 
                 <DataTable columns={columns}>
                   <>
                     {
                       pagination.data.map((x: any, i: number) => {
                         return (
-                          <tr className="slim-tr" key={i}>
+                          <tr className={`slim-tr ${x.active ? '' : 'bg-orange-300'}`} key={i}>
                             {columns.map((col: any) => (
                               <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
                                 {col.key == 'createdAt' || col.key == 'effectiveDate' ? maskDate((x as any)[col.key]) : col.key == 'typePlan' ? nomalizeTypePlan(x.typePlan) : col.key == "cost" ? convertNumberMoney(x.cost) : col.key == "active" ? 

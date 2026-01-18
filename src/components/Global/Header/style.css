@@ -5,10 +5,11 @@ header {
 
 .slim-header {
     color: var(--color-brand-500);
+    border-bottom: 0.5px solid var(--color-brand-200);
 }
 
 .dark .slim-header {
     color: white;
     background-color: var(--color-brand-900);
-    border-bottom: 0.5px solid oklch(92.758% 0.00592 264.656 / 0.326);
+    border-bottom: 0.5px solid #e5e7eb53;
 }

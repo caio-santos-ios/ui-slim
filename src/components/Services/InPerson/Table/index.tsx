@@ -3,7 +3,7 @@
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { TAccountsPayable } from "@/types/accountsPayable/accountsPayable.type";
 import { useEffect, useState } from "react";
-import { maskDate } from "@/utils/mask.util";
+import { formattedMoney, maskDate } from "@/utils/mask.util";
 import { api } from "@/service/api.service";
 import { configApi, resolveParamsRequest, resolveResponse } from "@/service/config.service";
 import { IconEdit } from "@/components/Global/IconEdit";
@@ -42,19 +42,12 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
     const [recipient, setRecipient] = useState<TRecipient[]>([]);
     const [accreditedNetworks, setAccreditedNetwork] = useState<TAccreditedNetwork[]>([]);
     const [serviceModules, setServiceModule] = useState<TServiceModule[]>([]);
-    const [produceres, setProcedure] = useState<TProcedure[]>([]);
-    const [listProduceres, setListProcedure] = useState<TProcedure[]>([]);
     const [myProcedures, setMyProcedure] = useState<TProcedure[]>([]);
     const [currentAccreditedNetwork, setCurrentAccreditedNetwork] = useState<any[]>([]);
 
     const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TInPersonSearch>({
         defaultValues: ResetInPersonSearch
     });
-
-    const onSubmit: SubmitHandler<TInPersonSearch> = async (body: TInPersonSearch) => {
-        console.log(body)
-        console.log(resolveParamsRequest(body))
-    };
 
     const getCurrentBody = (action: string, body: TAccountsPayable, ) => {
         const currentContract = {...body}        
@@ -159,6 +152,35 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
 
     const selectModule = (module: TProcedure[]) => {
         setMyProcedure(module)
+
+        return [];
+    };
+
+    const normalizeProcedures = (x: any): any[] => {
+        const procedures: any[] = [];
+        
+        if(x["procedures"]) {            
+            x.procedures.forEach((item: any) => {
+                if(x["tradingTables"]) {
+                    if(x.tradingTables != undefined) {
+                        const procedure = x.tradingTables.find((t: any) => t.procedureId == item.id);
+                        if(procedure) {
+                            procedures.push({value: procedure.total, name: item.name})
+                        };
+                    };
+                };
+            });
+        };
+
+        return procedures; 
+    };
+
+    const normalizeTotal = (x: any): number => {
+        if(x["tradingTables"]) {
+            return x.tradingTables.reduce((value: number, t: any) => value + parseFloat(t.total), 0); 
+        };
+
+        return 0;
     };
     
     useEffect(() => {
@@ -176,16 +198,18 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
         <>
             {
                 list.length > 0 &&
-                <div className="slim-container-table w-full">                    
+                <div className="slim-container-table h-[calc(100dvh-22rem)] w-full">                    
                     <table className="min-w-full divide-y">
                         <thead className="slim-table-thead">
                             <tr>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Beneficiário</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Unidade Credenciada</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Módulo de Serviço</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Unidade</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Profissional</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Módulo</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Responsável pelo Pagamento</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Responsável p/ Pg.</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Status</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Valor</th>
                                 <th scope="col" className={`px-4 py-3 text-center text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
                             </tr>
                         </thead>
@@ -197,6 +221,7 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                         <tr className="slim-tr" key={x.id}>                                            
                                             <td className="px-4 py-2">{x.recipientDescription}</td>
                                             <td className="px-4 py-2">{x.accreditedNetworkDescription}</td>
+                                            <td className="px-4 py-2">{x.professionalName}</td>
                                             <td className="px-4 py-2">{x.serviceModuleDescription}</td>
                                             <td className="px-4 py-2">{maskDate(x.date)}</td>
                                             <td className="px-4 py-2">{x.responsiblePayment}</td>
@@ -205,6 +230,7 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                                     {x.status}
                                                 </span>
                                             </td>
+                                            <td className="px-4 py-2">{formattedMoney(x.value)}</td>
                                             <td className="p-2">
                                                 <div className="flex justify-center gap-3">              
                                                     {
@@ -214,10 +240,12 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                                             <ProcedureSinglePDF 
                                                                 recipient={x.recipientDescription} 
                                                                 cpf={x.recipientCpf}
-                                                                procedure={'teste'}
+                                                                procedures={normalizeProcedures(x)}
+                                                                total={normalizeTotal(x)}
                                                                 time={x.hour}
                                                                 date={maskDate(x.date)}
-                                                                professional={''}
+                                                                professional={x.professionalName}
+                                                                responsiblePayment={x.responsiblePayment}
                                                                 accreditedNetwork={x.accreditedNetworkDescription}/>
                                                         } 
                                                         fileName={`comprovante-${Date.now()}.pdf`}>

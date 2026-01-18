@@ -1,28 +1,15 @@
 "use client";
 
-// import Checkbox from "@/components/form/input/Checkbox";
-// import Input from "@/components/form/input/InputField";
-// import Label from "@/components/form/Label";
-// import Button from "@/components/ui/button/Button";
-// import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
-import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { api } from "@/service/api.service";
 import { resolveResponse } from "@/service/config.service";
 import { TLogin } from "@/types/auth/auth.type";
-import { useAtom } from "jotai";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form"
-import { InputForm } from "../Global/InputForm";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Button } from "../Global/Button";
-// import LabelForm from "../form/LabelForm";
-// import InputForm from "../form/input/InputForm";
 
 export default function SignInForm() {
-  // const [__, setIsLoading] = useAtom(loadingAtom);
-  const [showPassword, setShowPassword] = useState(false);
   const [passwordEnabled, setPasswordEnabled] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -69,7 +56,6 @@ export default function SignInForm() {
             <form onSubmit={handleSubmit(login)}>
               <div className="space-y-6">
                 <input className="custom-input" type="text" />
-                {/* <InputForm {...register("email", { required: "E-mail é obrigatório",  pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "E-mail inválido"} })} name="email" placeholder="Digite seu e-mail" title="E-mail" themeInputStyle={`${errors.email ? 'border border-red-500' : ''}`} styleClass="mb-0" /> */}
                 <div className="text-red-500 min-h-6 mb-1">{errors.email && errors.email.message}</div>
     
                   <div className="mb-2">

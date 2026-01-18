@@ -1,0 +1,8 @@
+.slim-label-primary {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.dark .slim-label-primary {
+    color: #ffffff;
+}

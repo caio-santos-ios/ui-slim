@@ -1,0 +1,15 @@
+.logo {
+    display: flex;
+}
+
+.logo-light {
+    display: none;
+}
+
+.dark .logo {
+    display: none;
+}
+
+.dark .logo-light {
+    display: flex;
+}

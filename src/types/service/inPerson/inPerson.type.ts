@@ -3,6 +3,7 @@ export type TInPerson = {
     recipientId: string;
     accreditedNetworkId: string;
     serviceModuleId: string;
+    professionalId: string;
     procedureIds: string[];
     date: any;
     hour: string;
@@ -16,6 +17,7 @@ export const ResetInPerson: TInPerson = {
     recipientId: "",
     accreditedNetworkId: "",
     serviceModuleId: "",
+    professionalId: "",
     procedureIds: [],
     date: "",
     hour: "",
@@ -28,6 +30,7 @@ export type TInPersonSearch = {
     recipientId: string;
     accreditedNetworkId: string;
     serviceModuleId: string;
+    professionalId: string;
     gte$date: any;
     lte$date: any;
     status: string;
@@ -37,6 +40,7 @@ export const ResetInPersonSearch: TInPersonSearch = {
     recipientId: "",
     accreditedNetworkId: "",
     serviceModuleId: "",
+    professionalId: "",
     gte$date: "",
     lte$date: "",
     status: "",

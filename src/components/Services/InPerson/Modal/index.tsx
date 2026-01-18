@@ -18,6 +18,7 @@ import { TProcedure } from "@/types/masterData/procedure/procedure.type";
 import { maskMoney } from "@/utils/mask.util";
 import { convertInputStringMoney, convertMoneyToNumber, convertNumberMoney, convertStringMoney } from "@/utils/convert.util";
 import MultiSelect from "@/components/Global/MultiSelect";
+import { TProfessional } from "@/types/masterData/professional/professional.type";
 
 type TProp = {
     title: string;
@@ -32,8 +33,8 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
     const [_, setLoading] = useAtom(loadingAtom);
     const [recipient, setRecipient] = useState<TRecipient[]>([]);
     const [accreditedNetworks, setAccreditedNetwork] = useState<TAccreditedNetwork[]>([]);
-    const [listServiceModules, setListServiceModule] = useState<TServiceModule[]>([]);
     const [serviceModules, setServiceModule] = useState<TServiceModule[]>([]);
+    const [professionals, setProfessional] = useState<TProfessional[]>([]);
 
     const [serviceModulesDefault, setServiceModuleDefault] = useState<TServiceModule[]>([]);
 
@@ -56,9 +57,9 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
         if(body.value) body.value = convertStringMoney(body.value);
         
         if(!body.id) {
-          await create(body);
+            await create(body);
         } else {
-          await update(body);
+            await update(body);
         }
     };
 
@@ -161,6 +162,19 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
         }
     };
     
+    const getSelectProfessional = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/professionals/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
+            const result = data.result;
+            setProfessional(result.data ?? []);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
     const getByAccreditedNetworkId = async (accreditedNetworkId: string) => {
         try {
             setLoading(true);
@@ -242,11 +256,14 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
         getSelectAccreditedNetwork();
         getSelectServiceModule();
         getSelectProcedure();
+        getSelectProfessional();
     }, []);
 
     useEffect(() => {
         if(id) {
             getById(id);
+            setMyProcedure([]);
+            setListProcedure([]);
         };
     }, [id]);
 
@@ -254,9 +271,9 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
         <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto container-modal">
                 <div className="flex min-h-full items-center justify-center p-4">
-                    <DialogPanel transition className="w-full max-w-4xl rounded-xl bg-gray-300 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
-                        <div className="bg-red mb-4 border-b-3 header-modal">
-                            <DialogTitle as="h1" className="text-xl font-bold primary-color">{title}</DialogTitle>
+                    <DialogPanel transition className="slim-modal w-full max-w-4xl rounded-xl p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
+                        <div className="slim-modal-title mb-4 border-b-3">
+                            <DialogTitle as="h1" className="text-xl font-bold">{title}</DialogTitle>
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
@@ -283,12 +300,23 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
                                         }
                                     </select>
                                 </div>
-                                <div className={`flex flex-col col-span-2 mb-2`}>
+                                <div className={`flex flex-col col-span-3 mb-2`}>
                                     <label className={`label slim-label-primary`}>Módulo de Serviço</label>
                                     <select className="select slim-select-primary" {...register("serviceModuleId")}>
                                         <option value="">Selecione</option>
                                         {
                                             serviceModules.map((x: any, i: number) => {
+                                                return <option key={i} value={x.id}>{x.name}</option>
+                                            })
+                                        }
+                                    </select>
+                                </div>
+                                <div className={`flex flex-col col-span-3 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Profissional</label>
+                                    <select className="select slim-select-primary" {...register("professionalId")}>
+                                        <option value="">Selecione</option>
+                                        {
+                                            professionals.map((x: any, i: number) => {
                                                 return <option key={i} value={x.id}>{x.name}</option>
                                             })
                                         }
@@ -319,7 +347,7 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
                                 </div> 
                             </div>                          
                             <div className="flex justify-end gap-2 w-12/12 mt-3">
-                                <Button type="button" click={cancel} text="Fechar" theme="primary-light" styleClassBtn=""/>
+                                <Button type="button" click={cancel} text="Cancelar" theme="primary-light" styleClassBtn=""/>
                                 <Button type="submit" text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>

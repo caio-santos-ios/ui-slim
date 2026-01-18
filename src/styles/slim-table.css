@@ -1,5 +1,5 @@
 .slim-container-table {
-    max-height: calc(100dvh - (var(--height-header) +  7rem));
+    /* max-height: calc(100dvh - (var(--height-header) +  7rem)); */
     overflow-y: auto;
     border-radius: .8rem;
     background-color: white;
@@ -22,10 +22,12 @@
     top: 0;
     z-index: 1;
     border-bottom: 1px solid oklch(92.8% 0.006 264.531);
+    background-color: white;
 }
 
 .dark .slim-table-thead {
     border-bottom: 1px solid #f9fafb1e;
+    background-color: var(--color-brand-800);
 }
 
 .slim-tr {
