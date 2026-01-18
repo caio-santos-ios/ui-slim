@@ -66,8 +66,10 @@ export const FormResetPassword = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="px-3 py-6 slim-form-login shadow-gray-400 shadow-xl">
-            <Logo width={400} height={400} />
+        <form onSubmit={handleSubmit(submit)} className="px-3 py-6 slim-form-login">
+            <div className="flex items-center justify-center">
+                <Logo className="h-42" />
+            </div>
             {
                 requestCode ?
                 <>
