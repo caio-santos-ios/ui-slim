@@ -34,7 +34,7 @@ export const resolveResponse = (response: any) => {
       return;
     }
 
-    toast.warn(response?.response?.data?.message, {
+    toast.warn(response?.response?.data?.result?.message, {
       theme: 'colored'
     });
     return;

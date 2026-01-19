@@ -101,8 +101,10 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
     const getSelectSpecialtyAvailability = async (specialtyUuid: string, beneficiaryUuid: string) => {
         try {
             setLoading(true);
+            console.log(specialtyUuid, beneficiaryUuid)
             const {data} = await api.get(`/appointments/specialty-availability/${specialtyUuid}/${beneficiaryUuid}`, configApi());
             const result = data.result;
+            console.log(result)
             setSpecialtyAvailabilities(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
@@ -192,7 +194,7 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
                                     </div>
                                 </div>                      
                                 <div className="flex flex-col">
-                                    <label className="text-sm font-semibold text-gray-600 mb-2">Horários Disponíveis</label>
+                                    <label className="text-sm font-semibold slim-label-primary mb-2">Horários Disponíveis</label>
                                     <div className="grid grid-cols-2 gap-3 max-h-[265px] overflow-y-auto pr-2 custom-scrollbar">
                                         {date && specialtyAvailabilities
                                             .filter((h) => h.date === formatDate(date))
@@ -216,8 +218,8 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
                                         
                                         {date && specialtyAvailabilities.filter((h) => h.date === formatDate(date)).length === 0 && (
                                             <div className="col-span-2 flex flex-col items-center justify-center py-20 text-gray-400">
-                                                <RiCalendarScheduleFill className="text-4xl mb-2 opacity-20" />
-                                                <p className="italic text-sm">Nenhum horário disponível para esta data.</p>
+                                                <RiCalendarScheduleFill className="text-4xl mb-2 opacity-20 slim-label-primary" />
+                                                <p className="italic text-sm slim-label-primary">Nenhum horário disponível para esta data.</p>
                                             </div>
                                         )}
                                     </div>
