@@ -273,23 +273,23 @@ export const ModalProfessional = ({title, isOpen, setIsOpen, onClose, onSelectVa
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Número</label>
-                                    <input {...register("address.number", {required: "Número é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("address.number")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col col-span-2 mb-2`}>
                                     <label className={`label slim-label-primary`}>Rua</label>
-                                    <input {...register("address.street", {required: "Rua é obrigatória"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("address.street")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Bairro</label>
-                                    <input {...register("address.neighborhood", {required: "Bairro é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("address.neighborhood")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Cidade</label>
-                                    <input {...register("address.city", {required: "Cidade é obrigatória"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("address.city")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col mb-2`}>
                                     <label className={`label slim-label-primary`}>Estado</label>
-                                    <input {...register("address.state", {required: "Estado é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                                    <input {...register("address.state")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
                                 <div className={`flex flex-col col-span-3 mb-2`}>
                                     <label className={`label slim-label-primary`}>Complemento</label>
