@@ -194,108 +194,118 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
         onClose();
     };
 
+    const calculateTotal = (list: any[]): string => {
+        const total = list.reduce((value: number, t: any) => value + parseFloat(t.value), 0); 
+        return formattedMoney(total);
+    };
+
     return (
         <>
             {
                 list.length > 0 &&
-                <div className="slim-container-table h-[calc(100dvh-22rem)] w-full">                    
-                    <table className="min-w-full divide-y">
-                        <thead className="slim-table-thead">
-                            <tr>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Beneficiário</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Unidade</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Profissional</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Módulo</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Responsável p/ Pg.</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Status</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Valor</th>
-                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
-                            </tr>
-                        </thead>
+                <>
+                    <div className="slim-container-table h-[calc(100dvh-24rem)] w-full">                    
+                        <table className="min-w-full divide-y">
+                            <thead className="slim-table-thead">
+                                <tr>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Beneficiário</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Unidade</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Profissional</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Módulo</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Responsável p/ Pg.</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Status</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Valor</th>
+                                    <th scope="col" className={`px-4 py-3 text-center text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
+                                </tr>
+                            </thead>
 
-                        <tbody className="slim-body-table divide-y">
-                            {
-                                list.map((x: any) => {
-                                    return (
-                                        <tr className="slim-tr" key={x.id}>                                            
-                                            <td className="px-4 py-2">{x.recipientDescription}</td>
-                                            <td className="px-4 py-2">{x.accreditedNetworkDescription}</td>
-                                            <td className="px-4 py-2">{x.professionalName}</td>
-                                            <td className="px-4 py-2">{x.serviceModuleDescription}</td>
-                                            <td className="px-4 py-2">{maskDate(x.date)}</td>
-                                            <td className="px-4 py-2">{x.responsiblePayment}</td>
-                                            <td className="px-4 py-2">
-                                                <span className={`${normalizeStatus(x.status)} py-1 px-2 rounded-lg font-bold`}>
-                                                    {x.status}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-2">{formattedMoney(x.value)}</td>
-                                            <td className="p-2">
-                                                <div className="flex justify-center gap-3">              
-                                                    {
-                                                        permissionUpdate("2", "B22") &&
-                                                        <PDFDownloadLink 
-                                                        document={
-                                                            <ProcedureSinglePDF 
-                                                                recipient={x.recipientDescription} 
-                                                                cpf={x.recipientCpf}
-                                                                procedures={normalizeProcedures(x)}
-                                                                total={normalizeTotal(x)}
-                                                                time={x.hour}
-                                                                date={maskDate(x.date)}
-                                                                professional={x.professionalName}
-                                                                responsiblePayment={x.responsiblePayment}
-                                                                accreditedNetwork={x.accreditedNetworkDescription}/>
-                                                        } 
-                                                        fileName={`comprovante-${Date.now()}.pdf`}>
-                                                            <IconDownload />
-                                                        </PDFDownloadLink>
-                                                    }                             
-                                                    {
-                                                        permissionUpdate("2", "B22") &&
-                                                        <IconStatus action="alterStatus" obj={x} getObj={getCurrentBody}/>
-                                                    }                             
-                                                    {
-                                                        permissionUpdate("2", "B22") &&
-                                                        <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
-                                                    }                             
-                                                    {
-                                                        permissionDelete("2", "B22") &&
-                                                        <IconDelete obj={x} getObj={getDestroy}/>                                                   
-                                                    }         
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                            }
-                        </tbody>
-                    </table>
+                            <tbody className="slim-body-table divide-y">
+                                {
+                                    list.map((x: any) => {
+                                        return (
+                                            <tr className="slim-tr" key={x.id}>                                            
+                                                <td className="px-4 py-2">{x.recipientDescription}</td>
+                                                <td className="px-4 py-2">{x.accreditedNetworkDescription}</td>
+                                                <td className="px-4 py-2">{x.professionalName}</td>
+                                                <td className="px-4 py-2">{x.serviceModuleDescription}</td>
+                                                <td className="px-4 py-2">{maskDate(x.date)}</td>
+                                                <td className="px-4 py-2">{x.responsiblePayment}</td>
+                                                <td className="px-4 py-2">
+                                                    <span className={`${normalizeStatus(x.status)} py-1 px-2 rounded-lg font-bold`}>
+                                                        {x.status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-2">{formattedMoney(x.value)}</td>
+                                                <td className="p-2">
+                                                    <div className="flex justify-center gap-3">              
+                                                        {
+                                                            permissionUpdate("2", "B22") &&
+                                                            <PDFDownloadLink 
+                                                            document={
+                                                                <ProcedureSinglePDF 
+                                                                    recipient={x.recipientDescription} 
+                                                                    cpf={x.recipientCpf}
+                                                                    procedures={normalizeProcedures(x)}
+                                                                    total={normalizeTotal(x)}
+                                                                    time={x.hour}
+                                                                    date={maskDate(x.date)}
+                                                                    professional={x.professionalName}
+                                                                    responsiblePayment={x.responsiblePayment}
+                                                                    accreditedNetwork={x.accreditedNetworkDescription}/>
+                                                            } 
+                                                            fileName={`comprovante-${Date.now()}.pdf`}>
+                                                                <IconDownload />
+                                                            </PDFDownloadLink>
+                                                        }                             
+                                                        {
+                                                            permissionUpdate("2", "B22") &&
+                                                            <IconStatus action="alterStatus" obj={x} getObj={getCurrentBody}/>
+                                                        }                             
+                                                        {
+                                                            permissionUpdate("2", "B22") &&
+                                                            <IconEdit action="edit" obj={x} getObj={getCurrentBody}/>
+                                                        }                             
+                                                        {
+                                                            permissionDelete("2", "B22") &&
+                                                            <IconDelete obj={x} getObj={getDestroy}/>                                                   
+                                                        }         
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </table>
 
-                    <ModalInPerson
-                        title='Editar Atendimento Presencial' 
-                        isOpen={modal} setIsOpen={() => setModal(modal)} 
-                        onClose={onClose}
-                        handleReturnModal={handleReturn}
-                        id={id}
-                    />     
-                    
-                    <ModalInPersonStatus
-                        title='Editar Status' 
-                        isOpen={modalStatus} setIsOpen={() => setModalStatus(modalStatus)} 
-                        onClose={onClose}
-                        handleReturnModal={handleReturn}
-                        id={id}
-                    />     
-        
-                    <ModalDelete
-                        title='Excluír Atendimento Presencial'
-                        isOpen={modalDelete} setIsOpen={() => setModalDelete(!modalDelete)} 
-                        onClose={() => setModalDelete(false)}
-                        onSelectValue={destroy}
-                    />  
-                </div>
+                        <ModalInPerson
+                            title='Editar Atendimento Presencial' 
+                            isOpen={modal} setIsOpen={() => setModal(modal)} 
+                            onClose={onClose}
+                            handleReturnModal={handleReturn}
+                            id={id}
+                        />     
+                        
+                        <ModalInPersonStatus
+                            title='Editar Status' 
+                            isOpen={modalStatus} setIsOpen={() => setModalStatus(modalStatus)} 
+                            onClose={onClose}
+                            handleReturnModal={handleReturn}
+                            id={id}
+                        />     
+            
+                        <ModalDelete
+                            title='Excluír Atendimento Presencial'
+                            isOpen={modalDelete} setIsOpen={() => setModalDelete(!modalDelete)} 
+                            onClose={() => setModalDelete(false)}
+                            onSelectValue={destroy}
+                        />  
+                    </div>
+                    <div>
+                        <strong>Valor Total: R$ {calculateTotal(list)}</strong>
+                    </div>
+                </>
             }
         </>
     )

@@ -22,6 +22,12 @@
     color: var(--primary-text-color);
 }
 
+.dark .slim-btn-primary-light {
+    border: 1px solid white;
+    background-color: transparent;
+    color: white;
+}
+
 .slim-btn-secondary-light {
     border: 1px solid var(--secondary-color);
     background-color: transparent;

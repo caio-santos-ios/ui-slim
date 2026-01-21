@@ -18,6 +18,7 @@ import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import "./style.css"
 
 type TProp = {
     list: TAccountsPayable[],
@@ -53,10 +54,11 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
     const availableDates = new Set(specialtyAvailabilities.map(item => item.date));
 
     const getModal = async (body: any) => {
-        await getSelectRecipient(body.recipienId);
-        await getSelectSpecialty(body.specialtyId);
-        await getSelectSpecialtyAvailability(body.specialtyId, body.recipienId);
-        setModal(true);
+        console.log(body)
+        await getSelectRecipient(body.cpf);
+        // await getSelectSpecialty(body.specialtyId);
+        // await getSelectSpecialtyAvailability(body.specialtyId, body.recipienId);
+        // setModal(true);
     };
 
     const onSubmit: SubmitHandler<TForwarding> = async (body: TForwarding) => {
@@ -78,13 +80,12 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
         handleReturnModal();
     };
 
-    const getSelectRecipient = async (id: string) => {
+    const getSelectRecipient = async (cpf: string) => {
         try {
             setLoading(true);
-            const { data } = await api.get(`/customer-recipients/rapidoc/${id}`, configApi());
+            const { data } = await api.get(`/customer-recipients/cpf/${formattedCPF(cpf)}`, configApi());
             const result = data.result;
-            setRecipient([{ ...result.data }]);
-            setValueForwarding("beneficiaryUuid", id);
+            setValueForwarding("beneficiaryUuid", result.rapidocId);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -165,6 +166,14 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
         }
     };
 
+    const normalizeUrl = (x: any): boolean => {
+        if(x["urlPath"]) {
+            return !x.urlPath;
+        };
+
+        return false;
+    }
+
     return (
         <>
             {list.length > 0 && (
@@ -194,11 +203,13 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
                                                 {permissionDelete("2", "B25") && x.status === "SCHEDULED" && (
                                                     <a className="text-blue-400 hover:text-blue-500" target="_blank" href={x.urlPath}><IoIosVideocam /></a>
                                                 )}
-                                                {permissionUpdate("2", "B25") && (
+                                                {permissionUpdate("2", "B25") && normalizeUrl(x) && (
                                                     <a className="text-green-400 hover:text-green-500" target="_blank" href={x.urlPath}><FaDownload /></a>
                                                 )}
                                                 {permissionUpdate("2", "B25") && x.status === "PENDING" && (
-                                                    <RiCalendarScheduleFill onClick={() => getModal(x)} className="cursor-pointer slim-text-primary text-lg" />
+                                                    <div className="text-stone-400 hover:text-stone-500">
+                                                        <RiCalendarScheduleFill onClick={() => getModal(x)} className="cursor-pointer text-lg" />
+                                                    </div>
                                                 )}
                                             </div>
                                         </td>
@@ -211,30 +222,25 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
                     <Dialog open={modal} as="div" className="relative z-50" onClose={onClose}>
                         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" aria-hidden="true" />
                         <div className="fixed inset-0 flex items-center justify-center p-4">
-                            <DialogPanel className="w-full max-w-4xl rounded-2xl bg-white p-8 shadow-2xl">
-                                <DialogTitle className="text-2xl font-bold text-gray-800 border-b pb-4 mb-6">Fazer Encaminhamento</DialogTitle>
+                            <DialogPanel className="slim-modal w-full max-w-4xl rounded-xl p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
+                                <div className="slim-modal-title mb-4 border-b-3">
+                                    <DialogTitle as="h1" className="text-xl font-bold primary-color">Fazer Encaminhamento</DialogTitle>
+                                </div>
 
                                 <form onSubmit={handleSubmit(onSubmit)}>
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                         
                                         <div className="space-y-4">
-                                            {/* <div className="flex flex-col">
-                                                <label className="text-sm font-semibold text-gray-600 mb-1">Beneficiário</label>
-                                                <select disabled className="bg-gray-100 border border-gray-200 rounded-lg p-2.5 text-gray-500 cursor-not-allowed" {...registerForwarding("beneficiaryUuid")}>
-                                                    {recipient.map((x: any) => <option key={x.rapidocId} value={x.rapidocId}>{x.name}</option>)}
-                                                </select>
-                                            </div> */}
-
                                             <div className="flex flex-col">
-                                                <label className="text-sm font-semibold text-gray-600 mb-1">Especialidade</label>
-                                                <select disabled className="bg-gray-100 border border-gray-200 rounded-lg p-2.5 text-gray-500 cursor-not-allowed" {...registerForwarding("specialtyUuid")}>
+                                                <label className={`label slim-label-primary`}>Especialidade</label>
+                                                <select disabled className="select slim-select-primary" {...registerForwarding("specialtyUuid")}>
                                                     {specialties.map((x: any) => <option key={x.id} value={x.id}>{x.name}</option>)}
                                                 </select>
                                             </div>
 
                                             <div className="flex flex-col">
-                                                <label className="text-sm font-semibold text-gray-600 mb-2">Escolha uma Data</label>
-                                                <div className="rounded-xl p-2 bg-gray-50 flex justify-center shadow-inner">
+                                                <label className={`label slim-label-primary`}>Escolha uma Data</label>
+                                                <div className="calendar rounded-xl p-2 flex justify-center">
                                                     <Calendar
                                                         onChange={(val) => { setDate(val as Date); setSelectedTime(null); setValueForwarding("availabilityUuid", ""); }}
                                                         value={date}
@@ -248,7 +254,7 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
                                         </div>
 
                                         <div className="flex flex-col">
-                                            <label className="text-sm font-semibold text-gray-600 mb-2">Horários Disponíveis</label>
+                                            <label className={`label slim-label-primary`}>Horários Disponíveis</label>
                                             <div className="grid grid-cols-2 gap-3 max-h-[480px] overflow-y-auto pr-2 custom-scrollbar">
                                                 {date && specialtyAvailabilities
                                                     .filter((h) => h.date === formatDate(date))

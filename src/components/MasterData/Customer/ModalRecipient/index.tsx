@@ -343,26 +343,25 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         <form onSubmit={handleSubmit(onSubmit)} className="card-modal">
             
             <div className="grid grid-cols-1 gap-2 mb-2">
-                <div className="w-full overflow-x-auto hidden lg:block">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                <div className="slim-container-table w-full">
+                    <table className="min-w-full divide-y">
+                        <thead className="slim-table-thead">
                             <tr>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Nome</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>CPF</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data de Nascimento</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Gênero</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Telefone</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>E-mail</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Nome</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>CPF</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data de Nascimento</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Gênero</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Telefone</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>E-mail</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
                             </tr>
                         </thead>
 
-                        <tbody className="bg-white divide-y divide-gray-100">
+                        <tbody className="slim-body-table divide-y">
                             {
                                 customerRecipients.map((x: any) => {
                                     return (
-                                        <tr key={x.id}>
-                                           
+                                        <tr className="slim-tr" key={x.id}>
                                             <td className="px-4 py-2">{x.name}</td>
                                             <td className="px-4 py-2">{x.cpf}</td>
                                             <td className="px-4 py-2">{maskDate(x.dateOfBirth)}</td>

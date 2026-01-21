@@ -76,9 +76,10 @@ export default function Customer() {
 
   const getAll = async (uri: string = "customers", queryString: string = "", queryStringDate: string = "") => {
     try {
-      const {data} = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=${pagination.currentPage}${queryString}${queryStringDate}`, configApi());
-      const result = data.result;
+      const orderBy = uri == "customers" ? "corporateName" : "name";
 
+      const {data} = await api.get(`/${uri}?deleted=false&orderBy=${orderBy}&sort=asc&pageSize=10&pageNumber=${pagination.currentPage}${queryString}${queryStringDate}`, configApi());
+      const result = data.result;
       setPagination({
         currentPage: result.currentPage,
         data: result.data,
@@ -284,16 +285,23 @@ export default function Customer() {
                     {
                       pagination.data.map((x: any, i: number) => {
                         return (
-                          <tr className={`slim-tr ${x.active ? '' : 'bg-orange-300'}`} key={i}>
+                          <tr className={`slim-tr ${x.active ? '' : 'bg-red-100 text-black'}`} key={i}>
                             {columns.map((col: any) => (
                               <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
                                 {col.key == 'createdAt' || col.key == 'effectiveDate' ? maskDate((x as any)[col.key]) : col.key == 'typePlan' ? nomalizeTypePlan(x.typePlan) : col.key == "cost" ? convertNumberMoney(x.cost) : col.key == "active" ? 
+                                x.status ?
                                 <div className={`flex flex-col mb-2`}>
                                   <label className="slim-status-switch">
-                                    <input checked={x.active} onChange={() => openModalUpdateStatus(x)} type="checkbox"/>
-                                    <span className="slider"></span>
+                                  <input checked={x.active} onChange={() => openModalUpdateStatus(x)} type="checkbox"/>
+                                  <span className="slider"></span>
                                   </label>
-                                </div>  
+                                </div> :  
+                                <div title={`Inativado por: ${x?.userName ?? ""}`} className={`flex flex-col mb-2`}>
+                                  <label className="slim-status-switch">
+                                  <input checked={x.active} onChange={() => openModalUpdateStatus(x)} type="checkbox"/>
+                                  <span className="slider"></span>
+                                  </label>
+                                </div>
                                 : (x as any)[col.key]}
                               </td>        
                             ))}  

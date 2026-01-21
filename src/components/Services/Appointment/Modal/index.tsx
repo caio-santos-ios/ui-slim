@@ -77,6 +77,7 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
             setLoading(true);
             const {data} = await api.get(`/customer-recipients/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
             const result = data.result;
+            console.log(result.data)
             setRecipient(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
@@ -104,7 +105,6 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
             console.log(specialtyUuid, beneficiaryUuid)
             const {data} = await api.get(`/appointments/specialty-availability/${specialtyUuid}/${beneficiaryUuid}`, configApi());
             const result = data.result;
-            console.log(result)
             setSpecialtyAvailabilities(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
@@ -136,9 +136,27 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
     };
 
     useEffect(() => {
-        if(watch("beneficiaryUuid") && watch("specialtyUuid")) {
-            getSelectSpecialtyAvailability(watch("specialtyUuid"), watch("beneficiaryUuid"))
+        const req = async () => {
+            const beneficiaryId = watch("beneficiaryUuid").split("ESPACO");
+
+            if(beneficiaryId.length > 1) {
+                setLoading(true);
+                if(!beneficiaryId[0]) {
+                    const { data } = await api.get(`/customer-recipients/cpf/${beneficiaryId[1]}`, configApi());
+                    const result = data.result;
+                    if(watch("specialtyUuid")) {
+                        await getSelectSpecialtyAvailability(watch("specialtyUuid"), result.data.rapidocId)
+                    };
+                } else {
+                    if(watch("specialtyUuid")) {
+                        await getSelectSpecialtyAvailability(watch("specialtyUuid"), watch("beneficiaryUuid"))
+                    }
+                }
+                setLoading(false);
+            };
         };
+
+        req();
     }, [watch("beneficiaryUuid"), watch("specialtyUuid")]);
 
     useEffect(() => {
@@ -164,7 +182,7 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
                                         <option value="">Selecione</option>
                                         {
                                             recipient.map((x: any) => {
-                                                return <option key={x.id} value={x.rapidocId}>{x.name}</option>
+                                                return <option key={x.id} value={`${x.rapidocId}ESPACO${x.cpf}`}>{x.name}</option>
                                             })
                                         }
                                     </select>
@@ -182,9 +200,9 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
                                 </div>          
                                 <div className="flex flex-col">
                                     <label className={`label slim-label-primary`}>Escolha uma Data</label>
-                                    <div className="rounded-xl p-2 bg-gray-50 flex justify-center shadow-inner">
+                                    <div className="rounded-xl p-2 flex justify-center">
                                         <Calendar
-                                            onChange={(val) => { setDate(val as Date); setSelectedTime(null); setValue("availabilityUuid", ""); }}
+                                            onChange={(val) => { setDate(val as Date); setSelectedTime(null); }}
                                             value={date}
                                             tileDisabled={isTileDisabled}
                                             tileClassName={getTileClassName}
@@ -192,7 +210,7 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
                                             locale="pt-BR"
                                         />
                                     </div>
-                                </div>                      
+                                </div>                 
                                 <div className="flex flex-col">
                                     <label className="text-sm font-semibold slim-label-primary mb-2">Horários Disponíveis</label>
                                     <div className="grid grid-cols-2 gap-3 max-h-[265px] overflow-y-auto pr-2 custom-scrollbar">

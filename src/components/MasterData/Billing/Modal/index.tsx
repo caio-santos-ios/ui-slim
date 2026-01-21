@@ -202,23 +202,23 @@ export const ModalBilling = ({title, isOpen, setIsOpen, onClose, onSelectValue, 
                             </div>                          
                             {
                                 items.length > 0 &&
-                                <div className="slim-container-table w-full bg-white shadow-sm">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50 slim-table-thead">
+                                <div className="slim-container-table h-[calc(100dvh-24rem)] w-full">
+                                    <table className="min-w-full divide-y">
+                                        <thead className="slim-table-thead">
                                             <tr>
-                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Inicio da Realização</th>
-                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Fim da Realização</th>
-                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data Entrega de Faturamento</th>
-                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Data de Pagamento</th>
-                                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold text-gray-500 tracking-wider rounded-tr-xl`}>Ações</th>
+                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Inicio da Realização</th>
+                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Fim da Realização</th>
+                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data Entrega de Faturamento</th>
+                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data de Pagamento</th>
+                                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
                                             </tr>
                                         </thead>
                 
-                                        <tbody className="bg-white divide-y divide-gray-100">
+                                        <tbody className="slim-body-table divide-y">
                                             {
                                                 items.map((x: TBillingItem) => {
                                                     return (
-                                                        <tr key={x.item}>                                            
+                                                        <tr className="slim-tr" key={x.item}>                                            
                                                             <td className="px-4 py-2">{x.start}</td>
                                                             <td className="px-4 py-2">{x.end}</td>
                                                             <td className="px-4 py-2">{x.deliveryDate}</td>

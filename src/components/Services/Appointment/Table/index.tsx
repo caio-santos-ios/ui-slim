@@ -68,64 +68,66 @@ export const TableAppointment = ({list, handleReturnModal}: TProp) => {
         <>
             {
                 list.length > 0 &&
-                <div className="slim-container-table w-full">
-                    <table className="min-w-full divide-y">
-                        <thead className="slim-table-thead">
-                            <tr>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Beneficiário</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data Atendimento</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Horário Atendimento</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Especialidade</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Profissional</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Status</th>
-                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
-                            </tr>
-                        </thead>
+                <>
+                    <div className="slim-container-table w-full">
+                        <table className="min-w-full divide-y">
+                            <thead className="slim-table-thead">
+                                <tr>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Beneficiário</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data Atendimento</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Horário Atendimento</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Especialidade</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Profissional</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Status</th>
+                                    <th scope="col" className={`px-4 py-3 text-center text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
+                                </tr>
+                            </thead>
 
-                        <tbody className="slim-body-table divide-y">
-                            {
-                                list.map((x: any) => {
-                                    return (
-                                        <tr className="slim-tr" key={x.id}>                                            
-                                            <td className="px-4 py-2">{x.recipientDescription}</td>
-                                            <td className="px-4 py-2">{x.date}</td>
-                                            <td className="px-4 py-2">{x.startTime} até {x.endTime}</td>
-                                            <td className="px-4 py-2">{x.specialty}</td>
-                                            <td className="px-4 py-2">{x.professional}</td>
-                                            <td className="px-4 py-2">
-                                                <span className={`${normalizeStatus(x.status)} py-1 px-2 rounded-lg font-bold`}>
-                                                    {normalizeNameStatus(x.status)}
-                                                </span>
-                                            </td>
-                                            <td className="p-2">
-                                                <div className="flex justify-center gap-3">                                      
-                                                    {
-                                                        permissionDelete("2", "B24") && x.status == "SCHEDULED" &&
-                                                        <IconCancel obj={x} getObj={getCancel}/>                                                   
-                                                    }  
-                                                    {
-                                                        permissionUpdate("2", "B24") && x.status == "SCHEDULED" &&
-                                                        <IoIosVideocam className="cursor-pointer text-blue-400 hover:text-blue-500" onClick={() => copyToClipboard(x.beneficiaryUrl)} />
-                                                    }           
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                            }
-                        </tbody>
-                    </table>
-                    
+                            <tbody className="slim-body-table divide-y">
+                                {
+                                    list.map((x: any) => {
+                                        return (
+                                            <tr className="slim-tr" key={x.id}>                                            
+                                                <td className="px-4 py-2">{x.recipientDescription}</td>
+                                                <td className="px-4 py-2">{x.date}</td>
+                                                <td className="px-4 py-2">{x.startTime} até {x.endTime}</td>
+                                                <td className="px-4 py-2">{x.specialty}</td>
+                                                <td className="px-4 py-2">{x.professional}</td>
+                                                <td className="px-4 py-2">
+                                                    <span className={`${normalizeStatus(x.status)} py-1 px-2 rounded-lg font-bold`}>
+                                                        {normalizeNameStatus(x.status)}
+                                                    </span>
+                                                </td>
+                                                <td className="p-2">
+                                                    <div className="flex justify-center gap-3">                                      
+                                                        {
+                                                            permissionDelete("2", "B24") && x.status == "SCHEDULED" &&
+                                                            <IconCancel obj={x} getObj={getCancel}/>                                                   
+                                                        }  
+                                                        {
+                                                            permissionUpdate("2", "B24") && x.status == "SCHEDULED" &&
+                                                            <IoIosVideocam className="cursor-pointer text-blue-400 hover:text-blue-500" onClick={() => copyToClipboard(x.beneficiaryUrl)} />
+                                                        }           
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </table>
+                        
+            
+                        <ModalDelete
+                            title='Cancelar Agendamento'
+                            description="Deseja cancelar esse registro?"
+                            isOpen={modalCancel} setIsOpen={() => setModalCancel(!modalCancel)} 
+                            onClose={() => setModalCancel(false)}
+                            onSelectValue={cancel}
+                            />  
+                    </div>
                     <div className="font-bold mt-2">Total de Agendamentos: <strong>{list.length}</strong></div>
-        
-                    <ModalDelete
-                        title='Cancelar Agendamento'
-                        description="Deseja cancelar esse registro?"
-                        isOpen={modalCancel} setIsOpen={() => setModalCancel(!modalCancel)} 
-                        onClose={() => setModalCancel(false)}
-                        onSelectValue={cancel}
-                    />  
-                </div>
+                </>
             }
         </>
     )

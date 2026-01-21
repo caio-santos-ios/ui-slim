@@ -33,7 +33,9 @@ export const ModalAttachment = ({parentId}: TProp) => {
         formBody.append("type", body.type);
         formBody.append("parent", "customer");
         formBody.append("parentId", parentId);
-        formBody.append("description", body.description);
+        if(body.description) {
+            formBody.append("description", body.description);
+        }
         formBody.append("uri", body.uri);
         
         const attachment: any = document.querySelector('#attachment');
