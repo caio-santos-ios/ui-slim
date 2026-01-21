@@ -1,5 +1,6 @@
 "use client";
 
+import { CardCustomer } from "@/components/Dashboard/CardCustomer";
 import { FirstCard } from "@/components/Dashboard/FirstCard";
 import { RecentPatient } from "@/components/Dashboard/RecentPatient";
 import { Autorization } from "@/components/Global/Autorization";
@@ -64,6 +65,7 @@ export default function Dashboard() {
               <SlimContainer breadcrump="Dashboard" breadcrumpIcon="FaMoneyBillTrendUp"
                 buttons={<></>}>
                 <></>
+                <CardCustomer />
               </SlimContainer>
             </div>
           </main>

@@ -56,19 +56,20 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
     const getModal = async (body: any) => {
         console.log(body)
         await getSelectRecipient(body.cpf);
-        // await getSelectSpecialty(body.specialtyId);
-        // await getSelectSpecialtyAvailability(body.specialtyId, body.recipienId);
-        // setModal(true);
+        await getSelectSpecialty(body.specialtyId);
+        await getSelectSpecialtyAvailability(body.specialtyId, body.recipienId);
+        setModal(true);
     };
 
     const onSubmit: SubmitHandler<TForwarding> = async (body: TForwarding) => {
         try {
-            setLoading(true);
-            onClose();
+            console.log(body)
+            const { status, data} = await api.post(`/forwardings`, body, configApi());
+            resolveResponse({status, ...data});
+            handleReturnModal();
+            setModal(false);
         } catch (error) {
             resolveResponse(error);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -85,7 +86,8 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
             setLoading(true);
             const { data } = await api.get(`/customer-recipients/cpf/${formattedCPF(cpf)}`, configApi());
             const result = data.result;
-            setValueForwarding("beneficiaryUuid", result.rapidocId);
+            console.log(result.data)
+            setValueForwarding("beneficiaryUuid", result.data.rapidocId);
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -255,7 +257,7 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
 
                                         <div className="flex flex-col">
                                             <label className={`label slim-label-primary`}>Horários Disponíveis</label>
-                                            <div className="grid grid-cols-2 gap-3 max-h-[480px] overflow-y-auto pr-2 custom-scrollbar">
+                                            <div className="grid grid-cols-2 gap-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
                                                 {date && specialtyAvailabilities
                                                     .filter((h) => h.date === formatDate(date))
                                                     .map((slot) => (

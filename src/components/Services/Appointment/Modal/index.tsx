@@ -31,6 +31,7 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
     const [specialtyAvailabilities, setSpecialtyAvailabilities] = useState<any[]>([]);
     const [date, setDate] = useState<Date | null>(new Date());
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [ beneficiaryUUid, setBeneficiaryUUid] = useState<string>("");
     const availableDates = new Set(specialtyAvailabilities.map(item => item.date));
 
     const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<TAppointment>({
@@ -38,6 +39,7 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
     });
 
     const onSubmit: SubmitHandler<TAppointment> = async (body: TAppointment) => {      
+        body.beneficiaryUuid = beneficiaryUUid;
         if(!body.id) {
             await create(body);
         } else {
@@ -55,7 +57,7 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
             resolveResponse(error);
         }
     };
-      
+
     const update = async (body: TAppointment) => {
         try {
             const { status, data} = await api.put(`/appointments`, body, configApi());
@@ -75,9 +77,8 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
     const getSelectRecipient = async () => {
         try {
             setLoading(true);
-            const {data} = await api.get(`/customer-recipients/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
+            const {data} = await api.get(`/customer-recipients/select?deleted=false&active=true&orderBy=createdAt&sort=desc`, configApi());
             const result = data.result;
-            console.log(result.data)
             setRecipient(result.data ?? []);
         } catch (error) {
             resolveResponse(error);
@@ -102,7 +103,6 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
     const getSelectSpecialtyAvailability = async (specialtyUuid: string, beneficiaryUuid: string) => {
         try {
             setLoading(true);
-            console.log(specialtyUuid, beneficiaryUuid)
             const {data} = await api.get(`/appointments/specialty-availability/${specialtyUuid}/${beneficiaryUuid}`, configApi());
             const result = data.result;
             setSpecialtyAvailabilities(result.data ?? []);
@@ -145,11 +145,13 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
                     const { data } = await api.get(`/customer-recipients/cpf/${beneficiaryId[1]}`, configApi());
                     const result = data.result;
                     if(watch("specialtyUuid")) {
+                        setBeneficiaryUUid(result.data.rapidocId);
                         await getSelectSpecialtyAvailability(watch("specialtyUuid"), result.data.rapidocId)
                     };
                 } else {
                     if(watch("specialtyUuid")) {
-                        await getSelectSpecialtyAvailability(watch("specialtyUuid"), watch("beneficiaryUuid"))
+                        setBeneficiaryUUid(beneficiaryId[0]);
+                        await getSelectSpecialtyAvailability(watch("specialtyUuid"), beneficiaryId[0])
                     }
                 }
                 setLoading(false);
@@ -161,6 +163,8 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
 
     useEffect(() => {
         reset(ResetAppointment);
+        setBeneficiaryUUid("");
+        setSpecialtyAvailabilities([]);
         getSelectRecipient();
         getSelectSpecialty();
     }, []);
@@ -200,7 +204,7 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
                                 </div>          
                                 <div className="flex flex-col">
                                     <label className={`label slim-label-primary`}>Escolha uma Data</label>
-                                    <div className="rounded-xl p-2 flex justify-center">
+                                    <div className="calendar rounded-xl p-2 flex justify-center">
                                         <Calendar
                                             onChange={(val) => { setDate(val as Date); setSelectedTime(null); }}
                                             value={date}
@@ -210,7 +214,7 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
                                             locale="pt-BR"
                                         />
                                     </div>
-                                </div>                 
+                                </div>
                                 <div className="flex flex-col">
                                     <label className="text-sm font-semibold slim-label-primary mb-2">Horários Disponíveis</label>
                                     <div className="grid grid-cols-2 gap-3 max-h-[265px] overflow-y-auto pr-2 custom-scrollbar">

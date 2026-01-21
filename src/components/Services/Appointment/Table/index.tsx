@@ -9,16 +9,56 @@ import { permissionDelete, permissionUpdate } from "@/utils/permission.util";
 import { IconCancel } from "@/components/Global/IconCancel";
 import { IoIosVideocam } from "react-icons/io";
 import { toast } from "react-toastify";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { TForwarding } from "@/types/service/forwarding/forwarding.type";
+import { TRecipient } from "@/types/masterData/customers/customerRecipient.type";
+import Calendar from "react-calendar";
+import { RiCalendarScheduleFill } from "react-icons/ri";
+import { Button } from "@/components/Global/Button";
 
 type TProp = {
     list: TAccountsPayable[],
     handleReturnModal: () => void;
 }
 
+interface ISpecialtyAvailability {
+    id: string;
+    name: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+}
+
 export const TableAppointment = ({list, handleReturnModal}: TProp) => {
     const [modalCancel, setModalCancel] = useState<boolean>(false);
     const [currentBody, setCurrentBody] = useState<TAccountsPayable>();
-    
+    const [modal, setModal] = useState<boolean>(false);
+    const [recipient, setRecipient] = useState<TRecipient[]>([]);
+    const [specialties, setSpecialty] = useState<any[]>([]);
+    const [specialtyAvailabilities, setSpecialtyAvailabilities] = useState<ISpecialtyAvailability[]>([]);
+    const [date, setDate] = useState<Date | null>(new Date());
+    const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const availableDates = new Set(specialtyAvailabilities.map(item => item.date));
+
+    const { 
+        register: registerForwarding, 
+        handleSubmit, 
+        setValue: setValueForwarding, 
+        formState: { errors } 
+    } = useForm<TForwarding>({});
+
+    const onSubmit: SubmitHandler<TForwarding> = async (body: TForwarding) => {
+        // try {
+        //     setLoading(true);
+        //     onClose();
+        // } catch (error) {
+        //     resolveResponse(error);
+        // } finally {
+        //     setLoading(false);
+        // }
+    };
+
     const getCancel = (body: TAccountsPayable) => {
         setCurrentBody(body);
         setModalCancel(true);
@@ -64,12 +104,34 @@ export const TableAppointment = ({list, handleReturnModal}: TProp) => {
         handleReturnModal();
     };
 
+    const formatDate = (date: Date) => {
+        return date.toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+    };
+
+    const isTileDisabled = ({ date, view }: { date: Date; view: string }) => {
+        if (view === "month") {
+            return !availableDates.has(formatDate(date));
+        }
+        return false;
+    };
+
+    const getTileClassName = ({ date, view }: { date: Date; view: string }) => {
+        if (view === "month" && availableDates.has(formatDate(date))) {
+            return "font-bold text-blue-600 bg-blue-50 rounded-lg";
+        }
+        return "";
+    };
+
     return (
         <>
             {
                 list.length > 0 &&
                 <>
-                    <div className="slim-container-table w-full">
+                    <div className="slim-container-table w-full max-h-[calc(100dvh-19rem)]">
                         <table className="min-w-full divide-y">
                             <thead className="slim-table-thead">
                                 <tr>

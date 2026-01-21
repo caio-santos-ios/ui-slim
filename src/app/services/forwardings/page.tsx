@@ -120,12 +120,7 @@ export default function Forwarding() {
             <div className="slim-container w-full">
               <SlimContainer breadcrump="Encaminhamentos" breadcrumpIcon="MdSwapHoriz"
                 buttons={
-                  <>
-                    {
-                      permissionCreate("2", "B24") &&
-                      <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button>
-                    }
-                  </>
+                  <></>
                 }>
                 
                 <form onSubmit={handleSubmit(onSubmit)}>

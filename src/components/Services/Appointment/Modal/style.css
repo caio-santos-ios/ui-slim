@@ -1,36 +1,47 @@
+/* style.css */
+
 .react-calendar {
     width: 100% !important;
     max-width: 400px;
-    background: var(--color-brand-600);
+    background: var(--color-brand-600) !important; /* Sua cor brand */
     border: none !important;
     font-family: inherit;
     line-height: 1.125em;
     border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    padding: 10px;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    padding: 15px;
+    color: white; /* Texto geral branco */
 }
 
+/* Navegação (Mês e Setas) */
 .react-calendar__navigation {
     display: flex;
     height: 44px;
-    margin-bottom: 0.5em;
+    margin-bottom: 1em;
 }
 
 .react-calendar__navigation button {
     min-width: 44px;
     background: none;
     font-size: 16px;
-    font-weight: 600;
-    color: #fff; 
-    /* background-color: red; */
+    font-weight: 700;
+    color: white !important;
+    text-transform: capitalize;
 }
 
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+/* Dias da semana */
 .react-calendar__month-view__weekdays {
     text-align: center;
     text-transform: uppercase;
     font-weight: bold;
-    font-size: 0.75rem;
-    color: #fff; 
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8); 
     padding-bottom: 10px;
 }
 
@@ -38,33 +49,52 @@
     text-decoration: none;
 }
 
+/* Estilização dos Dias (Tiles) */
 .react-calendar__tile {
     max-width: 100%;
-    padding: 12px 6.6667px;
+    padding: 12px 6px;
     background: none;
     text-align: center;
     line-height: 16px;
     border-radius: 8px;
     transition: all 0.2s;
+    color: white; /* Garante que os números fiquem brancos */
 }
 
-.react-calendar__tile:enabled:hover,
-.react-calendar__tile:enabled:focus {
-    background-color: #F3F4F6;
+.react-calendar__tile:enabled:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
+/* Dia Atual */
 .react-calendar__tile--now {
-    background-color: #EFF6FF !important;
-    color: #3B82F6;
+    background-color: rgba(255, 255, 255, 0.15) !important;
     font-weight: bold;
+    color: #fff !important;
+    border: 1px solid white !important;
 }
 
+/* Dia Selecionado pelo usuário */
 .react-calendar__tile--active {
-    background: #3B82F6 !important; 
+    background: white !important; 
+    color: var(--color-brand-600) !important; /* Inverte a cor para destaque */
+    font-weight: 800;
 }
 
+/* Dias de outros meses (opacidade baixa) */
+.react-calendar__month-view__days__day--neighboringMonth {
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Dias Desabilitados (Não tem agenda) */
 .react-calendar__tile:disabled {
-    background-color: #f9fafb !important;
-    color: #d1d5db !important;
+    background-color: transparent !important;
+    color: rgba(255, 255, 255, 0.1) !important;
     cursor: not-allowed;
+}
+
+/* Customização para dias com Disponibilidade (via JS) */
+.tile-available {
+    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: underline;
+    font-weight: bold;
 }
