@@ -49,10 +49,33 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
 
     const create = async (body: TAppointment) => {
         try {
-            const { status, data} = await api.post(`/appointments`, body, configApi());
-            resolveResponse({status, ...data});
+            console.log(body)
+            const form: any = {...body};
+
+            const specialist = specialties.find(s => s.id == form.specialtyUuid);
+            if(specialist) {
+                form.specialtyName = specialist.name;
+            };
+            console.log(recipient)
+            const recipientObj = recipient.find((r: any) => r.rapidocId == body.beneficiaryUuid);
+            if(recipientObj) {
+                form.beneficiaryName = recipientObj.name;
+            };
+
+            const dateItem = specialtyAvailabilities.find(s => s.id == selectedTime);
+            if(dateItem) {
+                form.date = dateItem.date;
+                form.time = `${dateItem.startTime} até ${dateItem.endTime}`;
+            };
+
+
+            const { status, data} = await api.post(`/appointments`, form, configApi());
+
+            const result = data.result;
+            resolveResponse({status, ...result});
             cancel();
             handleReturnModal();
+            setSpecialtyAvailabilities([]);
         } catch (error) {
             resolveResponse(error);
         }
@@ -164,7 +187,6 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
     useEffect(() => {
         reset(ResetAppointment);
         setBeneficiaryUUid("");
-        setSpecialtyAvailabilities([]);
         getSelectRecipient();
         getSelectSpecialty();
     }, []);

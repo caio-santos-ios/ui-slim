@@ -11,7 +11,7 @@ import { TForwarding } from "@/types/service/forwarding/forwarding.type";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/components/Global/Button";
-import { TRecipient } from "@/types/masterData/customers/customerRecipient.type";
+import { ResetCustomerRecipient, TRecipient } from "@/types/masterData/customers/customerRecipient.type";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
 import { api } from "@/service/api.service";
@@ -37,7 +37,7 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
     const [modalCancel, setModalCancel] = useState<boolean>(false);
     const [modal, setModal] = useState<boolean>(false);
 
-    const [recipient, setRecipient] = useState<TRecipient[]>([]);
+    const [recipient, setRecipient] = useState<TRecipient>(ResetCustomerRecipient);
     const [specialties, setSpecialty] = useState<any[]>([]);
     const [specialtyAvailabilities, setSpecialtyAvailabilities] = useState<ISpecialtyAvailability[]>([]);
 
@@ -54,7 +54,6 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
     const availableDates = new Set(specialtyAvailabilities.map(item => item.date));
 
     const getModal = async (body: any) => {
-        console.log(body)
         await getSelectRecipient(body.cpf);
         await getSelectSpecialty(body.specialtyId);
         await getSelectSpecialtyAvailability(body.specialtyId, body.recipienId);
@@ -63,11 +62,24 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
 
     const onSubmit: SubmitHandler<TForwarding> = async (body: TForwarding) => {
         try {
-            console.log(body)
-            const { status, data} = await api.post(`/forwardings`, body, configApi());
+            const form: any = {...body};
+            form.beneficiaryName = recipient.name;
+            const specialist = specialties.find(s => s.id == form.specialtyUuid);
+            if(specialist) {
+                form.specialtyName = specialist.name;
+            };
+
+            const dateItem = specialtyAvailabilities.find(s => s.id == selectedTime);
+            if(dateItem) {
+                form.date = dateItem.date;
+                form.time = `${dateItem.startTime} até ${dateItem.endTime}`;
+            };
+
+            const { status, data} = await api.post(`/forwardings`, form, configApi());
             resolveResponse({status, ...data});
             handleReturnModal();
             setModal(false);
+            setSpecialtyAvailabilities([]);
         } catch (error) {
             resolveResponse(error);
         }
@@ -86,7 +98,7 @@ export const TableForwarding = ({ list, handleReturnModal }: TProp) => {
             setLoading(true);
             const { data } = await api.get(`/customer-recipients/cpf/${formattedCPF(cpf)}`, configApi());
             const result = data.result;
-            console.log(result.data)
+            setRecipient(result.data);
             setValueForwarding("beneficiaryUuid", result.data.rapidocId);
         } catch (error) {
             resolveResponse(error);

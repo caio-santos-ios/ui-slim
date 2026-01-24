@@ -24,12 +24,12 @@ export const TableHistoric = ({list}: TProp) => {
 
     const normalizeStatus = (status: string) => {
         switch(status) {
-            case "SCHEDULED": return "bg-blue-300 text-blue-700";
-            case "CANCELED": return "bg-red-300 text-red-700";
+            case "Agendado": return "bg-blue-300 text-blue-700";
+            case "Cancelado": return "bg-red-300 text-red-700";
             default: return "";
         }
     };
-   
+
     const normalizeNameCollection = (status: string) => {
         switch(status) {
             case "appointment": return "Agendamentos";
@@ -46,8 +46,12 @@ export const TableHistoric = ({list}: TProp) => {
                     <table className="min-w-full divide-y ">
                         <thead className="slim-table-thead">
                             <tr>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Tabela</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Ação</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Beneficiário</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Especialidade</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Status</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data do Agendamento</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Horário</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Usuário Responsável</th>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tr-xl`}>Data de criação</th>
                             </tr>
                         </thead>
@@ -56,9 +60,17 @@ export const TableHistoric = ({list}: TProp) => {
                             {
                                 list.map((x: any) => {
                                     return (
-                                        <tr key={x.id}>                                            
-                                            <td className="px-4 py-2">{normalizeNameCollection(x.collection)}</td>
-                                            <td className="px-4 py-2">{x.description}</td>
+                                        <tr className="slim-tr" key={x.id}>                                            
+                                            <td className="px-4 py-2">{x.recipientName}</td>
+                                            <td className="px-4 py-2">{x.specialistName}</td>
+                                            <td className="px-4 py-2">
+                                                <span className={`${normalizeStatus(x.status)} py-1 px-2 rounded-lg font-bold text-xs`}>
+                                                    {x.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-2">{x.date}</td>
+                                            <td className="px-4 py-2">{x.time}</td>
+                                            <td className="px-4 py-2">{x.userName}</td>
                                             <td className="px-4 py-2">{maskDate(x.createdAt, true)}</td>
                                         </tr>
                                     )

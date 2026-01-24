@@ -47,15 +47,15 @@ export const CardCustomer = () => {
 
                 <div className="flex items-end justify-between mt-5">
                     <div>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                        <span className="text-sm text-white">
                             Clientes ativos
                         </span>
-                        <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
+                        <h4 className="mt-2 font-bold text-title-sm text-white">
                             {active}
                         </h4>
                     </div>
                 
-                    <div>
+                    <div className="text-white">
                         {calculatePercentage(active, inactive + active)}%
                     </div>
                 </div>
@@ -63,19 +63,18 @@ export const CardCustomer = () => {
 
             <div className="rounded-2xl border border-(--color-brand-500) bg-(--color-brand-500) p-5 md:p-6">
                 <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800 text-red-600">
-                <FaUsers size={25} />
+                    <FaUsers size={25} />
                 </div>
                 <div className="flex items-end justify-between mt-5">
-                <div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                        Clientes Inativos
-                    </span>
-                    <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                        {inactive}
-                    </h4>
-                </div>
-                    
                     <div>
+                        <span className="text-sm text-white">
+                            Clientes Inativos
+                        </span>
+                        <h4 className="mt-2 font-bold text-white">
+                            {inactive}
+                        </h4>
+                    </div>                    
+                    <div className="text-white">
                         {calculatePercentage(inactive, inactive + active)}%
                     </div>
                 </div>

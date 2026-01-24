@@ -66,7 +66,12 @@ export const TableAppointment = ({list, handleReturnModal}: TProp) => {
 
     const cancel = async () => {
         try {
-            const { status } = await api.delete(`/forwardings/cancel/${currentBody!.id}`, configApi());
+            const form: any = {...currentBody};
+            form.time = `${form.startTime} até ${form.endTime}`;
+            form.beneficiaryName = form.recipientDescription;
+            form.specialtyName = form.specialty;
+
+            const { status } = await api.put(`/forwardings/cancel`, form, configApi());
             resolveResponse({status, message: "Cancelado com sucesso"});
             onClose();
         } catch (error) {

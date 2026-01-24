@@ -20,11 +20,11 @@ export default function Historic() {
   const [_, setLoading] = useAtom(loadingAtom);
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
- 
+
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/historics`, configApi());
+      const {data} = await api.get(`/telemedicine-historics`, configApi());
       const result = data.result;
 
       setPagination({
