@@ -11,13 +11,13 @@ export const Logo = ({className}: TProp) => {
         <div className={`${className}`}>
             <img
                 className="logo max-w-full max-h-full w-auto h-auto rounded-xl object-contain"
-                src="/assets/images/logo.png"
+                src="/erp/assets/images/logo.png"
                 alt="Logo"
             />
 
             <img
                 className="logo-light max-w-full max-h-full w-auto h-auto rounded-xl object-contain"
-                src="/assets/images/logo-light.png"
+                src="/erp/assets/images/logo-light.png"
                 alt="Logo"
             />
         </div>
