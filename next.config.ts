@@ -1,9 +1,8 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
-  basePath: "/erp",
-  output: 'standalone',
+// Local: ~/www/qa-slim/app-slim-frontend/next.config.js (ou .ts)
+const nextConfig = {
+  basePath: '/erp',        // Define que o app agora vive em /erp
+  trailingSlash: true,     // Garante compatibilidade com a barra final do Nginx
+  // ... mantenha suas outras configs
 };
 
-export default nextConfig;
+module.exports = nextConfig;
