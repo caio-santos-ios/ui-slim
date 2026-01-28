@@ -1,9 +1,9 @@
-// ~/www/qa-slim/ui-slim/next.config.ts
-const nextConfig = {
-  basePath: '/erp',
-  trailingSlash: true,
-  output: 'standalone', // <--- ESSA LINHA PRECISA ESTAR AQUI
-  // ... outras configs
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  basePath: "/erp",      // Diz ao Next.js que o endereço oficial é /erp/
+  trailingSlash: true,   // Mantém a compatibilidade com as rotas do Nginx
+  output: "standalone",  // NECESSÁRIO para o seu Dockerfile não dar erro de pasta
 };
 
 export default nextConfig;
