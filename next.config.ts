@@ -1,8 +1,9 @@
-// Local: ~/www/qa-slim/app-slim-frontend/next.config.js (ou .ts)
+// ~/www/qa-slim/ui-slim/next.config.ts
 const nextConfig = {
-  basePath: '/erp',        // Define que o app agora vive em /erp
-  trailingSlash: true,     // Garante compatibilidade com a barra final do Nginx
-  // ... mantenha suas outras configs
+  basePath: '/erp',
+  trailingSlash: true,
+  output: 'standalone', // <--- ESSA LINHA PRECISA ESTAR AQUI
+  // ... outras configs
 };
 
-module.exports = nextConfig;
+export default nextConfig;
