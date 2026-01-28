@@ -27,7 +27,7 @@ export default function SignInForm() {
       localStorage.setItem("admin", result.admin);
       localStorage.setItem("photo", result.photo);
       localStorage.setItem("modules", JSON.stringify(result.modules));
-      router.push("/");
+      router.push("/erp");
     } catch (error) {
       resolveResponse(error);
     } finally {

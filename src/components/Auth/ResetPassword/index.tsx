@@ -56,7 +56,7 @@ export const FormResetPassword = () => {
             });
             reset({email: "", password: ""});
             setTimeout(() => {
-                router.push("/");
+                router.push("/erp");
             }, 2000)
         } catch (error) {
             resolveResponse(error);
