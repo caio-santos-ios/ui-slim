@@ -49,9 +49,9 @@ export default function Home() {
         <main className="h-dvh slim-container-new">
           <div className="w-11/12 h-12/12 lg:max-w-md m-auto flex flex-col justify-center">
             <form onSubmit={handleSubmit(login)} className="px-3 py-6 slim-form-login">
-              <div className="flex items-center justify-center">
+              {/* <div className="flex items-center justify-center">
                 <Logo className="h-42" />
-              </div>
+              </div> */}
               <InputForm {...register("email", { required: "E-mail é obrigatório",  pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "E-mail inválido"} })} name="email" placeholder="Digite seu e-mail" title="E-mail" themeInputStyle={`${errors.email ? 'border border-red-500' : 'primary'}`} styleClass="mb-0" />
               <div className="text-red-500 min-h-6 mb-1">{errors.email && errors.email.message}</div>
 
