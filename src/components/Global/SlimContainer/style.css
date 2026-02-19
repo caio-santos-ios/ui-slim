@@ -1,4 +1,7 @@
-.slim-container { padding: 1.875rem 2rem; width: 100%; }
+.slim-container { 
+  padding: 1rem; 
+  width: 100%; 
+}
 
 .container-breadcrump {
   display: flex;
@@ -31,7 +34,7 @@
 
 /* Scrollable content zone */
 .slim-container-main {
-  height: calc(100dvh - (var(--height-header) + 12rem));
+  /* height: calc(100dvh - (var(--height-header) + 12rem)); */
   overflow: auto;
 }
 

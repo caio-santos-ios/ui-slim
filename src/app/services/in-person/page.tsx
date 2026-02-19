@@ -217,7 +217,7 @@ export default function Customer() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Presencial" breadcrumpIcon="MdPersonPinCircle"
+              <SlimContainer menu="Atendimentos" breadcrump="Presencial" breadcrumpIcon="MdPersonPinCircle"
                 buttons={
                   <>
                   {

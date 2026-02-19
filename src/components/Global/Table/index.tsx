@@ -12,14 +12,14 @@ export type Column = {
     render?: (row: any) => React.ReactNode;
     className?: string;
 };
-type TPropos = { columns: any[]; isAction?: boolean; children: ReactNode; isActive?: boolean; };
+type TPropos = { columns: any[]; isAction?: boolean; children: ReactNode; isActive?: boolean; classContainer?: string ; };
 
-export default function DataTable({ columns, children, isAction = true, isActive = true }: TPropos) {
+export default function DataTable({ columns, children, isAction = true, isActive = true, classContainer = "max-h-[calc(100dvh-(var(--height-header)+12rem))]" }: TPropos) {
     const [pagination] = useAtom(paginationAtom);
     return (
         <>
             {pagination.data.length > 0 && isActive && (
-                <div className="slim-container-table w-full max-h-[calc(100dvh-(var(--height-header)+7rem))]">
+                <div className={`slim-container-table w-full ${classContainer}`}>
                     <table className="min-w-full slim-table">
                         <thead className="slim-table-thead">
                             <tr>

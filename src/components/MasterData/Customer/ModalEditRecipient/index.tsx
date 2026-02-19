@@ -246,7 +246,6 @@ export const ModalEditRecipient = ({
                             className="flex items-center justify-between px-6 py-0 h-14"
                             style={{
                                 background: "linear-gradient(135deg, var(--primary-color-light) 0%, var(--primary-color) 100%)",
-                                borderBottom: "2px solid var(--accent-color)",
                             }}
                         >
                             <div className="flex items-center gap-3">

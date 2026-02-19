@@ -188,7 +188,7 @@ export default function AccreditedNetwork() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Rede Credenciada" breadcrumpIcon="MdHub"
+              <SlimContainer menu="Cadastros" breadcrump="Rede Credenciada" breadcrumpIcon="MdHub"
                 buttons={
                   <>
                     {

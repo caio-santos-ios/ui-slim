@@ -58,7 +58,7 @@ export const Header = () => {
             </button> */}
 
             {/* ── Logo ── */}
-            <a href="/dashboard" className="flex-shrink-0">
+            <a href="/erp/dashboard" className="flex-shrink-0">
                 <Logo className="h-14" />
             </a>
 

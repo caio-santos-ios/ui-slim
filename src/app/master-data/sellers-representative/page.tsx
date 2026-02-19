@@ -117,7 +117,7 @@ export default function Seller() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Representantes" breadcrumpIcon="MdGroups"
+              <SlimContainer menu="Cadastros" breadcrump="Representantes" breadcrumpIcon="MdGroups"
                 buttons={
                   <>
                     {

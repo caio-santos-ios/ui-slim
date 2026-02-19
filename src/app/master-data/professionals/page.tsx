@@ -120,7 +120,7 @@ export default function Professional() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Profissionais" breadcrumpIcon="FaUserTie"
+              <SlimContainer menu="Cadastros" breadcrump="Profissionais" breadcrumpIcon="FaUserTie"
                 buttons={
                   <>
                   {
@@ -161,7 +161,6 @@ export default function Professional() {
                 </DataTable>
 
                 <NotData />
-                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 

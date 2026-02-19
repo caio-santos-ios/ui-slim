@@ -118,7 +118,7 @@ export default function Forwarding() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Encaminhamentos" breadcrumpIcon="MdSwapHoriz"
+              <SlimContainer menu="Atendimentos" breadcrump="Encaminhamentos" breadcrumpIcon="MdSwapHoriz"
                 buttons={
                   <></>
                 }>

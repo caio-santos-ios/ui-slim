@@ -63,7 +63,7 @@ export default function AccountsPayable() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Contas a Pagar" breadcrumpIcon="PiMoneyFill"
+              <SlimContainer menu="Financeiro" breadcrump="Contas a Pagar" breadcrumpIcon="PiMoneyFill"
                 buttons={
                   <>
                     {

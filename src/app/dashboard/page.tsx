@@ -61,12 +61,8 @@ export default function Dashboard() {
           <main className="slim-bg-main">
             <SideMenu />
 
-            <div className="slim-container w-full">
-              <SlimContainer breadcrump="Dashboard" breadcrumpIcon="FaMoneyBillTrendUp"
-                buttons={<></>}>
-                <></>
-                <CardCustomer />
-              </SlimContainer>
+            <div className="slim-container w-full p-6">
+              <CardCustomer />
             </div>
           </main>
         </>

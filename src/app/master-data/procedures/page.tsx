@@ -137,7 +137,7 @@ export default function Procedure() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Procedimentos" breadcrumpIcon="MdChecklist"
+              <SlimContainer menu="Cadastros" breadcrump="Procedimentos" breadcrumpIcon="MdChecklist"
                 buttons={
                   <>
                     {

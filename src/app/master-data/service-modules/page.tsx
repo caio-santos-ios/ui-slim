@@ -111,7 +111,7 @@ export default function ServiceModules() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Módulos de Serviços" breadcrumpIcon="MdApps"
+              <SlimContainer menu="Cadastros" breadcrump="Módulos de Serviços" breadcrumpIcon="MdApps"
                 buttons={
                   <>
                   {

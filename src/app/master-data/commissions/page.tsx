@@ -117,7 +117,7 @@ export default function Commissions() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Comissões" breadcrumpIcon="MdPercent"
+              <SlimContainer menu="Cadastros" breadcrump="Comissões" breadcrumpIcon="MdPercent"
                 buttons={
                   <>
                     {

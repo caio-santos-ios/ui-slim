@@ -16,6 +16,7 @@ import { ModalContact } from "../ModalContact";
 import { Button } from "@/components/Global/Button";
 import { ModalAttachment } from "../ModalAttachment";
 import { ModalLog } from "../ModalLog";
+import { IoClose } from "react-icons/io5";
 
 type TProp = {
     title: string;
@@ -130,20 +131,77 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
     }, [id]);
 
     return (
-        <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
-            <div className="fixed inset-0 z-10 w-screen overflow-y-auto container-modal">
-                <div className="flex min-h-full items-center justify-center p-4">
-                    <DialogPanel transition className="slim-modal w-full max-w-8xl rounded-xl bg-gray-300 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
-                        <div className="slim-modal-title mb-4 border-b-3">
-                            <DialogTitle as="h1" className="text-xl font-bold primary-color">{title}</DialogTitle>
+        <>
+            <Dialog
+                open={isOpen}
+                as="div"
+                className="relative z-[999] focus:outline-none"
+                onClose={cancel}
+            >
+                {/* Backdrop */}
+                <div
+                    className="fixed inset-0 z-[999]"
+                    style={{ background: "rgba(0,15,35,.65)", backdropFilter: "blur(5px)" }}
+                />
+
+                <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
+                    <DialogPanel
+                        className="w-full max-w-8xl rounded-2xl overflow-hidden shadow-2xl"
+                        style={{
+                            background: "var(--surface-card)",
+                            border: "1px solid var(--surface-border)",
+                            animation: "modal-slide-in .25s cubic-bezier(.34,1.56,.64,1)",
+                        }}
+                    >
+                        {/* ── Header ── */}
+                        <div
+                            className="flex items-center justify-between px-6 py-0 h-14"
+                            style={{
+                                background: "linear-gradient(135deg, var(--primary-color-light) 0%, var(--primary-color) 100%)",
+                            }}
+                        >
+                            <DialogTitle as="h2" className="text-sm font-bold text-white">
+                                {title}
+                            </DialogTitle>
+                            <span
+                                onClick={cancel}
+                                className="flex items-center justify-center w-8 h-8 rounded-lg transition-all cursor-pointer"
+                                style={{ background: "rgba(255,255,255,.1)", border: "none", boxShadow: "none", color: "rgba(255,255,255,.7)" }}
+                            >
+                                <IoClose size={18} />
+                            </span>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-14 gap-1 mb-2 slim-bg-primary p-2 rounded-4xl">
-                            {tabs.map((x: any) => (
-                                <div key={x.key} onClick={() => alterTab(x.key)} className={`col-span-2 rounded-4xl py-2 font-bold text-lg text-center cursor-pointer ${tabCurrent === x.key ? 'slim-bg-secondary' : 'slim-bg-primary'}`}>
-                                    {x.title}
-                                </div>
-                            ))}
+                        {/* ── Body ── */}
+                        <div className="p-6 overflow-y-auto" style={{ maxHeight: "calc(100dvh - 20rem)" }}>
+                            <div
+                            className="flex border-b overflow-x-auto"
+                            style={{ background: "var(--surface-bg)", borderColor: "var(--surface-border)" }}
+                        >
+                            {tabs.map((t: any) => {
+                                const active = tabCurrent === t.key;
+                                return (
+                                    <button
+                                        key={t.key}
+                                        type="button"
+                                        onClick={() => alterTab(t.key)}
+                                        className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold whitespace-nowrap transition-all relative"
+                                        style={{
+                                            background: "transparent",
+                                            border: "none",
+                                            boxShadow: "none",
+                                            height: "auto",
+                                            borderRadius: 0,
+                                            color: active ? "var(--accent-color)" : "var(--text-muted)",
+                                            borderBottom: active ? "2.5px solid var(--accent-color)" : "2.5px solid transparent",
+                                            marginBottom: "-1px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        {t.title}
+                                    </button>
+                                );
+                            })}
                         </div>                        
 
                         {
@@ -181,16 +239,18 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
                             tabCurrent == "log" &&
                             <ModalLog onClose={cancel} parentId={id}/> 
                         }
-
-                        <div className="flex justify-end mb-2">
-                            {
-                                ["contact", "attachment"].includes(tabCurrent) &&
-                                <Button click={cancel} text="Fechar" theme="primary-light" styleClassBtn=""/>
-                            }
                         </div>
+
+            {/* ── Footer ── */}
+            <div
+                className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t"
+                style={{ background: "var(--surface-bg)", borderColor: "var(--surface-border)" }}
+            >
+                    <Button click={cancel} text="Fechar" theme="primary-light" styleClassBtn=""/>
+            </div>
                     </DialogPanel>
                 </div>
-            </div>
-        </Dialog>
+            </Dialog>
+        </>
     )
 }

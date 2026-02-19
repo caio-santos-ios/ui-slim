@@ -112,7 +112,7 @@ export default function Plan() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Planos" breadcrumpIcon="MdPriceChange"
+              <SlimContainer menu="Cadastros" breadcrump="Planos" breadcrumpIcon="MdPriceChange"
                 buttons={
                   <>
                     {

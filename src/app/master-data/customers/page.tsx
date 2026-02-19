@@ -228,7 +228,7 @@ export default function Customer() {
   }, []);
 
   /* ─────────────────────────────────────────────
-     RENDER
+    RENDER
   ───────────────────────────────────────────── */
   return (
     <>
@@ -239,15 +239,15 @@ export default function Customer() {
           <main className="slim-bg-main">
             <SideMenu />
 
-            <div className="slim-container-customer h-[calc(100dvh-22rem)] w-full">
+            <div className="slim-container-customer h-[calc(100dvh-5rem)] w-full">
               <SlimContainer
+                menu="Cadastros"
                 breadcrump="Clientes"
                 breadcrumpIcon="MdPerson"
                 buttons={
                   <>
                     {permissionUpdate("1", "A12") && (
                       <div className="flex items-center gap-2">
-                        {/* Badge de visão atual */}
                         <span
                           className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold"
                           style={{
@@ -307,7 +307,7 @@ export default function Customer() {
                   </>
                 }
               >
-                <DataTable columns={columns}>
+                <DataTable classContainer="max-h-[calc(100dvh-(var(--height-header)+13rem))]" columns={columns}>
                   <>
                     {pagination.data.map((x: any, i: number) => (
                       <tr
