@@ -20,7 +20,7 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<TLogin>();
+    const { register, handleSubmit, formState: { errors } } = useForm<TLogin>();
 
     const login: SubmitHandler<TLogin> = async (body) => {
         try {
@@ -45,41 +45,62 @@ export default function Home() {
             <Autorization path="login" />
             {!userLogger && (
                 <main className="min-h-dvh slim-container-new flex">
-                    {/* Left panel — branding */}
+                    {/* ── Left branding panel ── */}
                     <div
-                        className="hidden lg:flex lg:w-[45%] flex-col justify-between p-12 relative overflow-hidden"
-                        style={{ background: "linear-gradient(145deg, #339966 0%, #3C50E0 100%)" }}
+                        className="hidden lg:flex lg:w-[44%] flex-col justify-between p-12 relative overflow-hidden"
+                        style={{ background: "linear-gradient(155deg, #003366 0%, #002952 50%, #001f40 100%)" }}
                     >
-                        {/* Decorative circles */}
-                        <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10" style={{ background: "radial-gradient(circle, #fff, transparent)", transform: "translate(30%, -30%)" }} />
-                        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-10" style={{ background: "radial-gradient(circle, #fff, transparent)", transform: "translate(-30%, 30%)" }} />
-                        <div className="absolute top-1/2 left-1/2 w-96 h-96 rounded-full opacity-5" style={{ background: "radial-gradient(circle, #818CF8, transparent)", transform: "translate(-50%, -50%)" }} />
+                        {/* Decorative elements */}
+                        <div className="absolute top-0 right-0 w-72 h-72 rounded-full opacity-[0.07]"
+                            style={{ background: "radial-gradient(circle, #66CC99, transparent)", transform: "translate(30%, -30%)" }} />
+                        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-[0.06]"
+                            style={{ background: "radial-gradient(circle, #66CC99, transparent)", transform: "translate(-30%, 30%)" }} />
+                        <div className="absolute top-1/2 right-0 w-px h-3/4 opacity-20"
+                            style={{ background: "linear-gradient(to bottom, transparent, #66CC99, transparent)", transform: "translateY(-50%)" }} />
+
+                        {/* Floating accent dots */}
+                        <div className="absolute top-24 right-16 w-2 h-2 rounded-full bg-[#66CC99] opacity-60" />
+                        <div className="absolute top-36 right-10 w-1 h-1 rounded-full bg-[#66CC99] opacity-40" />
+                        <div className="absolute bottom-32 left-16 w-1.5 h-1.5 rounded-full bg-[#66CC99] opacity-50" />
 
                         {/* Top logo */}
                         <div className="relative z-10">
-                            <Logo className="h-20" />
+                            <Logo className="h-16" />
                         </div>
 
-                        {/* Center text */}
+                        {/* Center content */}
                         <div className="relative z-10">
-                            <h1 className="text-4xl font-bold text-white leading-tight mb-4">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#66CC99]/30 bg-[#66CC99]/10 mb-6">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#66CC99] animate-pulse" />
+                                <span className="text-[#66CC99] text-xs font-semibold tracking-wide">Sistema ERP de Saúde</span>
+                            </div>
+                            <h1 className="text-4xl font-extrabold text-white leading-tight mb-4 tracking-tight">
                                 Bem-vindo ao<br />
-                                <span className="text-[#A5B4FC]">SLIM Saúde ERP</span>
+                                <span style={{ color: "#66CC99" }}>SLIM Saúde</span>
                             </h1>
-                            <p className="text-[#8D99A8] text-base leading-relaxed max-w-sm">
+                            <p className="text-[#7A9BBF] text-base leading-relaxed max-w-sm">
                                 Sistema completo de gestão de saúde. Gerencie clientes, beneficiários, agendamentos e financeiro em um só lugar.
                             </p>
+
+                            {/* Feature chips */}
+                            <div className="mt-8 flex flex-wrap gap-2">
+                                {["Cadastros", "Atendimentos", "Financeiro"].map(f => (
+                                    <span key={f} className="px-3 py-1 rounded-full text-xs font-semibold border border-[#66CC99]/25 text-[#66CC99]/80 bg-[#66CC99]/10">
+                                        {f}
+                                    </span>
+                                ))}
+                            </div>
                         </div>
 
-                        {/* Bottom tagline */}
+                        {/* Bottom */}
                         <div className="relative z-10">
-                            <p className="text-[#4B5967] text-sm">
+                            <p className="text-[#4E6B8A] text-xs">
                                 © {new Date().getFullYear()} SLIM Saúde. Todos os direitos reservados.
                             </p>
                         </div>
                     </div>
 
-                    {/* Right panel — form */}
+                    {/* ── Right form panel ── */}
                     <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-[var(--surface-bg)]">
                         <div className="w-full max-w-md">
                             {/* Mobile logo */}
@@ -87,11 +108,23 @@ export default function Home() {
                                 <Logo className="h-12" />
                             </div>
 
+                            {/* Card */}
                             <div className="slim-form-login">
-                                {/* <div className="mb-8">
-                                    <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-1">Entrar na conta</h2>
-                                    <p className="text-sm text-[var(--text-muted)]">Digite suas credenciais para acessar o sistema</p>
-                                </div> */}
+                                {/* Form header */}
+                                <div className="mb-7">
+                                    <h2 className="text-2xl font-extrabold text-[var(--text-primary)] mb-1 tracking-tight">
+                                        Entrar na conta
+                                    </h2>
+                                    <p className="text-sm text-[var(--text-muted)]">
+                                        Use suas credenciais para acessar o sistema
+                                    </p>
+                                    {/* Accent underline */}
+                                    <div className="mt-3 flex gap-1">
+                                        <div className="h-0.5 w-8 rounded-full bg-[var(--primary-color)]" />
+                                        <div className="h-0.5 w-4 rounded-full bg-[var(--accent-color)]" />
+                                        <div className="h-0.5 w-2 rounded-full bg-[var(--accent-color)]/40" />
+                                    </div>
+                                </div>
 
                                 <form onSubmit={handleSubmit(login)} className="space-y-5" noValidate>
                                     {/* Email */}
@@ -112,7 +145,7 @@ export default function Home() {
                                     {/* Password */}
                                     <div>
                                         <label className="slim-label-primary" htmlFor="password">Senha</label>
-                                        <div className={`relative flex items-center rounded-[var(--radius-sm)] border-[1.5px] transition-all ${errors.password ? "border-red-500" : "border-[var(--surface-border)] focus-within:border-[var(--primary-color)] focus-within:shadow-[0_0_0_3px_rgba(60,80,224,.12)]"} bg-[var(--surface-card)]`}>
+                                        <div className={`relative flex items-center rounded-[var(--radius-sm)] border-[1.5px] transition-all ${errors.password ? "border-red-500" : "border-[var(--surface-border)] focus-within:border-[var(--accent-color)] focus-within:shadow-[0_0_0_3px_rgba(102,204,153,.18)]"} bg-[var(--surface-card)]`}>
                                             <input
                                                 {...register("password", { required: "Senha é obrigatória" })}
                                                 id="password"
@@ -124,7 +157,7 @@ export default function Home() {
                                             <button
                                                 type="button"
                                                 onClick={() => setPasswordEnabled(!passwordEnabled)}
-                                                className="px-3 text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors"
+                                                className="px-3 text-[var(--text-muted)] hover:text-[var(--accent-color)] transition-colors"
                                                 style={{ background: "transparent", border: "none", boxShadow: "none", height: "auto", padding: "0 .75rem" }}
                                             >
                                                 {passwordEnabled ? <FaEye size={16} /> : <FaEyeSlash size={16} />}
@@ -133,9 +166,9 @@ export default function Home() {
                                         {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
                                     </div>
 
-                                    {/* Forgot + submit */}
+                                    {/* Forgot */}
                                     <div className="flex items-center justify-end">
-                                        <a href="/reset-password" className="text-xs font-medium text-white hover:underline">
+                                        <a href="/reset-password" className="text-xs font-semibold text-[var(--accent-color)] hover:underline transition-all">
                                             Esqueceu a senha?
                                         </a>
                                     </div>

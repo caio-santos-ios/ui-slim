@@ -12,4 +12,4 @@ textarea {
   width: 100%;
 }
 textarea::placeholder { color: var(--text-muted); }
-textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(60,80,224,.12); }
+textarea:focus { border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(102,204,153,.18); }

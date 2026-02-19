@@ -4,6 +4,10 @@
   border-radius: var(--radius-lg);
   padding: 1.375rem;
   box-shadow: var(--shadow-sm);
-  transition: box-shadow .2s, transform .2s;
+  transition: box-shadow .2s, transform .2s, border-color .2s;
 }
-.slim-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.slim-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  border-color: rgba(102,204,153,.3);
+}

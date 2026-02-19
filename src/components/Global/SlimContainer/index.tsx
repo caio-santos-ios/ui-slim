@@ -21,27 +21,29 @@ export const SlimContainer = ({ children, buttons, inputSearch, breadcrump, brea
 
     return (
         <div className={`slim-container ${className ?? ""}`}>
-
-            {/* ── Breadcrumb trail ── */}
-            <nav className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] mb-3">
-                <Link href="/dashboard" className="hover:text-[var(--primary-color)] transition-colors">Dashboard</Link>
-                <span>/</span>
+            {/* Breadcrumb trail */}
+            <nav className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] mb-3.5">
+                <Link href="/dashboard" className="hover:text-[var(--accent-color)] transition-colors font-medium">
+                    Dashboard
+                </Link>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-50">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
                 <span className="text-[var(--primary-color)] font-semibold">{breadcrump}</span>
             </nav>
 
-            {/* ── Page header ── */}
-            <div className="container-breadcrump mb-5">
+            {/* Page header */}
+            <div className="container-breadcrump">
                 <div className="breadcrump">
                     {IconComponent && (
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                            style={{ background: "rgba(60,80,224,.1)" }}>
-                            <IconComponent size={20} className="text-[var(--primary-color)]" />
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                            style={{ background: "var(--accent-color-light)" }}>
+                            <IconComponent size={20} className="text-[var(--accent-color)]" />
                         </div>
                     )}
                     <p>{breadcrump}</p>
                 </div>
 
-                {/* Search + actions on the right */}
                 <div className="flex items-end gap-3 flex-wrap">
                     {inputSearch && (
                         <div className="flex items-end gap-2 flex-wrap">
@@ -52,7 +54,10 @@ export const SlimContainer = ({ children, buttons, inputSearch, breadcrump, brea
                 </div>
             </div>
 
-            {/* ── Content ── */}
+            {/* Divider */}
+            <div className="mb-5 h-px bg-gradient-to-r from-[var(--surface-border)] via-[var(--accent-color)]/20 to-transparent" />
+
+            {/* Content */}
             <div className="slim-container-main">
                 {children}
             </div>

@@ -12,8 +12,9 @@ export const ButtonTheme = () => {
     return (
         <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors"
+            className="text-[var(--text-muted)] hover:text-[var(--accent-color)] transition-colors"
             style={{ padding: 0, height: "auto", background: "transparent", border: "none", boxShadow: "none", fontSize: "1rem" }}
+            aria-label="Alternar tema"
         >
             {theme === "dark" ? <FiSun size={17} /> : <FiMoon size={17} />}
         </button>

@@ -38,9 +38,9 @@ export const SideMenu = () => {
 
     return (
         <>
-            {/* Overlay mobile */}
+            {/* Mobile overlay */}
             {isOpenMenu && (
-                <div className="lg:hidden fixed inset-0 bg-black/40 z-30 backdrop-blur-sm" />
+                <div className="lg:hidden fixed inset-0 bg-black/50 z-30 backdrop-blur-sm" />
             )}
 
             <aside
@@ -52,10 +52,13 @@ export const SideMenu = () => {
                 `}
                 style={{ minHeight: "100%" }}
             >
-                {/* Logo area — visible on mobile sidebar */}
-                <div className="flex items-center gap-3 px-5 py-5 border-b border-white/10 lg:hidden">
-                    <Logo className="h-9 brightness-0 invert" />
+                {/* Logo — mobile only */}
+                <div className="flex items-center gap-3 px-5 py-4 border-b border-white/[0.08] lg:hidden">
+                    <Logo className="h-8 brightness-0 invert" />
                 </div>
+
+                {/* Sidebar top accent bar */}
+                <div className="hidden lg:block h-0.5 bg-gradient-to-r from-[var(--accent-color)] to-transparent opacity-40 mx-3 mt-3 rounded-full" />
 
                 {/* Nav */}
                 <nav className="px-3 py-4">

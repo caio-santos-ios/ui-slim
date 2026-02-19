@@ -5,8 +5,20 @@ header {
   display: flex;
   align-items: center;
   padding: 0 1.5rem 0 1.25rem;
-  position: sticky; top: 0; z-index: 50;
-  box-shadow: var(--shadow-xs);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 0 var(--surface-border), var(--shadow-sm);
   gap: 1rem;
 }
 .dark header { background: var(--surface-card); border-color: var(--surface-border); }
+
+/* Subtle top accent strip */
+header::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  border-radius: 0;
+}

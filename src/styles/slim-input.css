@@ -12,12 +12,15 @@ input {
 }
 input::placeholder { color: var(--text-muted); font-weight: 400; }
 input:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(60,80,224,.12);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(102,204,153,.18);
 }
 .dark input { background: var(--surface-card); border-color: var(--surface-border); color: var(--text-primary); }
 
 .slim-input-primary { border: 1.5px solid var(--surface-border); }
-.slim-input-primary:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(60,80,224,.12); }
+.slim-input-primary:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(102,204,153,.18);
+}
 .dark .slim-input-primary { border-color: var(--surface-border); background: var(--surface-card); color: var(--text-primary); }
 .slim-input-secondary { border: 1.5px solid var(--surface-border); color: var(--text-secondary); }

@@ -1,9 +1,10 @@
+/* ─── LOGIN FORM ─────────────────────────────── */
 .slim-form-login {
   background: var(--surface-card);
   border: 1px solid var(--surface-border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-lg);
-  padding: 2.5rem;
+  padding: 2.5rem 2.25rem;
 }
 .dark .slim-form-login { background: var(--surface-card); border-color: var(--surface-border); }
 .container-password { position: relative; }

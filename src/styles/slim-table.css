@@ -25,11 +25,16 @@
   color: var(--text-muted);
   padding: .875rem 1rem;
   background: var(--surface-bg);
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 2px solid var(--surface-border);
   white-space: nowrap;
   text-align: left;
 }
 .dark .slim-container-table thead th { background: var(--surface-card); }
+
+/* Accent left border on first th */
+.slim-container-table thead th:first-child {
+  border-left: 3px solid var(--accent-color);
+}
 
 .slim-container-table tbody td {
   padding: .875rem 1rem;
@@ -40,13 +45,19 @@
 }
 .dark .slim-container-table tbody td { border-color: var(--surface-border); color: var(--text-secondary); }
 
-.slim-container-table tbody tr:hover td { background-color: var(--color-brand-25); }
-.dark .slim-container-table tbody tr:hover td { background-color: rgba(60,80,224,.04); }
+.slim-container-table tbody tr {
+  transition: background-color .12s;
+}
+.slim-container-table tbody tr:hover td {
+  background-color: rgba(102,204,153,.06);
+}
+.dark .slim-container-table tbody tr:hover td {
+  background-color: rgba(102,204,153,.04);
+}
 .slim-container-table tbody tr:last-child td { border-bottom: none; }
 
 .slim-tr { border: none; transition: background-color .12s; }
 .slim-body-table { background: var(--surface-card); }
 
-/* Column header center for actions */
 .slim-container-table thead th:last-child,
 .slim-container-table tbody td:last-child { text-align: center; }

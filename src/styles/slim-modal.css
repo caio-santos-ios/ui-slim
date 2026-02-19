@@ -1,4 +1,4 @@
-/* ─── MODAL TOKENS ──────────────────────────── */
-.slim-modal       { background-color: var(--primary-color); }
+/* ─── MODAL ─────────────────────────────────── */
+.slim-modal       { background: linear-gradient(135deg, var(--primary-color-light), var(--primary-color)); }
 .slim-modal-title { color: #fff; font-size: 1rem; font-weight: 700; }
 .dark .slim-modal-title { color: #fff; }

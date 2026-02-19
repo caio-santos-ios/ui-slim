@@ -1,112 +1,107 @@
 @import "tailwindcss";
 
 /* =============================================
-  SLIM SAÚDE × TAILADMIN — Design System
+   SLIM SAÚDE × TAILADMIN — Design System v2
+   Brand: #003366 (Navy) + #66CC99 (Mint)
    ============================================= */
 
 :root {
-  /* Core brand */
-  --primary-color: #003366;
-  --primary-color-hover: #003366;
-  --primary-text-color: #1C2434;
+  /* ── Core brand ── */
+  --primary-color:       #003366;
+  --primary-color-hover: #002850;
+  --primary-color-light: #004080;
+  --accent-color:        #66CC99;
+  --accent-color-hover:  #52b885;
+  --accent-color-light:  rgba(102,204,153,.12);
 
-  --secondary-color: #EFF4FB;
-  --secondary-text-color: #FFFFFF;
-  --secondary-color-hover: #E2E8F0;
+  /* ── Brand scale (navy) ── */
+  --color-brand-25:  #f0f4f8;
+  --color-brand-50:  #e1eaf4;
+  --color-brand-100: #c3d5e9;
+  --color-brand-200: #9ab7d5;
+  --color-brand-300: #6491b8;
+  --color-brand-400: #3a6fa0;
+  --color-brand-500: #003366;
+  --color-brand-600: #002d5c;
+  --color-brand-700: #002550;
+  --color-brand-800: #001d40;
+  --color-brand-900: #001530;
+  --color-brand-950: #000d1e;
 
-  --tree-color: #FFFFFF;
-  --tree-color-hover: #F8FAFC;
-
-  /* Layout */
+  /* ── Layout ── */
   --width-side-bar: 16.25rem;
-  --height-header: 4.375rem;
+  --height-header:  4.25rem;
 
-  /* Brand scale */
-  --color-brand-25: #f2f5f8;
-  --color-brand-50: #e8edf2;
-  --color-brand-100: #cedbe6;
-  --color-brand-200: #a2bcce;
-  --color-brand-300: #6d93b0;
-  --color-brand-400: #457091;
-  --color-brand-500: #1a3a5c;
-  --color-brand-600: #163250;
-  --color-brand-700: #122942;
-  --color-brand-800: #0f2135;
-  --color-brand-900: #0c1a29;
-  --color-brand-950: #07101a;
+  /* ── Surfaces ── */
+  --surface-bg:           #F0F4F8;
+  --surface-card:         #FFFFFF;
+  --surface-border:       #DDE3ED;
+  --surface-border-light: #EEF2F7;
+  --surface-hover:        #F7FAFC;
 
-  /* Surfaces */
-  --surface-bg:          #F1F5F9;
-  --surface-card:        #FFFFFF;
-  --surface-border:      #E2E8F0;
-  --surface-border-light:#F1F5F9;
-  --surface-hover:       #F8FAFC;
+  /* ── Text ── */
+  --text-primary:   #0D1B2E;
+  --text-secondary: #4A5A70;
+  --text-muted:     #8A99AE;
 
-  /* Text */
-  --text-primary:   #1C2434;
-  --text-secondary: #64748B;
-  --text-muted:     #94A3B8;
+  /* ── Sidebar ── */
+  --sidebar-bg:          #002952;
+  --sidebar-bg-dark:     #001f3f;
+  --sidebar-text:        #C8D8EC;
+  --sidebar-text-muted:  #7A9BBF;
+  --sidebar-item-hover:  rgba(102,204,153,.10);
+  --sidebar-item-active: #66CC99;
 
-  /* Status */
+  /* ── Status ── */
   --color-success:    #10B981;
   --color-success-bg: #D1FAE5;
   --color-danger:     #EF4444;
   --color-danger-bg:  #FEE2E2;
   --color-warning:    #F59E0B;
   --color-warning-bg: #FEF3C7;
+  --color-info:       #3B82F6;
+  --color-info-bg:    #DBEAFE;
 
-  /* Sidebar (TailAdmin dark sidebar) */
-  --sidebar-bg:         #1C2434;
-  --sidebar-bg-dark:    #24303F;
-  --sidebar-text:       #DEE4EE;
-  --sidebar-text-muted: #8D99A8;
-  --sidebar-item-hover: rgba(255,255,255,0.06);
-  --sidebar-item-active:#3C50E0;
+  /* ── Shadows ── */
+  --shadow-xs: 0 1px 2px rgba(0,51,102,.05);
+  --shadow-sm: 0 2px 6px rgba(0,51,102,.07), 0 1px 2px rgba(0,51,102,.04);
+  --shadow-md: 0 4px 14px rgba(0,51,102,.09), 0 2px 4px rgba(0,51,102,.05);
+  --shadow-lg: 0 10px 28px rgba(0,51,102,.12), 0 4px 8px rgba(0,51,102,.06);
+  --shadow-brand: 0 4px 16px rgba(0,51,102,.28);
+  --shadow-accent: 0 4px 16px rgba(102,204,153,.32);
 
-  /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
-  --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
-  --shadow-lg: 0 10px 24px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
-  --shadow-brand: 0 4px 16px rgba(60,80,224,0.24);
-
-  /* Radius */
+  /* ── Radius ── */
   --radius-xs: 0.25rem;
-  --radius-sm: 0.375rem;
+  --radius-sm: 0.4375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
 }
 
 /* ─── DARK MODE ─────────────────────────────── */
 .dark {
-  /* --primary-color: #4E63F0;
-  --primary-color-hover: #5d72f5;
-  */
-  --primary-color: #003366;
-  --primary-color-hover: #003366;
-  --primary-text-color: #AEB7C0;
-  /* --primary-text-color: #1C2434; */
+  --primary-color:       #003366;
+  --primary-color-hover: #004499;
+  --primary-color-light: #004d99;
 
-  --secondary-color: #1C2434;
-  --secondary-text-color: #DEE4EE;
+  --surface-bg:           #0D1B2E;
+  --surface-card:         #122240;
+  --surface-border:       #1E3355;
+  --surface-border-light: #192C48;
+  --surface-hover:        #1A2E4A;
 
-  --tree-color: #1C2434;
+  --text-primary:   #DCE8F5;
+  --text-secondary: #8AA8C8;
+  --text-muted:     #4E6B8A;
 
-  --surface-bg:          #1C2434;
-  --surface-card:        #24303F;
-  --surface-border:      #2E3A47;
-  --surface-border-light:#24303F;
-  --surface-hover:       #2E3A47;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-sm: 0 2px 6px rgba(0,0,0,.4);
+  --shadow-md: 0 4px 14px rgba(0,0,0,.45);
+  --shadow-lg: 0 10px 28px rgba(0,0,0,.5);
 
-  --text-primary:   #DEE4EE;
-  --text-secondary: #8D99A8;
-  --text-muted:     #5A6877;
-
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
-  --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.35);
-  --shadow-lg: 0 10px 24px rgba(0,0,0,0.4);
+  --sidebar-bg:       #001B38;
+  --sidebar-bg-dark:  #001529;
 }
 
 /* ─── BASE ──────────────────────────────────── */
@@ -115,9 +110,15 @@
 body {
   background: var(--surface-bg);
   color: var(--text-primary);
-  font-family: "Satoshi", "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ─── SCROLLBAR ─────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }

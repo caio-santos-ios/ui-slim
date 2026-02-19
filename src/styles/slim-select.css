@@ -10,12 +10,15 @@ select {
   padding: .5rem .75rem;
   width: 100%;
 }
-select:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(60,80,224,.12); }
+select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(102,204,153,.18);
+}
 .label { font-weight: 600; font-size: .8125rem; color: var(--text-secondary); display: block; margin-bottom: .3rem; }
 .select { border-radius: var(--radius-sm); padding: .5rem .75rem; border: 1.5px solid var(--surface-border); background: var(--surface-card); color: var(--text-primary); }
 .slim-label-secondary { color: var(--text-muted); font-weight: 600; }
 .slim-select-primary { border: 1.5px solid var(--surface-border); color: var(--text-primary); background: var(--surface-card); }
-.slim-select-primary:focus { border-color: var(--primary-color); }
+.slim-select-primary:focus { border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(102,204,153,.18); }
 .slim-input-secondary { border: 1.5px solid var(--surface-border); color: var(--text-secondary); }
 .dark .slim-select-primary { background: var(--surface-card); border-color: var(--surface-border); color: var(--text-primary); }
 .dark .slim-select-primary option { background-color: var(--surface-card) !important; color: var(--text-primary) !important; }
