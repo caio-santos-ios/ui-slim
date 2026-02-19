@@ -22,12 +22,12 @@ type TProps = {
 
 const statusStyle = (s: string) => {
     const map: Record<string, { bg: string; color: string }> = {
-        "Concluído":   { bg: "rgba(102,204,153,.12)", color: "#3a9e72" },
-        "Agendado":    { bg: "rgba(59,130,246,.10)",  color: "#2563eb" },
-        "Cancelado":   { bg: "rgba(239,68,68,.10)",   color: "#dc2626" },
-        "Em andamento":{ bg: "rgba(245,158,11,.12)",  color: "#d97706" },
+        "Concluído":   { bg: "rgba(102,204,153,.12)", color: "#000" },
+        "Agendado":    { bg: "rgba(59,130,246,.10)",  color: "#000" },
+        "Cancelado":   { bg: "rgba(239,68,68,.10)",   color: "#000" },
+        "Em andamento":{ bg: "rgba(245,158,11,.12)",  color: "#000" },
     };
-    return map[s] ?? { bg: "var(--surface-border)", color: "var(--text-muted)" };
+    return map[s] ?? { bg: "var(--surface-border)", color: "#000" };
 };
 
 const initials = (name: string) => {
@@ -82,12 +82,12 @@ export const ConsultasList = ({ title, icon, consultas, accentColor, emptyMsg }:
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{c.beneficiario}</p>
+                            <p className="text-sm font-semibold text-black truncate">{c.beneficiario}</p>
                             <div className="flex items-center gap-3 mt-0.5">
-                                <span className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
+                                <span className="flex items-center gap-1 text-xs text-black">
                                     <LuUser size={11} /> {c.profissional}
                                 </span>
-                                <span className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
+                                <span className="flex items-center gap-1 text-xs text-black">
                                     <LuStethoscope size={11} /> {c.modulo}
                                 </span>
                             </div>
@@ -95,7 +95,7 @@ export const ConsultasList = ({ title, icon, consultas, accentColor, emptyMsg }:
 
                         {/* Data/hora + status */}
                         <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                            <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
+                            <div className="flex items-center gap-1 text-xs text-black">
                                 <LuCalendar size={11} /> {c.data}
                                 <LuClock size={11} className="ml-1" /> {c.hora || "—"}
                             </div>
