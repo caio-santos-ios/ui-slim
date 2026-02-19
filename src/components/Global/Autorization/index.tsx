@@ -20,7 +20,7 @@ export const Autorization = ({path}: TProp) => {
         if(!token) {
             setUserLogger(false);
             if(path != "reset-password") {
-                router.push("/erp");
+                router.push("/");
             };
         } else {
             setUserLogger(true);

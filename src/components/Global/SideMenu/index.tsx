@@ -126,7 +126,7 @@ function SidebarBody({ expanded, isMobile, onToggle, onClose, menu, admin }: Sid
 
     const logout = () => {
         ["token", "name", "admin", "photo", "modules"].forEach((k) => localStorage.removeItem(k));
-        router.push("/");
+        router.push("/erp");
     };
 
     return (
