@@ -64,9 +64,9 @@ export default function Home() {
                         <div className="absolute bottom-32 left-16 w-1.5 h-1.5 rounded-full bg-[#66CC99] opacity-50" />
 
                         {/* Top logo */}
-                        <div className="relative z-10">
+                        <div className="relative z-10 flex justify-center">
                             <img
-                                className="w-20 h-20 max-w-full max-h-full object-contain"
+                                className="w-28 h-28 max-w-full max-h-full object-contain"
                                 src="/erp/assets/images/logo-light.png"
                                 alt="Logo"
                             />
@@ -80,7 +80,7 @@ export default function Home() {
                             </div>
                             <h1 className="text-4xl font-extrabold text-white leading-tight mb-4 tracking-tight">
                                 Bem-vindo ao<br />
-                                <span style={{ color: "#66CC99" }}>SLIM Saúde</span>
+                                <span style={{ color: "#66CC99" }}>Pasbem</span>
                             </h1>
                             <p className="text-[#7A9BBF] text-base leading-relaxed max-w-sm">
                                 Sistema completo de gestão de saúde. Gerencie clientes, beneficiários, agendamentos e financeiro em um só lugar.
@@ -99,7 +99,7 @@ export default function Home() {
                         {/* Bottom */}
                         <div className="relative z-10">
                             <p className="text-[#4E6B8A] text-xs">
-                                © {new Date().getFullYear()} SLIM Saúde. Todos os direitos reservados.
+                                © {new Date().getFullYear()} Pasbem. Todos os direitos reservados.
                             </p>
                         </div>
                     </div>

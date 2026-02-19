@@ -204,11 +204,12 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
             {
                 list.length > 0 &&
                 <>
-                    <div className="slim-container-table h-[calc(100dvh-24rem)] w-full">                    
+                    <div className="slim-container-table h-[calc(100dvh-28rem)] w-full">                    
                         <table className="min-w-full divide-y">
                             <thead className="slim-table-thead">
                                 <tr>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Beneficiário</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>CPF Beneficiário</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Unidade</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Profissional</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Módulo</th>
@@ -226,6 +227,7 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                         return (
                                             <tr className="slim-tr" key={x.id}>                                            
                                                 <td className="px-4 py-2">{x.recipientDescription}</td>
+                                                <td className="px-4 py-2">{x.recipientCpf}</td>
                                                 <td className="px-4 py-2">{x.accreditedNetworkDescription}</td>
                                                 <td className="px-4 py-2">{x.professionalName}</td>
                                                 <td className="px-4 py-2">{x.serviceModuleDescription}</td>

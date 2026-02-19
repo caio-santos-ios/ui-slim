@@ -68,17 +68,14 @@ const cards = (d: any) => [
 ];
 
 export const FirstCard = ({ cardFirst }: TProps) => (
-    <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
+    <ul className="grid grid-cols-12 gap-5">
         {cards(cardFirst).map((c, i) => (
             <li
                 key={i}
-                className="relative rounded-2xl border bg-[var(--surface-card)] p-6 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group cursor-default"
-                style={{ borderColor: "var(--surface-border)" }}
-            >
-                {/* Top accent line */}
+                className="h-52 col-span-3 relative rounded-2xl border bg-[var(--surface-card)] p-6 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group cursor-default"
+                style={{ borderColor: "var(--surface-border)" }}>
                 <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl transition-all duration-300"
                     style={{ background: c.borderColor }} />
-                {/* Left accent on hover */}
                 <div className="absolute top-0 left-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 rounded-l-2xl"
                     style={{ background: c.borderColor }} />
 

@@ -24,9 +24,9 @@ export const CardCustomer = () => {
     const total = active + inactive;
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-6">
+        <div className="grid grid-cols-12 gap-4">
             {/* Active card */}
-            <div className="relative rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-6 shadow-sm hover:shadow-md transition-all overflow-hidden group">
+            <div className="col-span-6 h-52 relative rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-6 shadow-sm hover:shadow-md transition-all overflow-hidden group">
                 {/* Top accent */}
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--accent-color)] rounded-t-2xl" />
                 {/* Bg tint */}
@@ -56,7 +56,7 @@ export const CardCustomer = () => {
             </div>
 
             {/* Inactive card */}
-            <div className="relative rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-6 shadow-sm hover:shadow-md transition-all overflow-hidden group">
+            <div className="col-span-6 h-52 relative rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-6 shadow-sm hover:shadow-md transition-all overflow-hidden group">
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--color-danger)] rounded-t-2xl" />
                 <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-danger)]/[0.03] to-transparent rounded-2xl" />
 
