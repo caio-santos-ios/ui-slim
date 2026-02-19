@@ -121,9 +121,9 @@ export default function Dashboard() {
                                 )}
                             </div>
 
-                            <div className="col-span-12">
+                            {/* <div className="col-span-12">
                                 {financeiro.length > 0 && <RevenueChart data={financeiro} />}
-                            </div>
+                            </div> */}
                         </div>
                     </main>
                 </>

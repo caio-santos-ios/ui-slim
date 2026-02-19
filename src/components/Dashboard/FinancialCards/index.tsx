@@ -55,27 +55,27 @@ export const FinancialCards = ({
     });
 
     const kpis = [
-        {
-            label:  "Contas a Pagar (Mês)",
-            value:  `R$ ${convertNumberMoney(contasPagarMes)}`,
-            icon:   <LuTrendingDown size={18} />,
-            color:  "#ef4444",
-            bg:     "rgba(239,68,68,.08)",
-        },
-        {
-            label:  "A Receber em Aberto",
-            value:  `R$ ${convertNumberMoney(contasReceberAberto)}`,
-            icon:   <FaMoneyBillWave size={18} />,
-            color:  "#f59e0b",
-            bg:     "rgba(245,158,11,.08)",
-        },
-        {
-            label:  "Ticket Médio",
-            value:  `R$ ${convertNumberMoney(ticketMedio)}`,
-            icon:   <LuTarget size={18} />,
-            color:  "var(--accent-color)",
-            bg:     "rgba(102,204,153,.10)",
-        },
+        // {
+        //     label:  "Contas a Pagar (Mês)",
+        //     value:  `R$ ${convertNumberMoney(contasPagarMes)}`,
+        //     icon:   <LuTrendingDown size={18} />,
+        //     color:  "#ef4444",
+        //     bg:     "rgba(239,68,68,.08)",
+        // },
+        // {
+        //     label:  "A Receber em Aberto",
+        //     value:  `R$ ${convertNumberMoney(contasReceberAberto)}`,
+        //     icon:   <FaMoneyBillWave size={18} />,
+        //     color:  "#f59e0b",
+        //     bg:     "rgba(245,158,11,.08)",
+        // },
+        // {
+        //     label:  "Ticket Médio",
+        //     value:  `R$ ${convertNumberMoney(ticketMedio)}`,
+        //     icon:   <LuTarget size={18} />,
+        //     color:  "var(--accent-color)",
+        //     bg:     "rgba(102,204,153,.10)",
+        // },
         {
             label:  "Consultas no Mês",
             value:  consultasMes,

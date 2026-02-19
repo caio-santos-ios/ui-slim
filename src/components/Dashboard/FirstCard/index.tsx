@@ -36,35 +36,35 @@ const cards = (d: any) => [
             </svg>
         ),
     },
-    {
-        title: "Contas a Receber (Mês)",
-        value: `R$ ${convertNumberMoney(d.accountReceivableMonth ?? 0)}`,
-        delta: d.percentageChangeMonth ?? null,
-        sub: `${new Date().getUTCMonth() + 1}/${new Date().getUTCFullYear()}`,
-        color: "#F59E0B",
-        accentBg: "rgba(245,158,11,.08)",
-        borderColor: "#F59E0B",
-        icon: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-6 h-6">
-                <line x1="12" y1="1" x2="12" y2="23"/>
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-            </svg>
-        ),
-    },
-    {
-        title: "Contas a Receber (Ano)",
-        value: `R$ ${convertNumberMoney(d.accountReceivableYear ?? 0)}`,
-        delta: d.percentageChangeYear ?? null,
-        sub: `${new Date().getUTCFullYear()}`,
-        color: "#EF4444",
-        accentBg: "rgba(239,68,68,.08)",
-        borderColor: "#EF4444",
-        icon: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-6 h-6">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-            </svg>
-        ),
-    },
+    // {
+    //     title: "Contas a Receber (Mês)",
+    //     value: `R$ ${convertNumberMoney(d.accountReceivableMonth ?? 0)}`,
+    //     delta: d.percentageChangeMonth ?? null,
+    //     sub: `${new Date().getUTCMonth() + 1}/${new Date().getUTCFullYear()}`,
+    //     color: "#F59E0B",
+    //     accentBg: "rgba(245,158,11,.08)",
+    //     borderColor: "#F59E0B",
+    //     icon: (
+    //         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-6 h-6">
+    //             <line x1="12" y1="1" x2="12" y2="23"/>
+    //             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+    //         </svg>
+    //     ),
+    // },
+    // {
+    //     title: "Contas a Receber (Ano)",
+    //     value: `R$ ${convertNumberMoney(d.accountReceivableYear ?? 0)}`,
+    //     delta: d.percentageChangeYear ?? null,
+    //     sub: `${new Date().getUTCFullYear()}`,
+    //     color: "#EF4444",
+    //     accentBg: "rgba(239,68,68,.08)",
+    //     borderColor: "#EF4444",
+    //     icon: (
+    //         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-6 h-6">
+    //             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+    //         </svg>
+    //     ),
+    // },
 ];
 
 export const FirstCard = ({ cardFirst }: TProps) => (
@@ -97,7 +97,7 @@ export const FirstCard = ({ cardFirst }: TProps) => (
 
                 <p className="text-xs text-[var(--text-muted)] mb-1 font-semibold uppercase tracking-wider">{c.title}</p>
                 <p className="text-2xl font-extrabold text-[var(--text-primary)] tracking-tight">{c.value}</p>
-                {c.sub && <p className="text-xs text-[var(--text-muted)] mt-1">{c.sub}</p>}
+                {/* {c.sub && <p className="text-xs text-[var(--text-muted)] mt-1">{c.sub}</p>} */}
 
                 {/* Bottom accent bar */}
                 <div className="absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"

@@ -73,7 +73,7 @@ export default function Home() {
                         </div>
 
                         {/* Center content */}
-                        <div className="relative z-10">
+                        <div className="relative z-10 flex justify-center items-center flex-col">
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#66CC99]/30 bg-[#66CC99]/10 mb-6">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#66CC99] animate-pulse" />
                                 <span className="text-[#66CC99] text-xs font-semibold tracking-wide">Sistema ERP de Saúde</span>
@@ -98,7 +98,7 @@ export default function Home() {
 
                         {/* Bottom */}
                         <div className="relative z-10">
-                            <p className="text-[#4E6B8A] text-xs">
+                            <p className="text-[#4E6B8A] text-xs text-center">
                                 © {new Date().getFullYear()} Pasbem. Todos os direitos reservados.
                             </p>
                         </div>
