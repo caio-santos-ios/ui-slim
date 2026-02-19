@@ -1,11 +1,2 @@
-input {
-    outline: none;
-    border-radius: .5rem;
-    padding: .4rem .5rem;
-}
-
-.input::placeholder {
-    opacity: 1;
-    /* font-size: .8rem; */
-    font-weight: 500;
-}
+.input { width: 100%; }
+.label { font-weight: 600; font-size: .8125rem; color: var(--text-secondary); display: block; margin-bottom: .3rem; }

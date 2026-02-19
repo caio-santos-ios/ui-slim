@@ -1,54 +1,21 @@
+/* ─── SELECT ────────────────────────────────── */
 select {
-    border: 0;
-    outline: none;
+  border: 1.5px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  transition: border-color .18s, box-shadow .18s;
+  font-size: .875rem;
+  padding: .5rem .75rem;
+  width: 100%;
 }
-
-.label {
-    font-weight: 500;
-}
-
-.select {
-    border-radius: .5rem;
-    padding: .45rem .5rem;
-}
-
-.select::placeholder {
-    color: blue !important;
-}
-
-input {
-    outline: none;
-    border-radius: .5rem;
-    padding: .4rem .5rem;
-}
-
-.input::placeholder {
-    opacity: 1;
-    font-weight: 500;
-}
-
-.slim-label-secondary {
-    color: var(--secondary-color);
-    font-weight: 700;
-}
-
-.slim-select-primary {
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-}
-
-.slim-input-secondary {
-    border: 1px solid var(--secondary-color);
-    color: var(--secondary-color);
-}
-
-.dark .slim-select-primary {
-    color: white;
-    border: 1px solid white;
-}
-
-.dark .slim-select-primary option {
-    background-color: var(--color-brand-900) !important; 
-    color: #ffffff !important;           
-    padding: 10px;
-}
+select:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(60,80,224,.12); }
+.label { font-weight: 600; font-size: .8125rem; color: var(--text-secondary); display: block; margin-bottom: .3rem; }
+.select { border-radius: var(--radius-sm); padding: .5rem .75rem; border: 1.5px solid var(--surface-border); background: var(--surface-card); color: var(--text-primary); }
+.slim-label-secondary { color: var(--text-muted); font-weight: 600; }
+.slim-select-primary { border: 1.5px solid var(--surface-border); color: var(--text-primary); background: var(--surface-card); }
+.slim-select-primary:focus { border-color: var(--primary-color); }
+.slim-input-secondary { border: 1.5px solid var(--surface-border); color: var(--text-secondary); }
+.dark .slim-select-primary { background: var(--surface-card); border-color: var(--surface-border); color: var(--text-primary); }
+.dark .slim-select-primary option { background-color: var(--surface-card) !important; color: var(--text-primary) !important; }

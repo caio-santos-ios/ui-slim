@@ -1,21 +1,2 @@
-select {
-    border: 0;
-    outline: none;
-}
-
-.label {
-    /* color: var(--primary-color); */
-    font-weight: 500;
-}
-
-.select {
-    border: 1px solid;
-    /* border: 1px solid var(--primary-color); */
-    border-radius: .5rem;
-    padding: .45rem .5rem;
-    /* color: var(--primary-color); */
-}
-
-.select::placeholder {
-    color: blue !important;
-}
+.select { width: 100%; }
+.label { font-weight: 600; font-size: .8125rem; color: var(--text-secondary); display: block; margin-bottom: .3rem; }

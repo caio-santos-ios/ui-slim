@@ -1,8 +1,4 @@
-.slim-label-primary {
-    color: var(--primary-color);
-    font-weight: 700;
-}
-
-.dark .slim-label-primary {
-    color: #ffffff;
-}
+/* ─── LABELS ────────────────────────────────── */
+.slim-label-primary  { color: var(--text-secondary); font-weight: 600; font-size: .8125rem; display: block; margin-bottom: .3rem; }
+.slim-label-secondary{ color: var(--text-muted); font-weight: 600; font-size: .8125rem; }
+.dark .slim-label-primary { color: var(--text-secondary); }

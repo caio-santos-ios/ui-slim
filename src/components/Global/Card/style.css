@@ -1,4 +1,9 @@
-header {
-    font-family: "Kedebideri", sans-serif;
-    height: var(--height-header);
+.slim-card {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  padding: 1.375rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .2s, transform .2s;
 }
+.slim-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }

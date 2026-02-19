@@ -1,13 +1,9 @@
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 15px; height: 15px;
   border-radius: 50%;
-  animation: spin 0.6s linear infinite;
+  border: 2.5px solid transparent;
+  animation: spin-btn .7s linear infinite;
   margin: 0 auto;
 }
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+.slim-btn-spinner-primary { border-color: rgba(255,255,255,.3); border-top-color: #fff; }
+@keyframes spin-btn { to { transform: rotate(360deg); } }

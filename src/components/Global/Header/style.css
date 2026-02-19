@@ -1,15 +1,12 @@
 header {
-    font-family: "Kedebideri", sans-serif;
-    height: var(--height-header);
+  height: var(--height-header);
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--surface-border);
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem 0 1.25rem;
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: var(--shadow-xs);
+  gap: 1rem;
 }
-
-.slim-header {
-    color: var(--color-brand-500);
-    border-bottom: 0.5px solid var(--color-brand-200);
-}
-
-.dark .slim-header {
-    color: white;
-    background-color: var(--color-brand-900);
-    border-bottom: 0.5px solid #e5e7eb53;
-}
+.dark header { background: var(--surface-card); border-color: var(--surface-border); }
