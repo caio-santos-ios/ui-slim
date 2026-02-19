@@ -2,22 +2,22 @@
 
 import "./style.css";
 import { menuOpenAtom } from "@/jotai/global/menu.jotai";
+import { sidebarAtom } from "@/jotai/global/sidebar.jotai";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { HiMenuAlt2 } from "react-icons/hi";
-import { IoMdClose } from "react-icons/io";
 import { api, uriBase } from "@/service/api.service";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { ButtonTheme } from "@/components/button-theme/ButtonTheme";
 import { Logo } from "../logo";
-import { BsBellFill } from "react-icons/bs";
 import { HiArrowPathRoundedSquare } from "react-icons/hi2";
 
 export const Header = () => {
     const [_, setLoading] = useAtom(loadingAtom);
-    const [isOpenMenu, setIsOpenMenu] = useAtom(menuOpenAtom);
+    const [isMobileOpen, setIsMobileOpen] = useAtom(menuOpenAtom);
+    const [isExpanded] = useAtom(sidebarAtom);
     const [name, setName] = useState<string>("");
     const [photo, setPhoto] = useState<string>("");
     const [dropOpen, setDropOpen] = useState(false);
@@ -47,25 +47,25 @@ export const Header = () => {
 
     return (
         <header>
-            {/* Hamburger (mobile) */}
-            <button
+            {/* ── Hamburger — abre drawer no mobile ── */}
+            {/* <button
                 className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg text-[var(--text-muted)] hover:text-[var(--primary-color)] hover:bg-[var(--color-brand-50)] transition-all"
-                onClick={() => setIsOpenMenu(!isOpenMenu)}
+                onClick={() => setIsMobileOpen(!isMobileOpen)}
                 style={{ padding: 0, border: "none", background: "transparent", boxShadow: "none" }}
-                aria-label="Menu"
+                aria-label="Abrir menu"
             >
-                {isOpenMenu ? <IoMdClose size={22} /> : <HiMenuAlt2 size={22} />}
-            </button>
+                <HiMenuAlt2 size={22} />
+            </button> */}
 
-            {/* Logo */}
+            {/* ── Logo ── */}
             <a href="/dashboard" className="flex-shrink-0">
                 <Logo className="h-14" />
             </a>
 
-            {/* Spacer */}
+            {/* ── Spacer ── */}
             <div className="flex-1" />
 
-            {/* Actions */}
+            {/* ── Actions ── */}
             <div className="flex items-center gap-1.5">
                 {/* Theme toggle */}
                 <div className="flex items-center justify-center w-9 h-9 rounded-lg border border-[var(--surface-border)] hover:border-[var(--accent-color)] hover:bg-[var(--accent-color-light)] transition-all cursor-pointer bg-[var(--surface-card)]">
@@ -105,7 +105,6 @@ export const Header = () => {
                         <>
                             <div className="fixed inset-0 z-40" onClick={() => setDropOpen(false)} />
                             <div className="absolute right-0 top-13 z-50 w-52 rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] shadow-lg overflow-hidden">
-                                {/* User info strip */}
                                 <div className="px-4 py-3 border-b border-[var(--surface-border)] bg-gradient-to-r from-[var(--primary-color)] to-[var(--primary-color-light)]">
                                     <p className="text-xs font-bold text-white truncate">{name}</p>
                                     <p className="text-[0.7rem] text-[rgba(255,255,255,.6)]">Administrador</p>

@@ -65,7 +65,11 @@ export default function Home() {
 
                         {/* Top logo */}
                         <div className="relative z-10">
-                            <Logo className="h-16" />
+                            <img
+                                className="w-20 h-20 max-w-full max-h-full object-contain"
+                                src="/erp/assets/images/logo-light.png"
+                                alt="Logo"
+                            />
                         </div>
 
                         {/* Center content */}
@@ -112,12 +116,12 @@ export default function Home() {
                             <div className="slim-form-login">
                                 {/* Form header */}
                                 <div className="mb-7">
-                                    <h2 className="text-2xl font-extrabold text-[var(--text-primary)] mb-1 tracking-tight">
+                                    {/* <h2 className="text-2xl font-extrabold text-[var(--text-primary)] mb-1 tracking-tight">
                                         Entrar na conta
                                     </h2>
                                     <p className="text-sm text-[var(--text-muted)]">
                                         Use suas credenciais para acessar o sistema
-                                    </p>
+                                    </p> */}
                                     {/* Accent underline */}
                                     <div className="mt-3 flex gap-1">
                                         <div className="h-0.5 w-8 rounded-full bg-[var(--primary-color)]" />
