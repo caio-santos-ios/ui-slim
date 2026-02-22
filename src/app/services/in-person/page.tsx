@@ -36,6 +36,9 @@ import { TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accredi
 import { TRecipient } from "@/types/masterData/customers/customerRecipient.type";
 import { IoSearch } from "react-icons/io5";
 import { TProfessional } from "@/types/masterData/professional/professional.type";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/Global/Accordion/AccordionContent";
+import { LuCreditCard, LuSettings, LuShieldCheck, LuUsers } from "react-icons/lu";
+import { MdFilterAlt, MdFilterAltOff } from "react-icons/md";
 
 const columns: {key: string; title: string}[] = [
   { key: "corporateName", title: "Contratante" },
@@ -66,6 +69,7 @@ export default function Customer() {
 
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
+  const [searchActive, setSearchActive] = useState<boolean>(false);
 
   const { register, handleSubmit, reset, watch, setValue, getValues, formState: { errors }} = useForm<TInPersonSearch>({
     defaultValues: ResetInPersonSearch
@@ -216,7 +220,7 @@ export default function Customer() {
           <main className="slim-bg-main">
             <SideMenu />
 
-            <div className="slim-container w-full">
+            <div className="max-h-[calc(100dvh-5rem)] overflow-y-auto w-full">
               <SlimContainer menu="Atendimentos" breadcrump="Presencial" breadcrumpIcon="MdPersonPinCircle"
                 buttons={
                   <>
@@ -227,79 +231,90 @@ export default function Customer() {
                   </>
                 }>
 
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 mb-2">
-                    <div className={`flex flex-col col-span-2 mb-2`}>
-                      <label className={`label slim-label-primary`}>Beneficiário</label>
-                      <select className="select slim-select-primary" {...register("recipientId")}>
-                        <option value="">Todos</option>
-                        {
-                          recipient.map((x: any) => {
-                            return <option key={x.id} value={x.id}>{x.name}</option>
-                          })
-                        }
-                      </select>
-                    </div>
-                      <div className={`flex flex-col col-span-3 mb-2`}>
-                        <label className={`label slim-label-primary`}>Unidade Credenciada</label>
-                        <select className="select slim-select-primary" {...register("accreditedNetworkId")}>
-                          <option value="">Todos</option>
-                          {
-                            accreditedNetworks.map((x: any) => {
-                              return <option key={x.id} value={x.id}>{x.corporateName}</option>
-                            })
-                          }
-                        </select>
-                      </div>
-                      <div className={`flex flex-col col-span-3 mb-2`}>
-                        <label className={`label slim-label-primary`}>Profissional</label>
-                        <select className="select slim-select-primary" {...register("professionalId")}>
-                          <option value="">Todos</option>
-                          {
-                            professionals.map((x: any, i: number) => {
-                                return <option key={i} value={x.id}>{x.name}</option>
-                            })
-                          }
-                        </select>
-                      </div>
-                      <div className={`flex flex-col col-span-2 mb-2`}>
-                        <label className={`label slim-label-primary`}>Módulo de Serviço</label>
-                        <select className="select slim-select-primary" {...register("serviceModuleId")}>
-                          <option value="">Todos</option>
-                          {
-                            serviceModules.map((x: any) => {
-                              return <option key={x.id} value={x.id}>{x.name}</option>
-                            })
-                          }
-                        </select>
-                      </div>                            
-                      <div className={`flex flex-col col-span-2 mb-2`}>
-                        <label className={`label slim-label-primary`}>Status</label>
-                        <select className="select slim-select-primary" {...register("status")}>
-                          <option value="">Todos</option>
-                          <option value="Solicitada">Solicitada</option>
-                          <option value="Agendada">Agendada</option>
-                          <option value="Cancelada - Cliente">Cancelada - Cliente</option>
-                          <option value="Cancelada - Pasbem">Cancelada - Pasbem</option>
-                          <option value="Cancelada - Credenciada">Cancelada - Credenciada</option>
-                          <option value="Realizada">Realizada</option>
-                      </select>
-                      </div>                            
-                      <div className={`flex flex-col col-span-2 mb-2`}>
-                        <label className={`label slim-label-primary`}>Data Inicio</label>
-                        <input {...register("gte$date")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
-                      </div>                                          
-                      <div className={`flex flex-col col-span-2 mb-2`}>
-                        <label className={`label slim-label-primary`}>Data Fim</label>
-                        <input {...register("lte$date")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
-                      </div>                                          
-                      <div className={`flex flex-col justify-end col-span-1 mb-2`}>
-                        <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">
-                          <IoSearch />
+                <div className="grid grid-cols-12 mb-2">
+                  <Accordion className="col-span-12" defaultOpenId="filter">
+                    <AccordionItem id="filter">
+                      <AccordionTrigger icon={
+                        !searchActive ? <MdFilterAlt size={15} /> : <MdFilterAltOff size={15} />
+                      } subtitle="">
+                        Filtros
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="grid grid-cols-12 gap-3">
+                          <div className={`flex flex-col col-span-3 mb-2`}>
+                            <label className={`label slim-label-primary`}>Beneficiário</label>
+                            <select className="select slim-select-primary" {...register("recipientId")}>
+                              <option value="">Todos</option>
+                              {
+                                recipient.map((x: any) => {
+                                  return <option key={x.id} value={x.id}>{x.name}</option>
+                                })
+                              }
+                            </select>
+                          </div>
+                          <div className={`flex flex-col col-span-3 mb-2`}>
+                            <label className={`label slim-label-primary`}>Unidade Credenciada</label>
+                            <select className="select slim-select-primary" {...register("accreditedNetworkId")}>
+                              <option value="">Todos</option>
+                              {
+                                accreditedNetworks.map((x: any) => {
+                                  return <option key={x.id} value={x.id}>{x.corporateName}</option>
+                                })
+                              }
+                            </select>
+                          </div>
+                          <div className={`flex flex-col col-span-3 mb-2`}>
+                            <label className={`label slim-label-primary`}>Profissional</label>
+                            <select className="select slim-select-primary" {...register("professionalId")}>
+                              <option value="">Todos</option>
+                              {
+                                professionals.map((x: any, i: number) => {
+                                    return <option key={i} value={x.id}>{x.name}</option>
+                                })
+                              }
+                            </select>
+                          </div>
+                          <div className={`flex flex-col col-span-3 mb-2`}>
+                            <label className={`label slim-label-primary`}>Módulo de Serviço</label>
+                            <select className="select slim-select-primary" {...register("serviceModuleId")}>
+                              <option value="">Todos</option>
+                              {
+                                serviceModules.map((x: any) => {
+                                  return <option key={x.id} value={x.id}>{x.name}</option>
+                                })
+                              }
+                            </select>
+                          </div>                            
+                          <div className={`flex flex-col col-span-3 mb-2`}>
+                            <label className={`label slim-label-primary`}>Status</label>
+                            <select className="select slim-select-primary" {...register("status")}>
+                              <option value="">Todos</option>
+                              <option value="Solicitada">Solicitada</option>
+                              <option value="Agendada">Agendada</option>
+                              <option value="Cancelada - Cliente">Cancelada - Cliente</option>
+                              <option value="Cancelada - Pasbem">Cancelada - Pasbem</option>
+                              <option value="Cancelada - Credenciada">Cancelada - Credenciada</option>
+                              <option value="Realizada">Realizada</option>
+                          </select>
+                          </div>                            
+                          <div className={`flex flex-col col-span-3 mb-2`}>
+                            <label className={`label slim-label-primary`}>Data Inicio</label>
+                            <input {...register("gte$date")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
+                          </div>                                          
+                          <div className={`flex flex-col col-span-3 mb-2`}>
+                            <label className={`label slim-label-primary`}>Data Fim</label>
+                            <input {...register("lte$date")} type="date" className={`input slim-input-primary`} placeholder="Digite"/>
+                          </div>                                          
+                          <div className={`flex flex-col justify-end col-span-1 mb-2`}>
+                            <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">
+                              <IoSearch />
+                            </div>
+                          </div>                                          
                         </div>
-                      </div>                                          
-                    </div>                          
-                </form>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
 
                 <NotData />
                 <TableInPerson handleReturnModal={handleReturnModal} list={pagination.data} />

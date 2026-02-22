@@ -60,7 +60,7 @@ export const SlimContainer = ({ children, buttons, inputSearch, breadcrump, menu
             </div>
 
             {/* Divider */}
-            <div className="mb-5 h-px bg-gradient-to-r from-[var(--surface-border)] via-[var(--accent-color)]/20 to-transparent" />
+            <div className="mb-2 h-px bg-gradient-to-r from-[var(--surface-border)] via-[var(--accent-color)]/20 to-transparent" />
 
             {/* Content */}
             <div className="slim-container-main">

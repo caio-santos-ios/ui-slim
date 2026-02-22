@@ -204,7 +204,7 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
             {
                 list.length > 0 &&
                 <>
-                    <div className="slim-container-table h-[calc(100dvh-28rem)] w-full">                    
+                    <div className="slim-container-table h-[calc(100dvh-18rem)] w-full">                    
                         <table className="min-w-full divide-y">
                             <thead className="slim-table-thead">
                                 <tr>

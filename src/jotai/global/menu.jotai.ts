@@ -4,6 +4,33 @@ import { atom } from "jotai";
 export const menuOpenAtom = atom<boolean>(false);
 export const menuRoutinesAtom = atom<TMenuRoutine[]>([
     {
+        code: '00',
+        isOpen: true,
+        authorized: false,
+        description: 'Home',
+        icon: 'FiGrid',
+        link: '',
+        padding: 'px-2',
+        subMenu: [
+            {
+                code: '001',
+                isOpen: true,
+                subMenu: [],
+                description: 'Dashboard',
+                icon: '',
+                link: '/dashboard',
+                padding: 'px-4',
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },     
+        ],
+    },
+    {
         code: '1',
         isOpen: true,
         authorized: false,

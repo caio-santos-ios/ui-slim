@@ -83,13 +83,13 @@ export const FinancialCards = ({
             color:  "var(--primary-color)",
             bg:     "rgba(0,51,102,.08)",
         },
-        {
-            label:  "Beneficiários Ativos",
-            value:  beneficiariosAtivos,
-            icon:   <LuUsers size={18} />,
-            color:  "#8b5cf6",
-            bg:     "rgba(139,92,246,.08)",
-        },
+        // {
+        //     label:  "Beneficiários Ativos",
+        //     value:  beneficiariosAtivos,
+        //     icon:   <LuUsers size={18} />,
+        //     color:  "#8b5cf6",
+        //     bg:     "rgba(139,92,246,.08)",
+        // },
     ];
 
     return (
