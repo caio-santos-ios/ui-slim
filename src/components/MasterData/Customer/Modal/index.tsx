@@ -54,7 +54,8 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
             setLoading(true);
             const {data} = await api.get(`/customers/${id}`, configApi());
             const result = data.result;
-            setCurrentBody(result.data)
+            setCurrentBody(result.data);
+            console.log(result.data)
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -216,9 +217,8 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
 
                         {
                             tabCurrent == "recipient" &&
-                            <ModalRecipient isOpen={isOpen} contractorType={currentBody.type} contractorId={currentBody.id!} onClose={cancel} />
+                            <ModalRecipient isOpen={isOpen} contractorType={currentBody.type} contractorId={currentBody.id!} planType={currentBody.typePlan} onClose={cancel} />
                         }
-
                         
                         {
                             tabCurrent == "contract" &&

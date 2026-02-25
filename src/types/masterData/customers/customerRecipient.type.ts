@@ -21,6 +21,7 @@ export type TRecipient = {
     discount: any;
     discountPercentage: any;
     effectiveDate: any | null;
+    age: any;
 }
 
 export const ResetCustomerRecipient: TRecipient = {
@@ -43,7 +44,8 @@ export const ResetCustomerRecipient: TRecipient = {
     discountPercentage: 0,
     subTotal: 0,
     total: 0,
-    effectiveDate: ""
+    effectiveDate: "",
+    age: ""
 }
 
 export type TRecipientSearch = {        

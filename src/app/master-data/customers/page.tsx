@@ -30,6 +30,8 @@ import { MdFilterAlt, MdFilterAltOff } from "react-icons/md";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/Global/Accordion/AccordionContent";
 import { TPlan } from "@/types/masterData/plans/plans.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
+import { GrUpdate } from "react-icons/gr";
+import { ModalUpdateConvertContractor } from "@/components/MasterData/Customer/ModalUpdateConvertContractor";
 
 /* ─── Colunas ───────────────────────────────── */
 const columns1: { key: string; title: string }[] = [
@@ -112,6 +114,7 @@ export default function Customer() {
   /* Estado geral */
   const [modalDelete, setModalDelete]               = useState<boolean>(false);
   const [modalUpdateStatus, setModalUpdateStatus]   = useState<boolean>(false);
+  const [modalUpdateContractor, setModalUpdateContractor]   = useState<boolean>(false);
   const [typeModal, setTypeModal]                   = useState<"create" | "edit">("create");
   const [id, setId]                                 = useState<string>("");
   const [id2, setId2]                               = useState<string>("");
@@ -241,6 +244,11 @@ export default function Customer() {
     setEditContractorType(body.typePlan ?? "");
     setModalEditRecipient(true);
   };
+  
+  const openEditRecipientContractor = (body: any) => {
+    setId2(body.id);
+    setModalUpdateContractor(true);
+  };
 
   const handleRecipientSuccess = async () => {
     await getAll("customer-recipients", queryStr);
@@ -301,6 +309,7 @@ export default function Customer() {
       setTypeModal("edit");
       await getAll(vision === "contractor" ? "customers" : "customer-recipients");
       setModalUpdateStatus(false);
+      setModalUpdateContractor(false);
     }
   };
 
@@ -372,10 +381,6 @@ export default function Customer() {
                   </>
                 }
               >
-
-                {/* ══════════════════════════════════════════════
-                    ACCORDION DE FILTROS
-                ══════════════════════════════════════════════ */}
                 <div className="grid grid-cols-12 mb-2">
                   <Accordion className="col-span-12" defaultOpenId="filter">
                     <AccordionItem id="filter">
@@ -597,14 +602,27 @@ export default function Customer() {
                           <div className="flex justify-center gap-2">
                             {permissionUpdate("1", "A12") && (
                               vision === "recipient" ? (
-                                <button
-                                  onClick={() => openEditRecipient(x)}
-                                  className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-muted)] bg-[var(--surface-bg)] hover:bg-[var(--primary-color)] hover:text-white border border-[var(--surface-border)] hover:border-[var(--primary-color)] transition-all"
-                                  style={{ padding: 0, minWidth: "2rem" }}
-                                  title="Editar"
-                                >
-                                  <FiEdit2 size={13} />
-                                </button>
+                                <>
+                                  <button
+                                    onClick={() => openEditRecipient(x)}
+                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-(--text-muted) bg-(--surface-bg) hover:bg-(--primary-color) hover:text-white border border-(--surface-border) hover:border-(--primary-color) transition-all"
+                                    style={{ padding: 0, minWidth: "2rem" }}
+                                    title="Editar">
+                                    <FiEdit2 size={13} />
+                                  </button>
+                                  {
+                                    x.typePlan != "" && x.customerDocument != x.cpf && (
+                                      <button
+                                        onClick={() => openEditRecipientContractor(x)}
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-(--text-muted) bg-(--surface-bg) hover:bg-(--primary-color) hover:text-white border border-(--surface-border) hover:border-(--primary-color) transition-all"
+                                        style={{ padding: 0, minWidth: "2rem" }}
+                                        title="Converter para contratante">
+                                        <GrUpdate size={13} />
+                                        {x.customerDocument != x.document}
+                                      </button>
+                                    )
+                                  }
+                                </>
                               ) : (
                                 <IconEdit action="edit" obj={x} getObj={openModal} />
                               )
@@ -622,7 +640,6 @@ export default function Customer() {
               </SlimContainer>
             </div>
 
-            {/* Modal de contratante */}
             <ModalCustomer
               title={typeModal === "create" ? "Inserir Cliente" : "Editar Cliente"}
               isOpen={modal}
@@ -632,7 +649,6 @@ export default function Customer() {
               id={id}
             />
 
-            {/* Modal isolado de edição de beneficiário */}
             <ModalEditRecipient
               isOpen={modalEditRecipient}
               recipientId={editRecipientId}
@@ -644,7 +660,6 @@ export default function Customer() {
               onSuccess={handleRecipientSuccess}
             />
 
-            {/* Modal de atualização de status */}
             <ModalUpdateStatus
               isOpen={modalUpdateStatus}
               setIsOpen={() => setModalUpdateStatus(modalUpdateStatus)}
@@ -652,8 +667,15 @@ export default function Customer() {
               onSelectValue={handleReturnModal}
               id={id2}
             />
+            
+            <ModalUpdateConvertContractor
+              isOpen={modalUpdateContractor}
+              setIsOpen={() => setModalUpdateContractor(modalUpdateContractor)}
+              onClose={resetModal}
+              onSelectValue={handleReturnModal}
+              id={id2}
+            />
 
-            {/* Modal de exclusão */}
             <ModalDelete
               title="Excluir Cliente"
               isOpen={modalDelete}

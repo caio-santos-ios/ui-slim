@@ -25,7 +25,7 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import { LuCalendar, LuCreditCard, LuMail, LuPhone, LuUser, LuHouse } from "react-icons/lu";
 import axios from "axios";
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaPlus } from "react-icons/fa";
 
 /* ─── Props ─────────────────────────────────── */
 type TProp = {
@@ -200,7 +200,32 @@ export const ModalEditRecipient = ({
         onClose();
     };
 
-    /* ── Efeitos ── */
+    const calculatedAge = (birthDateString: string) => {
+        const today = new Date();
+        const birthDate = new Date(birthDateString);
+        birthDate.setMinutes(birthDate.getMinutes() + birthDate.getTimezoneOffset());
+
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const month = today.getMonth() - birthDate.getMonth();
+
+        if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        return age;
+    };
+
+    useEffect(() => {
+        const dateOfBirth = watch("dateOfBirth");
+        if(dateOfBirth) {
+            const year = parseInt(dateOfBirth.split("-")[0]);
+            if(year.toString().length >= 4) {
+                const age = calculatedAge(dateOfBirth);
+                setValue("age", age);
+            }
+        }
+    }, [watch("dateOfBirth")]);
+
     useEffect(() => {
         if (!isOpen) return;
         loadGenders();
@@ -208,31 +233,25 @@ export const ModalEditRecipient = ({
         if (recipientId) getById(recipientId);
     }, [isOpen, recipientId]);
 
-    /* ── Fechar com Esc ── */
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && isOpen) handleClose(); };
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
     }, [isOpen]);
 
-    /* ──────────────────────────────────────────
-       RENDER
-    ─────────────────────────────────────────── */
     return (
         <>
             <Dialog
                 open={isOpen}
                 as="div"
-                className="relative z-[999] focus:outline-none"
-                onClose={handleClose}
-            >
-                {/* Backdrop */}
+                className="relative z-999 focus:outline-none"
+                onClose={handleClose}>
                 <div
-                    className="fixed inset-0 z-[999]"
+                    className="fixed inset-0 z-999"
                     style={{ background: "rgba(0,15,35,.65)", backdropFilter: "blur(5px)" }}
                 />
 
-                <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
+                <div className="fixed inset-0 z-1000 flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
                     <DialogPanel
                         className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl"
                         style={{
@@ -323,6 +342,10 @@ export const ModalEditRecipient = ({
                                         <Field label="Data de Nascimento" icon={<LuCalendar size={13} />}>
                                             <input {...register("dateOfBirth")} type="date" className="input slim-input-primary" />
                                         </Field>
+                                        
+                                        <Field label="Idade" icon={<LuCalendar size={13} />}>
+                                            <input disabled {...register("age")} type="number" className="input slim-input-primary" />
+                                        </Field>
 
                                         <Field label="Gênero">
                                             <div className="flex gap-1">
@@ -332,15 +355,13 @@ export const ModalEditRecipient = ({
                                                         <option key={g.code} value={g.code}>{g.description}</option>
                                                     ))}
                                                 </select>
-                                                <button
-                                                    type="button"
+                                                <div
                                                     onClick={() => { setModalGenericTable(true); setTableGenericTable("genero"); }}
-                                                    className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                                                    className="shrink-0 w-9 h-9 rounded-md flex items-center justify-center transition-all"
                                                     style={{ background: "var(--accent-color-light)", border: "1px solid rgba(102,204,153,.3)", boxShadow: "none", color: "var(--accent-color)", cursor: "pointer" }}
-                                                    title="Cadastrar gênero"
-                                                >
-                                                    <FaCirclePlus size={14} />
-                                                </button>
+                                                    title="Cadastrar gênero">
+                                                    <FaPlus />
+                                                </div>
                                             </div>
                                         </Field>
 
@@ -447,7 +468,7 @@ export const ModalEditRecipient = ({
                                         {/* Info card */}
                                         <div className="col-span-full rounded-xl p-4 flex items-center gap-3"
                                             style={{ background: "var(--accent-color-light)", border: "1px solid rgba(102,204,153,.25)" }}>
-                                            <LuCreditCard size={18} color="var(--accent-color)" className="flex-shrink-0" />
+                                            <LuCreditCard size={18} color="var(--accent-color)" className="shrink-0" />
                                             <p className="text-sm font-medium" style={{ color: "var(--accent-color)" }}>
                                                 Ajuste os valores financeiros do beneficiário. O campo <strong>Total</strong> é calculado automaticamente.
                                             </p>
