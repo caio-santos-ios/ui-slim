@@ -43,7 +43,7 @@ export const ModalTradingTable = ({title, isOpen, setIsOpen, onClose, handleRetu
     const items = watch("items");
 
     const onSubmit: SubmitHandler<TTradingTable> = async (body: TTradingTable) => {
-        if(!body.serviceModuleId) return toast.warning("Módulo de Serviço é obrigatório", {theme: 'colored'});
+        if(!body.serviceModuleId) return toast.warning("Programa é obrigatório", {theme: 'colored'});
         if(!body.procedureId) return toast.warning("Procedimento é obrigatório", {theme: 'colored'});
 
         const form: any = {
@@ -310,7 +310,7 @@ export const ModalTradingTable = ({title, isOpen, setIsOpen, onClose, handleRetu
                                     <input {...register("name")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>    */}
                                 <div className={`flex flex-col col-span-2 mb-2`}>
-                                    <label className={`label slim-label-primary flex gap-1 items-center`}>Módulo de Serviço</label>
+                                    <label className={`label slim-label-primary flex gap-1 items-center`}>Programa</label>
                                     <select className="select slim-select-primary" {...register("serviceModuleId")}>
                                         <option value="">Selecione</option>
                                         {
@@ -354,7 +354,7 @@ export const ModalTradingTable = ({title, isOpen, setIsOpen, onClose, handleRetu
                                             <table className="min-w-full divide-y divide-gray-200">
                                                 <thead className="bg-gray-50 slim-table-thead">
                                                     <tr>
-                                                        <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Módulo de Serviço</th>
+                                                        <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider rounded-tl-xl`}>Programa</th>
                                                         <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Procedimento</th>
                                                         <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>SubTotal</th>
                                                         <th scope="col" className={`px-4 py-3 text-left text-sm font-bold text-gray-500 tracking-wider`}>Desconto</th>

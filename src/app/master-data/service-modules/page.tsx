@@ -151,7 +151,7 @@ export default function ServiceModules() {
             </div>
 
             <ModalServiceModule
-              title={typeModal == 'create' ? 'Inserir Módulo de Serviço' : 'Editar Módulo de Serviço'} 
+              title={typeModal == 'create' ? 'Inserir Programa' : 'Editar Programa'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={resetModal}
               onSelectValue={handleReturnModal}
@@ -159,7 +159,7 @@ export default function ServiceModules() {
             />      
 
             <ModalDelete 
-              title='Excluír Módulo de Serviço'
+              title='Excluír Programa'
               isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} 
               onClose={() => setModalDelete(false)}
               onSelectValue={destroy}

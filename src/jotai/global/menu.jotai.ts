@@ -91,7 +91,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 code: 'A14',
                 isOpen: true,
                 subMenu: [],
-                description: 'Módulo de Serviços',
+                description: 'Programas',
                 icon: '',
                 link: 'master-data/service-modules',
                 padding: 'px-4',

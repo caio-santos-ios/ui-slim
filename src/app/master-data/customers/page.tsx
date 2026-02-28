@@ -23,15 +23,17 @@ import { IconDelete } from "@/components/Global/IconDelete";
 import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 import { ModalUpdateStatus } from "@/components/MasterData/Customer/ModalUpdateStatus";
 import { useForm } from "react-hook-form";
-import { ModalEditRecipient } from "@/components/MasterData/Customer/ModalEditRecipient";
 import { FiEdit2 } from "react-icons/fi";
 import { IoSearch } from "react-icons/io5";
-import { MdFilterAlt, MdFilterAltOff } from "react-icons/md";
+import { MdFilterAlt, MdFilterAltOff, MdHistoryToggleOff } from "react-icons/md";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/Global/Accordion/AccordionContent";
 import { TPlan } from "@/types/masterData/plans/plans.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 import { GrUpdate } from "react-icons/gr";
 import { ModalUpdateConvertContractor } from "@/components/MasterData/Customer/ModalUpdateConvertContractor";
+import { ModalHistoricEditRecipient } from "@/components/MasterData/Customer/ModalHistoricEditRecipient/ModalHistoricEditRecipient";
+import { FaHistory } from "react-icons/fa";
+import { ModalEditRecipient } from "@/components/MasterData/Customer/ModalEditRecipient";
 
 /* ─── Colunas ───────────────────────────────── */
 const columns1: { key: string; title: string }[] = [
@@ -129,6 +131,7 @@ export default function Customer() {
 
   /* Modal isolado de edição de beneficiário */
   const [modalEditRecipient, setModalEditRecipient] = useState<boolean>(false);
+  const [modalEditHistoricRecipient, setModalEditHistoricRecipient] = useState<boolean>(false);
   const [editRecipientId, setEditRecipientId]       = useState<string>("");
   const [editContractorType, setEditContractorType] = useState<string>("");
 
@@ -243,6 +246,12 @@ export default function Customer() {
     setEditRecipientId(body.id);
     setEditContractorType(body.typePlan ?? "");
     setModalEditRecipient(true);
+  };
+  
+  const openEditHistoricRecipient = (body: any) => {
+    setEditRecipientId(body.id);
+    setEditContractorType(body.typePlan ?? "");
+    setModalEditHistoricRecipient(true);
   };
   
   const openEditRecipientContractor = (body: any) => {
@@ -470,9 +479,9 @@ export default function Customer() {
                                 </select>
                               </div>
 
-                              {/* Módulo de serviço */}
+                              {/* Programa */}
                               <div className="flex flex-col col-span-6 sm:col-span-3 mb-2">
-                                <label className="label slim-label-primary">Módulo de Serviço</label>
+                                <label className="label slim-label-primary">Programa</label>
                                 <select className="select slim-select-primary" {...register("serviceModuleId")}>
                                   <option value="">Todos</option>
                                   {serviceModules.map((m: any) => (
@@ -604,6 +613,13 @@ export default function Customer() {
                               vision === "recipient" ? (
                                 <>
                                   <button
+                                    onClick={() => openEditHistoricRecipient(x)}
+                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-(--text-muted) bg-(--surface-bg) hover:bg-(--primary-color) hover:text-white border border-(--surface-border) hover:border-(--primary-color) transition-all"
+                                    style={{ padding: 0, minWidth: "2rem" }}
+                                    title="Histórico de Inativação">
+                                    <FaHistory size={13} />
+                                  </button>
+                                  <button
                                     onClick={() => openEditRecipient(x)}
                                     className="w-8 h-8 rounded-lg flex items-center justify-center text-(--text-muted) bg-(--surface-bg) hover:bg-(--primary-color) hover:text-white border border-(--surface-border) hover:border-(--primary-color) transition-all"
                                     style={{ padding: 0, minWidth: "2rem" }}
@@ -655,6 +671,17 @@ export default function Customer() {
               contractorType={editContractorType}
               onClose={() => {
                 setModalEditRecipient(false);
+                setEditRecipientId("");
+              }}
+              onSuccess={handleRecipientSuccess}
+            />
+            
+            <ModalHistoricEditRecipient
+              isOpen={modalEditHistoricRecipient}
+              recipientId={editRecipientId}
+              contractorType={editContractorType}
+              onClose={() => {
+                setModalEditHistoricRecipient(false);
                 setEditRecipientId("");
               }}
               onSuccess={handleRecipientSuccess}

@@ -22,6 +22,15 @@ export type TRecipient = {
     discountPercentage: any;
     effectiveDate: any | null;
     age: any;
+    branch: string;
+    department: string;
+    function: string;
+    registration: string;
+    cno: string;
+    cat: "yes" | "no",
+    catNumber: string;
+    catDate: any;
+    catCID: string;
 }
 
 export const ResetCustomerRecipient: TRecipient = {
@@ -45,7 +54,16 @@ export const ResetCustomerRecipient: TRecipient = {
     subTotal: 0,
     total: 0,
     effectiveDate: "",
-    age: ""
+    age: "",
+    branch: "",
+    department: "",
+    registration: "",
+    cno: "",
+    function: "",
+    cat: "no",
+    catNumber: "",
+    catCID: "",
+    catDate: null
 }
 
 export type TRecipientSearch = {        

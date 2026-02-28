@@ -26,6 +26,8 @@ import { IoClose } from "react-icons/io5";
 import { LuCalendar, LuCreditCard, LuMail, LuPhone, LuUser, LuHouse } from "react-icons/lu";
 import axios from "axios";
 import { FaHome, FaPlus } from "react-icons/fa";
+import MultiSelect from "@/components/Global/MultiSelect";
+import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 
 /* ─── Props ─────────────────────────────────── */
 type TProp = {
@@ -63,6 +65,9 @@ export const ModalEditRecipient = ({
     const [genders, setGenders] = useState<TGenericTable[]>([]);
     const [plans, setPlans]     = useState<TPlan[]>([]);
     const [modalDel, setModalDel] = useState(false);
+    const [serviceModules, setServiceModule] = useState([]);
+    const [modules, setModules] = useState<TServiceModule[]>([]);
+    const [type, setContractorType] = useState<string>("");
 
     const {
         register,
@@ -80,6 +85,8 @@ export const ModalEditRecipient = ({
             setLoading(true);
             const { data } = await api.get(`/customer-recipients/${id}`, configApi());
             const r: TRecipient = data.result.data;
+            
+            await getContractorById(r.contractorId);
 
             // Normaliza datas e valores monetários
             if (r.dateOfBirth)    r.dateOfBirth    = r.dateOfBirth.split("T")[0];
@@ -194,6 +201,19 @@ export const ModalEditRecipient = ({
         } catch {}
     };
 
+    const getSelectServiceModule = async () => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/service-modules?deleted=false&pageSize=100&pageNumber=1`, configApi());
+            const result = data.result;    
+            setServiceModule(result.data);
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleClose = () => {
         reset(ResetCustomerRecipient);
         setTab("dados");
@@ -214,6 +234,25 @@ export const ModalEditRecipient = ({
 
         return age;
     };
+    
+    const selectModule = (module: TServiceModule[]) => {
+        setModules(module)
+    };
+
+    const getContractorById = async (id: string) => {
+        try {
+            setLoading(true);
+            const {data} = await api.get(`/customers/${id}`, configApi());
+            const result = data.result;
+            if(result.data) {
+                setContractorType(result.data.type);
+            }
+        } catch (error) {
+            resolveResponse(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         const dateOfBirth = watch("dateOfBirth");
@@ -230,6 +269,7 @@ export const ModalEditRecipient = ({
         if (!isOpen) return;
         loadGenders();
         loadPlans();
+        getSelectServiceModule();
         if (recipientId) getById(recipientId);
     }, [isOpen, recipientId]);
 
@@ -412,6 +452,53 @@ export const ModalEditRecipient = ({
                                                 ))}
                                             </select>
                                         </Field>
+
+                                        <div className={`flex flex-col col-span-5 mb-2`}>
+                                            <label className={`label slim-label-primary`}>Progrmas Adicionais</label>                                  
+                                            <MultiSelect maxSelected={2} descriptionSelectedMax="Módulos Selecionados" value={watch("serviceModuleIds") ?? []} onChange={(items) => selectModule(items)} options={serviceModules} labelKey="name" valueKey="id" />
+                                        </div>   
+                                        
+                                        {
+                                            type == "B2B" &&
+                                            <>
+                                                <Field label="Filial" span={1}>
+                                                    <input {...register("branch")} type="text" className="input slim-input-primary" placeholder="Filial" />
+                                                </Field>
+                                                <Field label="Departamento" span={2}>
+                                                    <input {...register("department")} type="text" className="input slim-input-primary" placeholder="Departamento" />
+                                                </Field>
+                                                <Field label="Função" span={2}>
+                                                    <input {...register("function")} type="text" className="input slim-input-primary" placeholder="Função" />
+                                                </Field>
+                                                <Field label="Matrícula" span={2}>
+                                                    <input {...register("function")} type="text" className="input slim-input-primary" placeholder="Matrícula" />
+                                                </Field>
+                                                <Field label="CNO" span={2}>
+                                                    <input {...register("cno")} type="text" className="input slim-input-primary" placeholder="CNO" />
+                                                </Field>
+                                                <Field label="CAT">
+                                                    <select className="select slim-select-primary" {...register("cat")}>
+                                                        <option value="yes">Sim</option>
+                                                        <option value="no">Não</option>
+                                                    </select>
+                                                </Field>
+                                                {
+                                                    watch("cat") == "yes" && (
+                                                        <>
+                                                            <Field label="Nº da CAT" span={2}>
+                                                                <input {...register("catNumber")} type="text" className="input slim-input-primary" placeholder="Nº da CAT" />
+                                                            </Field>
+                                                            <Field label="Data do Acidente" icon={<LuCalendar size={13} />}>
+                                                                <input {...register("catDate")} type="date" className="input slim-input-primary" />
+                                                            </Field>
+                                                            <Field label="CID" span={2}>
+                                                                <input {...register("catCID")} type="text" className="input slim-input-primary" placeholder="CID" />
+                                                            </Field>
+                                                        </>
+                                                    )
+                                                }
+                                            </>
+                                        }
 
                                         <Field label="Vigência" icon={<LuCalendar size={13} />}>
                                             <input {...register("effectiveDate")} type="date" className="input slim-input-primary" />

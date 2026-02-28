@@ -40,13 +40,13 @@ export default function Seller() {
   const [currentBody, setCurrentBody] = useState<TSellerRepresentative>(ResetSellerRepresentative);
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
- 
+
   const getAll = async () => {
     try {
       setLoading(true);
       const {data} = await api.get(`/seller-representatives?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
-
+      console.log(result.data[0])
       setPagination({
         currentPage: result.currentPage,
         data: result.data,
@@ -181,7 +181,6 @@ export default function Seller() {
                 </DataTable>
 
                 <NotData />
-                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 

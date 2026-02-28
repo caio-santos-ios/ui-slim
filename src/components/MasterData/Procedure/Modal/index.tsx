@@ -218,8 +218,8 @@ export const ModalProcedure = ({title, isOpen, setIsOpen, onClose, onSelectValue
                                     </select>
                                 </div>                            
                                 <div className={`flex flex-col col-span-3 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Módulo de Serviço</label>
-                                    <select className="select slim-select-primary" {...register("serviceModuleId", {required: "Módulo de Serviço é obrigatório"})}>
+                                    <label className={`label slim-label-primary`}>Programa</label>
+                                    <select className="select slim-select-primary" {...register("serviceModuleId", {required: "Programa é obrigatório"})}>
                                         <option value="">Selecione</option>
                                         {
                                             type.map((x: any, i: number) => (

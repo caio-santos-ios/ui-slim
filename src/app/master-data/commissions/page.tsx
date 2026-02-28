@@ -24,12 +24,9 @@ import { ResetCommissions, TCommissions } from "@/types/masterData/commissions/c
 import { permissionCreate, permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 
 const columns: {key: string; title: string}[] = [
-  { key: "corporateName", title: "Razão Social" },
-  { key: "tradeName", title: "Nome Fantasia" },
-  { key: "email", title: "E-mail" },
-  { key: "phone", title: "Telefone" },
-  { key: "effectiveDate", title: "Vigência" },
-  { key: "createdAt", title: "Data de Cadastro" },
+  { key: "ruleName", title: "nome" },
+  { key: "description", title: "descrição" },
+  { key: "createdAt", title: "Data de Cadastro" }
 ];
 
 export default function Commissions() {
@@ -40,11 +37,11 @@ export default function Commissions() {
   const [currentBody, setCurrentBody] = useState<TCommissions>(ResetCommissions);
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom); 
- 
+
   const getAll = async () => {
     try {
       setLoading(true);
-      const {data} = await api.get(`/seller-representatives?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
+      const {data} = await api.get(`/commissions?deleted=false&pageSize=10&pageNumber=${pagination.currentPage}`, configApi());
       const result = data.result;
 
       setPagination({
@@ -182,7 +179,6 @@ export default function Commissions() {
                 </DataTable>
 
                 <NotData />
-                {/* <Pagination passPage={passPage} /> */}
               </SlimContainer>
             </div>
 

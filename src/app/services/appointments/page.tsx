@@ -174,7 +174,7 @@ export default function Appointments() {
       if (filter.statusIds.length > 0 && !filter.statusIds.includes(x.status))
         return false;
 
-      // Módulo de serviço
+      // Programa
       if (filter.serviceModuleIds.length > 0 && !filter.serviceModuleIds.includes(x.serviceModuleId))
         return false;
 
@@ -349,10 +349,10 @@ export default function Appointments() {
                             />
                           </div>
 
-                          {/* ── Módulo de serviço (multi) ─────────── */}
+                          {/* ── Programa (multi) ─────────── */}
                           <div className="col-span-12 sm:col-span-4 mb-2">
                             <MultiSelect
-                              label="Módulo de Serviço"
+                              label="Programa"
                               items={serviceModules}
                               selected={filter.serviceModuleIds}
                               onChange={v => setF("serviceModuleIds", v)}

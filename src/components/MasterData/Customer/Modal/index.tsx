@@ -55,7 +55,6 @@ export const ModalCustomer = ({title, isOpen, setIsOpen, onClose, onSelectValue,
             const {data} = await api.get(`/customers/${id}`, configApi());
             const result = data.result;
             setCurrentBody(result.data);
-            console.log(result.data)
         } catch (error) {
             resolveResponse(error);
         } finally {
