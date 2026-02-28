@@ -39,7 +39,7 @@ export const ModalCommissions = ({title, isOpen, setIsOpen, onClose, onSelectVal
 
     const create = async (body: TCommissions) => {
         try {
-            const { status, data} = await api.post(`/sellers`, body, configApi());
+            const { status, data} = await api.post(`/commissions`, body, configApi());
             resolveResponse({status, ...data});
             cancel();
             onSelectValue(true);
@@ -47,10 +47,10 @@ export const ModalCommissions = ({title, isOpen, setIsOpen, onClose, onSelectVal
             resolveResponse(error);
         }
     };
-      
+
     const update = async (body: TCommissions) => {
         try {
-            const { status, data} = await api.put(`/sellers`, body, configApi());
+            const { status, data} = await api.put(`/commissions`, body, configApi());
             resolveResponse({status, ...data});
             cancel();
             onSelectValue(true);
@@ -72,43 +72,6 @@ export const ModalCommissions = ({title, isOpen, setIsOpen, onClose, onSelectVal
             reset(body);
         };
     }, [body]);
-
-    const validatedField = () => {
-        const errorPriority = [
-            "type",
-            "name",
-            "email",
-            "phone",
-            "cpf",
-            "address.zipCode",
-            "address.number",
-            "address.street",
-            "address.neighborhood",
-            "address.city",
-            "address.state"
-        ];
-
-        const getErrorByPath = (path: string) => {
-            const parts = path.split(".");
-            let current: any = errors;
-
-            for (const part of parts) {
-                if (!current[part]) return null;
-                current = current[part];
-            }
-
-            return current.message || null;
-        };
-
-        for (const field of errorPriority) {
-            const message = getErrorByPath(field);
-
-            if (message) {
-                toast.warn(message, { theme: "colored" });
-                return; 
-            }
-        }
-    };
 
     return (
         <>
@@ -157,7 +120,7 @@ export const ModalCommissions = ({title, isOpen, setIsOpen, onClose, onSelectVal
                             <form onSubmit={handleSubmit(onSubmit)}>
                           
                             <div className="grid grid-cols-1 lg:grid-cols-6 gap-2 mb-2">
-                                <div className={`flex flex-col col-span-2 mb-2`}>
+                                {/* <div className={`flex flex-col col-span-2 mb-2`}>
                                     <label className={`label slim-label-primary`}>Nome da Regra</label>
                                     <input {...register("ruleName", {required: "Nome da Regra é obrigatório"})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>                                
@@ -191,12 +154,11 @@ export const ModalCommissions = ({title, isOpen, setIsOpen, onClose, onSelectVal
                                 <div className={`flex flex-col col-span-7 mb-2`}>
                                     <label className={`label slim-label-primary`}>Observações</label>
                                     <textarea {...register("notes")} className={`slim-textarea slim-textarea-primary`} placeholder="Digite" rows={4}></textarea>
-                                </div>
+                                </div> */}
                             </div>                          
-                                                   
                             <div className="flex justify-end gap-2 w-12/12 mt-3">
                                 <button type="button" onClick={cancel} className="slim-btn slim-btn-primary-light">Cancelar</button>
-                                <Button click={validatedField} text="Salvar" theme="primary" styleClassBtn=""/>
+                                <Button type="submit" text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>
                         </div>
