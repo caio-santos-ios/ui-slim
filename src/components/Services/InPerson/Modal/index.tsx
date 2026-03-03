@@ -66,7 +66,13 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
 
     const create = async (body: TInPerson) => {
         try {
-            const { status, data} = await api.post(`/in-persons`, body, configApi());
+            const accredited = accreditedNetworks.find(x => x.id == body.accreditedNetworkId);
+            const accreditedDescription = accredited ? accredited.corporateName : "";
+            const addressDescription = accredited ? `${accredited.address.street}, ${!accredited.address.number ? "S/N" : accredited.address.number} - ${accredited.address.neighborhood}, ${accredited.address.city} - ${accredited.address.state}` : "";
+            const procedureDescription = produceres.filter(x => body.procedureIds.includes(x.id!)).map(x => x.name).join(", ");
+            const professionalDescription = professionals.find(x => x.id == body.professionalId)?.name ?? "";
+
+            const { status, data} = await api.post(`/in-persons`, {...body, accreditedDescription, addressDescription, procedureDescription, professionalDescription}, configApi());
             resolveResponse({status, ...data});
             cancel();
             handleReturnModal();
@@ -169,24 +175,6 @@ export const ModalInPerson = ({title, isOpen, setIsOpen, onClose, handleReturnMo
             const {data} = await api.get(`/professionals/select?deleted=false&orderBy=createdAt&sort=desc`, configApi());
             const result = data.result;
             setProfessional(result.data ?? []);
-        } catch (error) {
-            resolveResponse(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-    
-    const getByAccreditedNetworkId = async (accreditedNetworkId: string) => {
-        try {
-            setLoading(true);
-            const {data} = await api.get(`/trading-tables/accredited-network/${accreditedNetworkId}`, configApi());
-            const result = data.result;
-            console.log(result.data)
-            if(result.data) {
-                setCurrentAccreditedNetwork(result.data.items ?? []);
-            } else {
-                setCurrentAccreditedNetwork([]);
-            }
         } catch (error) {
             resolveResponse(error);
         } finally {

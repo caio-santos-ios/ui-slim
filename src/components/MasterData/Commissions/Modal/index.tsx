@@ -78,16 +78,16 @@ export const ModalCommissions = ({title, isOpen, setIsOpen, onClose, onSelectVal
             <Dialog
                 open={isOpen}
                 as="div"
-                className="relative z-[999] focus:outline-none"
+                className="relative z-999 focus:outline-none"
                 onClose={cancel}
             >
                 {/* Backdrop */}
                 <div
-                    className="fixed inset-0 z-[999]"
+                    className="fixed inset-0 z-999"
                     style={{ background: "rgba(0,15,35,.65)", backdropFilter: "blur(5px)" }}
                 />
 
-                <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
+                <div className="fixed inset-0 z-1000 flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
                     <DialogPanel
                         className="w-full max-w-6xl rounded-2xl overflow-hidden shadow-2xl"
                         style={{
@@ -118,7 +118,7 @@ export const ModalCommissions = ({title, isOpen, setIsOpen, onClose, onSelectVal
                         {/* ── Body ── */}
                         <div className="p-6 overflow-y-auto" style={{ maxHeight: "calc(100dvh - 16rem)" }}>
                             <form onSubmit={handleSubmit(onSubmit)}>
-                          
+                        
                             <div className="grid grid-cols-1 lg:grid-cols-6 gap-2 mb-2">
                                 {/* <div className={`flex flex-col col-span-2 mb-2`}>
                                     <label className={`label slim-label-primary`}>Nome da Regra</label>

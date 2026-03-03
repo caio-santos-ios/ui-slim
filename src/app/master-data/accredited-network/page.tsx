@@ -160,6 +160,8 @@ export default function AccreditedNetwork() {
   const [selectedStatuses,    setSelectedStatuses]    = useState<string[]>([]);
   const [selectedProcedures,  setSelectedProcedures]  = useState<string[]>([]);
 
+  const [searchActive, setSearchActive] = useState<boolean>(true);
+
   const { register, getValues, reset } = useForm<TAccreditedNetworkFilter>({
     defaultValues: ResetFilter,
   });
@@ -336,7 +338,7 @@ export default function AccreditedNetwork() {
           <main className="slim-bg-main">
             <SideMenu />
 
-            <div className="slim-container w-full">
+            <div className="w-full max-h-[calc(100dvh-(var(--height-header)))]">
               <SlimContainer
                 menu="Cadastros"
                 breadcrump="Rede Credenciada"
@@ -360,8 +362,7 @@ export default function AccreditedNetwork() {
                     <AccordionItem id="filter">
                       <AccordionTrigger
                         icon={queryStr ? <MdFilterAlt size={15} /> : <MdFilterAltOff size={15} />}
-                        subtitle=""
-                      >
+                        subtitle="">
                         Filtros
                       </AccordionTrigger>
 
@@ -545,7 +546,7 @@ export default function AccreditedNetwork() {
                 {/* ════════════════════════════════════════════ */}
 
                 {pagination.data.length > 0 && (
-                  <div className="slim-container-table w-full max-h-[calc(100dvh-(var(--height-header)+7rem))]">
+                  <div className="slim-container-table w-full max-h-[calc(100dvh-(var(--height-header)+12rem))]">
                     <table className="min-w-full divide-y">
                       <thead className="slim-table-thead">
                         <tr>

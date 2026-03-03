@@ -50,14 +50,13 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
 
     const create = async (body: TAppointment) => {
         try {
-            console.log(body)
             const form: any = {...body};
 
             const specialist = specialties.find(s => s.id == form.specialtyUuid);
             if(specialist) {
                 form.specialtyName = specialist.name;
             };
-            console.log(recipient)
+
             const recipientObj = recipient.find((r: any) => r.rapidocId == body.beneficiaryUuid);
             if(recipientObj) {
                 form.beneficiaryName = recipientObj.name;
