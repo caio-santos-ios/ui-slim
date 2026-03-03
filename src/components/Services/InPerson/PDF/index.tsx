@@ -134,7 +134,7 @@ export const ProcedureSinglePDF = ({
         
         <View style={styles.tableRow}>
           <View style={styles.cellLogo}>
-            <Image style={{ width: 100 }} src="/assets/images/logo.png" />
+            <Image style={{ width: 100 }} src="/erp/assets/images/logo.png" />
           </View>
           
           <View style={styles.cellHeaderCenter}>
