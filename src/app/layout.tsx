@@ -18,6 +18,8 @@ import { ToastContainer } from "react-toastify";
 import { Loading } from "@/components/Global/Loading";
 import { HeroUIProvider } from "@heroui/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { WhatsAppModal } from "@/components/notification/whatsapp/WhatsAppModal";
+import { MessageModal } from "@/components/notification/message/MessageModal";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -46,6 +48,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                             }}
                         />
                         <Loading />
+                        <WhatsAppModal />
+                        <MessageModal />
                         {children}
                     </HeroUIProvider>
                 </NextThemesProvider>

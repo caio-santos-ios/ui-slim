@@ -34,6 +34,8 @@ import { ModalUpdateConvertContractor } from "@/components/MasterData/Customer/M
 import { ModalHistoricEditRecipient } from "@/components/MasterData/Customer/ModalHistoricEditRecipient/ModalHistoricEditRecipient";
 import { FaHistory } from "react-icons/fa";
 import { ModalEditRecipient } from "@/components/MasterData/Customer/ModalEditRecipient";
+import { WhatsAppButtonModal } from "@/components/notification/whatsapp/WhatsAppButtonModal";
+import { MessageButtonModal } from "@/components/notification/message/MessageButtonModal";
 
 /* ─── Colunas ───────────────────────────────── */
 const columns1: { key: string; title: string }[] = [
@@ -646,6 +648,18 @@ export default function Customer() {
                             {permissionDelete("1", "A12") && (
                               <IconDelete obj={x} getObj={openModalDelete} />
                             )}
+                            <button
+                              onClick={() => {
+                                console.log(x)
+                              }}
+                              className="w-8 h-8 rounded-lg flex items-center justify-center text-(--text-muted) bg-(--surface-bg) hover:bg-(--primary-color) hover:text-white border border-(--surface-border) hover:border-(--primary-color) transition-all"
+                              style={{ padding: 0, minWidth: "2rem" }}
+                              title="Converter para contratante">
+                              <GrUpdate size={13} />
+                              {x.customerDocument != x.document}
+                            </button>
+                            <WhatsAppButtonModal fieldSearch="beneficiaryId" type="" parent="" id={x.id}/>
+                            {/* <MessageButtonModal id={x.id}/> */}
                           </div>
                         </td>
                       </tr>

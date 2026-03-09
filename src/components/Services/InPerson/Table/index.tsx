@@ -19,12 +19,11 @@ import { TRecipient } from "@/types/masterData/customers/customerRecipient.type"
 import { TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 import { TProcedure } from "@/types/masterData/procedure/procedure.type";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { ResetInPerson, ResetInPersonSearch, TInPersonSearch } from "@/types/service/inPerson/inPerson.type";
-import MultiSelect from "@/components/Global/MultiSelect";
-import { Button } from "@/components/Global/Button";
+import { useForm } from "react-hook-form";
+import { ResetInPersonSearch, TInPersonSearch } from "@/types/service/inPerson/inPerson.type";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
+import { WhatsAppButtonModal } from "@/components/notification/whatsapp/WhatsAppButtonModal";
 
 type TProp = {
     list: TAccountsPayable[],
@@ -214,6 +213,7 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Profissional</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Módulo</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Horário</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Responsável p/ Pg.</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Status</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Valor</th>
@@ -232,6 +232,7 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                                 <td className="px-4 py-2">{x.professionalName}</td>
                                                 <td className="px-4 py-2">{x.serviceModuleDescription}</td>
                                                 <td className="px-4 py-2">{maskDate(x.date)}</td>
+                                                <td className="px-4 py-2">{x.hour}</td>
                                                 <td className="px-4 py-2">{x.responsiblePayment}</td>
                                                 <td className="px-4 py-2">
                                                     <span className={`${normalizeStatus(x.status)} py-1 px-2 rounded-lg font-bold`}>
@@ -240,7 +241,10 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                                 </td>
                                                 <td className="px-4 py-2">{formattedMoney(x.value)}</td>
                                                 <td className="p-2">
-                                                    <div className="flex justify-center gap-3">              
+                                                    <div className="flex justify-center gap-3"> 
+                                                        {
+                                                            <WhatsAppButtonModal fieldSearch="parentId" type="" parent="" id={x.id}/>
+                                                        }             
                                                         {
                                                             permissionUpdate("2", "B22") &&
                                                             <PDFDownloadLink 

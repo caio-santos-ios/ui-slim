@@ -29,7 +29,7 @@ export const Modal = ({ title, children, width = "md" }: TProp) => {
 
     return (
         <div
-            className="fixed inset-0 z-[999] flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto"
+            className="fixed inset-0 z-999 flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto"
             style={{ background: "rgba(0,15,35,.65)", backdropFilter: "blur(5px)" }}
         >
             <div
@@ -58,7 +58,6 @@ export const Modal = ({ title, children, width = "md" }: TProp) => {
                     </span>
                 </div>
 
-                {/* Body */}
                 <div className="p-6 overflow-y-auto" style={{ maxHeight: "calc(100dvh - 16rem)" }}>
                     {children}
                 </div>

@@ -4,29 +4,16 @@ export const maskDate = (dateString: string, isTime: boolean = false) => {
   const [datePart, timePart] = dateString.split("T");
   const [year, month, day] = datePart.split("-");
 
-  let hours = 0;
-  let minutes = 0;
+  const formatted = `${day}/${month}/${year}`;
 
-  if (timePart) {
+  if (isTime && timePart) {
     const [h, m] = timePart.split(":");
-    hours = parseInt(h);
-    minutes = parseInt(m);
+    const utcHour = parseInt(h) - 3;
+    const adjustedHour = String(utcHour).padStart(2, "0");
+    return `${formatted} ${adjustedHour}:${m}`;
   }
 
-  const date = new Date(
-    parseInt(year),
-    parseInt(month) - 1,
-    parseInt(day),
-    hours,
-    minutes
-  );
-
-  return date.toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    ...(isTime && { hour: "2-digit", minute: "2-digit" }), 
-  });
+  return formatted;
 };
 
 export const maskPhone = (event: React.ChangeEvent<HTMLInputElement>) => {
