@@ -9,11 +9,8 @@ type TProp = {
 export const IconStatus = ({action, obj, getObj}: TProp) => {
 
     return (
-        // <div onClick={() => getObj(action, obj)} className="cursor-pointer text-orange-400 hover:text-orange-500">
-        // </div>
-
         <button
-            onClick={() => getObj("edit", obj)}
+            onClick={() => getObj(action, obj)}
             className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-muted)] bg-[var(--surface-bg)] hover:bg-orange-500 hover:text-white border border-[var(--surface-border)] hover:border-orange-500 transition-all"
             style={{ padding: 0, minWidth: "2rem" }}
             title="Alterar Status">

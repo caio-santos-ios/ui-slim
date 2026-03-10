@@ -1,6 +1,6 @@
 export const maskDate = (
   dateString: string, 
-  format: "onlyDate" | "time" | "seconds" = "time"
+  format: "onlyDate" | "time" | "seconds" = "onlyDate"
 ) => {
   if (!dateString) return "";
 
