@@ -66,10 +66,15 @@ export const WhatsAppModal = () => {
             const initial = async () => {
                 setTime(5);
                 setCurrentWhatsApp("");
-
+                console.log(search)
                 if(search.fieldSearch == "parentId") {
                     await getAll(`parentId=${parentId}`);
                     setUri(`parentId=${parentId}`);
+                }
+                
+                if(search.fieldSearch == "beneficiaryId") {
+                    await getAll(`beneficiaryId=${parentId}`);
+                    setUri(`beneficiaryId=${parentId}`);
                 }
             };
             initial();
@@ -101,7 +106,7 @@ export const WhatsAppModal = () => {
                                             <TableCell className="px-4 py-2">{x.title}</TableCell>
                                             <TableCell className="px-4 py-2">{x.phone}</TableCell>
                                             <TableCell className="px-4 py-2">{x.sent ? 'Sim' : 'Não'}</TableCell>
-                                            <TableCell className="px-4 py-2">{maskDate(x.sendDate, true)}</TableCell>
+                                            <TableCell className="px-4 py-2">{maskDate(x.sendDate, "seconds")}</TableCell>
                                             <TableCell className="px-4 py-2">
                                                 <div>
                                                     {

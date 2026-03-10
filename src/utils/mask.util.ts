@@ -1,19 +1,30 @@
-export const maskDate = (dateString: string, isTime: boolean = false) => {
+export const maskDate = (
+  dateString: string, 
+  format: "onlyDate" | "time" | "seconds" = "time"
+) => {
   if (!dateString) return "";
 
-  const [datePart, timePart] = dateString.split("T");
-  const [year, month, day] = datePart.split("-");
+  const date = new Date(dateString);
+  
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const formattedDate = `${day}/${month}/${year}`;
 
-  const formatted = `${day}/${month}/${year}`;
+  const h = String(date.getHours()).padStart(2, "0");
+  const m = String(date.getMinutes()).padStart(2, "0");
+  const s = String(date.getSeconds()).padStart(2, "0");
 
-  if (isTime && timePart) {
-    const [h, m] = timePart.split(":");
-    const utcHour = parseInt(h) - 3;
-    const adjustedHour = String(utcHour).padStart(2, "0");
-    return `${formatted} ${adjustedHour}:${m}`;
+  switch (format) {
+    case "time":
+      return `${formattedDate} ${h}:${m}`;
+    case "seconds":
+      return `${formattedDate} ${h}:${m}:${s}`;
+    case "onlyDate":
+      return formattedDate;
+    default:
+      return formattedDate;
   }
-
-  return formatted;
 };
 
 export const maskPhone = (event: React.ChangeEvent<HTMLInputElement>) => {
