@@ -27,6 +27,7 @@ export default function Home() {
             setIsLoading(true);
             const { data } = await api.post(`/auth/login`, body);
             const result = data.result.data;
+            localStorage.setItem("role", result.role);
             localStorage.setItem("token", result.token);
             localStorage.setItem("name", result.name);
             localStorage.setItem("admin", result.admin);
@@ -45,12 +46,9 @@ export default function Home() {
             <Autorization path="login" />
             {!userLogger && (
                 <main className="min-h-dvh slim-container-new flex">
-                    {/* ── Left branding panel ── */}
                     <div
                         className="hidden lg:flex lg:w-[44%] flex-col justify-between p-12 relative overflow-hidden"
-                        style={{ background: "linear-gradient(155deg, #003366 0%, #002952 50%, #001f40 100%)" }}
-                    >
-                        {/* Decorative elements */}
+                        style={{ background: "linear-gradient(155deg, #003366 0%, #002952 50%, #001f40 100%)" }}>
                         <div className="absolute top-0 right-0 w-72 h-72 rounded-full opacity-[0.07]"
                             style={{ background: "radial-gradient(circle, #66CC99, transparent)", transform: "translate(30%, -30%)" }} />
                         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-[0.06]"
@@ -58,12 +56,10 @@ export default function Home() {
                         <div className="absolute top-1/2 right-0 w-px h-3/4 opacity-20"
                             style={{ background: "linear-gradient(to bottom, transparent, #66CC99, transparent)", transform: "translateY(-50%)" }} />
 
-                        {/* Floating accent dots */}
                         <div className="absolute top-24 right-16 w-2 h-2 rounded-full bg-[#66CC99] opacity-60" />
                         <div className="absolute top-36 right-10 w-1 h-1 rounded-full bg-[#66CC99] opacity-40" />
                         <div className="absolute bottom-32 left-16 w-1.5 h-1.5 rounded-full bg-[#66CC99] opacity-50" />
 
-                        {/* Top logo */}
                         <div className="relative z-10 flex justify-center">
                             <img
                                 className="w-28 h-28 max-w-full max-h-full object-contain"
@@ -72,7 +68,6 @@ export default function Home() {
                             />
                         </div>
 
-                        {/* Center content */}
                         <div className="relative z-10 flex justify-center items-center flex-col">
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#66CC99]/30 bg-[#66CC99]/10 mb-6">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#66CC99] animate-pulse" />
@@ -86,7 +81,6 @@ export default function Home() {
                                 Sistema completo de gestão de saúde. Gerencie clientes, beneficiários, agendamentos e financeiro em um só lugar.
                             </p>
 
-                            {/* Feature chips */}
                             <div className="mt-8 flex flex-wrap gap-2">
                                 {["Cadastros", "Atendimentos", "Financeiro"].map(f => (
                                     <span key={f} className="px-3 py-1 rounded-full text-xs font-semibold border border-[#66CC99]/25 text-[#66CC99]/80 bg-[#66CC99]/10">
@@ -96,7 +90,6 @@ export default function Home() {
                             </div>
                         </div>
 
-                        {/* Bottom */}
                         <div className="relative z-10">
                             <p className="text-[#4E6B8A] text-xs text-center">
                                 © {new Date().getFullYear()} Pasbem. Todos os direitos reservados.
@@ -104,25 +97,14 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* ── Right form panel ── */}
                     <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-[var(--surface-bg)]">
                         <div className="w-full max-w-md">
-                            {/* Mobile logo */}
                             <div className="flex justify-center mb-8 lg:hidden">
                                 <Logo className="h-12" />
                             </div>
 
-                            {/* Card */}
                             <div className="slim-form-login">
-                                {/* Form header */}
                                 <div className="mb-7">
-                                    {/* <h2 className="text-2xl font-extrabold text-[var(--text-primary)] mb-1 tracking-tight">
-                                        Entrar na conta
-                                    </h2>
-                                    <p className="text-sm text-[var(--text-muted)]">
-                                        Use suas credenciais para acessar o sistema
-                                    </p> */}
-                                    {/* Accent underline */}
                                     <div className="mt-3 flex gap-1">
                                         <div className="h-0.5 w-8 rounded-full bg-[var(--primary-color)]" />
                                         <div className="h-0.5 w-4 rounded-full bg-[var(--accent-color)]" />
@@ -131,7 +113,6 @@ export default function Home() {
                                 </div>
 
                                 <form onSubmit={handleSubmit(login)} className="space-y-5" noValidate>
-                                    {/* Email */}
                                     <div>
                                         <InputForm
                                             {...register("email", {
@@ -146,7 +127,6 @@ export default function Home() {
                                         {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
                                     </div>
 
-                                    {/* Password */}
                                     <div>
                                         <label className="slim-label-primary" htmlFor="password">Senha</label>
                                         <div className={`relative flex items-center rounded-[var(--radius-sm)] border-[1.5px] transition-all ${errors.password ? "border-red-500" : "border-[var(--surface-border)] focus-within:border-[var(--accent-color)] focus-within:shadow-[0_0_0_3px_rgba(102,204,153,.18)]"} bg-[var(--surface-card)]`}>
@@ -170,9 +150,8 @@ export default function Home() {
                                         {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
                                     </div>
 
-                                    {/* Forgot */}
                                     <div className="flex items-center justify-end">
-                                        <a href="/reset-password" className="text-xs font-semibold text-[var(--accent-color)] hover:underline transition-all">
+                                        <a href="/erp/reset-password" className="text-xs font-semibold text-[var(--accent-color)] hover:underline transition-all">
                                             Esqueceu a senha?
                                         </a>
                                     </div>
