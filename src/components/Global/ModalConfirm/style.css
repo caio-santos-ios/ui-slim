@@ -1,0 +1,2 @@
+.container-modal { background: rgba(0,0,0,.55); backdrop-filter: blur(4px); z-index: 1100; }
+.header-modal { color: #fff; }

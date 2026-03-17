@@ -6,16 +6,12 @@ import { menuOpenAtom, menuRoutinesAtom } from "@/jotai/global/menu.jotai";
 import { sidebarAtom } from "@/jotai/global/sidebar.jotai";
 import { TMenuRoutine } from "@/types/global/menu.type";
 import { iconAtom } from "@/jotai/global/icons.jotai";
-import { sincAtom } from "@/jotai/auth/auth.jotai";
-import { Logo } from "../logo";
+import { roleUserAtom, sincAtom } from "@/jotai/auth/auth.jotai";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { IoChevronDownOutline } from "react-icons/io5";
 import { LuLogOut, LuPanelLeftClose } from "react-icons/lu";
 
-/* ─────────────────────────────────────────────
-   NavItem — item recursivo do menu
-───────────────────────────────────────────── */
 interface NavItemProps {
     item: TMenuRoutine;
     depth: number;
@@ -25,6 +21,8 @@ interface NavItemProps {
 
 function NavItem({ item, depth, expanded, admin }: NavItemProps) {
     const [icons] = useAtom(iconAtom);
+    const [role, setRole] = useAtom(roleUserAtom);
+
     const pathname = usePathname();
     const router = useRouter();
     const hasChildren = item.subMenu?.length > 0;
@@ -37,13 +35,15 @@ function NavItem({ item, depth, expanded, admin }: NavItemProps) {
     const active = isActive(item.link);
     const childActive = hasActiveChild(item);
 
-    // Abre automaticamente se um filho está ativo
     const [open, setOpen] = useState(childActive);
     useEffect(() => { if (childActive) setOpen(true); }, [childActive]);
 
-    if (!item.authorized && !admin) return null;
+    if(role == "Manager") {
+        if (!['4', 'D01', 'D02', 'D03'].includes(item.code)) return null;
+    } else {
+        if (!item.authorized && !admin) return null;
+    }
 
-    /* ── Top-level group: só label + children diretos ── */
     if (depth === 0 && hasChildren) {
         return (
             <li>
@@ -60,7 +60,6 @@ function NavItem({ item, depth, expanded, admin }: NavItemProps) {
         );
     }
 
-    /* ── Item com sub-filhos (parent retrátil) ── */
     if (hasChildren) {
         return (
             <li>
@@ -74,7 +73,6 @@ function NavItem({ item, depth, expanded, admin }: NavItemProps) {
                         size={13}
                         className={`nav-item-chevron ${open ? "open" : ""}`}
                     />
-                    {/* Tooltip modo colapsado */}
                     {!expanded && <span className="nav-item-tooltip">{item.description}</span>}
                 </button>
 
@@ -89,7 +87,6 @@ function NavItem({ item, depth, expanded, admin }: NavItemProps) {
         );
     }
 
-    /* ── Leaf item (sem filhos) ── */
     return (
         <li>
             <button
@@ -99,17 +96,12 @@ function NavItem({ item, depth, expanded, admin }: NavItemProps) {
                 {depth === 1 && Icon && <Icon className="nav-item-icon" />}
                 {depth > 1 && <span className="nav-subitem-dot" />}
                 <span className="nav-item-label">{item.description}</span>
-                {/* Tooltip modo colapsado */}
                 {!expanded && depth === 1 && <span className="nav-item-tooltip">{item.description}</span>}
             </button>
         </li>
     );
 }
 
-/* ─────────────────────────────────────────────
-   Conteúdo interno da sidebar (reutilizado em
-   desktop e mobile)
-───────────────────────────────────────────── */
 interface SidebarBodyProps {
     expanded: boolean;
     isMobile?: boolean;
@@ -131,16 +123,11 @@ function SidebarBody({ expanded, isMobile, onToggle, onClose, menu, admin }: Sid
 
     return (
         <>
-            {/* ── Logo + toggle ── */}
             <div className="side-bar-logo slim-bg-side-bar">
-                {/* Logo — visível quando expandido ou no mobile */}
                 {(expanded || isMobile) && (
-                    <div className="flex-1 min-w-0 overflow-hidden">
-                        {/* <Logo className="h-9 brightness-0 invert" /> */}
-                    </div>
+                    <div className="flex-1 min-w-0 overflow-hidden"></div>
                 )}
 
-                {/* Botão de colapsar/expandir — só desktop */}
                 {!isMobile && (
                     <button
                         className="sidebar-toggle-btn"
@@ -151,7 +138,6 @@ function SidebarBody({ expanded, isMobile, onToggle, onClose, menu, admin }: Sid
                     </button>
                 )}
 
-                {/* Botão de fechar — só mobile */}
                 {isMobile && (
                     <button
                         className="sidebar-toggle-btn"
@@ -167,7 +153,6 @@ function SidebarBody({ expanded, isMobile, onToggle, onClose, menu, admin }: Sid
                 )}
             </div>
 
-            {/* ── Nav ── */}
             <nav className="side-bar-nav slim-bg-side-bar">
                 <div className={`py-3 ${expanded || isMobile ? "px-3" : "px-2"}`}>
                     <ul className="space-y-px">
@@ -184,14 +169,13 @@ function SidebarBody({ expanded, isMobile, onToggle, onClose, menu, admin }: Sid
                 </div>
             </nav>
 
-            {/* ── Footer / Logout ── */}
             <div className="side-bar-footer slim-bg-side-bar">
                 <button
                     className="nav-logout-btn"
                     onClick={logout}
                     title={!(expanded || isMobile) ? (logoutItem?.description ?? "Sair") : undefined}
                 >
-                    <LuLogOut size={16} className="flex-shrink-0" style={{ minWidth: "1rem" }} />
+                    <LuLogOut size={16} className="shrink-0" style={{ minWidth: "1rem" }} />
                     <span className="nav-logout-label">{logoutItem?.description ?? "Sair"}</span>
                     {!(expanded || isMobile) && (
                         <span className="nav-item-tooltip">{logoutItem?.description ?? "Sair"}</span>
@@ -202,9 +186,6 @@ function SidebarBody({ expanded, isMobile, onToggle, onClose, menu, admin }: Sid
     );
 }
 
-/* ─────────────────────────────────────────────
-   SideMenu — componente principal exportado
-───────────────────────────────────────────── */
 export const SideMenu = () => {
     const [isExpanded, setIsExpanded] = useAtom(sidebarAtom);
     const [isMobileOpen, setIsMobileOpen] = useAtom(menuOpenAtom);
@@ -212,35 +193,36 @@ export const SideMenu = () => {
     const [sinc] = useAtom(sincAtom);
     const [admin, setAdmin] = useState(false);
 
-    /* Permissões */
     useEffect(() => {
         const a = localStorage.getItem("admin");
         if (a) setAdmin(a === "true");
     }, []);
-
+    
     useEffect(() => {
         const modulesStr = localStorage.getItem("modules");
-        if (modulesStr) {
-            const modules: any[] = JSON.parse(modulesStr);
-            menu.forEach((x: TMenuRoutine) => {
-                if (x.subMenu.length > 0) {
-                    x.authorized = false;
-                    const idx = modules.findIndex((m: any) => m.code == x.code);
-                    if (idx >= 0) {
-                        const routines = modules[idx].routines as any[];
-                        if (routines.length > 0) {
-                            x.authorized = true;
-                            x.subMenu.forEach((sub: TMenuRoutine) => {
-                                if (routines.find((r: any) => r.code == sub.code)) sub.authorized = true;
-                            });
+        const r = localStorage.getItem("role");
+        if(r != "Manager") {
+            if (modulesStr) {
+                const modules: any[] = JSON.parse(modulesStr);
+                menu.forEach((x: TMenuRoutine) => {
+                    if (x.subMenu.length > 0) {
+                        x.authorized = false;
+                        const idx = modules.findIndex((m: any) => m.code == x.code);
+                        if (idx >= 0) {
+                            const routines = modules[idx].routines as any[];
+                            if (routines.length > 0) {
+                                x.authorized = true;
+                                x.subMenu.forEach((sub: TMenuRoutine) => {
+                                    if (routines.find((r: any) => r.code == sub.code)) sub.authorized = true;
+                                });
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         }
     }, [sinc]);
 
-    /* Fecha drawer no mobile ao navegar */
     const pathname = usePathname();
     const prevPath = useRef(pathname);
     useEffect(() => {
@@ -254,9 +236,6 @@ export const SideMenu = () => {
 
     return (
         <>
-            {/* ══════════════════════
-                DESKTOP — sticky sidebar (lg+)
-            ══════════════════════ */}
             <aside
                 className={`side-bar slim-bg-side-bar hidden lg:flex flex-col ${isExpanded ? "expanded" : "collapsed"}`}
             >
@@ -267,13 +246,7 @@ export const SideMenu = () => {
                 />
             </aside>
 
-            {/* ══════════════════════
-                MOBILE — fixed drawer (<lg)
-                Sempre no DOM para a animação de saída funcionar.
-                O CSS .mobile-open/.mobile-closed controla via transform.
-            ══════════════════════ */}
             <div className="lg:hidden">
-                {/* Overlay escurecido — só visível quando aberto */}
                 {isMobileOpen && (
                     <div
                         className="sidebar-overlay"

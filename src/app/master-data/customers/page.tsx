@@ -25,7 +25,7 @@ import { ModalUpdateStatus } from "@/components/MasterData/Customer/ModalUpdateS
 import { useForm } from "react-hook-form";
 import { FiEdit2 } from "react-icons/fi";
 import { IoSearch } from "react-icons/io5";
-import { MdFilterAlt, MdFilterAltOff, MdHistoryToggleOff } from "react-icons/md";
+import { MdFilterAlt, MdFilterAltOff, MdHistoryToggleOff, MdLogin } from "react-icons/md";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/Global/Accordion/AccordionContent";
 import { TPlan } from "@/types/masterData/plans/plans.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
@@ -36,6 +36,7 @@ import { FaHistory } from "react-icons/fa";
 import { ModalEditRecipient } from "@/components/MasterData/Customer/ModalEditRecipient";
 import { WhatsAppButtonModal } from "@/components/notification/whatsapp/WhatsAppButtonModal";
 import { MessageButtonModal } from "@/components/notification/message/MessageButtonModal";
+import { ModalConfirm } from "@/components/Global/ModalConfirm";
 
 /* ─── Colunas ───────────────────────────────── */
 const columns1: { key: string; title: string }[] = [
@@ -116,16 +117,18 @@ export default function Customer() {
   const [pagination, setPagination] = useAtom(paginationAtom);
 
   /* Estado geral */
-  const [modalDelete, setModalDelete]               = useState<boolean>(false);
-  const [modalUpdateStatus, setModalUpdateStatus]   = useState<boolean>(false);
+  const [modalDelete, setModalDelete]                       = useState<boolean>(false);
+  const [modalFirstAccess, setModalFirstAccess]             = useState<boolean>(false);
+  const [idFirstAccess, setIdFirstAccess]             = useState<string>("");
+  const [modalUpdateStatus, setModalUpdateStatus]           = useState<boolean>(false);
   const [modalUpdateContractor, setModalUpdateContractor]   = useState<boolean>(false);
-  const [typeModal, setTypeModal]                   = useState<"create" | "edit">("create");
-  const [id, setId]                                 = useState<string>("");
-  const [id2, setId2]                               = useState<string>("");
-  const [currentBody, setCurrentBody]               = useState<any>({});
-  const [vision, setVision]                         = useState<string>("contractor");
-  const [columns, setCollumns]                      = useState<any[]>(columns1);
-  const [queryStr, setQueryStr]                     = useState<string>("");
+  const [typeModal, setTypeModal]                           = useState<"create" | "edit">("create");
+  const [id, setId]                                         = useState<string>("");
+  const [id2, setId2]                                       = useState<string>("");
+  const [currentBody, setCurrentBody]                       = useState<any>({});
+  const [vision, setVision]                                 = useState<string>("contractor");
+  const [columns, setCollumns]                              = useState<any[]>(columns1);
+  const [queryStr, setQueryStr]                             = useState<string>("");
 
   /* Selects dos filtros */
   const [plans, setPlans]               = useState<TPlan[]>([]);
@@ -298,6 +301,18 @@ export default function Customer() {
       setModalDelete(false);
       resetModal();
       await getAll(uri);
+    } catch (error) {
+      resolveResponse(error);
+    }
+  };
+  
+  const confirmFirstAccess = async () => {
+    try {
+      const { status } = await api.put(`/customers/painel-access`, {id: idFirstAccess}, configApi());
+      resolveResponse({ status, message: "Acesso enviado com sucesso" });
+      setModalFirstAccess(false);
+      setIdFirstAccess("");
+      await getAll("customers");
     } catch (error) {
       resolveResponse(error);
     }
@@ -642,7 +657,23 @@ export default function Customer() {
                                   }
                                 </>
                               ) : (
-                                <IconEdit action="edit" obj={x} getObj={openModal} />
+                                <>
+                                  <IconEdit action="edit" obj={x} getObj={openModal} />
+                                  {
+                                    x.type == "B2B" && (
+                                      <button
+                                        onClick={() => {
+                                          setModalFirstAccess(true);
+                                          setIdFirstAccess(x.id);
+                                        }}
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-(--text-muted) bg-(--surface-bg) hover:bg-(--primary-color) hover:text-white border border-(--surface-border) hover:border-(--primary-color) transition-all"
+                                        style={{ padding: 0, minWidth: "2rem" }}
+                                        title="Acesso ao Painel do Gestor">
+                                        <MdLogin size={13} />
+                                      </button>
+                                    )
+                                  }
+                                </>
                               )
                             )}
                             {permissionDelete("1", "A12") && (
@@ -659,7 +690,6 @@ export default function Customer() {
                               {x.customerDocument != x.document}
                             </button>
                             <WhatsAppButtonModal fieldSearch="beneficiaryId" type="" parent="" id={x.id}/>
-                            {/* <MessageButtonModal id={x.id}/> */}
                           </div>
                         </td>
                       </tr>
@@ -723,6 +753,15 @@ export default function Customer() {
               setIsOpen={() => setModalDelete(modal)}
               onClose={() => setModalDelete(false)}
               onSelectValue={destroy}
+            />
+            
+            <ModalConfirm
+              title="Acesso ao Painel Gestor"
+              description="Deseja enviar o primeiro acesso para o contratante?"
+              isOpen={modalFirstAccess}
+              setIsOpen={() => setModalFirstAccess(modal)}
+              onClose={() => setModalFirstAccess(false)}
+              onSelectValue={confirmFirstAccess}
             />
           </main>
         </>

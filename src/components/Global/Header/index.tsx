@@ -13,6 +13,7 @@ import { configApi, resolveResponse } from "@/service/config.service";
 import { ButtonTheme } from "@/components/button-theme/ButtonTheme";
 import { Logo } from "../logo";
 import { HiArrowPathRoundedSquare } from "react-icons/hi2";
+import { roleUserAtom } from "@/jotai/auth/auth.jotai";
 
 export const Header = () => {
     const [_, setLoading] = useAtom(loadingAtom);
@@ -21,7 +22,9 @@ export const Header = () => {
     const [name, setName] = useState<string>("");
     const [photo, setPhoto] = useState<string>("");
     const [dropOpen, setDropOpen] = useState(false);
-
+    const [role, setRole] = useAtom(roleUserAtom);
+    const [subTitle, setSubTitle] = useState("Administrador");
+    
     const sincLogged = async () => {
         try {
             setLoading(true);
@@ -41,24 +44,19 @@ export const Header = () => {
     useEffect(() => {
         const n = localStorage.getItem("name");
         const p = localStorage.getItem("photo");
+        const r = localStorage.getItem("role");
+
+        if(r == "Manager") setSubTitle("Gestora");
+        
         if (n) setName(n);
         if (p) setPhoto(p);
+        if (r) setRole(r);
     }, []);
 
     return (
         <header>
-            {/* ── Hamburger — abre drawer no mobile ── */}
-            {/* <button
-                className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg text-[var(--text-muted)] hover:text-[var(--primary-color)] hover:bg-[var(--color-brand-50)] transition-all"
-                onClick={() => setIsMobileOpen(!isMobileOpen)}
-                style={{ padding: 0, border: "none", background: "transparent", boxShadow: "none" }}
-                aria-label="Abrir menu"
-            >
-                <HiMenuAlt2 size={22} />
-            </button> */}
-
             {/* ── Logo ── */}
-            <a href="/erp/dashboard" className="flex-shrink-0">
+            <a href="/erp/dashboard" className="shrink-0">
                 <Logo className="h-14" />
             </a>
 
@@ -94,7 +92,7 @@ export const Header = () => {
                         )}
                         <div className="hidden md:block text-left">
                             <p className="text-sm font-semibold text-[var(--text-primary)] leading-tight">{name || "Usuário"}</p>
-                            <p className="text-xs text-[var(--text-muted)]">Administrador</p>
+                            <p className="text-xs text-[var(--text-muted)]">{subTitle}</p>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={`text-[var(--text-muted)] hidden md:block transition-transform duration-200 ${dropOpen ? "rotate-180" : ""}`}>
                             <polyline points="6 9 12 15 18 9" />
@@ -107,7 +105,7 @@ export const Header = () => {
                             <div className="absolute right-0 top-13 z-50 w-52 rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] shadow-lg overflow-hidden">
                                 <div className="px-4 py-3 border-b border-[var(--surface-border)] bg-gradient-to-r from-[var(--primary-color)] to-[var(--primary-color-light)]">
                                     <p className="text-xs font-bold text-white truncate">{name}</p>
-                                    <p className="text-[0.7rem] text-[rgba(255,255,255,.6)]">Administrador</p>
+                                    <p className="text-[0.7rem] text-[rgba(255,255,255,.6)]">{subTitle}</p>
                                 </div>
                                 <div className="py-1">
                                     <button

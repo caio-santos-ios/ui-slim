@@ -424,6 +424,65 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
         padding: 'px-2'
     },
     {
+        code: '4',
+        isOpen: true,
+        authorized: false,
+        subMenu: [
+            {
+                code: 'D01',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Dashboard',
+                icon: '',
+                link: 'dashboard',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
+            {
+                code: 'D02',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Painel do Gestor',
+                icon: '',
+                link: 'management/b2b-panel',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
+            {
+                code: 'D03',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Saúde Ocupacional',
+                icon: '',
+                link: 'management/occupational-management',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
+        ],
+        description: 'Gestão',
+        icon: 'BsCashCoin',
+        link: '',
+        padding: 'px-2'
+    },
+    {
         code: '0',
         isOpen: true,
         authorized: true,
