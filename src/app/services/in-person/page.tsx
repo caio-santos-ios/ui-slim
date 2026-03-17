@@ -275,7 +275,7 @@ export default function Customer() {
                             </select>
                           </div>
                           <div className={`flex flex-col col-span-3 mb-2`}>
-                            <label className={`label slim-label-primary`}></label>
+                            <label className={`label slim-label-primary`}>Programa</label>
                             <select className="select slim-select-primary" {...register("serviceModuleId")}>
                               <option value="">Todos</option>
                               {
