@@ -4,12 +4,13 @@ export const maskDate = (
 ) => {
   if (!dateString) return "";
 
+  const arrayDate = dateString.split("T")[0].split("-");
   const date = new Date(dateString);
   
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
-  const formattedDate = `${day}/${month}/${year}`;
+  const formattedDate = `${arrayDate[2]}/${arrayDate[1]}/${arrayDate[0]}`;
 
   const h = String(date.getHours()).padStart(2, "0");
   const m = String(date.getMinutes()).padStart(2, "0");
