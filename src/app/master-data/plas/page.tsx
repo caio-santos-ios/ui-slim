@@ -112,7 +112,7 @@ export default function Plan() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer menu="Cadastros" breadcrump="Planos" breadcrumpIcon="MdPriceChange"
+              <SlimContainer menu="Cadastros" breadcrump="Programas" breadcrumpIcon="MdPriceChange"
                 buttons={
                   <>
                     {
@@ -152,7 +152,7 @@ export default function Plan() {
             </div>
 
             <ModalPlan
-              title={typeModal == 'create' ? 'Inserir Planos' : 'Editar Planos'} 
+              title={typeModal == 'create' ? 'Inserir Programas' : 'Editar Programas'} 
               isOpen={modal} setIsOpen={() => setModal(modal)} 
               onClose={resetModal}
               onSelectValue={handleReturnModal}
@@ -160,7 +160,7 @@ export default function Plan() {
             />      
 
             <ModalDelete 
-              title='Excluír Planos'
+              title='Excluír Programas'
               isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} 
               onClose={() => setModalDelete(false)}
               onSelectValue={destroy}

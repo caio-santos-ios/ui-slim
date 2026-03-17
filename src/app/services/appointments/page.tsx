@@ -362,10 +362,10 @@ export default function Appointments() {
                             />
                           </div>
 
-                          {/* ── Programas (multi — derivado da lista quando API fornecer x.program) ── */}
+                          {/* ── Módulos de Serviços (multi — derivado da lista quando API fornecer x.program) ── */}
                           <div className="col-span-12 sm:col-span-4 mb-2">
                             <MultiSelect
-                              label="Programas"
+                              label="Módulos de Serviços"
                               items={programsOptions}
                               selected={filter.programIds}
                               onChange={v => setF("programIds", v)}

@@ -434,7 +434,7 @@ export const ModalRecipient = ({contractorId, contractorType, planType, onClose,
                     </select>
                 </div>                
                 <div className={`flex flex-col mb-2`}>
-                    <label className={`label slim-label-primary`}>Plano</label>
+                    <label className={`label slim-label-primary`}>Programas</label>
                     <select className="select slim-select-primary" {...register("planId")}>
                         <option value="">Selecione</option>
                         {

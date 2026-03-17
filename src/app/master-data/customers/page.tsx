@@ -52,8 +52,8 @@ const columns2: { key: string; title: string }[] = [
   { key: "code",          title: "ID" },
   { key: "name",          title: "Beneficiário" },
   { key: "cpf",           title: "CPF" },
-  { key: "typePlan",      title: "Tipo de Plano" },
-  { key: "planName",      title: "Plano" },
+  { key: "typePlan",      title: "Tipo de Programas" },
+  { key: "planName",      title: "Programas" },
   { key: "active",        title: "Status" },
   { key: "effectiveDate", title: "Data da Vigência" },
   { key: "bond",          title: "Vínculo" },
@@ -485,9 +485,9 @@ export default function Customer() {
                                 </select>
                               </div>
 
-                              {/* Plano */}
+                              {/* Programas */}
                               <div className="flex flex-col col-span-6 sm:col-span-3 mb-2">
-                                <label className="label slim-label-primary">Plano</label>
+                                <label className="label slim-label-primary">Programas</label>
                                 <select className="select slim-select-primary" {...register("planId")}>
                                   <option value="">Todos</option>
                                   {plans.map((p) => (

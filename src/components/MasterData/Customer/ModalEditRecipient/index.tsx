@@ -444,7 +444,7 @@ export const ModalEditRecipient = ({
                                             </select>
                                         </Field>
 
-                                        <Field label="Plano">
+                                        <Field label="Programas">
                                             <select className="select slim-select-primary" {...register("planId")}>
                                                 <option value="">Selecione</option>
                                                 {plans.map((p) => (
@@ -454,7 +454,7 @@ export const ModalEditRecipient = ({
                                         </Field>
 
                                         <div className={`flex flex-col col-span-5 mb-2`}>
-                                            <label className={`label slim-label-primary`}>Progrmas Adicionais</label>                                  
+                                            <label className={`label slim-label-primary`}>Módulos de Serviços</label>                                  
                                             <MultiSelect maxSelected={2} descriptionSelectedMax="Módulos Selecionados" value={watch("serviceModuleIds") ?? []} onChange={(items) => selectModule(items)} options={serviceModules} labelKey="name" valueKey="id" />
                                         </div>   
                                         

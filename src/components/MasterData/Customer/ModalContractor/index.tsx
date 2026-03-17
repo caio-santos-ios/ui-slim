@@ -413,7 +413,7 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                     </>
                     : 
                     <div className={`flex flex-col mb-2`}>
-                        <label className={`label slim-label-primary`}>Tipo de Plano</label>
+                        <label className={`label slim-label-primary`}>Tipo de Programas</label>
                         <select {...register("typePlan")} className="select slim-select-primary">
                             <option value="">Selecione</option>
                             <option value="Individual">Individual</option>
