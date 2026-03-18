@@ -393,7 +393,7 @@ export default function B2BPanel() {
                 }
               >
                 {/* ── Summary Cards ─────────────────────────────────────── */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 hidden">
+                <div className="grid-cols-2 sm:grid-cols-4 gap-3 mb-4 hidden">
                   {[
                     { label: "Movimentações", value: summary.movements,       color: "var(--primary-color)" },
                     { label: "Faturas",        value: summary.invoices,         color: "#3b82f6" },
@@ -405,7 +405,7 @@ export default function B2BPanel() {
                       className="rounded-xl p-4 flex flex-col gap-1"
                       style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}
                     >
-                      <span className="text-xs text-[var(--text-muted)] font-medium">{c.label}</span>
+                      <span className="text-xs text-(--text-muted) font-medium">{c.label}</span>
                       <span className="text-2xl font-bold" style={{ color: c.color }}>{c.value}</span>
                     </div>
                   ))}
