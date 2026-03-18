@@ -90,17 +90,11 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
         };
       }
 
-      // if (typeModal === "create") {
       const formBody = new FormData();      
       const attachment: any = document.querySelector('#attachment');
       if (attachment.files[0]) formBody.append('file', attachment.files[0]);
 
-        const { status } = await api.put("/customer-recipients/import-manager-painel", formBody, configApi(false));
-        resolveResponse({ status, message: "Movimentação criada com sucesso" });
-      // } else {
-      //   const { status } = await api.put("/b2b-mass-movements", { ...payload, id: body.id }, configApi());
-      //   resolveResponse({ status, message: "Movimentação atualizada com sucesso" });
-      // }
+      const { status } = await api.put("/customer-recipients/import-manager-painel", formBody, configApi(false));
       onSuccess();
     } catch (error) {
       resolveResponse(error);
@@ -113,7 +107,6 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
       <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl"
         style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)", animation: "modal-slide-in .25s cubic-bezier(.34,1.56,.64,1)" }}>
 
-        {/* Header */}
         <div className="flex items-center justify-between px-6 h-14"
           style={{ background: "linear-gradient(135deg, var(--primary-color-light) 0%, var(--primary-color) 100%)", borderBottom: "2px solid var(--accent-color)" }}>
           <span className="text-white font-bold text-sm">
@@ -124,48 +117,13 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
           </button>
         </div>
 
-        {/* Body */}
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 grid grid-cols-12 gap-4">
-
-          {/* Contratante */}
-          {/* <div className="flex flex-col col-span-12 sm:col-span-6">
-            <label className="label slim-label-primary">Contratante *</label>
-            <select {...register("customerId", { required: true })} className="select slim-select-primary">
-              <option value="">Selecione</option>
-              {customers.map((c) => <option key={c.id} value={c.id}>{c.corporateName}</option>)}
-            </select>
-          </div> */}
-
-          {/* Tipo */}
-          {/* <div className="flex flex-col col-span-12 sm:col-span-6">
-            <label className="label slim-label-primary">Tipo de Movimentação *</label>
-            <select {...register("type", { required: true })} className="select slim-select-primary">
-              <option value="">Selecione</option>
-              <option value="Inclusao">Inclusão</option>
-              <option value="Exclusao">Exclusão</option>
-              <option value="UpgradePrograma">Upgrade de Programa</option>
-              <option value="DowngradePrograma">Downgrade de Programa</option>
-            </select>
-          </div> */}
-
-          {/* Observações */}
-          <div className="flex flex-col col-span-12">
-            <label className="label slim-label-primary">Observações</label>
-            <textarea {...register("notes")} rows={2} className="input slim-input-primary resize-none" placeholder="Observações sobre a movimentação..." />
-          </div>
-
           {/* Arquivo para importação */}
           <div className="flex flex-col col-span-12">
             <label className="label slim-label-primary">Arquivo para Importação (Excel/CSV)</label>
-            {/* <div className={`flex flex-col col-span-2 mb-2`}>
-                <label className={`label slim-label-primary`}>Arquivo</label>
-            </div> */}
             <input id="attachment" {...register("file")} type="file" className={`input slim-input-primary`} placeholder="Digite"/>
-            {/* <input {...register("fileName")} type="text" className="input slim-input-primary" placeholder="Nome do arquivo ou URL" /> */}
-            {/* <span className="text-xs text-[var(--text-muted)] mt-1">Obs: back-office pode processar via arquivo de importação</span> */}
           </div>
 
-          {/* Dados do beneficiário (só Inclusão) */}
           {movType === "Inclusao" && (
             <>
               <div className="col-span-12">
@@ -206,7 +164,7 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
           <div className="col-span-12 flex justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} className="slim-btn slim-btn-secondary">Cancelar</button>
             <button type="submit" className="slim-btn slim-btn-primary">
-              {typeModal === "create" ? "Criar Movimentação" : "Salvar Alterações"}
+              Salvar
             </button>
           </div>
         </form>

@@ -28,6 +28,8 @@ import { TB2BMassMovement, TB2BInvoice, TB2BAttachment } from "@/types/b2bPanel/
 import { ModalB2BMassMovement } from "@/components/B2BPanel/Modal/ModalMassMovement";
 import { ModalB2BAttachment, ModalB2BInvoice } from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
 import { IconView } from "@/components/Global/IconView";
+import { IconEdit } from "@/components/Global/IconEdit";
+import { IconDelete } from "@/components/Global/IconDelete";
 
 // ─── Abas principais ─────────────────────────────────────────────────────────
 type TTab = "movements" | "invoices" | "attachments";
@@ -50,16 +52,15 @@ const invoiceColumns = [
 ];
 
 const attachmentColumns = [
-  { key: "Visualizar",         title: "Visualizar" },
-  { key: "description",        title: "Nome" },
-  { key: "createdAt",          title: "Data" },
+  { key: "description", title: "Nome" },
+  { key: "createdAt",   title: "Data" },
 ];
 
 const reportColumns = [
-  { key: "department",   title: "Departamento" },
-  { key: "role",         title: "Função" },
-  { key: "period",       title: "Período" },
-  { key: "status",       title: "Status" },
+  { key: "department", title: "Departamento" },
+  { key: "role",       title: "Função" },
+  { key: "period",     title: "Período" },
+  { key: "status",     title: "Status" },
 ];
 
 // ─── Filtro ───────────────────────────────────────────────────────────────────
@@ -138,7 +139,6 @@ export default function B2BPanel() {
     movements:   "b2b-mass-movements",
     invoices:    "b2b-invoices",
     attachments: "attachments",
-    // reports:     "b2b-mass-movements",
   };
 
   // ── Listagem ───────────────────────────────────────────────────────────────
@@ -146,12 +146,9 @@ export default function B2BPanel() {
     try {
       setLoading(true);
       const uri = uriMap[activeTab];
-
-      if(uri == "attachments") {
+      if (uri === "attachments") {
         const id = localStorage.getItem("id");
-        if(id) {
-          query += `&parentId=${id}&parent=customer-manager`;
-        }
+        if (id) query += `&parentId=${id}&parent=customer-manager`;
       }
       const { data } = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
@@ -173,7 +170,6 @@ export default function B2BPanel() {
       setLoading(true);
       const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
-
       setPagination({
         currentPage: result.currentPage,
         data:        result.data,
@@ -190,13 +186,11 @@ export default function B2BPanel() {
   const exportExcel = async () => {
     try {
       setExportingExcel(true);
-
       const { data } = await api.get(
         `/customer-recipients/manager-panel?deleted=false&orderBy=name&sort=asc&pageSize=99999&pageNumber=1${queryStr}`,
         configApi()
       );
       const rows: any[] = data.result.data ?? [];
-
       const sheetData = rows.map((r) => ({
         "Beneficiário":       r.name ?? "",
         "CPF":                r.cpf ?? "",
@@ -215,16 +209,13 @@ export default function B2BPanel() {
         "Complemento":        r?.address?.complement ?? "",
         "Bairro":             r?.address?.neighborhood ?? "",
         "Cidade":             r?.address?.city ?? "",
-        "Estado":             r?.address?.state ?? ""
+        "Estado":             r?.address?.state ?? "",
       }));
-
       const XLSX = await import("xlsx");
       const ws   = XLSX.utils.json_to_sheet(sheetData);
       const wb   = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Beneficiários");
-
       ws["!cols"] = Object.keys(sheetData[0] ?? {}).map(() => ({ wch: 24 }));
-
       XLSX.writeFile(wb, `beneficiarios_${new Date().toISOString().split("T")[0]}.xlsx`);
     } catch (error) {
       resolveResponse(error);
@@ -268,11 +259,7 @@ export default function B2BPanel() {
   const onSubmit = async () => {
     const q = buildQuery(getValues());
     setQueryStr(q);
-    if (activeTab === "movements") {
-      await getRecipient(q);
-    } else {
-      await getAll(q);
-    }
+    activeTab === "movements" ? await getRecipient(q) : await getAll(q);
   };
 
   const openModal = (action: "create" | "edit" = "create", body?: any) => {
@@ -340,25 +327,18 @@ export default function B2BPanel() {
     return v;
   };
 
-  useEffect(() => {
-    loadSummary();
-  }, []);
+  useEffect(() => { loadSummary(); }, []);
 
   useEffect(() => {
     reset(ResetFilter);
     setQueryStr("");
-    if (activeTab === "movements") {
-      getRecipient();
-    } else {
-      getAll();
-    }
+    activeTab === "movements" ? getRecipient() : getAll();
   }, [activeTab]);
 
   const tabs: { key: TTab; label: string; icon: React.ReactNode; count?: number }[] = [
     { key: "movements",   label: "Movimentação de Massa", icon: <FiUsers size={15} />,             count: summary.movements },
     { key: "invoices",    label: "Painel de Faturas",     icon: <MdOutlineReceipt size={15} />,    count: summary.invoices },
     { key: "attachments", label: "Anexos",                icon: <MdOutlineAttachFile size={15} />, count: summary.attachments },
-    // { key: "reports",     label: "Relatórios",            icon: <HiOutlineDocumentReport size={15} /> },
   ];
 
   return (
@@ -426,15 +406,15 @@ export default function B2BPanel() {
                     >
                       {t.icon}
                       <span className="hidden sm:inline">{t.label}</span>
-                      {t.key != "movements" && t.count !== undefined && (
+                      {t.key !== "movements" && t.count !== undefined && (
                         <span
                           className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
                           style={
                             activeTab === t.key
                               ? { background: "rgba(255,255,255,.25)", color: "#fff" }
                               : { background: "var(--surface-border)", color: "var(--text-muted)" }
-                          }>
-                          
+                          }
+                        >
                           {t.count}
                         </span>
                       )}
@@ -470,7 +450,7 @@ export default function B2BPanel() {
                             <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
                           </div>
 
-                          {(activeTab === "invoices") && (
+                          {activeTab === "invoices" && (
                             <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                               <label className="label slim-label-primary">Status</label>
                               <select className="select slim-select-primary" {...register("status")}>
@@ -503,7 +483,11 @@ export default function B2BPanel() {
                 </div>
 
                 {/* ── Tabela ────────────────────────────────────────────── */}
-                <DataTable isAction={false} classContainer="max-h-[calc(100dvh-(var(--height-header)+18rem))]" columns={columns}>
+                <DataTable
+                  isAction={activeTab === "invoices" || activeTab === "attachments"}
+                  classContainer="max-h-[calc(100dvh-(var(--height-header)+18rem))]"
+                  columns={columns}
+                >
                   <>
                     {pagination.data.map((x: any, i: number) => (
                       <tr className="slim-tr" key={i}>
@@ -514,6 +498,25 @@ export default function B2BPanel() {
                             </td>
                           )
                         ))}
+
+                        {/* Editar fatura */}
+                        {activeTab === "invoices" && (
+                          <td className="text-center">
+                            <div className="flex justify-center gap-2">
+                              <IconEdit action="edit" obj={x} getObj={openModal} />
+                            </div>
+                          </td>
+                        )}
+
+                        {/* Deletar anexo */}
+                        {activeTab === "attachments" && (
+                          <td className="text-center">
+                            <div className="flex justify-center gap-2">
+                              <IconDelete obj={x} getObj={openModalDelete} />
+                              <IconView link={x.uri} />
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     ))}
                   </>

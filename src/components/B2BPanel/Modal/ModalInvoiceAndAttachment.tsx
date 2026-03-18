@@ -34,7 +34,8 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
   const { register, handleSubmit, reset } = useForm<TInvoiceForm>();
 
   useEffect(() => {
-    if (isOpen && typeModal === "edit" && body?.id) {
+    if (!isOpen) return;
+    if (typeModal === "edit" && body?.id) {
       reset({
         customerId:       body.customerId ?? "",
         referenceMonth:   String(body.referenceMonth ?? ""),
@@ -46,10 +47,10 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
         dueDate:          body.dueDate?.split("T")[0] ?? "",
         status:           body.status ?? "",
       });
-    } else if (isOpen && typeModal === "create") {
+    } else if (typeModal === "create") {
       reset({});
     }
-  }, [isOpen, typeModal, body]);
+  }, [isOpen, typeModal, body?.id]);
 
   if (!isOpen) return null;
 
