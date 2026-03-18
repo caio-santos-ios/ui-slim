@@ -32,6 +32,7 @@ type TForm = {
   benDepartment:  string;
   benRole:        string;
   benPlanId:      string;
+  file: any;
 };
 
 export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClose, onSuccess }: TProps) => {
@@ -89,13 +90,17 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
         };
       }
 
-      if (typeModal === "create") {
-        const { status } = await api.post("/b2b-mass-movements", payload, configApi());
+      // if (typeModal === "create") {
+      const formBody = new FormData();      
+      const attachment: any = document.querySelector('#attachment');
+      if (attachment.files[0]) formBody.append('file', attachment.files[0]);
+
+        const { status } = await api.put("/customer-recipients/import-manager-painel", formBody, configApi(false));
         resolveResponse({ status, message: "Movimentação criada com sucesso" });
-      } else {
-        const { status } = await api.put("/b2b-mass-movements", { ...payload, id: body.id }, configApi());
-        resolveResponse({ status, message: "Movimentação atualizada com sucesso" });
-      }
+      // } else {
+      //   const { status } = await api.put("/b2b-mass-movements", { ...payload, id: body.id }, configApi());
+      //   resolveResponse({ status, message: "Movimentação atualizada com sucesso" });
+      // }
       onSuccess();
     } catch (error) {
       resolveResponse(error);
@@ -123,16 +128,16 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 grid grid-cols-12 gap-4">
 
           {/* Contratante */}
-          <div className="flex flex-col col-span-12 sm:col-span-6">
+          {/* <div className="flex flex-col col-span-12 sm:col-span-6">
             <label className="label slim-label-primary">Contratante *</label>
             <select {...register("customerId", { required: true })} className="select slim-select-primary">
               <option value="">Selecione</option>
               {customers.map((c) => <option key={c.id} value={c.id}>{c.corporateName}</option>)}
             </select>
-          </div>
+          </div> */}
 
           {/* Tipo */}
-          <div className="flex flex-col col-span-12 sm:col-span-6">
+          {/* <div className="flex flex-col col-span-12 sm:col-span-6">
             <label className="label slim-label-primary">Tipo de Movimentação *</label>
             <select {...register("type", { required: true })} className="select slim-select-primary">
               <option value="">Selecione</option>
@@ -141,7 +146,7 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
               <option value="UpgradePrograma">Upgrade de Programa</option>
               <option value="DowngradePrograma">Downgrade de Programa</option>
             </select>
-          </div>
+          </div> */}
 
           {/* Observações */}
           <div className="flex flex-col col-span-12">
@@ -152,8 +157,12 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
           {/* Arquivo para importação */}
           <div className="flex flex-col col-span-12">
             <label className="label slim-label-primary">Arquivo para Importação (Excel/CSV)</label>
-            <input {...register("fileName")} type="text" className="input slim-input-primary" placeholder="Nome do arquivo ou URL" />
-            <span className="text-xs text-[var(--text-muted)] mt-1">Obs: back-office pode processar via arquivo de importação</span>
+            {/* <div className={`flex flex-col col-span-2 mb-2`}>
+                <label className={`label slim-label-primary`}>Arquivo</label>
+            </div> */}
+            <input id="attachment" {...register("file")} type="file" className={`input slim-input-primary`} placeholder="Digite"/>
+            {/* <input {...register("fileName")} type="text" className="input slim-input-primary" placeholder="Nome do arquivo ou URL" /> */}
+            {/* <span className="text-xs text-[var(--text-muted)] mt-1">Obs: back-office pode processar via arquivo de importação</span> */}
           </div>
 
           {/* Dados do beneficiário (só Inclusão) */}
@@ -161,7 +170,7 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
             <>
               <div className="col-span-12">
                 <div className="h-px mb-2" style={{ background: "var(--surface-border)" }} />
-                <p className="text-xs font-bold text-[var(--primary-color)] mb-3">Dados Cadastrais do Beneficiário</p>
+                <p className="text-xs font-bold text-(--primary-color) mb-3">Dados Cadastrais do Beneficiário</p>
               </div>
 
               {[
