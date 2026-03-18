@@ -97,16 +97,7 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 grid grid-cols-12 gap-4">
-
-          <div className="flex flex-col col-span-12 sm:col-span-8">
-            <label className="label slim-label-primary">Contratante *</label>
-            <select {...register("customerId", { required: true })} className="select slim-select-primary">
-              <option value="">Selecione</option>
-              {customers.map((c) => <option key={c.id} value={c.id}>{c.corporateName}</option>)}
-            </select>
-          </div>
-
-          <div className="flex flex-col col-span-6 sm:col-span-2">
+          <div className="flex flex-col col-span-6 sm:col-span-3">
             <label className="label slim-label-primary">Mês *</label>
             <select {...register("referenceMonth", { required: true })} className="select slim-select-primary">
               <option value="">Mês</option>
@@ -114,7 +105,7 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
             </select>
           </div>
 
-          <div className="flex flex-col col-span-6 sm:col-span-2">
+          <div className="flex flex-col col-span-6 sm:col-span-3">
             <label className="label slim-label-primary">Ano *</label>
             <input {...register("referenceYear", { required: true })} type="number" className="input slim-input-primary" placeholder={String(new Date().getFullYear())} />
           </div>
@@ -149,7 +140,7 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
             <input {...register("totalAmount")} type="number" step="0.01" className="input slim-input-primary" placeholder="0.00" />
           </div>
 
-          <div className="flex flex-col col-span-6 sm:col-span-4">
+          <div className="flex flex-col col-span-6 sm:col-span-3">
             <label className="label slim-label-primary">Qtd. Beneficiários</label>
             <input {...register("beneficiaryCount")} type="number" className="input slim-input-primary" placeholder="0" />
           </div>
@@ -177,6 +168,7 @@ type TAttachmentForm = {
   fileType:   string;
   required:   boolean;
   notes:      string;
+  file: any;
 };
 
 type TAttachmentProps = {
@@ -212,11 +204,22 @@ export const ModalB2BAttachment = ({ isOpen, typeModal, body, customers, onClose
   const onSubmit = async (values: TAttachmentForm) => {
     try {
       const payload = { ...values };
+      const formBody = new FormData();  
+      const id = localStorage.getItem("id");
+      formBody.append("parent", "customer-manager");
+      formBody.append("description", payload.name);
+      if(id) {
+        formBody.append("parentId", id);
+      };
+
+      const attachment: any = document.querySelector('#attachment');
+      if (attachment.files[0]) formBody.append('file', attachment.files[0]);
+
       if (typeModal === "create") {
-        const { status } = await api.post("/b2b-attachments", payload, configApi());
+        const { status } = await api.post("/attachments", formBody, configApi(false));
         resolveResponse({ status, message: "Anexo criado com sucesso" });
       } else {
-        const { status } = await api.put("/b2b-attachments", { ...payload, id: body.id }, configApi());
+        const { status } = await api.put("/attachments", { ...payload, id: body.id }, configApi());
         resolveResponse({ status, message: "Anexo atualizado com sucesso" });
       }
       onSuccess();
@@ -240,47 +243,13 @@ export const ModalB2BAttachment = ({ isOpen, typeModal, body, customers, onClose
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 grid grid-cols-12 gap-4">
-
           <div className="flex flex-col col-span-12">
-            <label className="label slim-label-primary">Contratante *</label>
-            <select {...register("customerId", { required: true })} className="select slim-select-primary">
-              <option value="">Selecione</option>
-              {customers.map((c) => <option key={c.id} value={c.id}>{c.corporateName}</option>)}
-            </select>
+            <label className="label slim-label-primary">Anexo *</label>
+            <input id="attachment" {...register("file")} type="file" className={`input slim-input-primary`} placeholder="Digite"/>
           </div>
-
-          <div className="flex flex-col col-span-12 sm:col-span-8">
+          <div className="flex flex-col col-span-12">
             <label className="label slim-label-primary">Nome do Anexo *</label>
-            <input {...register("name", { required: true })} type="text" className="input slim-input-primary" placeholder="Nome descritivo obrigatório" />
-          </div>
-
-          <div className="flex flex-col col-span-12 sm:col-span-4">
-            <label className="label slim-label-primary">Tipo de Arquivo</label>
-            <select {...register("fileType")} className="select slim-select-primary">
-              <option value="">Selecione</option>
-              <option value="Excel">Excel</option>
-              <option value="PDF">PDF</option>
-              <option value="JPEG">JPEG</option>
-            </select>
-          </div>
-
-          <div className="flex flex-col col-span-12">
-            <label className="label slim-label-primary">URL / Caminho do Arquivo</label>
-            <input {...register("fileUrl")} type="text" className="input slim-input-primary" placeholder="https://..." />
-          </div>
-
-          <div className="flex flex-col col-span-12">
-            <label className="label slim-label-primary">Observações</label>
-            <textarea {...register("notes")} rows={2} className="input slim-input-primary resize-none" />
-          </div>
-
-          {/* Obrigatório */}
-          <div className="col-span-12 flex items-center gap-3">
-            <label className="slim-switch">
-              <input {...register("required")} type="checkbox" />
-              <span className="slider-default"></span>
-            </label>
-            <span className="text-sm text-[var(--text-muted)]">Obrigatório nomear este anexo</span>
+            <input {...register("name")} type="text" className="input slim-input-primary" placeholder="Nome descritivo obrigatório" />
           </div>
 
           <div className="col-span-12 flex justify-end gap-3 pt-2">

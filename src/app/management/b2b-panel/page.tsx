@@ -27,6 +27,7 @@ import { HiOutlineDocumentReport } from "react-icons/hi";
 import { TB2BMassMovement, TB2BInvoice, TB2BAttachment } from "@/types/b2bPanel/b2bPanel.type";
 import { ModalB2BMassMovement } from "@/components/B2BPanel/Modal/ModalMassMovement";
 import { ModalB2BAttachment, ModalB2BInvoice } from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
+import { IconView } from "@/components/Global/IconView";
 
 // ─── Abas principais ─────────────────────────────────────────────────────────
 type TTab = "movements" | "invoices" | "attachments";
@@ -41,7 +42,6 @@ const movementColumns = [
 ];
 
 const invoiceColumns = [
-  { key: "customerName",     title: "Contratante" },
   { key: "referenceMonth",   title: "Mês/Ano" },
   { key: "beneficiaryCount", title: "Beneficiários" },
   { key: "totalAmount",      title: "Valor Total" },
@@ -50,15 +50,12 @@ const invoiceColumns = [
 ];
 
 const attachmentColumns = [
-  { key: "customerName", title: "Contratante" },
-  { key: "name",         title: "Nome" },
-  { key: "fileType",     title: "Tipo" },
-  { key: "required",     title: "Obrigatório" },
-  { key: "createdAt",    title: "Data" },
+  { key: "Visualizar",         title: "Visualizar" },
+  { key: "description",        title: "Nome" },
+  { key: "createdAt",          title: "Data" },
 ];
 
 const reportColumns = [
-  { key: "customerName", title: "Contratante" },
   { key: "department",   title: "Departamento" },
   { key: "role",         title: "Função" },
   { key: "period",       title: "Período" },
@@ -140,7 +137,7 @@ export default function B2BPanel() {
   const uriMap: Record<TTab, string> = {
     movements:   "b2b-mass-movements",
     invoices:    "b2b-invoices",
-    attachments: "b2b-attachments",
+    attachments: "attachments",
     // reports:     "b2b-mass-movements",
   };
 
@@ -149,6 +146,13 @@ export default function B2BPanel() {
     try {
       setLoading(true);
       const uri = uriMap[activeTab];
+
+      if(uri == "attachments") {
+        const id = localStorage.getItem("id");
+        if(id) {
+          query += `&parentId=${id}&parent=customer-manager`;
+        }
+      }
       const { data } = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
       setPagination({
@@ -231,10 +235,12 @@ export default function B2BPanel() {
 
   const loadSummary = async () => {
     try {
+      const idLocal = localStorage.getItem("id");
+      const id = idLocal ? idLocal : "";
       const [mov, inv, att] = await Promise.all([
         api.get(`/b2b-mass-movements?deleted=false&pageSize=1&pageNumber=1`, configApi()),
         api.get(`/b2b-invoices?deleted=false&pageSize=1&pageNumber=1`, configApi()),
-        api.get(`/b2b-attachments?deleted=false&pageSize=1&pageNumber=1`, configApi()),
+        api.get(`/attachments?deleted=false&pageSize=1&pageNumber=1&parentId=${id}&parent=customer-manager`, configApi()),
       ]);
       const pending = await api.get(`/b2b-mass-movements?deleted=false&status=Pendente&pageSize=1&pageNumber=1`, configApi());
       setSummary({
@@ -243,13 +249,6 @@ export default function B2BPanel() {
         attachments:      att.data.result.totalCount,
         pendingMovements: pending.data.result.totalCount,
       });
-    } catch {}
-  };
-
-  const loadCustomers = async () => {
-    try {
-      const { data } = await api.get(`/customers?deleted=false&type=B2B&orderBy=corporateName&sort=asc&pageSize=200&pageNumber=1`, configApi());
-      setCustomers(data.result.data ?? []);
     } catch {}
   };
 
@@ -326,6 +325,7 @@ export default function B2BPanel() {
     if (["createdAt", "dueDate", "paidAt", "dateOfBirth"].includes(col.key)) return maskDate(v);
     if (col.key === "totalAmount")    return convertNumberMoney(v);
     if (col.key === "active")         return <StatusBadge value={v ? "Ativo" : "Inativo"} />;
+    if (col.key === "Visualizar")     return <IconView link={x.uri} />;
     if (col.key === "required")       return v ? <span className="text-green-600 font-semibold">Sim</span> : <span className="text-gray-400">Não</span>;
     if (col.key === "referenceMonth") return `${String(x.referenceMonth).padStart(2, "0")}/${x.referenceYear}`;
     if (col.key === "type") {
@@ -341,7 +341,6 @@ export default function B2BPanel() {
   };
 
   useEffect(() => {
-    loadCustomers();
     loadSummary();
   }, []);
 
@@ -394,7 +393,7 @@ export default function B2BPanel() {
                 }
               >
                 {/* ── Summary Cards ─────────────────────────────────────── */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 hidden">
                   {[
                     { label: "Movimentações", value: summary.movements,       color: "var(--primary-color)" },
                     { label: "Faturas",        value: summary.invoices,         color: "#3b82f6" },
@@ -427,15 +426,15 @@ export default function B2BPanel() {
                     >
                       {t.icon}
                       <span className="hidden sm:inline">{t.label}</span>
-                      {t.count !== undefined && (
+                      {t.key != "movements" && t.count !== undefined && (
                         <span
                           className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
                           style={
                             activeTab === t.key
                               ? { background: "rgba(255,255,255,.25)", color: "#fff" }
                               : { background: "var(--surface-border)", color: "var(--text-muted)" }
-                          }
-                        >
+                          }>
+                          
                           {t.count}
                         </span>
                       )}
@@ -471,52 +470,25 @@ export default function B2BPanel() {
                             <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
                           </div>
 
-                          {(activeTab === "movements" || activeTab === "invoices") && (
+                          {(activeTab === "invoices") && (
                             <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                               <label className="label slim-label-primary">Status</label>
                               <select className="select slim-select-primary" {...register("status")}>
                                 <option value="">Todos</option>
-                                {activeTab === "movements" && <>
-                                  <option value="Pendente">Pendente</option>
-                                  <option value="Processado">Processado</option>
-                                  <option value="Erro">Erro</option>
-                                </>}
-                                {activeTab === "invoices" && <>
-                                  <option value="Aberta">Aberta</option>
-                                  <option value="Fechada">Fechada</option>
-                                  <option value="Paga">Paga</option>
-                                  <option value="Cancelada">Cancelada</option>
-                                </>}
+                                <option value="Aberta">Aberta</option>
+                                <option value="Fechada">Fechada</option>
+                                <option value="Paga">Paga</option>
+                                <option value="Cancelada">Cancelada</option>
                               </select>
                             </div>
                           )}
 
-                          {/* {activeTab === "movements" && (
+                          {activeTab === "movements" && (
                             <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                              <label className="label slim-label-primary">Tipo</label>
-                              <select className="select slim-select-primary" {...register("type")}>
-                                <option value="">Todos</option>
-                                <option value="Inclusao">Inclusão</option>
-                                <option value="Exclusao">Exclusão</option>
-                                <option value="UpgradePrograma">Upgrade de Programa</option>
-                                <option value="DowngradePrograma">Downgrade de Programa</option>
-                              </select>
+                              <label className="label slim-label-primary">Departamento</label>
+                              <input {...register("department")} type="text" className="input slim-input-primary" placeholder="Ex: RH" />
                             </div>
-                          )} */}
-
-                          <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                            <label className="label slim-label-primary">Departamento</label>
-                            <input {...register("department")} type="text" className="input slim-input-primary" placeholder="Ex: RH" />
-                          </div>
-                          {/* <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                            <label className="label slim-label-primary">Período</label>
-                            <select className="select slim-select-primary" {...register("period")}>
-                              <option value="">Todos</option>
-                              <option value="Manha">Manhã</option>
-                              <option value="Tarde">Tarde</option>
-                              <option value="Noite">Noite</option>
-                            </select>
-                          </div> */}
+                          )}
 
                           <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
                             <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">

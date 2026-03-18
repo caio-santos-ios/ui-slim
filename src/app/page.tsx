@@ -27,6 +27,7 @@ export default function Home() {
             setIsLoading(true);
             const { data } = await api.post(`/auth/login`, body);
             const result = data.result.data;
+            localStorage.setItem("id", result.id);
             localStorage.setItem("role", result.role);
             localStorage.setItem("token", result.token);
             localStorage.setItem("name", result.name);
