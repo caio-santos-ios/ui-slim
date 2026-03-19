@@ -66,7 +66,7 @@ export const WhatsAppModal = () => {
             const initial = async () => {
                 setTime(5);
                 setCurrentWhatsApp("");
-                console.log(search)
+
                 if(search.fieldSearch == "parentId") {
                     await getAll(`parentId=${parentId}`);
                     setUri(`parentId=${parentId}`);
