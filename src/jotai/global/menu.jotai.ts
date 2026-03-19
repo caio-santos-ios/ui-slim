@@ -428,22 +428,22 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
         isOpen: true,
         authorized: false,
         subMenu: [
-            {
-                code: 'D01',
-                isOpen: false,
-                authorized: false,
-                subMenu: [],
-                description: 'Dashboard',
-                icon: '',
-                link: 'dashboard',
-                padding: 'px-4',
-                permissions: {
-                    create: false,
-                    update: false,
-                    read: false,
-                    delete: false
-                }
-            },
+            // {
+            //     code: 'D01',
+            //     isOpen: false,
+            //     authorized: false,
+            //     subMenu: [],
+            //     description: 'Dashboard',
+            //     icon: '',
+            //     link: 'dashboard',
+            //     padding: 'px-4',
+            //     permissions: {
+            //         create: false,
+            //         update: false,
+            //         read: false,
+            //         delete: false
+            //     }
+            // },
             {
                 code: 'D02',
                 isOpen: false,

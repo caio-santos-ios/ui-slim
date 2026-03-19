@@ -132,6 +132,7 @@ export default function B2BPanel() {
   const [modalMovement,   setModalMovement]   = useState(false);
   const [modalInvoice,    setModalInvoice]    = useState(false);
   const [modalAttachment, setModalAttachment] = useState(false);
+  const [filterOpened, setFilterOpened] = useState(true);
 
   const { register, reset, getValues } = useForm<TFilter>({ defaultValues: ResetFilter });
 
@@ -170,6 +171,7 @@ export default function B2BPanel() {
       setLoading(true);
       const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
+
       setPagination({
         currentPage: result.currentPage,
         data:        result.data,
@@ -366,9 +368,13 @@ export default function B2BPanel() {
                         {exportingExcel ? "Exportando..." : "Exportar Excel"}
                       </button>
                     )}
-                    <button onClick={() => openModal()} className="slim-btn slim-btn-primary">
-                      Adicionar
-                    </button>
+                    {
+                      activeTab != "invoices" && (
+                        <button onClick={() => openModal()} className="slim-btn slim-btn-primary">
+                          Adicionar
+                        </button>
+                      )
+                    }
                   </div>
                 }
               >
@@ -422,23 +428,26 @@ export default function B2BPanel() {
                   ))}
                 </div>
 
-                {/* ── Filtros ───────────────────────────────────────────── */}
                 <div className="grid grid-cols-12 mb-2">
                   <Accordion className="col-span-12" defaultOpenId="filter">
                     <AccordionItem id="filter">
                       <AccordionTrigger
+                        clickHeader={() => setFilterOpened(!filterOpened)}
                         icon={queryStr ? <MdFilterAlt size={15} /> : <MdFilterAltOff size={15} />}
-                        subtitle=""
-                      >
+                        subtitle="">
                         Filtros
                       </AccordionTrigger>
                       <AccordionContent>
                         <div className="grid grid-cols-12 gap-3">
 
-                          <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
-                            <label className="label slim-label-primary">Busca rápida</label>
-                            <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Busca rápida..." />
-                          </div>
+                          {
+                            activeTab != "invoices" && (
+                              <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
+                                <label className="label slim-label-primary">Busca rápida</label>
+                                <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Busca rápida..." />
+                              </div>
+                            )
+                          }
 
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Data — início</label>
@@ -485,7 +494,7 @@ export default function B2BPanel() {
                 {/* ── Tabela ────────────────────────────────────────────── */}
                 <DataTable
                   isAction={activeTab === "invoices" || activeTab === "attachments"}
-                  classContainer="max-h-[calc(100dvh-(var(--height-header)+18rem))]"
+                  classContainer={`${filterOpened ? 'max-h-[calc(100dvh-(var(--height-header)+23rem))]' : 'max-h-[calc(100dvh-(var(--height-header)+16rem))]'}`}
                   columns={columns}
                 >
                   <>

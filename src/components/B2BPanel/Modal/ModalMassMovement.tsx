@@ -5,6 +5,9 @@ import { useForm } from "react-hook-form";
 import { IoClose } from "react-icons/io5";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
+import { loadingAtom } from "@/jotai/global/loading.jotai";
+import { useAtom } from "jotai";
+import { Button } from "@/components/Global/Button";
 
 type TProps = {
   isOpen: boolean;
@@ -21,7 +24,6 @@ type TForm = {
   programId:   string;
   notes:       string;
   fileName:    string;
-  // beneficiary
   benName:        string;
   benCpf:         string;
   benDateOfBirth: string;
@@ -38,6 +40,7 @@ type TForm = {
 export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClose, onSuccess }: TProps) => {
   const { register, handleSubmit, reset, watch } = useForm<TForm>();
   const movType = watch("type");
+  const [loading, setLoading] = useAtom(loadingAtom);
 
   useEffect(() => {
     if (isOpen && typeModal === "edit" && body?.id) {
@@ -67,37 +70,19 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
 
   const onSubmit = async (values: TForm) => {
     try {
-      const payload: any = {
-        customerId: values.customerId,
-        type:       values.type,
-        programId:  values.programId,
-        notes:      values.notes,
-        fileName:   values.fileName,
-      };
-
-      if (values.type === "Inclusao") {
-        payload.beneficiary = {
-          name:        values.benName,
-          cpf:         values.benCpf,
-          dateOfBirth: values.benDateOfBirth || null,
-          gender:      values.benGender,
-          email:       values.benEmail,
-          phone:       values.benPhone,
-          whatsapp:    values.benWhatsapp,
-          department:  values.benDepartment,
-          role:        values.benRole,
-          planId:      values.benPlanId,
-        };
-      }
+      setLoading(true);
 
       const formBody = new FormData();      
       const attachment: any = document.querySelector('#attachment');
       if (attachment.files[0]) formBody.append('file', attachment.files[0]);
 
       const { status } = await api.put("/customer-recipients/import-manager-painel", formBody, configApi(false));
+      resolveResponse({ status, message: "Movimentado com sucesso" });
       onSuccess();
     } catch (error) {
       resolveResponse(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -163,9 +148,7 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
           {/* Footer */}
           <div className="col-span-12 flex justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} className="slim-btn slim-btn-secondary">Cancelar</button>
-            <button type="submit" className="slim-btn slim-btn-primary">
-              Salvar
-            </button>
+            <button type="submit" className="slim-btn slim-btn-primary">Salvar</button>
           </div>
         </form>
       </div>

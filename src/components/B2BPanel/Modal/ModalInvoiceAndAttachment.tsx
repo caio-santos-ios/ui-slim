@@ -97,8 +97,8 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
           <button onClick={onClose} className="text-white/80 hover:text-white transition-colors"><IoClose size={20} /></button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 grid grid-cols-12 gap-4">
-          <div className="flex flex-col col-span-6 sm:col-span-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6 grid grid-cols-2">
+          {/* <div className="flex flex-col col-span-6 sm:col-span-3">
             <label className="label slim-label-primary">Mês *</label>
             <select {...register("referenceMonth", { required: true })} className="select slim-select-primary">
               <option value="">Mês</option>
@@ -124,9 +124,9 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
           <div className="flex flex-col col-span-6 sm:col-span-3">
             <label className="label slim-label-primary">Vencimento</label>
             <input {...register("dueDate")} type="date" className="input slim-input-primary" />
-          </div>
+          </div> */}
 
-          <div className="flex flex-col col-span-6 sm:col-span-3">
+          <div className="flex flex-col col-span-2">
             <label className="label slim-label-primary">Status</label>
             <select {...register("status")} className="select slim-select-primary">
               <option value="Aberta">Aberta</option>
@@ -136,7 +136,7 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
             </select>
           </div>
 
-          <div className="flex flex-col col-span-6 sm:col-span-4">
+          {/* <div className="flex flex-col col-span-6 sm:col-span-4">
             <label className="label slim-label-primary">Valor Total (R$)</label>
             <input {...register("totalAmount")} type="number" step="0.01" className="input slim-input-primary" placeholder="0.00" />
           </div>
@@ -144,12 +144,12 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
           <div className="flex flex-col col-span-6 sm:col-span-3">
             <label className="label slim-label-primary">Qtd. Beneficiários</label>
             <input {...register("beneficiaryCount")} type="number" className="input slim-input-primary" placeholder="0" />
-          </div>
+          </div> */}
 
           <div className="col-span-12 flex justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} className="slim-btn slim-btn-secondary">Cancelar</button>
             <button type="submit" className="slim-btn slim-btn-primary">
-              {typeModal === "create" ? "Criar Fatura" : "Salvar Alterações"}
+              {typeModal === "create" ? "Criar Fatura" : "Salvar"}
             </button>
           </div>
         </form>

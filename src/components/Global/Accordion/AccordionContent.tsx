@@ -106,16 +106,22 @@ type TTriggerProps = {
     icon?:      React.ReactNode;
     subtitle?:  string;
     className?: string;
+    clickHeader?: () => void;
 };
 
-export const AccordionTrigger = ({ children, icon, subtitle, className }: TTriggerProps) => {
+export const AccordionTrigger = ({ children, icon, subtitle, className, clickHeader }: TTriggerProps) => {
     const { id, isOpen } = useContext(ItemCtx);
     const { toggle }     = useContext(AccordionCtx);
 
     return (
         <button
             type="button"
-            onClick={() => toggle(id)}
+            onClick={() => {
+                toggle(id);
+                if(clickHeader) {
+                    clickHeader();
+                }
+            }}
             aria-expanded={isOpen}
             className={className}
             style={{

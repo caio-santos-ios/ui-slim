@@ -34,7 +34,12 @@ export default function Home() {
             localStorage.setItem("admin", result.admin);
             localStorage.setItem("photo", result.photo);
             localStorage.setItem("modules", JSON.stringify(result.modules));
-            router.push("/dashboard");
+
+            if(result.role == "Manager") {
+                router.push("/management/b2b-panel");
+            } else {
+                router.push("/dashboard");
+            }
         } catch (error) {
             resolveResponse(error);
         } finally {
@@ -98,7 +103,7 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-[var(--surface-bg)]">
+                    <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-(--surface-bg)">
                         <div className="w-full max-w-md">
                             <div className="flex justify-center mb-8 lg:hidden">
                                 <Logo className="h-12" />
@@ -107,9 +112,9 @@ export default function Home() {
                             <div className="slim-form-login">
                                 <div className="mb-7">
                                     <div className="mt-3 flex gap-1">
-                                        <div className="h-0.5 w-8 rounded-full bg-[var(--primary-color)]" />
-                                        <div className="h-0.5 w-4 rounded-full bg-[var(--accent-color)]" />
-                                        <div className="h-0.5 w-2 rounded-full bg-[var(--accent-color)]/40" />
+                                        <div className="h-0.5 w-8 rounded-full bg-(--primary-color)" />
+                                        <div className="h-0.5 w-4 rounded-full bg-(--accent-color)" />
+                                        <div className="h-0.5 w-2 rounded-full bg-(--accent-color)/40" />
                                     </div>
                                 </div>
 
@@ -130,19 +135,19 @@ export default function Home() {
 
                                     <div>
                                         <label className="slim-label-primary" htmlFor="password">Senha</label>
-                                        <div className={`relative flex items-center rounded-[var(--radius-sm)] border-[1.5px] transition-all ${errors.password ? "border-red-500" : "border-[var(--surface-border)] focus-within:border-[var(--accent-color)] focus-within:shadow-[0_0_0_3px_rgba(102,204,153,.18)]"} bg-[var(--surface-card)]`}>
+                                        <div className={`relative flex items-center rounded-sm border-[1.5px] transition-all ${errors.password ? "border-red-500" : "border-(--surface-border) focus-within:border-(--accent-color) focus-within:shadow-[0_0_0_3px_rgba(102,204,153,.18)]"} bg-(--surface-card)`}>
                                             <input
                                                 {...register("password", { required: "Senha é obrigatória" })}
                                                 id="password"
                                                 placeholder="••••••••"
-                                                className="flex-1 py-[.5rem] px-3 text-sm bg-transparent outline-none text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
+                                                className="flex-1 py-2 px-3 text-sm bg-transparent outline-none text-(--text-muted) placeholder:text-(--text-muted)"
                                                 style={{ border: "none", boxShadow: "none", width: "100%", height: "auto" }}
                                                 type={passwordEnabled ? "text" : "password"}
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setPasswordEnabled(!passwordEnabled)}
-                                                className="px-3 text-[var(--text-muted)] hover:text-[var(--accent-color)] transition-colors"
+                                                className="px-3 text-(--text-muted) hover:text-(--accent-color) transition-colors"
                                                 style={{ background: "transparent", border: "none", boxShadow: "none", height: "auto", padding: "0 .75rem" }}
                                             >
                                                 {passwordEnabled ? <FaEye size={16} /> : <FaEyeSlash size={16} />}
@@ -152,7 +157,7 @@ export default function Home() {
                                     </div>
 
                                     <div className="flex items-center justify-end">
-                                        <a href="/erp/reset-password" className="text-xs font-semibold text-[var(--accent-color)] hover:underline transition-all">
+                                        <a href="/erp/reset-password" className="text-xs font-semibold text-(--accent-color) hover:underline transition-all">
                                             Esqueceu a senha?
                                         </a>
                                     </div>
