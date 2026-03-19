@@ -13,7 +13,6 @@ import { MdEdit } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
 import axios from "axios";
 import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
-import { TSeller } from "@/types/masterData/seller/seller.type";
 import { ResetCustomerRecipient, TRecipient } from "@/types/masterData/customers/customerRecipient.type";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { TPlan } from "@/types/masterData/plans/plans.type";
@@ -21,8 +20,7 @@ import { toast } from "react-toastify";
 import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
 import { FaCirclePlus } from "react-icons/fa6";
 import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
-import { convertInputStringMoney, convertMoneyToNumber, convertNumberMoney } from "@/utils/convert.util";
-import MultiSelect from "@/components/Global/MultiSelect";
+import { convertMoneyToNumber, convertNumberMoney } from "@/utils/convert.util";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 
 type TProp = {
@@ -30,9 +28,10 @@ type TProp = {
     onClose: () => void;
     contractorId: string;
     contractorType: string;
+    planType: string;
 }
 
-export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: TProp) => {
+export const ModalRecipient = ({contractorId, contractorType, planType, onClose, isOpen}: TProp) => {
     const [_, setLoading] = useAtom(loadingAtom);
     const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
     const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
@@ -50,7 +49,6 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
     const [message, setMessage] = useState('');
 
     const { register, handleSubmit, reset, getValues, watch, setValue, formState: { errors }} = useForm<TRecipient>();
-    const serviceModuleIds = watch("serviceModuleIds");
 
     const onSubmit: SubmitHandler<TRecipient> = async (body: TRecipient) => {
         if(!contractorId) return toast.warn("Contratante é obrigatório", { theme: 'colored'});
@@ -67,7 +65,6 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         body.subTotal = convertMoneyToNumber(body.subTotal);
         body.discount = convertMoneyToNumber(body.discount);
         if(!body.discountPercentage) body.discountPercentage = 0;
-        // body.discountPercentage = convertMoneyToNumber(body.discountPercentage),
         body.total = convertMoneyToNumber(body.total)
         
         if(!body.id) {
@@ -337,6 +334,11 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
         getSelectPlan();
         getRecipient();
         onReturnGeneric();
+        
+        if(planType == "Familiar" || planType == "Concessão - Familia") {
+            setValue("bond", "Dependente");
+            console.log(planType)
+        };
     }, []);
 
     return (
@@ -432,7 +434,7 @@ export const ModalRecipient = ({contractorId, contractorType, onClose, isOpen}: 
                     </select>
                 </div>                
                 <div className={`flex flex-col mb-2`}>
-                    <label className={`label slim-label-primary`}>Plano</label>
+                    <label className={`label slim-label-primary`}>Programas</label>
                     <select className="select slim-select-primary" {...register("planId")}>
                         <option value="">Selecione</option>
                         {

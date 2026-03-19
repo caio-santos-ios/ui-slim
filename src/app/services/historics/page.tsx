@@ -57,7 +57,7 @@ export default function Historic() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Histórico" breadcrumpIcon="MdHistory"
+              <SlimContainer menu="Atendimentos" breadcrump="Histórico" breadcrumpIcon="MdHistory"
                 buttons={
                   <></>
                 }>

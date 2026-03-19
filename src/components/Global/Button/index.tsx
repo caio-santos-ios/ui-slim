@@ -16,7 +16,7 @@ export const Button = ({isLoading, text, click, theme = "primary", styleClassBtn
 
     return (
         <button type={type} onClick={click} className={`slim-btn slim-btn-${theme} ${styleClassBtn}`} disabled={isLoading}>
-            {isLoading ? <div className={`spinner slim-btn-spinner-${theme}`}></div> : text}
+            {isLoading ? <div className={`spinner slim-btn-spinner-${theme}`}></div> : <span className="text-center w-full">{text}</span>}
         </button>
     )
 }

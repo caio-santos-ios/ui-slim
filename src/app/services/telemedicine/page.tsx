@@ -78,7 +78,7 @@ export default function Customer() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Telemedicina" breadcrumpIcon="MdVideoCall"
+              <SlimContainer menu="Atendimentos" breadcrump="Telemedicina" breadcrumpIcon="MdVideoCall"
                 buttons={<></>}>
 
                 <TableTelemedicine list={pagination.data} />

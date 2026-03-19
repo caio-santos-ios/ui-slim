@@ -2,4 +2,5 @@ import { atom } from "jotai";
 
 export const userLoggerAtom = atom<boolean>(false);
 export const sincAtom = atom<boolean>(false);
-export const user = atom<any>({})
+export const user = atom<any>({});
+export const roleUserAtom = atom<string>("");

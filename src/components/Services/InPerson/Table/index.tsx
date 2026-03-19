@@ -19,12 +19,11 @@ import { TRecipient } from "@/types/masterData/customers/customerRecipient.type"
 import { TAccreditedNetwork } from "@/types/masterData/accreditedNetwork/accreditedNetwork.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 import { TProcedure } from "@/types/masterData/procedure/procedure.type";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { ResetInPerson, ResetInPersonSearch, TInPersonSearch } from "@/types/service/inPerson/inPerson.type";
-import MultiSelect from "@/components/Global/MultiSelect";
-import { Button } from "@/components/Global/Button";
+import { useForm } from "react-hook-form";
+import { ResetInPersonSearch, TInPersonSearch } from "@/types/service/inPerson/inPerson.type";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
 import { useAtom } from "jotai";
+import { WhatsAppButtonModal } from "@/components/notification/whatsapp/WhatsAppButtonModal";
 
 type TProp = {
     list: TAccountsPayable[],
@@ -204,15 +203,17 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
             {
                 list.length > 0 &&
                 <>
-                    <div className="slim-container-table h-[calc(100dvh-24rem)] w-full">                    
+                    <div className="slim-container-table h-[calc(100dvh-18rem)] w-full">                    
                         <table className="min-w-full divide-y">
                             <thead className="slim-table-thead">
                                 <tr>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Beneficiário</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>CPF Beneficiário</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Unidade</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Profissional</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Módulo</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Data</th>
+                                    <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Horário</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Responsável p/ Pg.</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Status</th>
                                     <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Valor</th>
@@ -226,10 +227,12 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                         return (
                                             <tr className="slim-tr" key={x.id}>                                            
                                                 <td className="px-4 py-2">{x.recipientDescription}</td>
+                                                <td className="px-4 py-2">{x.recipientCpf}</td>
                                                 <td className="px-4 py-2">{x.accreditedNetworkDescription}</td>
                                                 <td className="px-4 py-2">{x.professionalName}</td>
                                                 <td className="px-4 py-2">{x.serviceModuleDescription}</td>
                                                 <td className="px-4 py-2">{maskDate(x.date)}</td>
+                                                <td className="px-4 py-2">{x.hour}</td>
                                                 <td className="px-4 py-2">{x.responsiblePayment}</td>
                                                 <td className="px-4 py-2">
                                                     <span className={`${normalizeStatus(x.status)} py-1 px-2 rounded-lg font-bold`}>
@@ -238,7 +241,10 @@ export const TableInPerson = ({list, handleReturnModal}: TProp) => {
                                                 </td>
                                                 <td className="px-4 py-2">{formattedMoney(x.value)}</td>
                                                 <td className="p-2">
-                                                    <div className="flex justify-center gap-3">              
+                                                    <div className="flex justify-center gap-3"> 
+                                                        {
+                                                            <WhatsAppButtonModal fieldSearch="parentId" type="" parent="" id={x.id}/>
+                                                        }             
                                                         {
                                                             permissionUpdate("2", "B22") &&
                                                             <PDFDownloadLink 

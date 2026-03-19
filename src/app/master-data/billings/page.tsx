@@ -119,7 +119,7 @@ export default function Billing() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Faturamento" breadcrumpIcon="MdReceiptLong"
+              <SlimContainer menu="Cadastros" breadcrump="Faturamento" breadcrumpIcon="MdReceiptLong"
                 buttons={
                   <>
                   {

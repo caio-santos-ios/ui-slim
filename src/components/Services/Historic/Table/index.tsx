@@ -71,7 +71,7 @@ export const TableHistoric = ({list}: TProp) => {
                                             <td className="px-4 py-2">{x.date}</td>
                                             <td className="px-4 py-2">{x.time}</td>
                                             <td className="px-4 py-2">{x.userName}</td>
-                                            <td className="px-4 py-2">{maskDate(x.createdAt, true)}</td>
+                                            <td className="px-4 py-2">{maskDate(x.createdAt, "seconds")}</td>
                                         </tr>
                                     )
                                 })

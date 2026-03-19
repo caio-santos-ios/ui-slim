@@ -1,8 +1,3 @@
-header {
-    font-family: "Kedebideri", sans-serif;
-    height: var(--height-header);
-}
-
-.container-table {
-    max-height: calc(100dvh - var(--height-header) * 2);
-}
+/* DataTable extra — thin border dividers in tbody */
+.slim-body-table tr + tr { border-top: 1px solid var(--surface-border-light); }
+.dark .slim-body-table tr + tr { border-color: var(--surface-border); }

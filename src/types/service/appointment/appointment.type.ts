@@ -3,6 +3,7 @@ export type TAppointment = {
     beneficiaryUuid: string;
     availabilityUuid: string;
     specialtyUuid: string;
+    ProfessionalName: string;
     approveAdditionalPayment: boolean;
 }
 
@@ -11,7 +12,8 @@ export const ResetAppointment: TAppointment = {
     beneficiaryUuid: "",
     availabilityUuid: "",
     specialtyUuid: "",
-    approveAdditionalPayment: true
+    approveAdditionalPayment: true,
+    ProfessionalName: "",
 }
 
 export type TAppointmentSearch = {        

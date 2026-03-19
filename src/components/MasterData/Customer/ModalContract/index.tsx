@@ -395,7 +395,7 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
                     </select>
                 </div>   
                 <div className={`flex flex-col col-span-2 mb-2`}>
-                    <label className={`label slim-label-primary`}>Planos</label>
+                    <label className={`label slim-label-primary`}>Programas</label>
                     <select className="select slim-select-primary" {...register("planId")}>
                         <option value="">Selecione</option>
                         {
@@ -406,7 +406,7 @@ export const ModalContract = ({contractorId, contractorType, onClose}: TProp) =>
                     </select>
                 </div> 
                 <div className={`flex flex-col col-span-2 mb-2`}>
-                    <label className={`label slim-label-primary`}>Módulo de Serviços</label>
+                    <label className={`label slim-label-primary`}>Módulos de Serviços</label>
                     <MultiSelect maxSelected={1} descriptionSelectedMax="Módulos de Serviço Selecionados" value={serviceModuleIds ?? []} onChange={(items) => selectModule(items)} options={serviceModule} labelKey="name" valueKey="id" />
                 </div> 
                 <div className={`flex flex-col ${watch("paymentCondition") == "Parcelado" ? 'col-span-1' : 'col-span-1'} mb-2`}>

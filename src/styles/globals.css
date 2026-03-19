@@ -1,50 +1,130 @@
 @import "tailwindcss";
 
+/* =============================================
+   SLIM SAÚDE × TAILADMIN — Design System v2
+   Brand: #003366 (Navy) + #66CC99 (Mint)
+   ============================================= */
+
 :root {
-  --primary-color:#1a3a5c;
-  --primary-text-color:#1a3a5c;
-  --primary-color-hover:#0f2840;
+  /* ── Core brand ── */
+  --primary-color:       #003366;
+  --primary-color-hover: #002850;
+  --primary-color-light: #004080;
+  --accent-color:        #66CC99;
+  --accent-color-hover:  #52b885;
+  --accent-color-light:  rgba(102,204,153,.12);
 
-  --secondary-color: #f0f0f0;
-  --secondary-text-color: #f0f0f0;
-  --secondary-color-hover: #f0f0f0;
+  /* ── Brand scale (navy) ── */
+  --color-brand-25:  #f0f4f8;
+  --color-brand-50:  #e1eaf4;
+  --color-brand-100: #c3d5e9;
+  --color-brand-200: #9ab7d5;
+  --color-brand-300: #6491b8;
+  --color-brand-400: #3a6fa0;
+  --color-brand-500: #003366;
+  --color-brand-600: #002d5c;
+  --color-brand-700: #002550;
+  --color-brand-800: #001d40;
+  --color-brand-900: #001530;
+  --color-brand-950: #000d1e;
 
-  --tree-color: #fff;
-  --tree-color-hover: #ff;
+  /* ── Layout ── */
+  --width-side-bar: 16.25rem;
+  --height-header:  4.25rem;
 
-  --width-side-bar: 16rem;
-  --height-header: 6rem;
+  /* ── Surfaces ── */
+  --surface-bg:           #F0F4F8;
+  --surface-card:         #FFFFFF;
+  --surface-border:       #DDE3ED;
+  --surface-border-light: #EEF2F7;
+  --surface-hover:        #F7FAFC;
 
-  --color-brand-25: #f2f5f8;
-  --color-brand-50: #e8edf2;
-  --color-brand-100: #cedbe6;
-  --color-brand-200: #a2bcce;
-  --color-brand-300: #6d93b0;
-  --color-brand-400: #457091;
-  --color-brand-500: #1a3a5c;
-  --color-brand-600: #163250;
-  --color-brand-700: #122942;
-  --color-brand-800: #0f2135;
-  --color-brand-900: #0c1a29;
-  --color-brand-950: #07101a;
+  /* ── Text ── */
+  --text-primary:   #0D1B2E;
+  --text-secondary: #4A5A70;
+  --text-muted:     #8A99AE;
+
+  /* ── Sidebar ── */
+  --sidebar-bg:          #002952;
+  --sidebar-bg-dark:     #001f3f;
+  --sidebar-text:        #C8D8EC;
+  --sidebar-text-muted:  #7A9BBF;
+  --sidebar-item-hover:  rgba(102,204,153,.10);
+  --sidebar-item-active: #66CC99;
+
+  /* ── Status ── */
+  --color-success:    #10B981;
+  --color-success-bg: #D1FAE5;
+  --color-danger:     #EF4444;
+  --color-danger-bg:  #FEE2E2;
+  --color-warning:    #F59E0B;
+  --color-warning-bg: #FEF3C7;
+  --color-info:       #3B82F6;
+  --color-info-bg:    #DBEAFE;
+
+  /* ── Shadows ── */
+  --shadow-xs: 0 1px 2px rgba(0,51,102,.05);
+  --shadow-sm: 0 2px 6px rgba(0,51,102,.07), 0 1px 2px rgba(0,51,102,.04);
+  --shadow-md: 0 4px 14px rgba(0,51,102,.09), 0 2px 4px rgba(0,51,102,.05);
+  --shadow-lg: 0 10px 28px rgba(0,51,102,.12), 0 4px 8px rgba(0,51,102,.06);
+  --shadow-brand: 0 4px 16px rgba(0,51,102,.28);
+  --shadow-accent: 0 4px 16px rgba(102,204,153,.32);
+
+  /* ── Radius ── */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.4375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
 }
 
-@theme inline {
-  /* --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono); */
+/* ─── DARK MODE ─────────────────────────────── */
+.dark {
+  --primary-color:       #003366;
+  --primary-color-hover: #004499;
+  --primary-color-light: #004d99;
+
+  --surface-bg:           #0D1B2E;
+  --surface-card:         #122240;
+  --surface-border:       #1E3355;
+  --surface-border-light: #192C48;
+  --surface-hover:        #1A2E4A;
+
+  --text-primary:   #DCE8F5;
+  --text-secondary: #8AA8C8;
+  --text-muted:     #4E6B8A;
+
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-sm: 0 2px 6px rgba(0,0,0,.4);
+  --shadow-md: 0 4px 14px rgba(0,0,0,.45);
+  --shadow-lg: 0 10px 28px rgba(0,0,0,.5);
+
+  --sidebar-bg:       #001B38;
+  --sidebar-bg-dark:  #001529;
 }
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
+/* ─── BASE ──────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "Kedebideri", sans-serif;
+  background: var(--surface-bg);
+  color: var(--text-primary);
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── SCROLLBAR ─────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+
+/* ─── Modal animation ───────────────────────── */
+@keyframes modal-slide-in {
+    from { opacity: 0; transform: translateY(-14px) scale(.97); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
 }

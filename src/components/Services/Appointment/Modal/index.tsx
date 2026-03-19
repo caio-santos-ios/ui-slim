@@ -14,6 +14,7 @@ import { ResetAppointment, TAppointment } from "@/types/service/appointment/appo
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { RiCalendarScheduleFill } from "react-icons/ri";
+import { IoClose } from "react-icons/io5";
 
 type TProp = {
     title: string;
@@ -49,14 +50,13 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
 
     const create = async (body: TAppointment) => {
         try {
-            console.log(body)
             const form: any = {...body};
 
             const specialist = specialties.find(s => s.id == form.specialtyUuid);
             if(specialist) {
                 form.specialtyName = specialist.name;
             };
-            console.log(recipient)
+
             const recipientObj = recipient.find((r: any) => r.rapidocId == body.beneficiaryUuid);
             if(recipientObj) {
                 form.beneficiaryName = recipientObj.name;
@@ -192,15 +192,50 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
     }, []);
 
     return (
-        <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
-            <div className="fixed inset-0 z-10 w-screen overflow-y-auto container-modal">
-                <div className="flex min-h-full items-center justify-center p-4">
-                    <DialogPanel transition className="slim-modal w-full max-w-4xl rounded-xl bg-gray-300 p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
-                        <div className="slim-modal-title mb-4 border-b-3">
-                            <DialogTitle as="h1" className="text-xl font-bold primary-color">{title}</DialogTitle>
+        <>
+            <Dialog
+                open={isOpen}
+                as="div"
+                className="relative z-[999] focus:outline-none"
+                onClose={cancel}
+            >
+                {/* Backdrop */}
+                <div
+                    className="fixed inset-0 z-[999]"
+                    style={{ background: "rgba(0,15,35,.65)", backdropFilter: "blur(5px)" }}
+                />
+
+                <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
+                    <DialogPanel
+                        className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl"
+                        style={{
+                            background: "var(--surface-card)",
+                            border: "1px solid var(--surface-border)",
+                            animation: "modal-slide-in .25s cubic-bezier(.34,1.56,.64,1)",
+                        }}
+                    >
+                        {/* ── Header ── */}
+                        <div
+                            className="flex items-center justify-between px-6 py-0 h-14"
+                            style={{
+                                background: "linear-gradient(135deg, var(--primary-color-light) 0%, var(--primary-color) 100%)",
+                            }}
+                        >
+                            <DialogTitle as="h2" className="text-sm font-bold text-white">
+                                {title}
+                            </DialogTitle>
+                            <span
+                                onClick={cancel}
+                                className="flex items-center justify-center w-8 h-8 rounded-lg transition-all cursor-pointer"
+                                style={{ background: "rgba(255,255,255,.1)", border: "none", boxShadow: "none", color: "rgba(255,255,255,.7)" }}
+                            >
+                                <IoClose size={18} />
+                            </span>
                         </div>
 
-                        <form onSubmit={handleSubmit(onSubmit)}>
+                        {/* ── Body ── */}
+                        <div className="p-6 overflow-y-auto" style={{ maxHeight: "calc(100dvh - 16rem)" }}>
+                            <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-2">
                                 <div className={`flex flex-col col-span-2 lg:col-span-1 mb-2`}>
                                     <label className={`label slim-label-primary`}>Beneficiário</label>
@@ -276,9 +311,11 @@ export const ModalAppointment = ({title, isOpen, setIsOpen, onClose, handleRetur
                                 <Button type="submit" text="Salvar" theme="primary" styleClassBtn=""/>
                             </div>  
                         </form>
+                        </div>
+
                     </DialogPanel>
                 </div>
-            </div>
-        </Dialog>    
+            </Dialog>
+        </>    
     )
 }

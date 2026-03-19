@@ -21,6 +21,10 @@ export type TCustomerContractor = {
     dateOfBirth: any | null;
     gender: string;
     minimumValue: any;
+    taxRegime: string;
+    ratRate: number;
+    technicalManager: string;
+    sheetValue: any;
 }
 
 export const ResetCustomerContractor: TCustomerContractor = {
@@ -63,7 +67,11 @@ export const ResetCustomerContractor: TCustomerContractor = {
         email: "",
         notes: "",
     },
-    minimumValue: ""
+    minimumValue: "",
+    taxRegime: "",
+    ratRate: 0,
+    technicalManager: "",
+    sheetValue: 0,
 }
 
 export type TResponsible = {
