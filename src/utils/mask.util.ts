@@ -1,32 +1,31 @@
-export const maskDate = (dateString: string, isTime: boolean = false) => {
+export const maskDate = (
+  dateString: string, 
+  format: "onlyDate" | "time" | "seconds" = "onlyDate"
+) => {
   if (!dateString) return "";
 
-  const [datePart, timePart] = dateString.split("T");
-  const [year, month, day] = datePart.split("-");
+  const arrayDate = dateString.split("T")[0].split("-");
+  const date = new Date(dateString);
+  
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const formattedDate = `${arrayDate[2]}/${arrayDate[1]}/${arrayDate[0]}`;
 
-  let hours = 0;
-  let minutes = 0;
+  const h = String(date.getHours()).padStart(2, "0");
+  const m = String(date.getMinutes()).padStart(2, "0");
+  const s = String(date.getSeconds()).padStart(2, "0");
 
-  if (timePart) {
-    const [h, m] = timePart.split(":");
-    hours = parseInt(h);
-    minutes = parseInt(m);
+  switch (format) {
+    case "time":
+      return `${formattedDate} ${h}:${m}`;
+    case "seconds":
+      return `${formattedDate} ${h}:${m}:${s}`;
+    case "onlyDate":
+      return formattedDate;
+    default:
+      return formattedDate;
   }
-
-  const date = new Date(
-    parseInt(year),
-    parseInt(month) - 1,
-    parseInt(day),
-    hours,
-    minutes
-  );
-
-  return date.toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    ...(isTime && { hour: "2-digit", minute: "2-digit" }), 
-  });
 };
 
 export const maskPhone = (event: React.ChangeEvent<HTMLInputElement>) => {

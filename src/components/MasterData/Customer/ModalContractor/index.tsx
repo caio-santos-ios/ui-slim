@@ -65,9 +65,15 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
 
         if(body.minimumValue) body.minimumValue = convertStringMoney(body.minimumValue);
         if(!body.minimumValue) body.minimumValue = 0;
+        
+        if(body.sheetValue) body.sheetValue = convertStringMoney(body.sheetValue);
+        if(!body.sheetValue) body.sheetValue = 0;
+
         if(body.type == "B2B") {
             if(body.minimumValue < 1) return toast.warn("Fatura Mínima não pode ser menor que R$ 1,00", {theme: 'colored'});
         };
+
+        if(!body.ratRate) body.ratRate = 0;
 
         if(!body.id) {
             await create(body);
@@ -364,7 +370,12 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                     type == "B2B" ?
                     <>
                         <div className={`flex flex-col mb-2`}>
-                            <label className={`label slim-label-primary flex gap-1 items-center`}>Segmento <span onClick={() => genericTable("segmento-contratante-cliente")} className="pr-2 cursor-pointer"><FaCirclePlus /></span></label>
+                            <label className={`label slim-label-primary flex gap-1 items-center`}>
+                                Segmento 
+                                <span onClick={() => genericTable("segmento-contratante-cliente")} className="pr-2 cursor-pointer">
+                                    <FaCirclePlus />
+                                </span>
+                            </label>
                             <select {...register("segment")} className="select slim-select-primary">
                                 <option value="">Selecione</option>
                                 {
@@ -375,11 +386,34 @@ export const ModalContractor = ({body, onSelectValue, onSelectType, onSuccess, o
                         <div className={`flex flex-col mb-2`}>
                             <label className={`label slim-label-primary`}>Fatura Mínima</label>
                             <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("minimumValue")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                        </div> 
+                        <div className={`flex flex-col mb-2`}>
+                            <label className={`label slim-label-primary flex gap-1 items-center`}>Regime de Tributação</label>
+                            <select {...register("taxRegime")} className="select slim-select-primary">
+                                <option value="Simples Nacional">Simples Nacional</option>
+                                <option value="Lucro Real">Lucro Real</option>
+                                <option value="Lucro Presumido">Lucro Presumido</option>
+                            </select>
                         </div>  
+                        {
+                            watch("taxRegime") != "Simples Nacional" &&
+                            <div className={`flex flex-col mb-2`}>
+                                <label className={`label slim-label-primary`}>Alíquota RAT</label>
+                                <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("ratRate")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                            </div>
+                        }
+                        <div className={`flex flex-col mb-2`}>
+                            <label className={`label slim-label-primary`}>Responsável Técnico</label>
+                            <input {...register("technicalManager")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                        </div> 
+                        <div className={`flex flex-col mb-2`}>
+                            <label className={`label slim-label-primary`}>Folha de Pagemento</label>
+                            <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("sheetValue")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
+                        </div>
                     </>
                     : 
                     <div className={`flex flex-col mb-2`}>
-                        <label className={`label slim-label-primary`}>Tipo de Plano</label>
+                        <label className={`label slim-label-primary`}>Tipo de Programas</label>
                         <select {...register("typePlan")} className="select slim-select-primary">
                             <option value="">Selecione</option>
                             <option value="Individual">Individual</option>

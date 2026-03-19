@@ -4,6 +4,33 @@ import { atom } from "jotai";
 export const menuOpenAtom = atom<boolean>(false);
 export const menuRoutinesAtom = atom<TMenuRoutine[]>([
     {
+        code: '00',
+        isOpen: true,
+        authorized: false,
+        description: 'Home',
+        icon: 'FiGrid',
+        link: '',
+        padding: 'px-2',
+        subMenu: [
+            {
+                code: '001',
+                isOpen: true,
+                subMenu: [],
+                description: 'Dashboard',
+                icon: '',
+                link: '/dashboard',
+                padding: 'px-4',
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },     
+        ],
+    },
+    {
         code: '1',
         isOpen: true,
         authorized: false,
@@ -64,7 +91,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 code: 'A14',
                 isOpen: true,
                 subMenu: [],
-                description: 'Módulo de Serviços',
+                description: 'Módulos de Serviços',
                 icon: '',
                 link: 'master-data/service-modules',
                 padding: 'px-4',
@@ -80,7 +107,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 code: 'A15',
                 isOpen: true,
                 subMenu: [],
-                description: 'Planos',
+                description: 'Programas',
                 icon: '',
                 link: 'master-data/plas',
                 padding: 'px-4',
@@ -392,6 +419,65 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
             }
         ],
         description: 'Financeiro',
+        icon: 'BsCashCoin',
+        link: '',
+        padding: 'px-2'
+    },
+    {
+        code: '4',
+        isOpen: true,
+        authorized: false,
+        subMenu: [
+            // {
+            //     code: 'D01',
+            //     isOpen: false,
+            //     authorized: false,
+            //     subMenu: [],
+            //     description: 'Dashboard',
+            //     icon: '',
+            //     link: 'dashboard',
+            //     padding: 'px-4',
+            //     permissions: {
+            //         create: false,
+            //         update: false,
+            //         read: false,
+            //         delete: false
+            //     }
+            // },
+            {
+                code: 'D02',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Painel do Gestor',
+                icon: '',
+                link: 'management/b2b-panel',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
+            {
+                code: 'D03',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Saúde Ocupacional',
+                icon: '',
+                link: 'management/occupational-management',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
+        ],
+        description: 'Gestão',
         icon: 'BsCashCoin',
         link: '',
         padding: 'px-2'

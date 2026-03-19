@@ -1,15 +1,6 @@
-.logo {
-    display: flex;
-}
+/* Logo — show dark/light variants */
+.logo       { display: block; }
+.logo-light { display: none; }
 
-.logo-light {
-    display: none;
-}
-
-.dark .logo {
-    display: none;
-}
-
-.dark .logo-light {
-    display: flex;
-}
+.dark .logo       { display: none; }
+.dark .logo-light { display: block; }

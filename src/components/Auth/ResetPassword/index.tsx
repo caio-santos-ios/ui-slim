@@ -56,7 +56,7 @@ export const FormResetPassword = () => {
             });
             reset({email: "", password: ""});
             setTimeout(() => {
-                router.push("/erp");
+                router.push("/");
             }, 2000)
         } catch (error) {
             resolveResponse(error);
@@ -102,8 +102,8 @@ export const FormResetPassword = () => {
                     <div className="text-red-500 min-h-6 mb-1">{errors.email && errors.email.message}</div>
                 </>
             }
-            <Button type="submit" isLoading={isLoading} text={requestCode ? 'Salvar senha' : 'Enviar Código'} theme="primary" styleClassBtn="w-full p-3 mb-8"/>
-            <div className="text-center font-normal">Recuperou a senha? <a className="font-bold text-blue-600" href="/">Fazer login</a></div>
+            <Button type="submit" isLoading={isLoading} text={requestCode ? 'Salvar senha' : 'Enviar Código'} theme="primary" styleClassBtn="w-full text-center m-auto p-3 mb-8"/>
+            <div className="text-center font-normal">Recuperou a senha? <a className="font-bold text-blue-600" href="/erp">Fazer login</a></div>
         </form>
     )
 }

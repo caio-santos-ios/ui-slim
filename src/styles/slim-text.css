@@ -1,10 +1,1 @@
-.slim-text-primary {
-    color: var(--primary-color);
-}
-
-/* DARK */
-@media (prefers-color-scheme: dark) {
-    .slim-text-primary {
-        color: white;
-    }
-}
+.slim-text-primary { color: var(--text-primary); }

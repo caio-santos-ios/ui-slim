@@ -63,7 +63,7 @@ export default function TradingTable() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Tabela de Negociação" breadcrumpIcon="MdTableChart"
+              <SlimContainer menu="Cadastros" breadcrump="Tabela de Negociação" breadcrumpIcon="MdTableChart"
                 buttons={
                   <>
                     {

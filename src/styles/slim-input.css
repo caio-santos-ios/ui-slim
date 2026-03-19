@@ -1,25 +1,26 @@
+/* ─── INPUTS ────────────────────────────────── */
 input {
-    border-radius: .5rem;
-    border: 1px solid oklch(87.2% 0.01 258.338);
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--surface-border);
+  outline: none;
+  padding: .5rem .75rem;
+  font-size: .875rem;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  transition: border-color .18s, box-shadow .18s;
+  width: 100%;
 }
-
+input::placeholder { color: var(--text-muted); font-weight: 400; }
 input:focus {
-    border: 1px solid var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); 
-    transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(102,204,153,.18);
 }
+.dark input { background: var(--surface-card); border-color: var(--surface-border); color: var(--text-primary); }
 
-.slim-input-secondary {
-    border: 1px solid var(--secondary-color);
-    color: var(--secondary-color);
+.slim-input-primary { border: 1.5px solid var(--surface-border); }
+.slim-input-primary:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(102,204,153,.18);
 }
-
-.slim-input-primary {
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
-}
-
-.dark .slim-input-primary {
-    border: 1px solid white;
-    color: white;
-}
+.dark .slim-input-primary { border-color: var(--surface-border); background: var(--surface-card); color: var(--text-primary); }
+.slim-input-secondary { border: 1.5px solid var(--surface-border); color: var(--text-secondary); }

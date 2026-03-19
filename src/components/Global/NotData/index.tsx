@@ -6,22 +6,16 @@ import { paginationAtom } from "@/jotai/global/pagination.jotai";
 import Image from "next/image";
 
 export const NotData = () => {
-    const [pagination] = useAtom(paginationAtom);   
-
+    const [pagination] = useAtom(paginationAtom);
     return (
         <>
-            {
-                pagination.data.length == 0 &&
-                <div className="hidden lg:flex flex-col items-center justify-center text-sm text-gray-600">
-                    <Image
-                        src="/assets/images/notData.png"
-                        alt="Logo"
-                        width={400}
-                        height={150}
-                    />
-                    <h1 className="text-xl font-bold">Nenhum registro encontrado</h1>
+            {pagination.data.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                    <Image src="/erp/assets/images/notData.png" alt="Sem dados" width={180} height={120} className="opacity-60 mb-5" />
+                    <h2 className="text-base font-bold text-[var(--text-primary)] mb-1">Nenhum registro encontrado</h2>
+                    <p className="text-sm text-[var(--text-muted)] max-w-xs">Tente ajustar os filtros ou adicionar novos registros.</p>
                 </div>
-            }
+            )}
         </>
-    )
-}
+    );
+};

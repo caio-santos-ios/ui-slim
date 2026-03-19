@@ -1,13 +1,7 @@
-.container-modal {
-    background-color: rgba(248, 248, 248, 0.46);
-}
-
-.header-modal {
-    color: var(--primary-color);
-}
-
-.card-modal {
-    padding: 1rem 0;
-    /* max-height: calc(100dvh - 21rem); */
-    overflow-y: auto;
-}
+/* Domain modal styles — tabs + form grid + footer */
+.modal-tabs { display: flex; background: var(--surface-bg); border-bottom: 1px solid var(--surface-border); padding: 0 1.25rem; overflow-x: auto; scrollbar-width: none; }
+.modal-tabs::-webkit-scrollbar { display: none; }
+.modal-tab { padding: .75rem 1rem; font-size: .8125rem; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2.5px solid transparent; margin-bottom: -1px; white-space: nowrap; transition: color .18s, border-color .18s; }
+.modal-tab:hover { color: var(--primary-color); }
+.modal-tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+.modal-footer { display: flex; align-items: center; justify-content: flex-end; gap: .5rem; padding: .875rem 1.375rem; border-top: 1px solid var(--surface-border); background: var(--surface-bg); border-radius: 0 0 var(--radius-xl) var(--radius-xl); position: sticky; bottom: 0; }

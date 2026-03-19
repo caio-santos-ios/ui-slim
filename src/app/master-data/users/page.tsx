@@ -77,7 +77,7 @@ export default function User() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Usuários" breadcrumpIcon="FaUsers"
+              <SlimContainer menu="Cadastros" breadcrump="Usuários" breadcrumpIcon="FaUsers"
                 buttons={
                   <>
                     {

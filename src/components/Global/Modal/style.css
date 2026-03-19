@@ -1,67 +1,101 @@
+/* ─── MODAL ─────────────────────────────────── */
 .container-modal {
-    background-color: rgba(241, 241, 241, 0.674);
-    position: absolute;
-    top: 0;
-    width: 100dvw;
-    height: 100dvh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: 3rem;
+  background: rgba(0,15,35,.6);
+  backdrop-filter: blur(5px);
+  position: fixed; inset: 0;
+  display: flex; justify-content: center; align-items: flex-start;
+  padding-top: 3.5rem;
+  z-index: 999;
+  animation: modal-fade-in .2s ease;
 }
+@keyframes modal-fade-in { from { opacity: 0; } to { opacity: 1; } }
 
 .modal {
-    background-color: #fff;
-    color: var(--secondary-text-color);
-    border-radius: .5rem;
-    font-weight: 600;
-    max-height: calc(100dvh - 7rem);
-    border: 1px solid var(--primary-color);
-    position: relative;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  border-radius: var(--radius-xl);
+  max-height: calc(100dvh - 7rem);
+  border: 1px solid var(--surface-border);
+  position: relative;
+  box-shadow: 0 25px 60px -12px rgba(0,0,0,.22);
+  animation: modal-slide-in .25s cubic-bezier(.34,1.56,.64,1);
+  overflow: hidden;
+}
+.dark .modal { box-shadow: 0 25px 60px -12px rgba(0,0,0,.7); }
+@keyframes modal-slide-in {
+  from { opacity: 0; transform: translateY(-16px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.modal-heigth {
-    height: 20rem;
-}
-
-.modal-sm {
-    width: 95%;
-    max-width: 40rem;
-}
-
-.modal-md {
-    width: 95%;
-    max-width: 48rem;
-}
-
-.modal-lg {
-    width: 95%;
-    max-width: 64rem;
-}
-
-.modal-xl {
-    width: 95%;
-    max-width: 80rem;
-}
-
-.modal-full {
-    width: 100%;
-}
-
-.modal-header, .modal-body {
-    padding: 1rem;
-}
+.modal-sm   { width: 95%; max-width: 36rem; }
+.modal-md   { width: 95%; max-width: 48rem; }
+.modal-lg   { width: 95%; max-width: 64rem; }
+.modal-xl   { width: 95%; max-width: 80rem; }
+.modal-full { width: 95%; max-width: 96rem; }
 
 .modal-header {
-    background-color: var(--primary-color);
-    border-radius: .3rem .3rem 0 0;
-    height: 4rem;
-    font-size: 1.3rem;
+  background: linear-gradient(135deg, var(--primary-color-light) 0%, var(--primary-color) 100%);
+  border-bottom: 2px solid var(--accent-color);
+  height: 3.5rem;
+  padding: 0 1.375rem;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  position: relative;
 }
+/* Subtle accent glow at bottom of header */
+.modal-header::after {
+  content: "";
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-color) 0%, transparent 100%);
+  opacity: .7;
+}
+.modal-header h1 { font-size: .9375rem; font-weight: 700; color: #fff; letter-spacing: -.01em; }
 
 .modal-body {
-    max-height: calc(100dvh - 12rem);
-    border-radius: 0 0 .5rem .5rem;
-    overflow-y: auto;
-    padding-bottom: 3rem;
+  max-height: calc(100dvh - 12rem);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  overflow-y: auto;
+  padding: 1.375rem;
+  padding-bottom: 3rem;
+}
+
+/* Tabs */
+.modal-tabs {
+  display: flex;
+  background: var(--surface-bg);
+  border-bottom: 1px solid var(--surface-border);
+  padding: 0 1.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.modal-tabs::-webkit-scrollbar { display: none; }
+.modal-tab {
+  padding: .75rem 1rem;
+  font-size: .8125rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  transition: color .18s, border-color .18s;
+}
+.modal-tab:hover  { color: var(--primary-color); }
+.modal-tab.active { color: var(--accent-color); border-bottom-color: var(--accent-color); }
+
+/* Footer */
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .5rem;
+  padding: .875rem 1.375rem;
+  border-top: 1px solid var(--surface-border);
+  background: var(--surface-bg);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  position: sticky;
+  bottom: 0;
 }

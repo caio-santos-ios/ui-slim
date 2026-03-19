@@ -9,13 +9,9 @@ import { permissionDelete, permissionUpdate } from "@/utils/permission.util";
 import { IconCancel } from "@/components/Global/IconCancel";
 import { IoIosVideocam } from "react-icons/io";
 import { toast } from "react-toastify";
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { TForwarding } from "@/types/service/forwarding/forwarding.type";
 import { TRecipient } from "@/types/masterData/customers/customerRecipient.type";
-import Calendar from "react-calendar";
-import { RiCalendarScheduleFill } from "react-icons/ri";
-import { Button } from "@/components/Global/Button";
 
 type TProp = {
     list: TAccountsPayable[],
@@ -173,7 +169,14 @@ export const TableAppointment = ({list, handleReturnModal}: TProp) => {
                                                         }  
                                                         {
                                                             permissionUpdate("2", "B24") && x.status == "SCHEDULED" &&
-                                                            <IoIosVideocam className="cursor-pointer text-blue-400 hover:text-blue-500" onClick={() => copyToClipboard(x.beneficiaryUrl)} />
+                                                            <button
+                                                                    onClick={() => copyToClipboard(x.beneficiaryUrl)}
+                                                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-muted)] bg-[var(--surface-bg)] border-[var(--surface-border)] hover:bg-blue-50 hover:text-blue-500 border hover:border-blue-200 transition-all"
+                                                                    style={{ padding: 0, minWidth: "2rem" }}
+                                                                    title="Copiar Link"
+                                                                >
+                                                                    <IoIosVideocam className="cursor-pointer" />
+                                                                </button>
                                                         }           
                                                     </div>
                                                 </td>

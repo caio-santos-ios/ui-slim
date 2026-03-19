@@ -1,103 +1,34 @@
-.slim-switch {
-  position: relative;
-  display: inline-block;
-  width: 4rem;
-  height: 2rem;
-}
-
-.slim-status-switch {
-  position: relative;
-  display: inline-block;
-  width: 3.5rem;
-  height: 1.8rem;
-}
-
-.slim-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slim-status-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #fff;
-  border: 1px solid #eb2412;
-  transition: .4s;
-  border-radius: 30px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 1.4em;
-  width: 1.4em;
-  border-radius: 20px;
-  left: 0.27em;
-  bottom: 0.23em;
-  background-color: #eb2412;
-  transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px var(--primary-color);
-}
-
-input:checked + .slider:before {
-  transform: translateX(1.9em);
-  background-color: #fff;
-}
+/* ─── SWITCHES ──────────────────────────────── */
+.slim-switch        { position: relative; display: inline-block; width: 3.25rem; height: 1.75rem; }
+.slim-status-switch { position: relative; display: inline-block; width: 2.75rem; height: 1.5rem; }
+.slim-switch input, .slim-status-switch input { opacity: 0; width: 0; height: 0; }
 
 .slider-default {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #fff;
-  border: 1px solid var(--primary-color);
-  transition: .4s;
-  border-radius: 30px;
+  position: absolute; cursor: pointer; inset: 0;
+  background: #E2E8F0; border: 1.5px solid #CBD5E1;
+  transition: .28s ease; border-radius: 9999px;
 }
+.slider-default::before {
+  content: ""; position: absolute;
+  width: 1.2rem; height: 1.2rem; border-radius: 50%;
+  left: .22rem; bottom: .18rem;
+  background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  transition: .28s ease;
+}
+input:checked + .slider-default { background: var(--accent-color); border-color: var(--accent-color); }
+input:checked + .slider-default::before { transform: translateX(1.45rem); }
 
-.slider-default:before {
-  position: absolute;
-  content: "";
-  height: 1.4em;
-  width: 1.4em;
-  border-radius: 20px;
-  left: 0.27em;
-  bottom: 0.23em;
-  background-color: var(--primary-color);
-  transition: .4s;
+.slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: #FEE2E2; border: 1.5px solid #FCA5A5;
+  transition: .28s ease; border-radius: 9999px;
 }
-
-input:checked + .slider-default {
-  background-color: var(--primary-color);
-  border: 1px solid var(--primary-color);
+.slider::before {
+  content: ""; position: absolute;
+  width: 1rem; height: 1rem; border-radius: 50%;
+  left: .2rem; bottom: .18rem;
+  background: var(--color-danger); box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  transition: .28s ease;
 }
-
-input:focus + .slider-default {
-  box-shadow: 0 0 1px var(--primary-color);
-}
-
-input:checked + .slider-default:before {
-  transform: translateX(1.9em);
-  background-color: #fff;
-}
+input:checked + .slider { background: var(--accent-color); border-color: var(--accent-color); }
+input:checked + .slider::before { transform: translateX(1.25rem); background: #fff; }

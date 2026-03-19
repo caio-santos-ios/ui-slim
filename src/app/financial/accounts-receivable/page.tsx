@@ -61,7 +61,7 @@ export default function AccountsReceivable() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Contas a Receber" breadcrumpIcon="FaMoneyBillTrendUp"
+              <SlimContainer menu="Financeiro" breadcrump="Contas a Receber" breadcrumpIcon="FaMoneyBillTrendUp"
                 buttons={
                   <>
                     {/* <button onClick={() => openModal()} className="slim-bg-primary slim-bg-primary-hover">Adicionar</button> */}

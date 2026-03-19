@@ -64,7 +64,7 @@ export default function Supplier() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Fornecedores" breadcrumpIcon="MdLocalShipping"
+              <SlimContainer menu="Cadastros" breadcrump="Fornecedores" breadcrumpIcon="MdLocalShipping"
                 buttons={
                   <>
                   {

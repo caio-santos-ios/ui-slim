@@ -130,7 +130,7 @@ export default function Dashboard() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Tabelas Genérica" breadcrumpIcon="LiaTableSolid"
+              <SlimContainer menu="Cadastros" breadcrump="Tabelas Genérica" breadcrumpIcon="LiaTableSolid"
                 buttons={
                   <>
                   {

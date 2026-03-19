@@ -27,7 +27,7 @@ export const resolveResponse = (response: any) => {
       });
 
       setTimeout(() => {
-        window.location.href = "/";
+        window.location.href = "/erp";
         localStorage.removeItem("token");
         localStorage.removeItem("name");
       }, 1000);

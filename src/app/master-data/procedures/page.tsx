@@ -26,7 +26,7 @@ const columns: {key: string; title: string}[] = [
   { key: "code", title: "Código" },
   { key: "name", title: "Nome" },
   { key: "description", title: "Descrição" },
-  { key: "serviceModule", title: "Módulo de Serviço" },
+  { key: "serviceModule", title: "Programa" },
   { key: "active", title: "Status" },
   { key: "createdAt", title: "Data de Cadastro" },
 ];
@@ -137,7 +137,7 @@ export default function Procedure() {
             <SideMenu />
 
             <div className="slim-container w-full">
-              <SlimContainer breadcrump="Procedimentos" breadcrumpIcon="MdChecklist"
+              <SlimContainer menu="Cadastros" breadcrump="Procedimentos" breadcrumpIcon="MdChecklist"
                 buttons={
                   <>
                     {
