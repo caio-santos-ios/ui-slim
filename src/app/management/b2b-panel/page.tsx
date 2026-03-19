@@ -26,15 +26,13 @@ import { FiDownload, FiUsers } from "react-icons/fi";
 import { HiOutlineDocumentReport } from "react-icons/hi";
 import { TB2BMassMovement, TB2BInvoice, TB2BAttachment } from "@/types/b2bPanel/b2bPanel.type";
 import { ModalB2BMassMovement } from "@/components/B2BPanel/Modal/ModalMassMovement";
-import { ModalB2BAttachment, ModalB2BInvoice } from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
+import { ModalB2BInvoice, ModalB2BAttachment } from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
 import { IconView } from "@/components/Global/IconView";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 
-// ─── Abas principais ─────────────────────────────────────────────────────────
 type TTab = "movements" | "invoices" | "attachments";
 
-// ─── Colunas ──────────────────────────────────────────────────────────────────
 const movementColumns = [
   { key: "name",        title: "Beneficiário" },
   { key: "cpf",         title: "CPF" },
@@ -63,7 +61,6 @@ const reportColumns = [
   { key: "status",     title: "Status" },
 ];
 
-// ─── Filtro ───────────────────────────────────────────────────────────────────
 type TFilter = {
   search:          string;
   "gte$createdAt": string;
@@ -73,6 +70,9 @@ type TFilter = {
   customerId:      string;
   department:      string;
   period:          string;
+  program:         string;
+  role:            string;
+  effectiveDate:   string;
 };
 
 const ResetFilter: TFilter = {
@@ -84,9 +84,11 @@ const ResetFilter: TFilter = {
   customerId:      "",
   department:      "",
   period:          "",
+  program:         "",
+  role:            "",
+  effectiveDate:   "",
 };
 
-// ─── Status badge ─────────────────────────────────────────────────────────────
 const StatusBadge = ({ value }: { value: any }) => {
   const map: Record<string, any> = {
     Ativo:      "bg-green-100 text-green-800 border-green-200",
@@ -110,9 +112,6 @@ const StatusBadge = ({ value }: { value: any }) => {
 
 type TSummary = { movements: number; invoices: number; attachments: number; pendingMovements: number };
 
-// ═════════════════════════════════════════════════════════════════════════════
-// PAGE
-// ═════════════════════════════════════════════════════════════════════════════
 export default function B2BPanel() {
   const [_, setLoading]             = useAtom(loadingAtom);
   const [modal, setModal]           = useAtom(modalAtom);
@@ -128,11 +127,11 @@ export default function B2BPanel() {
   const [customers, setCustomers]       = useState<any[]>([]);
   const [exportingExcel, setExportingExcel] = useState(false);
   const [summary, setSummary]           = useState<TSummary>({ movements: 0, invoices: 0, attachments: 0, pendingMovements: 0 });
-
   const [modalMovement,   setModalMovement]   = useState(false);
   const [modalInvoice,    setModalInvoice]    = useState(false);
   const [modalAttachment, setModalAttachment] = useState(false);
   const [filterOpened, setFilterOpened] = useState(true);
+  const [plans, setPlans]               = useState<{ id: string; name: string }[]>([]);
 
   const { register, reset, getValues } = useForm<TFilter>({ defaultValues: ResetFilter });
 
@@ -142,7 +141,6 @@ export default function B2BPanel() {
     attachments: "attachments",
   };
 
-  // ── Listagem ───────────────────────────────────────────────────────────────
   const getAll = async (query: string = "") => {
     try {
       setLoading(true);
@@ -171,7 +169,6 @@ export default function B2BPanel() {
       setLoading(true);
       const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
-
       setPagination({
         currentPage: result.currentPage,
         data:        result.data,
@@ -245,16 +242,34 @@ export default function B2BPanel() {
     } catch {}
   };
 
+  const loadPlans = async () => {
+    try {
+      const { data } = await api.get(
+        `/customer-recipients/manager-panel?deleted=false&orderBy=name&sort=asc&pageSize=999&pageNumber=1`,
+        configApi()
+      );
+      const rows: any[] = data.result.data ?? [];
+      const unique = Array.from(
+        new Map(
+          rows
+            .filter((r) => r.planId && r.planName)
+            .map((r) => [r.planId, { id: r.planId, name: r.planName }])
+        ).values()
+      );
+      setPlans(unique);
+    } catch {}
+  };
+
   const buildQuery = (values: TFilter): string => {
     let q = "";
-    if (values.search)           q += `&regex$or$customerName=${values.search}`;
+    if (values.search)           q += `&regex$or$name=${values.search}`;
     if (values["gte$createdAt"]) q += `&gte$createdAt=${values["gte$createdAt"]}`;
     if (values["lte$createdAt"]) q += `&lte$createdAt=${values["lte$createdAt"]}`;
-    if (values.status)           q += `&status=${values.status}`;
-    if (values.type)             q += `&type=${values.type}`;
-    if (values.customerId)       q += `&customerId=${values.customerId}`;
+    if (values.status)           q += `&active=${values.status}`;
     if (values.department)       q += `&regex$department=${values.department}`;
-    if (values.period)           q += `&period=${values.period}`;
+    if (values.program)          q += `&planId=${values.program}`;
+    if (values.role)             q += `&regex$role=${values.role}`;
+    if (values.effectiveDate)    q += `&effectiveDate=${values.effectiveDate}`;
     return q;
   };
 
@@ -319,17 +334,20 @@ export default function B2BPanel() {
     if (col.key === "referenceMonth") return `${String(x.referenceMonth).padStart(2, "0")}/${x.referenceYear}`;
     if (col.key === "type") {
       const map: Record<string, string> = {
-        Inclusao:         "Inclusão",
-        Exclusao:         "Exclusão",
-        UpgradePrograma:  "Upgrade",
-        DowngradePrograma:"Downgrade",
+        Inclusao:          "Inclusão",
+        Exclusao:          "Exclusão",
+        UpgradePrograma:   "Upgrade",
+        DowngradePrograma: "Downgrade",
       };
       return map[v] ?? v;
     }
     return v;
   };
 
-  useEffect(() => { loadSummary(); }, []);
+  useEffect(() => {
+    loadSummary();
+    loadPlans();
+  }, []);
 
   useEffect(() => {
     reset(ResetFilter);
@@ -368,36 +386,29 @@ export default function B2BPanel() {
                         {exportingExcel ? "Exportando..." : "Exportar Excel"}
                       </button>
                     )}
-                    {
-                      activeTab != "invoices" && (
-                        <button onClick={() => openModal()} className="slim-btn slim-btn-primary">
-                          Adicionar
-                        </button>
-                      )
-                    }
+                    {activeTab !== "invoices" && (
+                      <button onClick={() => openModal()} className="slim-btn slim-btn-primary">
+                        Adicionar
+                      </button>
+                    )}
                   </div>
                 }
               >
-                {/* ── Summary Cards ─────────────────────────────────────── */}
                 <div className="grid-cols-2 sm:grid-cols-4 gap-3 mb-4 hidden">
                   {[
-                    { label: "Movimentações", value: summary.movements,       color: "var(--primary-color)" },
+                    { label: "Movimentações", value: summary.movements,        color: "var(--primary-color)" },
                     { label: "Faturas",        value: summary.invoices,         color: "#3b82f6" },
                     { label: "Anexos",         value: summary.attachments,      color: "#8b5cf6" },
                     { label: "Mov. Pendentes", value: summary.pendingMovements, color: "#f59e0b" },
                   ].map((c) => (
-                    <div
-                      key={c.label}
-                      className="rounded-xl p-4 flex flex-col gap-1"
-                      style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}
-                    >
-                      <span className="text-xs text-(--text-muted) font-medium">{c.label}</span>
+                    <div key={c.label} className="rounded-xl p-4 flex flex-col gap-1"
+                      style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
+                      <span className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>{c.label}</span>
                       <span className="text-2xl font-bold" style={{ color: c.color }}>{c.value}</span>
                     </div>
                   ))}
                 </div>
 
-                {/* ── Tabs ──────────────────────────────────────────────── */}
                 <div className="flex gap-1 mb-4 p-1 rounded-xl" style={{ background: "var(--surface-bg)", border: "1px solid var(--surface-border)" }}>
                   {tabs.map((t) => (
                     <button
@@ -413,14 +424,12 @@ export default function B2BPanel() {
                       {t.icon}
                       <span className="hidden sm:inline">{t.label}</span>
                       {t.key !== "movements" && t.count !== undefined && (
-                        <span
-                          className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
+                        <span className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
                           style={
                             activeTab === t.key
                               ? { background: "rgba(255,255,255,.25)", color: "#fff" }
                               : { background: "var(--surface-border)", color: "var(--text-muted)" }
-                          }
-                        >
+                          }>
                           {t.count}
                         </span>
                       )}
@@ -434,20 +443,19 @@ export default function B2BPanel() {
                       <AccordionTrigger
                         clickHeader={() => setFilterOpened(!filterOpened)}
                         icon={queryStr ? <MdFilterAlt size={15} /> : <MdFilterAltOff size={15} />}
-                        subtitle="">
+                        subtitle=""
+                      >
                         Filtros
                       </AccordionTrigger>
                       <AccordionContent>
                         <div className="grid grid-cols-12 gap-3">
 
-                          {
-                            activeTab != "invoices" && (
-                              <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
-                                <label className="label slim-label-primary">Busca rápida</label>
-                                <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Busca rápida..." />
-                              </div>
-                            )
-                          }
+                          {activeTab !== "invoices" && (
+                            <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
+                              <label className="label slim-label-primary">Busca rápida</label>
+                              <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Busca rápida..." />
+                            </div>
+                          )}
 
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Data — início</label>
@@ -479,6 +487,48 @@ export default function B2BPanel() {
                             </div>
                           )}
 
+                          {activeTab === "movements" && (
+                            <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                              <label className="label slim-label-primary">Programa</label>
+                              <select {...register("program")} className="input slim-input-primary">
+                                <option value="">Todos</option>
+                                {plans.map((p) => (
+                                  <option key={p.id} value={p.id}>{p.name}</option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+
+                          {activeTab === "movements" && (
+                            <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                              <label className="label slim-label-primary">Status</label>
+                              <select {...register("status")} className="input slim-input-primary">
+                                <option value="">Todos</option>
+                                <option value="true">Ativo</option>
+                                <option value="false">Inativo</option>
+                              </select>
+                            </div>
+                          )}
+
+                          {activeTab === "movements" && (
+                            <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                              <label className="label slim-label-primary">Função</label>
+                              <input
+                                {...register("role")}
+                                type="text"
+                                className="input slim-input-primary"
+                                placeholder="Ex: Gerente"
+                              />
+                            </div>
+                          )}
+
+                          {activeTab === "movements" && (
+                            <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                              <label className="label slim-label-primary">Data de vigência</label>
+                              <input {...register("effectiveDate")} type="date" className="input slim-input-primary" />
+                            </div>
+                          )}
+
                           <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
                             <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">
                               <IoSearch />
@@ -491,7 +541,6 @@ export default function B2BPanel() {
                   </Accordion>
                 </div>
 
-                {/* ── Tabela ────────────────────────────────────────────── */}
                 <DataTable
                   isAction={activeTab === "invoices" || activeTab === "attachments"}
                   classContainer={`${filterOpened ? 'max-h-[calc(100dvh-(var(--height-header)+23rem))]' : 'max-h-[calc(100dvh-(var(--height-header)+16rem))]'}`}
@@ -507,8 +556,6 @@ export default function B2BPanel() {
                             </td>
                           )
                         ))}
-
-                        {/* Editar fatura */}
                         {activeTab === "invoices" && (
                           <td className="text-center">
                             <div className="flex justify-center gap-2">
@@ -516,8 +563,6 @@ export default function B2BPanel() {
                             </div>
                           </td>
                         )}
-
-                        {/* Deletar anexo */}
                         {activeTab === "attachments" && (
                           <td className="text-center">
                             <div className="flex justify-center gap-2">
@@ -534,7 +579,6 @@ export default function B2BPanel() {
               </SlimContainer>
             </div>
 
-            {/* ── Modais ────────────────────────────────────────────────── */}
             <ModalB2BMassMovement
               isOpen={modalMovement}
               typeModal={typeModal}
@@ -543,7 +587,6 @@ export default function B2BPanel() {
               onClose={closeModal}
               onSuccess={handleSuccess}
             />
-
             <ModalB2BInvoice
               isOpen={modalInvoice}
               typeModal={typeModal}
@@ -552,7 +595,6 @@ export default function B2BPanel() {
               onClose={closeModal}
               onSuccess={handleSuccess}
             />
-
             <ModalB2BAttachment
               isOpen={modalAttachment}
               typeModal={typeModal}
@@ -561,7 +603,6 @@ export default function B2BPanel() {
               onClose={closeModal}
               onSuccess={handleSuccess}
             />
-
             <ModalDelete
               title="Excluir registro"
               isOpen={modalDelete}

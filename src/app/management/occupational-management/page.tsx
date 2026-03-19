@@ -27,13 +27,13 @@ type TTab = "igs" | "ign" | "ies" | "iso";
 
 // ─── Colunas por aba ──────────────────────────────────────────────────────────
 const igsColumns = [
-  { key: "beneficiaryName", title: "Beneficiário" },
-  { key: "chekinIGS",       title: "Check-in IGS" },
-  { key: "chekinIGSPoint",  title: "Pontos IGS" },
-  { key: "sleepHours",      title: "Horas de Sono" },
-  { key: "sleepQuality",    title: "Qualidade do Sono" },
+  { key: "beneficiaryName",    title: "Beneficiário" },
+  { key: "chekinIGS",          title: "Check-in IGS" },
+  { key: "chekinIGSPoint",     title: "Pontos IGS" },
+  { key: "sleepHours",         title: "Horas de Sono" },
+  { key: "sleepQuality",       title: "Qualidade do Sono" },
   { key: "sleepFragmentation", title: "Fragmentação" },
-  { key: "createdAt",       title: "Data" },
+  { key: "createdAt",          title: "Data" },
 ];
 
 const ignColumns = [
@@ -58,11 +58,11 @@ const iesColumns = [
 ];
 
 const isoColumns = [
-  { key: "beneficiaryName",      title: "Beneficiário" },
-  { key: "chekinISO",            title: "Check-in ISO" },
-  { key: "chekinISOQuestion",    title: "Pergunta" },
-  { key: "chekinISOResponse",    title: "Resposta" },
-  { key: "createdAt",            title: "Data" }
+  { key: "beneficiaryName",   title: "Beneficiário" },
+  { key: "chekinISO",         title: "Check-in ISO" },
+  { key: "chekinISOQuestion", title: "Pergunta" },
+  { key: "chekinISOResponse", title: "Resposta" },
+  { key: "createdAt",         title: "Data" },
 ];
 
 // ─── Badges ───────────────────────────────────────────────────────────────────
@@ -96,6 +96,10 @@ type TFilter = {
   chekinIGN:       string;
   chekinIES:       string;
   chekinISO:       string;
+  program:         string;
+  status:          string;
+  role:            string;
+  effectiveDate:   string;
 };
 
 const ResetFilter: TFilter = {
@@ -106,6 +110,10 @@ const ResetFilter: TFilter = {
   chekinIGN:       "",
   chekinIES:       "",
   chekinISO:       "",
+  program:         "",
+  status:          "",
+  role:            "",
+  effectiveDate:   "",
 };
 
 // ─── Summary ──────────────────────────────────────────────────────────────────
@@ -136,7 +144,6 @@ export default function OccupationalManagement() {
       setLoading(true);
       const idLocal = localStorage.getItem("id");
       const id = idLocal ? idLocal : "";
-      // Filtra pela aba ativa para mostrar apenas quem fez o check-in do tipo
       const tabFilter: Record<TTab, string> = {
         igs: "&chekinIGS=true",
         ign: "&chekinIGN=true",
@@ -180,7 +187,7 @@ export default function OccupationalManagement() {
         totalIES: ies.data.result.totalCount,
         totalISO: iso.data.result.totalCount,
       });
-      console.log(iso.data.result)
+      console.log(iso.data.result);
     } catch {}
   };
 
@@ -190,6 +197,10 @@ export default function OccupationalManagement() {
     if (values.search)           q += `&regex$or$beneficiaryName=${values.search}`;
     if (values["gte$createdAt"]) q += `&gte$createdAt=${values["gte$createdAt"]}`;
     if (values["lte$createdAt"]) q += `&lte$createdAt=${values["lte$createdAt"]}`;
+    if (values.program)          q += `&program=${values.program}`;
+    if (values.status)           q += `&status=${values.status}`;
+    if (values.role)             q += `&role=${values.role}`;
+    if (values.effectiveDate)    q += `&effectiveDate=${values.effectiveDate}`;
     return q;
   };
 
@@ -241,10 +252,10 @@ export default function OccupationalManagement() {
 
   // ── Tabs ───────────────────────────────────────────────────────────────────
   const tabs: { key: TTab; label: string; icon: React.ReactNode; count: number; color: string }[] = [
-    { key: "iso", label: "ISO — Ocupacional",icon: <FiCheckSquare size={14} />, count: summary.totalISO, color: "#f59e0b" },
-    { key: "igs", label: "IGS — Saúde",     icon: <FiMoon size={14} />,       count: summary.totalIGS, color: "var(--primary-color)" },
-    { key: "ign", label: "IGN — Nutrição",  icon: <BsBarChartLine size={14} />, count: summary.totalIGN, color: "#10b981" },
-    { key: "ies", label: "IES — Mental",    icon: <TbHeartbeat size={14} />,   count: summary.totalIES, color: "#8b5cf6" },
+    { key: "iso", label: "ISO — Ocupacional", icon: <FiCheckSquare size={14} />, count: summary.totalISO, color: "#f59e0b" },
+    { key: "igs", label: "IGS — Saúde",       icon: <FiMoon size={14} />,        count: summary.totalIGS, color: "var(--primary-color)" },
+    { key: "ign", label: "IGN — Nutrição",    icon: <BsBarChartLine size={14} />, count: summary.totalIGN, color: "#10b981" },
+    { key: "ies", label: "IES — Mental",      icon: <TbHeartbeat size={14} />,   count: summary.totalIES, color: "#8b5cf6" },
   ];
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -303,6 +314,7 @@ export default function OccupationalManagement() {
                   ))}
                 </div>
 
+                {/* ── Filtros ───────────────────────────────────────────── */}
                 <div className="grid grid-cols-12 mb-2">
                   <Accordion className="col-span-12" defaultOpenId="filter">
                     <AccordionItem id="filter">
@@ -315,6 +327,7 @@ export default function OccupationalManagement() {
                       <AccordionContent>
                         <div className="grid grid-cols-12 gap-3">
 
+                          {/* Busca rápida */}
                           <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
                             <label className="label slim-label-primary">Busca rápida</label>
                             <input
@@ -325,16 +338,55 @@ export default function OccupationalManagement() {
                             />
                           </div>
 
+                          {/* Data início */}
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Data — início</label>
                             <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
                           </div>
 
+                          {/* Data fim */}
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Data — fim</label>
                             <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
                           </div>
 
+                          {/* Programa */}
+                          <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                            <label className="label slim-label-primary">Programa</label>
+                            <select {...register("program")} className="input slim-input-primary">
+                              <option value="">Todos</option>
+                              <option value="programa_1">Programa 1</option>
+                              <option value="programa_2">Programa 2</option>
+                            </select>
+                          </div>
+
+                          {/* Status */}
+                          <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                            <label className="label slim-label-primary">Status</label>
+                            <select {...register("status")} className="input slim-input-primary">
+                              <option value="">Todos</option>
+                              <option value="ativo">Ativo</option>
+                              <option value="inativo">Inativo</option>
+                            </select>
+                          </div>
+
+                          {/* Função */}
+                          <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                          <label className="label slim-label-primary">Função</label>
+                          <input
+                            {...register("role")}
+                            type="text"
+                            className="input slim-input-primary"
+                            placeholder="Ex: Gerente"/>
+                          </div>
+
+                          {/* Data de vigência */}
+                          <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                            <label className="label slim-label-primary">Data de vigência</label>
+                            <input {...register("effectiveDate")} type="date" className="input slim-input-primary" />
+                          </div>
+
+                          {/* Botão buscar */}
                           <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
                             <div
                               onClick={onSubmit}
