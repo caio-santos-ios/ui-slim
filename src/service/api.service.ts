@@ -6,4 +6,5 @@ export const baseURL = `${uriBase}/api`;
 
 export const api = axios.create({
   baseURL
+
 });
