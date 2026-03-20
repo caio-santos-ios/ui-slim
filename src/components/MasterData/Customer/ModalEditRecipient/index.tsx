@@ -190,9 +190,9 @@ export const ModalEditRecipient = ({
         } catch {}
     };
 
-    const loadPlans = async () => {
+    const loadPlans = async (customerType: "B2C" | "B2B") => {
         try {
-            const filter = contractorType === "B2B" ? "B2C" : "B2B";
+            const filter = customerType === "B2B" ? "B2C" : "B2B";
             const { data } = await api.get(
                 `/plans?deleted=false&orderBy=createdAt&sort=desc&pageSize=200&pageNumber=1&ne$type=${filter}`,
                 configApi()
@@ -246,6 +246,7 @@ export const ModalEditRecipient = ({
             const result = data.result;
             if(result.data) {
                 setContractorType(result.data.type);
+                await loadPlans(result.data.type);
             }
         } catch (error) {
             resolveResponse(error);
@@ -268,7 +269,6 @@ export const ModalEditRecipient = ({
     useEffect(() => {
         if (!isOpen) return;
         loadGenders();
-        loadPlans();
         getSelectServiceModule();
         if (recipientId) getById(recipientId);
     }, [isOpen, recipientId]);
