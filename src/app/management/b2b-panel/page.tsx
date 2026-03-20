@@ -244,19 +244,10 @@ export default function B2BPanel() {
 
   const loadPlans = async () => {
     try {
-      const { data } = await api.get(
-        `/customer-recipients/manager-panel?deleted=false&orderBy=name&sort=asc&pageSize=999&pageNumber=1`,
-        configApi()
-      );
-      const rows: any[] = data.result.data ?? [];
-      const unique = Array.from(
-        new Map(
-          rows
-            .filter((r) => r.planId && r.planName)
-            .map((r) => [r.planId, { id: r.planId, name: r.planName }])
-        ).values()
-      );
-      setPlans(unique);
+      const { data } = await api.get(`/plans?deleted=false&orderBy=name&sort=asc&pageSize=999&pageNumber=1`, configApi());
+      
+      const result = data?.result?.data;
+      setPlans(result);
     } catch {}
   };
 
