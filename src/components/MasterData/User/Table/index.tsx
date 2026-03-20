@@ -63,7 +63,7 @@ export const TableUser = ({list, handleReturnModal}: TProp) => {
     };
 
     const validatedImage = (uri: string) =>  {
-        if(!uri) return '/assets/images/notImage.png';
+        if(!uri) return '/erp/assets/images/notImage.png';
 
         return `${uriBase}/${uri}`;
     };
@@ -77,9 +77,9 @@ export const TableUser = ({list, handleReturnModal}: TProp) => {
                         <thead className="slim-table-thead">
                             <tr>
                                 <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Nome</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>E-mail</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Admin</th>
-                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>Bloqueado</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>E-mail</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Admin</th>
+                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Bloqueado</th>
                                 <th scope="col" className={`px-4 py-3 text-center text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
                             </tr>
                         </thead>

@@ -33,14 +33,44 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
     const [modules] = useAtom<TMenuRoutine[]>(menuRoutinesAtom);
     const [subModules, setSubModule] = useState<any[]>([]);
     const [userAdmin, setUserAdmin] = useState(false);
-
     const [passwordEnabled, setPasswordEnabled] = useState<boolean>(false);
+
+    // ── Perfis de permissão ───────────────────────────────────────────────
+    const [profiles, setProfiles] = useState<any[]>([]);
     
     const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TUser>({
         defaultValues: ResetUser
     });
 
     const myModules = watch("modules");
+
+    // ── Carrega perfis disponíveis ────────────────────────────────────────
+    const loadProfiles = async () => {
+        try {
+            const { data } = await api.get(`/permission-profiles?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi());
+            setProfiles(data.result.data ?? []);
+        } catch {}
+    };
+
+    // ── Aplica perfil selecionado como base nos modules do formulário ──────
+    const applyProfile = (profileId: string) => {
+        if (!profileId) return;
+        const profile = profiles.find((p) => p.id === profileId);
+        if (!profile?.modules) return;
+
+        // Deep-copy para não vincular referência
+        const copiedModules = profile.modules.map((m: any) => ({
+            code:        m.code,
+            description: m.description,
+            routines:    m.routines.map((r: any) => ({
+                code:        r.code,
+                description: r.description,
+                permissions: { ...r.permissions },
+            })),
+        }));
+
+        setValue("modules", copiedModules);
+    };
     
     const onSubmit: SubmitHandler<TUser> = async (body: TUser) => {
         const moduleSaved: any[] = watch("modules");
@@ -79,10 +109,8 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                         description: currentSubModule?.description,
                         permissions: body.permission
                     }]
-                })
+                });
             };
-       
-            
         }; 
 
         const form: any = {
@@ -91,7 +119,8 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
             name: body.name,
             email: body.email,
             admin: body.admin,
-            blocked: body.blocked
+            blocked: body.blocked,
+            permissionProfile: body.permissionProfile
         };
         
         if(!body.id) {
@@ -101,7 +130,7 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
             await update(form);
         };
     };
-      
+    
     const create = async (body: any) => {
         try {
             const { status, data} = await api.post(`/users`, body, configApi());
@@ -117,7 +146,7 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
             const { status, data} = await api.put(`/users/modules`, body, configApi());
             resolveResponse({status, ...data});
             reset(ResetUser);
-            getById(id)
+            getById(id);
         } catch (error) {
             resolveResponse(error);
         }
@@ -161,9 +190,7 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
 
     useEffect(() => {
         const subModule = modules.find((x: TMenuRoutine) => x.code == watch("module"));
-        if(subModule) {
-            setSubModule(subModule.subMenu)
-        };
+        if(subModule) setSubModule(subModule.subMenu);
     }, [watch("module")]);
     
     useEffect(() => {
@@ -182,15 +209,14 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
     }, [watch("subModule")]);
 
     useEffect(() => {
-        if(id) {            
-            getById(id);
-        };
+        if(id) getById(id);
     }, [id]);
     
     useEffect(() => {
         const admin = localStorage.getItem("admin");
         if(admin) setUserAdmin(admin == "true");
-    }, [])
+        loadProfiles();
+    }, []);
 
     return (
         <>
@@ -246,19 +272,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                     <label className={`label slim-label-primary`}>E-mail</label>
                                     <input {...register("email", { pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>
-                                {/* {
-                                    !watch("id") &&
-                                    <div className={`flex flex-col col-span-2`}>
-                                        <label className="slim-label-primary" htmlFor="password">Senha</label>
-                        
-                                        <div className={`container-password rounded-md flex items-center pr-2 ${errors.password ? 'border border-red-500 text-red-500' : 'slim-input-primary'}`}>
-                                            <input {...register("password")} id="password" placeholder="Digite sua senha" className="py-[.4rem] px-2 w-full" type={`${passwordEnabled ? 'text' : 'password'}`} />
-                                            {
-                                                passwordEnabled ? <FaEye onClick={() => setPasswordEnabled(!passwordEnabled)} size={25}/> : <FaEyeSlash onClick={() => setPasswordEnabled(!passwordEnabled)} size={25}/>
-                                            }
-                                        </div>
-                                    </div>
-                                } */}
                                 {
                                     userAdmin &&
                                     <div className={`flex flex-col mb-2`}>
@@ -275,7 +288,30 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                         <input {...register("blocked")} type="checkbox"/>
                                         <span className="slider"></span>
                                     </label>
-                                </div>  
+                                </div>
+
+                                {/* ── Perfil de Permissão ─────────────────── */}
+                                <div className={`flex flex-col col-span-6 mb-2`}>
+                                    <label className={`label slim-label-primary`}>
+                                        Perfil de Permissão
+                                        <span className="ml-1 text-xs text-[var(--text-muted)] font-normal">
+                                            — aplica os módulos do perfil como base (editável individualmente)
+                                        </span>
+                                    </label>
+                                    <select
+                                        className="select slim-select-primary"
+                                        defaultValue=""
+                                        onChange={(e) => {
+                                            applyProfile(e.target.value);
+                                            setValue("permissionProfile", e.target.value);
+                                        }}>
+                                        <option value="">Selecione um perfil para aplicar...</option>
+                                        {profiles.map((p: any) => (
+                                            <option key={p.id} value={p.id}>{p.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
                                 <div className={`flex flex-col col-span-2 mb-2`}>
                                     <label className={`label slim-label-primary`}>Módulos</label>
                                     <select className="select slim-select-primary" {...register("module")}>
@@ -307,7 +343,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                                     <input {...register("permission.read")} type="checkbox" />
                                                     <span className="font-bold">Listagem</span>
                                                 </div>
-
                                                 <p className="text-gray-500">Permite que o usuário liste registros</p>
                                             </li>
                                             <li className="bg-gray-100 shadow-lg shadow-gray-100/50 p-3 rounded-lg">
@@ -315,7 +350,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                                     <input {...register("permission.create")} type="checkbox" />
                                                     <span className="font-bold">Criação</span>
                                                 </div>
-
                                                 <p className="text-gray-500">Permite que o usuário crie registros</p>
                                             </li>
                                             <li className="bg-gray-100 shadow-lg shadow-gray-100/50 p-3 rounded-lg">
@@ -323,7 +357,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                                     <input {...register("permission.update")} type="checkbox" />
                                                     <span className="font-bold">Edição</span>
                                                 </div>
-
                                                 <p className="text-gray-500">Permite que o usuário edite registros</p>
                                             </li>
                                             <li className="bg-gray-100 shadow-lg shadow-gray-100/50 p-3 rounded-lg">
@@ -331,7 +364,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                                     <input {...register("permission.delete")} type="checkbox" />
                                                     <span className="font-bold">Exclusão</span>
                                                 </div>
-
                                                 <p className="text-gray-500">Permite que o usuário exclua registros</p>
                                             </li>
                                         </ul>
@@ -349,7 +381,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                                 <div className="flex gap-1">
                                                     <span className="font-bold">{x.description}</span>
                                                 </div>
-
                                                 <ul key={x.code}>
                                                     {
                                                         x.routines.map((r: any) => {
@@ -385,5 +416,5 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                 </div>
             </Dialog>
         </>    
-    )
-}
+    );
+};

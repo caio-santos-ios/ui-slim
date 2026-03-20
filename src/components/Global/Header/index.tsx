@@ -45,8 +45,18 @@ export const Header = () => {
         const n = localStorage.getItem("name");
         const p = localStorage.getItem("photo");
         const r = localStorage.getItem("role");
-
+        const a = localStorage.getItem("admin");
+        
         if(r == "Manager") setSubTitle("Gestora");
+        
+        if(a) {
+            if(a == "true") {
+                setSubTitle("Administrador");
+            } else {
+                const permissionProfileName = localStorage.getItem("permissionProfileName");
+                setSubTitle(permissionProfileName ? permissionProfileName : "");
+            }
+        }
         
         if (n) setName(n);
         if (p) setPhoto(p);
