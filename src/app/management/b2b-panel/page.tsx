@@ -73,6 +73,8 @@ type TFilter = {
   program:         string;
   role:            string;
   effectiveDate:   string;
+  planId:          string;  
+  function:        string;
 };
 
 const ResetFilter: TFilter = {
@@ -87,6 +89,8 @@ const ResetFilter: TFilter = {
   program:         "",
   role:            "",
   effectiveDate:   "",
+  planId:        "",  
+  function:      "",  
 };
 
 const StatusBadge = ({ value }: { value: any }) => {
@@ -261,6 +265,8 @@ export default function B2BPanel() {
     if (values.program)          q += `&planId=${values.program}`;
     if (values.role)             q += `&regex$role=${values.role}`;
     if (values.effectiveDate)    q += `&effectiveDate=${values.effectiveDate}`;
+    if (values.planId)           q += `&planId=${values.planId}`;     
+    if (values.function)         q += `&regex$role=${values.function}`; 
     return q;
   };
 
@@ -481,7 +487,7 @@ export default function B2BPanel() {
                           {activeTab === "movements" && (
                             <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                               <label className="label slim-label-primary">Programa</label>
-                              <select {...register("program")} className="input slim-input-primary">
+                              <select {...register("planId")} className="input slim-input-primary">
                                 <option value="">Todos</option>
                                 {plans.map((p) => (
                                   <option key={p.id} value={p.id}>{p.name}</option>
@@ -505,7 +511,7 @@ export default function B2BPanel() {
                             <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                               <label className="label slim-label-primary">Função</label>
                               <input
-                                {...register("role")}
+                                {...register("function")}
                                 type="text"
                                 className="input slim-input-primary"
                                 placeholder="Ex: Gerente"
