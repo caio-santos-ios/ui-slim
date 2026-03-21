@@ -264,7 +264,7 @@ export default function B2BPanel() {
   const [modalAttachment, setModalAttachment] = useState(false);
   const [chartMovements, setChartMovements] = useState<TChartMovements>({ ativos: 0, inativos: 0, porPrograma: [], porMes: [] });
   const [chartInvoices, setChartInvoices]   = useState<TChartInvoices>({ porMes: [] });
-  const [activeFilter, setActiveFilter] = useState<number>(0);
+  const [activeFilter, setActiveFilter] = useState<number>(6);
   const [permissionQuery, setPermissionQuery] = useState<boolean>(true);
 
   const { register, reset, getValues } = useForm<TFilter>({ defaultValues: ResetFilter });
