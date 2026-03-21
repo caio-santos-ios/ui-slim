@@ -428,22 +428,6 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
         isOpen: true,
         authorized: false,
         subMenu: [
-            // {
-            //     code: 'D01',
-            //     isOpen: false,
-            //     authorized: false,
-            //     subMenu: [],
-            //     description: 'Dashboard',
-            //     icon: '',
-            //     link: 'dashboard',
-            //     padding: 'px-4',
-            //     permissions: {
-            //         create: false,
-            //         update: false,
-            //         read: false,
-            //         delete: false
-            //     }
-            // },
             {
                 code: 'D02',
                 isOpen: false,
@@ -468,6 +452,38 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 description: 'Saúde Ocupacional',
                 icon: '',
                 link: 'management/occupational-management',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
+            {
+                code: 'D04',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Visão Executiva',
+                icon: '',
+                link: 'dashboard/executivo/iso',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
+            {
+                code: 'D05',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Painel SST',
+                icon: '',
+                link: 'dashboard/executivo/sst',
                 padding: 'px-4',
                 permissions: {
                     create: false,

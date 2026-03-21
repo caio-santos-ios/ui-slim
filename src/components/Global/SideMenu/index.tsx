@@ -39,7 +39,7 @@ function NavItem({ item, depth, expanded, admin }: NavItemProps) {
     useEffect(() => { if (childActive) setOpen(true); }, [childActive]);
 
     if(role == "Manager") {
-        if (!['4', 'D01', 'D02', 'D03'].includes(item.code)) return null;
+        if (!['4', 'D01', 'D02', 'D03', 'D04', 'D05'].includes(item.code)) return null;
     } else {
         if (!item.authorized && !admin) return null;
     }

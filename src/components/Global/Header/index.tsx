@@ -24,7 +24,7 @@ export const Header = () => {
     const [dropOpen, setDropOpen] = useState(false);
     const [role, setRole] = useAtom(roleUserAtom);
     const [subTitle, setSubTitle] = useState("Administrador");
-    
+    const [urlDashboard, setUrlDashboard] = useState("/erp/dashboard/executivo")
     const sincLogged = async () => {
         try {
             setLoading(true);
@@ -47,16 +47,20 @@ export const Header = () => {
         const r = localStorage.getItem("role");
         const a = localStorage.getItem("admin");
         
-        if(r == "Manager") setSubTitle("Gestora");
-        
-        if(a) {
-            if(a == "true") {
-                setSubTitle("Administrador");
-            } else {
-                const permissionProfileName = localStorage.getItem("permissionProfileName");
-                setSubTitle(permissionProfileName ? permissionProfileName : "");
+        if(r == "Manager") {
+            setSubTitle("Gestora");
+        } else {
+            if(a) {
+                if(a == "true") {
+                    setSubTitle("Administrador");
+                } else {
+                    const permissionProfileName = localStorage.getItem("permissionProfileName");
+                    setSubTitle(permissionProfileName ? permissionProfileName : "");
+                }
             }
         }
+        
+        
         
         if (n) setName(n);
         if (p) setPhoto(p);
@@ -66,7 +70,7 @@ export const Header = () => {
     return (
         <header>
             {/* ── Logo ── */}
-            <a href="/erp/dashboard" className="shrink-0">
+            <a href={urlDashboard}className="shrink-0">
                 <Logo className="h-14" />
             </a>
 

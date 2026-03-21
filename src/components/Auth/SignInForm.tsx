@@ -22,6 +22,7 @@ export default function SignInForm() {
       const {data} = await api.post(`/auth/login`, body);
       const result = data.result.data;
 
+      localStorage.setItem("contractorId", result.contractorId);
       localStorage.setItem("token", result.token);
       localStorage.setItem("name", result.name);
       localStorage.setItem("admin", result.admin);
