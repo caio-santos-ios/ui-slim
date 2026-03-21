@@ -620,13 +620,6 @@ export default function B2BPanel() {
                             </td>
                           )
                         ))}
-                        {activeTab === "invoices" && (
-                          <td className="text-center">
-                            <div className="flex justify-center gap-2">
-                              <IconEdit action="edit" obj={x} getObj={openModal} />
-                            </div>
-                          </td>
-                        )}
                         {activeTab === "attachments" && (
                           <td className="text-center">
                             <div className="flex justify-center gap-2">
