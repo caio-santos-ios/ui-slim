@@ -366,7 +366,7 @@ export default function B2BPanel() {
       const contractorId = localStorage.getItem("contractorId");
       const id = contractorId ? contractorId : "";
 
-      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId${id}&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
+      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
       setPagination({ currentPage: result.currentPage, data: result.data, sizePage: result.pageSize, totalPages: result.totalCount });
     } catch (error) {
