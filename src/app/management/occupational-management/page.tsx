@@ -18,14 +18,14 @@ import { maskDate } from "@/utils/mask.util";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/Global/Accordion/AccordionContent";
 import { IoSearch } from "react-icons/io5";
 import { MdFilterAlt, MdFilterAltOff } from "react-icons/md";
-import { TbHeartbeat, TbShieldCheck } from "react-icons/tb";
+import { TbHeartbeat } from "react-icons/tb";
 import { BsBarChartLine } from "react-icons/bs";
 import { FiCheckSquare, FiMoon } from "react-icons/fi";
 
 // ─── Abas ─────────────────────────────────────────────────────────────────────
 type TTab = "igs" | "ign" | "ies" | "iso";
 
-// ─── Colunas por aba ──────────────────────────────────────────────────────────
+// ─── Colunas ──────────────────────────────────────────────────────────────────
 const igsColumns = [
   { key: "beneficiaryName",    title: "Beneficiário" },
   { key: "chekinIGS",          title: "Check-in IGS" },
@@ -87,7 +87,12 @@ const PointBadge = ({ value }: { value: number }) => {
   );
 };
 
-// ─── Filtro ───────────────────────────────────────────────────────────────────
+// ─── Tipos ────────────────────────────────────────────────────────────────────
+type TPlan = {
+  id: string;
+  name: string;
+};
+
 type TFilter = {
   search:          string;
   "gte$createdAt": string;
@@ -116,7 +121,6 @@ const ResetFilter: TFilter = {
   effectiveDate:   "",
 };
 
-// ─── Summary ──────────────────────────────────────────────────────────────────
 type TSummary = {
   totalIGS: number;
   totalIGN: number;
@@ -135,6 +139,7 @@ export default function OccupationalManagement() {
   const [activeTab, setActiveTab] = useState<TTab>("igs");
   const [queryStr, setQueryStr]   = useState<string>("");
   const [summary, setSummary]     = useState<TSummary>({ totalIGS: 0, totalIGN: 0, totalIES: 0, totalISO: 0 });
+  const [plans, setPlans]         = useState<TPlan[]>([]);
 
   const { register, reset, getValues } = useForm<TFilter>({ defaultValues: ResetFilter });
 
@@ -142,8 +147,7 @@ export default function OccupationalManagement() {
   const getAll = async (query: string = "") => {
     try {
       setLoading(true);
-      const idLocal = localStorage.getItem("id");
-      const id = idLocal ? idLocal : "";
+      const id = localStorage.getItem("id") ?? "";
       const tabFilter: Record<TTab, string> = {
         igs: "&chekinIGS=true",
         ign: "&chekinIGN=true",
@@ -155,12 +159,12 @@ export default function OccupationalManagement() {
         `/vitals?deleted=false&contractorId=${id}&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${tabFilter[activeTab]}${query}`,
         configApi()
       );
-      const result = data.result;
+      const result = data?.result;
       setPagination({
-        currentPage: result.currentPage,
-        data:        result.data ?? [],
-        sizePage:    result.pageSize,
-        totalPages:  result.totalCount,
+        currentPage: result?.currentPage ?? 1,
+        data:        result?.data ?? [],
+        sizePage:    result?.pageSize ?? 10,
+        totalPages:  result?.totalCount ?? 0,
       });
     } catch (error) {
       resolveResponse(error);
@@ -172,9 +176,7 @@ export default function OccupationalManagement() {
   // ── Summary ────────────────────────────────────────────────────────────────
   const loadSummary = async () => {
     try {
-      const idLocal = localStorage.getItem("id");
-      const id = idLocal ? idLocal : "";
-
+      const id = localStorage.getItem("id") ?? "";
       const [igs, ign, ies, iso] = await Promise.all([
         api.get(`/vitals?deleted=false&contractorId=${id}&chekinIGS=true&pageSize=1&pageNumber=1`, configApi()),
         api.get(`/vitals?deleted=false&contractorId=${id}&chekinIGN=true&pageSize=1&pageNumber=1`, configApi()),
@@ -182,12 +184,22 @@ export default function OccupationalManagement() {
         api.get(`/vitals?deleted=false&contractorId=${id}&chekinISO=true&pageSize=1&pageNumber=1`, configApi()),
       ]);
       setSummary({
-        totalIGS: igs.data.result.totalCount,
-        totalIGN: ign.data.result.totalCount,
-        totalIES: ies.data.result.totalCount,
-        totalISO: iso.data.result.totalCount,
+        totalIGS: igs.data?.result?.totalCount ?? 0,
+        totalIGN: ign.data?.result?.totalCount ?? 0,
+        totalIES: ies.data?.result?.totalCount ?? 0,
+        totalISO: iso.data?.result?.totalCount ?? 0,
       });
-      console.log(iso.data.result);
+    } catch {}
+  };
+
+  // ── Plans ──────────────────────────────────────────────────────────────────
+  const loadPlans = async () => {
+    try {
+      const { data } = await api.get(
+        `/plans?deleted=false&orderBy=name&sort=asc&pageSize=999&pageNumber=1`,
+        configApi()
+      );
+      setPlans(data?.result?.data ?? []);
     } catch {}
   };
 
@@ -221,27 +233,29 @@ export default function OccupationalManagement() {
   // ── Cell renderer ──────────────────────────────────────────────────────────
   const renderCell = (x: any, col: { key: string }) => {
     const v = x[col.key];
-    if (col.key === "createdAt") return maskDate(v);
+    if (col.key === "createdAt")
+      return maskDate(v);
     if (["chekinIGS", "chekinIGN", "chekinIES", "chekinISO"].includes(col.key))
       return <CheckBadge value={Boolean(v)} />;
     if (["chekinIGSPoint", "chekinIGNPoint", "chekinIESPoint", "chekinISOPoint"].includes(col.key))
       return <PointBadge value={Number(v ?? 0)} />;
     if (col.key === "sleepQuality")
-      return v ? `${v}/10` : "—";
+      return v != null ? `${v}/10` : "—";
     if (col.key === "waterAmount")
-      return v ? `${v}L` : "—";
-    if (col.key === "isoQuestion")
+      return v != null ? `${v}L` : "—";
+    if (col.key === "chekinISOQuestion")
       return v
-        ? <span className="text-xs text-(--text-muted) italic max-w-xs truncate block" title={v}>{v}</span>
+        ? <span className="text-xs italic max-w-xs truncate block" title={v}>{v}</span>
         : "—";
-    if (["dass1","dass2","dass3","dass7"].includes(col.key))
-      return v !== undefined && v !== null ? `${v}/3` : "—";
+    if (["dass1", "dass2", "dass3", "dass7"].includes(col.key))
+      return v != null ? `${v}/3` : "—";
     return v ?? "—";
   };
 
   // ── Effects ────────────────────────────────────────────────────────────────
   useEffect(() => {
     loadSummary();
+    loadPlans();
   }, []);
 
   useEffect(() => {
@@ -250,12 +264,12 @@ export default function OccupationalManagement() {
     getAll();
   }, [activeTab]);
 
-  // ── Tabs ───────────────────────────────────────────────────────────────────
+  // ── Tabs config ────────────────────────────────────────────────────────────
   const tabs: { key: TTab; label: string; icon: React.ReactNode; count: number; color: string }[] = [
-    { key: "iso", label: "ISO — Ocupacional", icon: <FiCheckSquare size={14} />, count: summary.totalISO, color: "#f59e0b" },
-    { key: "igs", label: "IGS — Saúde",       icon: <FiMoon size={14} />,        count: summary.totalIGS, color: "var(--primary-color)" },
+    { key: "iso", label: "ISO — Ocupacional", icon: <FiCheckSquare size={14} />,  count: summary.totalISO, color: "#f59e0b" },
+    { key: "igs", label: "IGS — Saúde",       icon: <FiMoon size={14} />,         count: summary.totalIGS, color: "var(--primary-color)" },
     { key: "ign", label: "IGN — Nutrição",    icon: <BsBarChartLine size={14} />, count: summary.totalIGN, color: "#10b981" },
-    { key: "ies", label: "IES — Mental",      icon: <TbHeartbeat size={14} />,   count: summary.totalIES, color: "#8b5cf6" },
+    { key: "ies", label: "IES — Mental",      icon: <TbHeartbeat size={14} />,    count: summary.totalIES, color: "#8b5cf6" },
   ];
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -295,8 +309,10 @@ export default function OccupationalManagement() {
                 </div>
 
                 {/* ── Tabs ──────────────────────────────────────────────── */}
-                <div className="flex gap-1 mb-4 p-1 rounded-xl overflow-x-auto"
-                  style={{ background: "var(--surface-bg)", border: "1px solid var(--surface-border)" }}>
+                <div
+                  className="flex gap-1 mb-4 p-1 rounded-xl overflow-x-auto"
+                  style={{ background: "var(--surface-bg)", border: "1px solid var(--surface-border)" }}
+                >
                   {tabs.map((t) => (
                     <button
                       key={t.key}
@@ -355,8 +371,9 @@ export default function OccupationalManagement() {
                             <label className="label slim-label-primary">Programa</label>
                             <select {...register("program")} className="input slim-input-primary">
                               <option value="">Todos</option>
-                              <option value="programa_1">Programa 1</option>
-                              <option value="programa_2">Programa 2</option>
+                              {plans.map((p) => (
+                                <option key={p.id} value={p.id}>{p.name}</option>
+                              ))}
                             </select>
                           </div>
 
@@ -372,12 +389,13 @@ export default function OccupationalManagement() {
 
                           {/* Função */}
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                          <label className="label slim-label-primary">Função</label>
-                          <input
-                            {...register("role")}
-                            type="text"
-                            className="input slim-input-primary"
-                            placeholder="Ex: Gerente"/>
+                            <label className="label slim-label-primary">Função</label>
+                            <input
+                              {...register("role")}
+                              type="text"
+                              className="input slim-input-primary"
+                              placeholder="Ex: Gerente"
+                            />
                           </div>
 
                           {/* Data de vigência */}
