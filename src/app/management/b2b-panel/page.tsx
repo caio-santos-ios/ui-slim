@@ -264,8 +264,6 @@ export default function B2BPanel() {
   const [modalAttachment, setModalAttachment] = useState(false);
   const [chartMovements, setChartMovements] = useState<TChartMovements>({ ativos: 0, inativos: 0, porPrograma: [], porMes: [] });
   const [chartInvoices, setChartInvoices]   = useState<TChartInvoices>({ porMes: [] });
-  const [activeFilter, setActiveFilter] = useState<number>(6);
-  const [permissionQuery, setPermissionQuery] = useState<boolean>(true);
 
   const { register, reset, getValues } = useForm<TFilter>({ defaultValues: ResetFilter });
 
@@ -290,18 +288,13 @@ export default function B2BPanel() {
     } catch (error) { resolveResponse(error); } finally { setLoading(false); }
   };
 
-  const getRecipient = async (query: string = "", activedFilter: boolean = false) => {
+  const getRecipient = async (query: string = "") => {
     try {
       setLoading(true);
       const contractorId = localStorage.getItem("contractorId");
       const id = contractorId ? contractorId : "";
-      
       const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
-      if(activeFilter) {
-        setActiveTab(result.data.length);
-        setPermissionQuery(false);
-      }
       setPagination({ currentPage: result.currentPage, data: result.data, sizePage: result.pageSize, totalPages: result.totalCount });
     } catch (error) { resolveResponse(error); } finally { setLoading(false); }
   };
@@ -480,16 +473,12 @@ export default function B2BPanel() {
   };
 
   useEffect(() => {
-    loadSummary(); 
-    loadPlans(); 
-    loadServiceModules(); 
-    loadChartMovements(); 
-    loadChartInvoices();
+    loadSummary(); loadPlans(); loadServiceModules(); loadChartMovements(); loadChartInvoices();
   }, []);
 
   useEffect(() => {
     reset(ResetFilter); setQueryStr("");
-    activeTab === "movements" ? getRecipient("", permissionQuery) : getAll();
+    activeTab === "movements" ? getRecipient() : getAll();
   }, [activeTab]);
 
   const tabs: { key: TTab; label: string; icon: React.ReactNode; count?: number }[] = [
