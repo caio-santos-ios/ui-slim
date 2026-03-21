@@ -165,9 +165,6 @@ function IndexBar({ label, value, color }: { label: string; value: number; color
   );
 }
 
-// ═════════════════════════════════════════════════════════════════════════════
-// COMPONENTE — usa no Pasbem como widget de insights
-// ═════════════════════════════════════════════════════════════════════════════
 export function HealthScoreIPV() {
   const [_, setLoading] = useAtom(loadingAtom);
   const [vital, setVital] = useState<any>(null);
