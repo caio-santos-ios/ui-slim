@@ -34,8 +34,8 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
     const [subModules, setSubModule] = useState<any[]>([]);
     const [userAdmin, setUserAdmin] = useState(false);
     const [passwordEnabled, setPasswordEnabled] = useState<boolean>(false);
+    const [customers, setCustomers] = useState<any[]>([]);
 
-    // ── Perfis de permissão ───────────────────────────────────────────────
     const [profiles, setProfiles] = useState<any[]>([]);
     
     const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TUser>({
@@ -44,21 +44,26 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
 
     const myModules = watch("modules");
 
-    // ── Carrega perfis disponíveis ────────────────────────────────────────
     const loadProfiles = async () => {
         try {
             const { data } = await api.get(`/permission-profiles?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi());
             setProfiles(data.result.data ?? []);
         } catch {}
     };
+    
+    const loadCustomers = async () => {
+        try {
+            const { data } = await api.get(`/customers/select?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi());
+            console.log(data.result)
+            setCustomers(data.result.data ?? []);
+        } catch {}
+    };
 
-    // ── Aplica perfil selecionado como base nos modules do formulário ──────
     const applyProfile = (profileId: string) => {
         if (!profileId) return;
         const profile = profiles.find((p) => p.id === profileId);
         if (!profile?.modules) return;
 
-        // Deep-copy para não vincular referência
         const copiedModules = profile.modules.map((m: any) => ({
             code:        m.code,
             description: m.description,
@@ -120,9 +125,11 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
             email: body.email,
             admin: body.admin,
             blocked: body.blocked,
-            permissionProfile: body.permissionProfile
+            permissionProfile: body.permissionProfile,
+            type: body.type,
+            contractorId: body.contractorId
         };
-        
+
         if(!body.id) {
             form.password = watch("password");
             await create(form);
@@ -133,22 +140,30 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
     
     const create = async (body: any) => {
         try {
+            setLoading(true);
             const { status, data} = await api.post(`/users`, body, configApi());
             resolveResponse({status, ...data});
             cancel();
+            handleReturnModal(true);
         } catch (error) {
             resolveResponse(error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const update = async (body: any) => {
         try {
+            setLoading(true);
             const { status, data} = await api.put(`/users/modules`, body, configApi());
             resolveResponse({status, ...data});
             reset(ResetUser);
             getById(id);
+            handleReturnModal(true);
         } catch (error) {
             resolveResponse(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -216,6 +231,7 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
         const admin = localStorage.getItem("admin");
         if(admin) setUserAdmin(admin == "true");
         loadProfiles();
+        loadCustomers();
     }, []);
 
     return (
@@ -223,16 +239,16 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
             <Dialog
                 open={isOpen}
                 as="div"
-                className="relative z-[999] focus:outline-none"
+                className="relative z-999 focus:outline-none"
                 onClose={cancel}
             >
                 {/* Backdrop */}
                 <div
-                    className="fixed inset-0 z-[999]"
+                    className="fixed inset-0 z-999"
                     style={{ background: "rgba(0,15,35,.65)", backdropFilter: "blur(5px)" }}
                 />
 
-                <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
+                <div className="fixed inset-0 z-1000 flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
                     <DialogPanel
                         className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl"
                         style={{
@@ -290,17 +306,39 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                     </label>
                                 </div>
 
-                                {/* ── Perfil de Permissão ─────────────────── */}
+                                <div className={`flex flex-col col-span-1 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Tipo</label>
+                                    <select className="select slim-select-primary" {...register("type")}>
+                                        <option value="Interno">Interno</option>
+                                        <option value="Externo">Externo</option>
+                                    </select>
+                                </div>  
+                                {
+                                    watch("type") == "Externo" && (
+                                        <div className={`flex flex-col col-span-3 mb-2`}>
+                                            <label className={`label slim-label-primary`}>Contratante</label>
+                                            <select className="select slim-select-primary" {...register("contractorId")}>
+                                                <option value="">Selecione</option>
+                                                {
+                                                    customers.map((c: any) => {
+                                                        return <option key={c.id} value={c.id}>{c.corporateName}</option>
+                                                    })
+                                                }
+                                            </select>
+                                        </div>
+                                    )
+                                }
+
                                 <div className={`flex flex-col col-span-6 mb-2`}>
                                     <label className={`label slim-label-primary`}>
                                         Perfil de Permissão
-                                        <span className="ml-1 text-xs text-[var(--text-muted)] font-normal">
+                                        <span className="ml-1 text-xs text-(--text-muted) font-normal">
                                             — aplica os módulos do perfil como base (editável individualmente)
                                         </span>
                                     </label>
                                     <select
                                         className="select slim-select-primary"
-                                        defaultValue=""
+                                        {...register("permissionProfile")}
                                         onChange={(e) => {
                                             applyProfile(e.target.value);
                                             setValue("permissionProfile", e.target.value);

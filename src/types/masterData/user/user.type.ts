@@ -16,6 +16,8 @@ export type TUser = {
     password: string;
     effectiveDate: any;
     permissionProfile: string;
+    type: string;
+    contractorId: string;
 }
 
 export type TUserPhoto = {
@@ -40,5 +42,7 @@ export const ResetUser: TUser = {
     blocked: false,
     password: "",
     effectiveDate: "",
-    permissionProfile: ""
+    permissionProfile: "",
+    type: "Interno",
+    contractorId: ""
 }
