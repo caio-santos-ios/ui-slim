@@ -53,7 +53,7 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
     
     const loadCustomers = async () => {
         try {
-            const { data } = await api.get(`/customers/select?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi());
+            const { data } = await api.get(`/customers/select?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1&type=B2B`, configApi());
             console.log(data.result)
             setCustomers(data.result.data ?? []);
         } catch {}
