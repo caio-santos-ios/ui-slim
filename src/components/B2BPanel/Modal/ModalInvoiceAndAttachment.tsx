@@ -221,10 +221,10 @@ export const ModalB2BAttachment = ({ isOpen, typeModal, body, customers, onClose
     try {
       const payload = { ...values };
       const formBody = new FormData();
-      const id = localStorage.getItem("id");
+      const constractorId = localStorage.getItem("constractorId");
       formBody.append("parent", "customer-manager");
       formBody.append("description", payload.name);
-      if (id) formBody.append("parentId", id);
+      if (constractorId) formBody.append("parentId", constractorId);
 
       const attachment: any = document.querySelector("#attachment");
       if (attachment.files[0]) formBody.append("file", attachment.files[0]);

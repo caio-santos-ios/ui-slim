@@ -202,8 +202,10 @@ export default function B2BPanel() {
 
   const exportExcel = async () => {
     try {
+      const contractorId = localStorage.getItem("contractorId");
+
       setExportingExcel(true);
-      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&orderBy=name&sort=asc&pageSize=99999&pageNumber=1${queryStr}`, configApi());
+      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${contractorId ?? ""}&orderBy=name&sort=asc&pageSize=99999&pageNumber=1${queryStr}`, configApi());
       const rows: any[] = data.result.data ?? [];
       const sheetData = rows.map((r) => ({
         "Beneficiário":       r.name ?? "",
@@ -242,7 +244,7 @@ export default function B2BPanel() {
 
   const loadSummary = async () => {
     try {
-      const idLocal = localStorage.getItem("id");
+      const idLocal = localStorage.getItem("contractorId");
       const id = idLocal ?? "";
       const [mov, inv, att] = await Promise.all([
         api.get(`/b2b-mass-movements?deleted=false&pageSize=1&pageNumber=1`, configApi()),

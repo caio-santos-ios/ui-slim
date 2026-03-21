@@ -37,7 +37,7 @@ type TForm = {
 };
 
 export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClose, onSuccess }: TProps) => {
-  const { register, handleSubmit, reset } = useForm<TForm>();
+  const { register, watch, handleSubmit, reset } = useForm<TForm>();
   const [loading, setLoading] = useAtom(loadingAtom);
   const [tab, setTab] = useState<"import" | "manual">("import");
   const [plans, setPlans] = useState<any[]>([]);
@@ -95,7 +95,7 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
         phone:         values.phone,
         whatsapp:      values.whatsapp,
         department:    values.department,
-        role:          values.role,  // campo "function" no backend
+        role:          values.role,  
         planId:        values.planId,
         effectiveDate: values.effectiveDate || null,
         bond:          values.bond,
@@ -143,7 +143,6 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
           ))}
         </div>
 
-        {/* ── ABA: Importar ─────────────────────────────────────────────── */}
         {tab === "import" && (
           <div className="p-6 flex flex-col gap-4">
             <p className="text-xs text-[var(--text-muted)]">
@@ -163,7 +162,6 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
           </div>
         )}
 
-        {/* ── ABA: Cadastro Manual ──────────────────────────────────────── */}
         {tab === "manual" && (
           <form onSubmit={handleSubmit(onSubmitManual)} className="p-6 grid grid-cols-12 gap-4">
 
@@ -208,14 +206,20 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
               <label className="label slim-label-primary">WhatsApp</label>
               <input {...register("whatsapp")} type="text" className="input slim-input-primary" />
             </div>
-            <div className="flex flex-col col-span-12 sm:col-span-4">
-              <label className="label slim-label-primary">Departamento</label>
-              <input {...register("department")} type="text" className="input slim-input-primary" />
-            </div>
-            <div className="flex flex-col col-span-12 sm:col-span-4">
-              <label className="label slim-label-primary">Função</label>
-              <input {...register("role")} type="text" className="input slim-input-primary" />
-            </div>
+            {
+              watch("bond") == "Titular" && (
+                <>
+                  <div className="flex flex-col col-span-12 sm:col-span-4">
+                    <label className="label slim-label-primary">Departamento</label>
+                    <input {...register("department")} type="text" className="input slim-input-primary" />
+                  </div>
+                  <div className="flex flex-col col-span-12 sm:col-span-4">
+                    <label className="label slim-label-primary">Função</label>
+                    <input {...register("role")} type="text" className="input slim-input-primary" />
+                  </div>
+                </>
+              )
+            }
             <div className="flex flex-col col-span-12 sm:col-span-4">
               <label className="label slim-label-primary">Data de Vigência</label>
               <input {...register("effectiveDate")} type="date" className="input slim-input-primary" />
