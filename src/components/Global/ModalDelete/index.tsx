@@ -16,7 +16,7 @@ type TProp = {
 
 export const ModalDelete = ({ title, isOpen, setIsOpen, onClose, onSelectValue, description = "Deseja excluir esse registro?" }: TProp) => {
     return (
-        <Dialog open={isOpen} as="div" className="relative z-50 focus:outline-none" onClose={() => setIsOpen(false)}>
+        <Dialog open={isOpen} as="div" className="relative z-999 focus:outline-none" onClose={() => setIsOpen(false)}>
             <div className="fixed inset-0 z-50 overflow-y-auto" style={{ background: "rgba(0,15,35,.6)", backdropFilter: "blur(5px)" }}>
                 <div className="flex min-h-full items-center justify-center p-4">
                     <DialogPanel className="w-full max-w-sm bg-[var(--surface-card)] rounded-2xl border border-[var(--surface-border)] shadow-xl overflow-hidden transition-all duration-300 data-closed:scale-95 data-closed:opacity-0">
