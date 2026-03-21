@@ -563,148 +563,144 @@ export default function B2BPanel() {
                 )}
 
                 {/* Filtros */}
-                {
-                  activeFilter > 5 && (
-                    <div className="grid grid-cols-12 mb-2">
-                      <Accordion className="col-span-12" defaultOpenId="filter">
-                        <AccordionItem id="filter">
-                          <AccordionTrigger
-                            clickHeader={() => setFilterOpened(!filterOpened)}
-                            icon={queryStr ? <MdFilterAlt size={15} /> : <MdFilterAltOff size={15} />}
-                            subtitle=""
-                          >
-                            Filtros
-                          </AccordionTrigger>
-                          <AccordionContent>
-                            <div className="grid grid-cols-12 gap-3">
-                              {activeTab === "movements" && (
-                                <>
-                                  <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
-                                    <label className="label slim-label-primary">Beneficiário</label>
-                                    <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome..." />
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">CPF</label>
-                                    <input {...register("cpf")} type="text" className="input slim-input-primary" placeholder="000.000.000-00" />
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Sexo</label>
-                                    <select {...register("gender")} className="select slim-select-primary">
-                                      <option value="">Todos</option>
-                                      <option value="Masculino">Masculino</option>
-                                      <option value="Feminino">Feminino</option>
-                                      <option value="Outros">Outros</option>
-                                    </select>
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
-                                    <label className="label slim-label-primary">Idade de</label>
-                                    <input {...register("ageFrom")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="0" />
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
-                                    <label className="label slim-label-primary">Até</label>
-                                    <input {...register("ageTo")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="120" />
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Status</label>
-                                    <select {...register("active")} className="select slim-select-primary">
-                                      <option value="">Todos</option>
-                                      <option value="true">Ativo</option>
-                                      <option value="false">Inativo</option>
-                                    </select>
-                                  </div>
-                                  <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
-                                    <label className="label slim-label-primary">Programa (Plano)</label>
-                                    <select {...register("planId")} className="select slim-select-primary">
-                                      <option value="">Todos</option>
-                                      {plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                                    </select>
-                                  </div>
-                                  <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
-                                    <label className="label slim-label-primary">Módulo de Serviço</label>
-                                    <select {...register("serviceModuleId")} className="select slim-select-primary">
-                                      <option value="">Todos</option>
-                                      {serviceModules.map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
-                                    </select>
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Cadastro — início</label>
-                                    <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Cadastro — fim</label>
-                                    <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Vigência — início</label>
-                                    <input {...register("gte$effectiveDate")} type="date" className="input slim-input-primary" />
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Vigência — fim</label>
-                                    <input {...register("lte$effectiveDate")} type="date" className="input slim-input-primary" />
-                                  </div>
-                                </>
-                              )}
-                              {activeTab === "invoices" && (
-                                <>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Mês</label>
-                                    <select {...register("referenceMonth")} className="select slim-select-primary">
-                                      <option value="">Todos</option>
-                                      {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
-                                    </select>
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Ano</label>
-                                    <input {...register("referenceYear")} type="number" className="input slim-input-primary" placeholder={String(new Date().getFullYear())} />
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Status</label>
-                                    <select {...register("status")} className="select slim-select-primary">
-                                      <option value="">Todos</option>
-                                      <option value="Aberta">Aberta</option>
-                                      <option value="Fechada">Fechada</option>
-                                      <option value="Paga">Paga</option>
-                                      <option value="Cancelada">Cancelada</option>
-                                    </select>
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Data — início</label>
-                                    <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Data — fim</label>
-                                    <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
-                                  </div>
-                                </>
-                              )}
-                              {activeTab === "attachments" && (
-                                <>
-                                  <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
-                                    <label className="label slim-label-primary">Busca rápida</label>
-                                    <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome do anexo..." />
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Data — início</label>
-                                    <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
-                                  </div>
-                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                    <label className="label slim-label-primary">Data — fim</label>
-                                    <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
-                                  </div>
-                                </>
-                              )}
-                              <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
-                                <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">
-                                  <IoSearch />
-                                </div>
+                <div className="grid grid-cols-12 mb-2">
+                  <Accordion className="col-span-12" defaultOpenId="filter">
+                    <AccordionItem id="filter">
+                      <AccordionTrigger
+                        clickHeader={() => setFilterOpened(!filterOpened)}
+                        icon={queryStr ? <MdFilterAlt size={15} /> : <MdFilterAltOff size={15} />}
+                        subtitle=""
+                      >
+                        Filtros
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="grid grid-cols-12 gap-3">
+                          {activeTab === "movements" && (
+                            <>
+                              <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                <label className="label slim-label-primary">Beneficiário</label>
+                                <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome..." />
                               </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">CPF</label>
+                                <input {...register("cpf")} type="text" className="input slim-input-primary" placeholder="000.000.000-00" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Sexo</label>
+                                <select {...register("gender")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  <option value="Masculino">Masculino</option>
+                                  <option value="Feminino">Feminino</option>
+                                  <option value="Outros">Outros</option>
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                                <label className="label slim-label-primary">Idade de</label>
+                                <input {...register("ageFrom")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="0" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                                <label className="label slim-label-primary">Até</label>
+                                <input {...register("ageTo")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="120" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Status</label>
+                                <select {...register("active")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  <option value="true">Ativo</option>
+                                  <option value="false">Inativo</option>
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                <label className="label slim-label-primary">Programa (Plano)</label>
+                                <select {...register("planId")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  {plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                <label className="label slim-label-primary">Módulo de Serviço</label>
+                                <select {...register("serviceModuleId")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  {serviceModules.map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Cadastro — início</label>
+                                <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Cadastro — fim</label>
+                                <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Vigência — início</label>
+                                <input {...register("gte$effectiveDate")} type="date" className="input slim-input-primary" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Vigência — fim</label>
+                                <input {...register("lte$effectiveDate")} type="date" className="input slim-input-primary" />
+                              </div>
+                            </>
+                          )}
+                          {activeTab === "invoices" && (
+                            <>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Mês</label>
+                                <select {...register("referenceMonth")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Ano</label>
+                                <input {...register("referenceYear")} type="number" className="input slim-input-primary" placeholder={String(new Date().getFullYear())} />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Status</label>
+                                <select {...register("status")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  <option value="Aberta">Aberta</option>
+                                  <option value="Fechada">Fechada</option>
+                                  <option value="Paga">Paga</option>
+                                  <option value="Cancelada">Cancelada</option>
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Data — início</label>
+                                <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Data — fim</label>
+                                <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                            </>
+                          )}
+                          {activeTab === "attachments" && (
+                            <>
+                              <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
+                                <label className="label slim-label-primary">Busca rápida</label>
+                                <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome do anexo..." />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Data — início</label>
+                                <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Data — fim</label>
+                                <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                            </>
+                          )}
+                          <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
+                            <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">
+                              <IoSearch />
                             </div>
-                          </AccordionContent>
-                        </AccordionItem>
-                      </Accordion>
-                    </div>
-                  )
-                }
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
 
                 {/* Tabela */}
                 <DataTable
