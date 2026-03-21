@@ -175,10 +175,10 @@ export default function OccupationalManagement() {
       };
 
       const { data } = await api.get(
-        `/vitals?deleted=false&contractorId=${id}&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${tabFilter[activeTab]}${query}`,
+        `/vitals?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${tabFilter[activeTab]}${query}`,
         configApi()
       );
-      const result = data.result;
+      const result = data.result.filter((x: any) => x.contractorId == id);
       setPagination({ currentPage: result.currentPage, data: result.data ?? [], sizePage: result.pageSize, totalPages: result.totalCount });
     } catch (error) {
       resolveResponse(error);
@@ -216,7 +216,7 @@ export default function OccupationalManagement() {
     if (values["gte$createdAt"]) q += `&gte$createdAt=${values["gte$createdAt"]}`;
     if (values["lte$createdAt"]) q += `&lte$createdAt=${values["lte$createdAt"]}`;
     if (values.department)       q += `&regex$department=${values.department}`;
-    if (values.branch)           q += `&regex$branch=${values.branch}`;
+    // if (values.branch)           q += `&regex$branch=${values.branch}`;
     if (values.function)         q += `&regex$function=${values.function}`;
     return q;
   };
@@ -264,6 +264,13 @@ export default function OccupationalManagement() {
   useEffect(() => { loadSummary(); }, []);
 
   useEffect(() => {
+    setPagination({
+      currentPage: 1,
+      data: [],
+      sizePage: 10,
+      totalPages: 10,
+      query: {}
+    });
     reset(ResetFilter);
     setQueryStr("");
     getAll();
@@ -340,20 +347,20 @@ export default function OccupationalManagement() {
                             <label className="label slim-label-primary">Departamento</label>
                             <input {...register("department")} type="text" className="input slim-input-primary" placeholder="Ex: RH" />
                           </div>
-                          <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                          {/* <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Setor</label>
                             <input {...register("branch")} type="text" className="input slim-input-primary" placeholder="Ex: Operações" />
-                          </div>
+                          </div> */}
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Função</label>
                             <input {...register("function")} type="text" className="input slim-input-primary" placeholder="Ex: Analista" />
                           </div>
 
-                          <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                          <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Data início</label>
                             <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
                           </div>
-                          <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                          <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Data fim</label>
                             <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
                           </div>

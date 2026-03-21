@@ -32,10 +32,8 @@ import { IconDelete } from "@/components/Global/IconDelete";
 import { TPlan } from "@/types/masterData/plans/plans.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 
-// ─── Abas ────────────────────────────────────────────────────────────────────
 type TTab = "movements" | "invoices" | "attachments";
 
-// ─── Colunas ─────────────────────────────────────────────────────────────────
 const movementColumns = [
   { key: "name",          title: "Beneficiário" },
   { key: "cpf",           title: "CPF" },
@@ -60,26 +58,13 @@ const attachmentColumns = [
   { key: "createdAt",   title: "Data" },
 ];
 
-// ─── Filtros ──────────────────────────────────────────────────────────────────
 type TFilter = {
-  search:              string;
-  cpf:                 string;
-  ageFrom:             string;
-  ageTo:               string;
-  gender:              string;
-  serviceModuleId:     string;
-  planId:              string;
-  active:              string;
-  "gte$createdAt":     string;
-  "lte$createdAt":     string;
-  "gte$effectiveDate": string;
-  "lte$effectiveDate": string;
-  referenceMonth:      string;
-  referenceYear:       string;
-  status:              string;
-  type:                string;
-  department:          string;
-  period:              string;
+  search: string; cpf: string; ageFrom: string; ageTo: string; gender: string;
+  serviceModuleId: string; planId: string; active: string;
+  "gte$createdAt": string; "lte$createdAt": string;
+  "gte$effectiveDate": string; "lte$effectiveDate": string;
+  referenceMonth: string; referenceYear: string; status: string;
+  type: string; department: string; period: string;
 };
 
 const ResetFilter: TFilter = {
@@ -91,7 +76,6 @@ const ResetFilter: TFilter = {
   type: "", department: "", period: "",
 };
 
-// ─── Badges ───────────────────────────────────────────────────────────────────
 const StatusBadge = ({ value }: { value: any }) => {
   const map: Record<string, string> = {
     Ativo: "bg-green-100 text-green-800 border-green-200",
@@ -112,16 +96,14 @@ const StatusBadge = ({ value }: { value: any }) => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// GRÁFICOS (SVG puro — sem biblioteca)
+// GRÁFICOS
 // ═══════════════════════════════════════════════════════════════════════════
 
-// ── Gráfico de Colunas: Ativos vs Inativos ────────────────────────────────
 function ColunasAtivosInativos({ ativos, inativos }: { ativos: number; inativos: number }) {
   const total = ativos + inativos || 1;
   const maxH = 80;
   const hAtivo   = Math.round((ativos   / total) * maxH);
   const hInativo = Math.round((inativos / total) * maxH);
-
   return (
     <div className="rounded-2xl p-4" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
       <p className="text-xs font-bold text-[var(--primary-color)] mb-3">Beneficiários Ativos / Inativos</p>
@@ -141,41 +123,34 @@ function ColunasAtivosInativos({ ativos, inativos }: { ativos: number; inativos:
       </div>
       <div className="flex justify-center gap-4 mt-2">
         <span className="text-xs text-[var(--text-muted)]">Total: <strong>{total}</strong></span>
-        <span className="text-xs text-green-600">{total > 0 ? ((ativos / total) * 100).toFixed(0) : 0}% ativos</span>
+        <span className="text-xs text-green-600">{((ativos / total) * 100).toFixed(0)}% ativos</span>
       </div>
     </div>
   );
 }
 
-// ── Gráfico de Pizza: Programas ────────────────────────────────────────────
 const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444","#10b981","#f97316"];
 
 function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) {
   const total = data.reduce((s, d) => s + d.value, 0) || 1;
   const cx = 70, cy = 70, r = 60;
   let startAngle = -Math.PI / 2;
-
   const slices = data.map((d, i) => {
-    const angle    = (d.value / total) * 2 * Math.PI;
+    const angle = (d.value / total) * 2 * Math.PI;
     const endAngle = startAngle + angle;
-    const x1 = cx + r * Math.cos(startAngle);
-    const y1 = cy + r * Math.sin(startAngle);
-    const x2 = cx + r * Math.cos(endAngle);
-    const y2 = cy + r * Math.sin(endAngle);
+    const x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
     const large = angle > Math.PI ? 1 : 0;
-    const path   = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
-    startAngle   = endAngle;
+    const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
+    startAngle = endAngle;
     return { path, color: PIZZA_COLORS[i % PIZZA_COLORS.length], label: d.label, value: d.value };
   });
-
   return (
     <div className="rounded-2xl p-4" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
       <p className="text-xs font-bold text-[var(--primary-color)] mb-3">Programas Ativos</p>
       <div className="flex items-center gap-4">
         <svg viewBox="0 0 140 140" className="w-28 h-28 flex-shrink-0">
-          {slices.map((s, i) => (
-            <path key={i} d={s.path} fill={s.color} stroke="#fff" strokeWidth="1.5" />
-          ))}
+          {slices.map((s, i) => <path key={i} d={s.path} fill={s.color} stroke="#fff" strokeWidth="1.5" />)}
           <circle cx={cx} cy={cy} r={r * 0.45} fill="var(--surface-card)" />
           <text x={cx} y={cy + 4} textAnchor="middle" fontSize="10" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
           <text x={cx} y={cy + 14} textAnchor="middle" fontSize="7" fill="var(--text-muted)">prog.</text>
@@ -195,7 +170,6 @@ function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) 
   );
 }
 
-// ── Gráfico de Barras verticais: Evolução mensal beneficiários ────────────
 function BarrasMensalBeneficiarios({ data }: { data: { month: string; year: number; total: number }[] }) {
   const max = Math.max(...data.map(d => d.total), 1);
   const BAR_H = 100;
@@ -224,47 +198,34 @@ function BarrasMensalBeneficiarios({ data }: { data: { month: string; year: numb
   );
 }
 
-// ── Gráfico de Barras duplas verticais: Evolução mensal faturas ───────────
+// ── ALTERAÇÃO 1: 1 barra por fatura individual (sem agrupamento) ──────────
 function BarrasMensalFaturas({ data }: { data: { month: string; year: number; count: number; total: number }[] }) {
-  const maxCount = Math.max(...data.map(d => d.count), 1);
   const maxTotal = Math.max(...data.map(d => d.total), 1);
   const BAR_H = 100;
   const fmt = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
   return (
     <div className="rounded-2xl p-4" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
       <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-bold text-[var(--primary-color)]">Evolução Mensal de Faturas</p>
-        <div className="flex gap-3">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-2.5 rounded-sm" style={{ background: "var(--primary-color)" }} />
-            <span className="text-xs text-[var(--text-muted)]">Qtd.</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-2.5 rounded-sm bg-green-500" />
-            <span className="text-xs text-[var(--text-muted)]">Valor</span>
-          </div>
+        <p className="text-xs font-bold text-[var(--primary-color)]">Evolução de Faturas</p>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-2.5 rounded-sm bg-green-500" />
+          <span className="text-xs text-[var(--text-muted)]">Valor por fatura</span>
         </div>
       </div>
       <div className="overflow-x-auto pb-1">
-        <div className="flex items-end gap-3" style={{ minWidth: `${data.length * 72}px`, height: `${BAR_H + 52}px` }}>
+        <div className="flex items-end gap-3" style={{ minWidth: `${data.length * 64}px`, height: `${BAR_H + 52}px` }}>
           {data.map((d, i) => {
-            const hCount = Math.max(6, Math.round((d.count / maxCount) * BAR_H));
-            const hTotal = Math.max(6, Math.round((d.total / maxTotal) * BAR_H));
+            const h = Math.max(6, Math.round((d.total / maxTotal) * BAR_H));
             return (
-              <div key={i} className="flex flex-col items-center gap-1 flex-shrink-0" style={{ width: 64 }}>
-                <span className="text-[10px] font-bold text-[var(--primary-color)]">{d.count > 0 ? d.count : ""}</span>
-                <div className="flex items-end gap-1 w-full justify-center" style={{ height: `${BAR_H}px` }}>
-                  <div className="rounded-t-md transition-all duration-700 flex-1"
-                    style={{ height: `${hCount}px`, background: "linear-gradient(180deg, #0ea5e9, var(--primary-color))" }} />
-                  <div className="rounded-t-md transition-all duration-700 flex-1"
-                    style={{ height: `${hTotal}px`, background: "linear-gradient(180deg, #22c55e, #16a34a)" }} />
+              <div key={i} className="flex flex-col items-center gap-1 flex-shrink-0" style={{ width: 56 }}>
+                <span className="text-[9px] font-bold text-green-600">{d.total > 0 ? fmt(d.total) : ""}</span>
+                <div className="flex items-end w-full justify-center" style={{ height: `${BAR_H}px` }}>
+                  <div className="rounded-t-md transition-all duration-700 w-full"
+                    style={{ height: `${h}px`, background: "linear-gradient(180deg, #22c55e, #16a34a)" }} />
                 </div>
                 <span className="text-xs text-[var(--text-muted)] text-center leading-tight">
                   {d.month}<br /><span className="text-[10px]">{d.year}</span>
                 </span>
-                {d.total > 0 && (
-                  <span className="text-[9px] text-green-600 font-semibold text-center leading-tight">{fmt(d.total)}</span>
-                )}
               </div>
             );
           })}
@@ -274,16 +235,12 @@ function BarrasMensalFaturas({ data }: { data: { month: string; year: number; co
   );
 }
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 type TSummary = { movements: number; invoices: number; attachments: number; pendingMovements: number };
 type TChartMovements = { ativos: number; inativos: number; porPrograma: { label: string; value: number }[]; porMes: { month: string; year: number; total: number }[] };
 type TChartInvoices  = { porMes: { month: string; year: number; count: number; total: number }[] };
 
 const MONTHS_SHORT: string[] = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 
-// ═════════════════════════════════════════════════════════════════════════════
-// PAGE
-// ═════════════════════════════════════════════════════════════════════════════
 export default function B2BPanel() {
   const [_, setLoading]             = useAtom(loadingAtom);
   const [modal, setModal]           = useAtom(modalAtom);
@@ -302,23 +259,22 @@ export default function B2BPanel() {
   const [exportingExcel, setExportingExcel] = useState(false);
   const [summary, setSummary]           = useState<TSummary>({ movements: 0, invoices: 0, attachments: 0, pendingMovements: 0 });
   const [filterOpened, setFilterOpened] = useState(true);
-
   const [modalMovement,   setModalMovement]   = useState(false);
   const [modalInvoice,    setModalInvoice]    = useState(false);
   const [modalAttachment, setModalAttachment] = useState(false);
-
   const [chartMovements, setChartMovements] = useState<TChartMovements>({ ativos: 0, inativos: 0, porPrograma: [], porMes: [] });
   const [chartInvoices, setChartInvoices]   = useState<TChartInvoices>({ porMes: [] });
+  const [activeFilter, setActiveFilter] = useState<number>(0);
+  const [permissionQuery, setPermissionQuery] = useState<boolean>(true);
 
   const { register, reset, getValues } = useForm<TFilter>({ defaultValues: ResetFilter });
 
   const uriMap: Record<TTab, string> = {
-    movements:   "b2b-mass-movements",
-    invoices:    "b2b-invoices",
+    movements: "b2b-mass-movements",
+    invoices:  "b2b-invoices",
     attachments: "attachments",
   };
 
-  // ── Listagem ───────────────────────────────────────────────────────────────
   const getAll = async (query: string = "") => {
     try {
       setLoading(true);
@@ -331,104 +287,63 @@ export default function B2BPanel() {
       const { data } = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
       setPagination({ currentPage: result.currentPage, data: result.data, sizePage: result.pageSize, totalPages: result.totalCount });
-    } catch (error) {
-      resolveResponse(error);
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) { resolveResponse(error); } finally { setLoading(false); }
   };
 
-  const getRecipient = async (query: string = "") => {
+  const getRecipient = async (query: string = "", activedFilter: boolean = false) => {
     try {
       setLoading(true);
       const contractorId = localStorage.getItem("contractorId");
       const id = contractorId ? contractorId : "";
+      
       const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
+      if(activeFilter) {
+        setActiveTab(result.data.length);
+        setPermissionQuery(false);
+      }
       setPagination({ currentPage: result.currentPage, data: result.data, sizePage: result.pageSize, totalPages: result.totalCount });
-    } catch (error) {
-      resolveResponse(error);
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) { resolveResponse(error); } finally { setLoading(false); }
   };
 
-  // ── Gráficos ───────────────────────────────────────────────────────────────
   const loadChartMovements = async () => {
     try {
       const contractorId = localStorage.getItem("contractorId");
       const id = contractorId ? contractorId : "";
-      const { data } = await api.get(
-        `/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=9999&pageNumber=1`,
-        configApi()
-      );
+      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=9999&pageNumber=1`, configApi());
       const rows: any[] = data.result?.data ?? [];
-
       const ativos   = rows.filter(r => r.active).length;
       const inativos = rows.filter(r => !r.active).length;
-
       const progMap: Record<string, number> = {};
-      rows.forEach(r => {
-        const p = r.planName || "Sem programa";
-        progMap[p] = (progMap[p] || 0) + 1;
-      });
-      const porPrograma = Object.entries(progMap)
-        .map(([label, value]) => ({ label, value }))
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 8);
-
+      rows.forEach(r => { const p = r.planName || "Sem programa"; progMap[p] = (progMap[p] || 0) + 1; });
+      const porPrograma = Object.entries(progMap).map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value).slice(0, 8);
       const now = new Date();
       const porMes: { month: string; year: number; total: number }[] = [];
       for (let i = 11; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const m = d.getMonth();
-        const y = d.getFullYear();
-        const count = rows.filter(r => {
-          if (!r.createdAt) return false;
-          const cd = new Date(r.createdAt);
-          return cd.getMonth() === m && cd.getFullYear() === y;
-        }).length;
+        const m = d.getMonth(), y = d.getFullYear();
+        const count = rows.filter(r => { if (!r.createdAt) return false; const cd = new Date(r.createdAt); return cd.getMonth() === m && cd.getFullYear() === y; }).length;
         porMes.push({ month: MONTHS_SHORT[m], year: y, total: count });
       }
-
       setChartMovements({ ativos, inativos, porPrograma, porMes });
     } catch {}
   };
 
+  // ── ALTERAÇÃO 2: 1 entrada por fatura (sem agrupamento por mês) ──────────
   const loadChartInvoices = async () => {
     try {
-      const { data } = await api.get(
-        `/b2b-invoices?deleted=false&orderBy=createdAt&sort=asc&pageSize=9999&pageNumber=1`,
-        configApi()
-      );
+      const { data } = await api.get(`/b2b-invoices?deleted=false&orderBy=createdAt&sort=asc&pageSize=9999&pageNumber=1`, configApi());
       const rows: any[] = data.result?.data ?? [];
-
-      const map: Record<string, { count: number; total: number }> = {};
-      rows.forEach(r => {
-        const key = `${String(r.referenceMonth).padStart(2, "0")}/${r.referenceYear}`;
-        if (!map[key]) map[key] = { count: 0, total: 0 };
-        map[key].count++;
-        map[key].total += Number(r.totalAmount ?? 0);
-      });
-
-      const now = new Date();
-      const porMes: { month: string; year: number; count: number; total: number }[] = [];
-      for (let i = 11; i >= 0; i--) {
-        const d   = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const key = `${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
-        porMes.push({
-          month: MONTHS_SHORT[d.getMonth()],
-          year:  d.getFullYear(),
-          count: map[key]?.count ?? 0,
-          total: map[key]?.total ?? 0,
-        });
-      }
-
+      const porMes = rows.map(r => ({
+        month: MONTHS_SHORT[(r.referenceMonth ?? 1) - 1] ?? String(r.referenceMonth),
+        year:  r.referenceYear ?? new Date().getFullYear(),
+        count: 1,
+        total: Number(r.totalAmount ?? 0),
+      }));
       setChartInvoices({ porMes });
     } catch {}
   };
 
-  // ── Export Excel ───────────────────────────────────────────────────────────
   const exportExcel = async () => {
     try {
       setExportingExcel(true);
@@ -437,31 +352,24 @@ export default function B2BPanel() {
       const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=99999&pageNumber=1${queryStr}`, configApi());
       const rows: any[] = data.result.data ?? [];
       const sheetData = rows.map((r) => ({
-        "Beneficiário": r.name ?? "", "CPF": r.cpf ?? "",
-        "Status": r.active ? "Ativo" : "Inativo", "Programa": r.planName ?? "",
-        "Função": r.role ?? "", "Departamento": r.department ?? "",
+        "Beneficiário": r.name ?? "", "CPF": r.cpf ?? "", "Status": r.active ? "Ativo" : "Inativo",
+        "Programa": r.planName ?? "", "Função": r.role ?? "", "Departamento": r.department ?? "",
         "Sexo": r.gender ?? "", "Data de Nascimento": r.dateOfBirth ? maskDate(r.dateOfBirth) : "",
         "Data de Vigência": r.effectiveDate ? maskDate(r.effectiveDate) : "",
         "E-mail": r.email ?? "", "Telefone": r.phone ?? "", "WhatsApp": r.whatsapp ?? "",
-        "Vínculo": r.bond ?? "", "CEP": r?.address?.zipCode ?? "",
-        "Número": r?.address?.number ?? "", "Rua": r?.address?.street ?? "",
-        "Complemento": r?.address?.complement ?? "", "Bairro": r?.address?.neighborhood ?? "",
-        "Cidade": r?.address?.city ?? "", "Estado": r?.address?.state ?? "",
+        "Vínculo": r.bond ?? "", "CEP": r?.address?.zipCode ?? "", "Número": r?.address?.number ?? "",
+        "Rua": r?.address?.street ?? "", "Complemento": r?.address?.complement ?? "",
+        "Bairro": r?.address?.neighborhood ?? "", "Cidade": r?.address?.city ?? "", "Estado": r?.address?.state ?? "",
       }));
       const XLSX = await import("xlsx");
-      const ws   = XLSX.utils.json_to_sheet(sheetData);
-      const wb   = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(sheetData);
+      const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Beneficiários");
       ws["!cols"] = Object.keys(sheetData[0] ?? {}).map(() => ({ wch: 24 }));
       XLSX.writeFile(wb, `beneficiarios_${new Date().toISOString().split("T")[0]}.xlsx`);
-    } catch (error) {
-      resolveResponse(error);
-    } finally {
-      setExportingExcel(false);
-    }
+    } catch (error) { resolveResponse(error); } finally { setExportingExcel(false); }
   };
 
-  // ── Summary ────────────────────────────────────────────────────────────────
   const loadSummary = async () => {
     try {
       const idLocal = localStorage.getItem("id") ?? "";
@@ -476,20 +384,13 @@ export default function B2BPanel() {
   };
 
   const loadPlans = async () => {
-    try {
-      const { data } = await api.get(`/plans?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi());
-      setPlans(data.result.data ?? []);
-    } catch {}
+    try { const { data } = await api.get(`/plans?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi()); setPlans(data.result.data ?? []); } catch {}
   };
 
   const loadServiceModules = async () => {
-    try {
-      const { data } = await api.get(`/service-modules/select?deleted=false&orderBy=name&sort=asc`, configApi());
-      setServiceModules(data.result.data ?? []);
-    } catch {}
+    try { const { data } = await api.get(`/service-modules/select?deleted=false&orderBy=name&sort=asc`, configApi()); setServiceModules(data.result.data ?? []); } catch {}
   };
 
-  // ── Build query ────────────────────────────────────────────────────────────
   const buildQuery = (values: TFilter): string => {
     let q = "";
     if (activeTab === "movements") {
@@ -527,7 +428,6 @@ export default function B2BPanel() {
     activeTab === "movements" ? await getRecipient(q) : await getAll(q);
   };
 
-  // ── Modals ─────────────────────────────────────────────────────────────────
   const openModal = (action: "create" | "edit" = "create", body?: any) => {
     if (body) { setCurrentBody(body); setId(body.id); }
     setTypeModal(action);
@@ -559,15 +459,12 @@ export default function B2BPanel() {
       setModalDelete(false); setCurrentBody({});
       activeTab === "movements" ? await getRecipient(queryStr) : await getAll(queryStr);
       await loadSummary();
-    } catch (error) {
-      resolveResponse(error);
-    }
+    } catch (error) { resolveResponse(error); }
   };
 
-  // ── Columns / render ──────────────────────────────────────────────────────
   const columns = useMemo(() => {
-    if (activeTab === "movements")   return movementColumns;
-    if (activeTab === "invoices")    return invoiceColumns;
+    if (activeTab === "movements") return movementColumns;
+    if (activeTab === "invoices")  return invoiceColumns;
     return attachmentColumns;
   }, [activeTab]);
 
@@ -582,22 +479,19 @@ export default function B2BPanel() {
     return v ?? "—";
   };
 
-  // ── Effects ────────────────────────────────────────────────────────────────
   useEffect(() => {
-    loadSummary();
-    loadPlans();
-    loadServiceModules();
-    loadChartMovements();
+    loadSummary(); 
+    loadPlans(); 
+    loadServiceModules(); 
+    loadChartMovements(); 
     loadChartInvoices();
   }, []);
 
   useEffect(() => {
-    reset(ResetFilter);
-    setQueryStr("");
-    activeTab === "movements" ? getRecipient() : getAll();
+    reset(ResetFilter); setQueryStr("");
+    activeTab === "movements" ? getRecipient("", permissionQuery) : getAll();
   }, [activeTab]);
 
-  // ── Tabs ───────────────────────────────────────────────────────────────────
   const tabs: { key: TTab; label: string; icon: React.ReactNode; count?: number }[] = [
     { key: "movements",   label: "Movimentação de Massa", icon: <FiUsers size={15} />,             count: summary.movements },
     { key: "invoices",    label: "Painel de Faturas",     icon: <MdOutlineReceipt size={15} />,    count: summary.invoices },
@@ -606,7 +500,6 @@ export default function B2BPanel() {
 
   const MONTHS = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <>
       <Autorization />
@@ -617,15 +510,12 @@ export default function B2BPanel() {
             <SideMenu />
             <div className="slim-container-customer h-[calc(100dvh-5rem)] w-full overflow-y-auto">
               <SlimContainer
-                menu="Gestão"
-                breadcrump="Painel do Gestor"
-                breadcrumpIcon="MdBusiness"
+                menu="Gestão" breadcrump="Painel do Gestor" breadcrumpIcon="MdBusiness"
                 buttons={
                   <div className="flex items-center gap-2">
                     {activeTab === "movements" && (
                       <button onClick={exportExcel} disabled={exportingExcel} className="slim-btn slim-btn-primary-light flex items-center gap-1.5">
-                        <FiDownload size={14} />
-                        {exportingExcel ? "Exportando..." : "Exportar Excel"}
+                        <FiDownload size={14} />{exportingExcel ? "Exportando..." : "Exportar Excel"}
                       </button>
                     )}
                     {activeTab !== "invoices" && (
@@ -634,7 +524,7 @@ export default function B2BPanel() {
                   </div>
                 }
               >
-                {/* ── Tabs ──────────────────────────────────────────────── */}
+                {/* Tabs */}
                 <div className="flex gap-1 mb-4 p-1 rounded-xl" style={{ background: "var(--surface-bg)", border: "1px solid var(--surface-border)" }}>
                   {tabs.map((t) => (
                     <button key={t.key} onClick={() => setActiveTab(t.key)}
@@ -656,7 +546,7 @@ export default function B2BPanel() {
                   ))}
                 </div>
 
-                {/* ── GRÁFICOS — ABA MOVEMENTS ──────────────────────────── */}
+                {/* Gráficos movements */}
                 {activeTab === "movements" && (
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                     <ColunasAtivosInativos ativos={chartMovements.ativos} inativos={chartMovements.inativos} />
@@ -665,154 +555,158 @@ export default function B2BPanel() {
                   </div>
                 )}
 
-                {/* ── GRÁFICO — ABA INVOICES ────────────────────────────── */}
+                {/* Gráfico invoices */}
                 {activeTab === "invoices" && (
                   <div className="mb-4">
                     <BarrasMensalFaturas data={chartInvoices.porMes} />
                   </div>
                 )}
 
-                {/* ── Filtros ───────────────────────────────────────────── */}
-                <div className="grid grid-cols-12 mb-2">
-                  <Accordion className="col-span-12" defaultOpenId="filter">
-                    <AccordionItem id="filter">
-                      <AccordionTrigger
-                        clickHeader={() => setFilterOpened(!filterOpened)}
-                        icon={queryStr ? <MdFilterAlt size={15} /> : <MdFilterAltOff size={15} />}
-                        subtitle=""
-                      >
-                        Filtros
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="grid grid-cols-12 gap-3">
-                          {activeTab === "movements" && (
-                            <>
-                              <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
-                                <label className="label slim-label-primary">Beneficiário</label>
-                                <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome..." />
+                {/* Filtros */}
+                {
+                  activeFilter > 5 && (
+                    <div className="grid grid-cols-12 mb-2">
+                      <Accordion className="col-span-12" defaultOpenId="filter">
+                        <AccordionItem id="filter">
+                          <AccordionTrigger
+                            clickHeader={() => setFilterOpened(!filterOpened)}
+                            icon={queryStr ? <MdFilterAlt size={15} /> : <MdFilterAltOff size={15} />}
+                            subtitle=""
+                          >
+                            Filtros
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="grid grid-cols-12 gap-3">
+                              {activeTab === "movements" && (
+                                <>
+                                  <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                    <label className="label slim-label-primary">Beneficiário</label>
+                                    <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome..." />
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">CPF</label>
+                                    <input {...register("cpf")} type="text" className="input slim-input-primary" placeholder="000.000.000-00" />
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Sexo</label>
+                                    <select {...register("gender")} className="select slim-select-primary">
+                                      <option value="">Todos</option>
+                                      <option value="Masculino">Masculino</option>
+                                      <option value="Feminino">Feminino</option>
+                                      <option value="Outros">Outros</option>
+                                    </select>
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                                    <label className="label slim-label-primary">Idade de</label>
+                                    <input {...register("ageFrom")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="0" />
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                                    <label className="label slim-label-primary">Até</label>
+                                    <input {...register("ageTo")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="120" />
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Status</label>
+                                    <select {...register("active")} className="select slim-select-primary">
+                                      <option value="">Todos</option>
+                                      <option value="true">Ativo</option>
+                                      <option value="false">Inativo</option>
+                                    </select>
+                                  </div>
+                                  <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                    <label className="label slim-label-primary">Programa (Plano)</label>
+                                    <select {...register("planId")} className="select slim-select-primary">
+                                      <option value="">Todos</option>
+                                      {plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                    </select>
+                                  </div>
+                                  <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                    <label className="label slim-label-primary">Módulo de Serviço</label>
+                                    <select {...register("serviceModuleId")} className="select slim-select-primary">
+                                      <option value="">Todos</option>
+                                      {serviceModules.map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
+                                    </select>
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Cadastro — início</label>
+                                    <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Cadastro — fim</label>
+                                    <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Vigência — início</label>
+                                    <input {...register("gte$effectiveDate")} type="date" className="input slim-input-primary" />
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Vigência — fim</label>
+                                    <input {...register("lte$effectiveDate")} type="date" className="input slim-input-primary" />
+                                  </div>
+                                </>
+                              )}
+                              {activeTab === "invoices" && (
+                                <>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Mês</label>
+                                    <select {...register("referenceMonth")} className="select slim-select-primary">
+                                      <option value="">Todos</option>
+                                      {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+                                    </select>
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Ano</label>
+                                    <input {...register("referenceYear")} type="number" className="input slim-input-primary" placeholder={String(new Date().getFullYear())} />
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Status</label>
+                                    <select {...register("status")} className="select slim-select-primary">
+                                      <option value="">Todos</option>
+                                      <option value="Aberta">Aberta</option>
+                                      <option value="Fechada">Fechada</option>
+                                      <option value="Paga">Paga</option>
+                                      <option value="Cancelada">Cancelada</option>
+                                    </select>
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Data — início</label>
+                                    <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Data — fim</label>
+                                    <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
+                                  </div>
+                                </>
+                              )}
+                              {activeTab === "attachments" && (
+                                <>
+                                  <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
+                                    <label className="label slim-label-primary">Busca rápida</label>
+                                    <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome do anexo..." />
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Data — início</label>
+                                    <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
+                                  </div>
+                                  <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                    <label className="label slim-label-primary">Data — fim</label>
+                                    <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
+                                  </div>
+                                </>
+                              )}
+                              <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
+                                <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">
+                                  <IoSearch />
+                                </div>
                               </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">CPF</label>
-                                <input {...register("cpf")} type="text" className="input slim-input-primary" placeholder="000.000.000-00" />
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Sexo</label>
-                                <select {...register("gender")} className="select slim-select-primary">
-                                  <option value="">Todos</option>
-                                  <option value="Masculino">Masculino</option>
-                                  <option value="Feminino">Feminino</option>
-                                  <option value="Outros">Outros</option>
-                                </select>
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
-                                <label className="label slim-label-primary">Idade de</label>
-                                <input {...register("ageFrom")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="0" />
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
-                                <label className="label slim-label-primary">Até</label>
-                                <input {...register("ageTo")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="120" />
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Status</label>
-                                <select {...register("active")} className="select slim-select-primary">
-                                  <option value="">Todos</option>
-                                  <option value="true">Ativo</option>
-                                  <option value="false">Inativo</option>
-                                </select>
-                              </div>
-                              <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
-                                <label className="label slim-label-primary">Programa (Plano)</label>
-                                <select {...register("planId")} className="select slim-select-primary">
-                                  <option value="">Todos</option>
-                                  {plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                                </select>
-                              </div>
-                              <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
-                                <label className="label slim-label-primary">Módulo de Serviço</label>
-                                <select {...register("serviceModuleId")} className="select slim-select-primary">
-                                  <option value="">Todos</option>
-                                  {serviceModules.map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
-                                </select>
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Cadastro — início</label>
-                                <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Cadastro — fim</label>
-                                <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Vigência — início</label>
-                                <input {...register("gte$effectiveDate")} type="date" className="input slim-input-primary" />
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Vigência — fim</label>
-                                <input {...register("lte$effectiveDate")} type="date" className="input slim-input-primary" />
-                              </div>
-                            </>
-                          )}
-                          {activeTab === "invoices" && (
-                            <>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Mês</label>
-                                <select {...register("referenceMonth")} className="select slim-select-primary">
-                                  <option value="">Todos</option>
-                                  {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
-                                </select>
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Ano</label>
-                                <input {...register("referenceYear")} type="number" className="input slim-input-primary" placeholder={String(new Date().getFullYear())} />
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Status</label>
-                                <select {...register("status")} className="select slim-select-primary">
-                                  <option value="">Todos</option>
-                                  <option value="Aberta">Aberta</option>
-                                  <option value="Fechada">Fechada</option>
-                                  <option value="Paga">Paga</option>
-                                  <option value="Cancelada">Cancelada</option>
-                                </select>
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Data — início</label>
-                                <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Data — fim</label>
-                                <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
-                              </div>
-                            </>
-                          )}
-                          {activeTab === "attachments" && (
-                            <>
-                              <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
-                                <label className="label slim-label-primary">Busca rápida</label>
-                                <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome do anexo..." />
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Data — início</label>
-                                <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
-                              </div>
-                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                <label className="label slim-label-primary">Data — fim</label>
-                                <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
-                              </div>
-                            </>
-                          )}
-                          <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
-                            <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">
-                              <IoSearch />
                             </div>
-                          </div>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    </div>
+                  )
+                }
 
-                {/* ── Tabela ────────────────────────────────────────────── */}
+                {/* Tabela */}
                 <DataTable
                   isAction={activeTab === "invoices" || activeTab === "attachments"}
                   classContainer={`${filterOpened ? "max-h-[calc(100dvh-(var(--height-header)+23rem))]" : "max-h-[calc(100dvh-(var(--height-header)+16rem))]"}`}
@@ -851,25 +745,10 @@ export default function B2BPanel() {
               </SlimContainer>
             </div>
 
-            <ModalB2BMassMovement
-              isOpen={modalMovement} typeModal={typeModal} body={currentBody}
-              customers={customers} onClose={closeModal} onSuccess={handleSuccess}
-            />
-            <ModalB2BInvoice
-              isOpen={modalInvoice} typeModal={typeModal} body={currentBody}
-              customers={customers} onClose={closeModal} onSuccess={handleSuccess}
-            />
-            <ModalB2BAttachment
-              isOpen={modalAttachment} typeModal={typeModal} body={currentBody}
-              customers={customers} onClose={closeModal} onSuccess={handleSuccess}
-            />
-            <ModalDelete
-              title="Excluir registro"
-              isOpen={modalDelete}
-              setIsOpen={() => setModalDelete(modal)}
-              onClose={() => setModalDelete(false)}
-              onSelectValue={destroy}
-            />
+            <ModalB2BMassMovement isOpen={modalMovement} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
+            <ModalB2BInvoice      isOpen={modalInvoice}  typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
+            <ModalB2BAttachment   isOpen={modalAttachment} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
+            <ModalDelete title="Excluir registro" isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} onClose={() => setModalDelete(false)} onSelectValue={destroy} />
           </main>
         </>
       ) : <></>}
