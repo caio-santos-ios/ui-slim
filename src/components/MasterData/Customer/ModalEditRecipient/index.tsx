@@ -471,7 +471,7 @@ export const ModalEditRecipient = ({
                                                     <input {...register("function")} type="text" className="input slim-input-primary" placeholder="Função" />
                                                 </Field>
                                                 <Field label="Matrícula" span={2}>
-                                                    <input {...register("function")} type="text" className="input slim-input-primary" placeholder="Matrícula" />
+                                                    <input {...register("registration")} type="text" className="input slim-input-primary" placeholder="Matrícula" />
                                                 </Field>
                                                 <Field label="CNO" span={2}>
                                                     <input {...register("cno")} type="text" className="input slim-input-primary" placeholder="CNO" />

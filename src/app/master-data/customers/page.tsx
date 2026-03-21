@@ -150,7 +150,7 @@ export default function Customer() {
       setLoading(true);
       const orderBy = uri === "customers" ? "corporateName" : "name";
       const { data } = await api.get(
-        `/${uri}?deleted=false&orderBy=${orderBy}&sort=asc&pageSize=10&pageNumber=${pagination.currentPage}${query}`,
+        `/${uri}?deleted=false&orderBy=${orderBy}&sort=asc&pageSize=10&pageNumber=${pagination.currentPage ?? 1}${query}`,
         configApi()
       );
       const result = data.result;

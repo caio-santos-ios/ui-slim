@@ -42,7 +42,7 @@ const movementColumns = [
   { key: "cpf",           title: "CPF" },
   { key: "planName",      title: "Programa" },
   { key: "active",        title: "Status" },
-  { key: "role",          title: "Função" },
+  { key: "function",      title: "Função" },
   { key: "department",    title: "Departamento" },
   { key: "effectiveDate", title: "Data de Vigência" },
 ];
@@ -54,7 +54,7 @@ const invoiceColumns = [
   { key: "totalAmount",      title: "Valor Total" },
   { key: "status",           title: "Status" },
   { key: "dueDate",          title: "Vencimento" },
-  { key: "closingDate",      title: "Data de Corte" }, // item 5
+  { key: "closingDate",      title: "Data de Corte" }
 ];
 
 const attachmentColumns = [
@@ -165,15 +165,16 @@ export default function B2BPanel() {
     attachments: "attachments",
   };
 
-  // ── Listagem ───────────────────────────────────────────────────────────────
   const getAll = async (query: string = "") => {
     try {
       setLoading(true);
       const uri = uriMap[activeTab];
+      
       if (uri === "attachments") {
-        const id = localStorage.getItem("id");
-        if (id) query += `&parentId=${id}&parent=customer-manager`;
-      }
+        const contractorId = localStorage.getItem("contractorId");
+        if (contractorId) query += `&parentId=${contractorId}&parent=customer-manager`;
+      };
+
       const { data } = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
       setPagination({ currentPage: result.currentPage, data: result.data, sizePage: result.pageSize, totalPages: result.totalCount });
@@ -186,8 +187,10 @@ export default function B2BPanel() {
 
   const getRecipient = async (query: string = "") => {
     try {
+      const contractorId = localStorage.getItem("contractorId");
+
       setLoading(true);
-      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
+      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${contractorId ?? ""}&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
       setPagination({ currentPage: result.currentPage, data: result.data, sizePage: result.pageSize, totalPages: result.totalCount });
     } catch (error) {
@@ -197,7 +200,6 @@ export default function B2BPanel() {
     }
   };
 
-  // ── Export Excel ───────────────────────────────────────────────────────────
   const exportExcel = async () => {
     try {
       setExportingExcel(true);
@@ -238,7 +240,6 @@ export default function B2BPanel() {
     }
   };
 
-  // ── Summary ────────────────────────────────────────────────────────────────
   const loadSummary = async () => {
     try {
       const idLocal = localStorage.getItem("id");
@@ -267,12 +268,10 @@ export default function B2BPanel() {
     } catch {}
   };
 
-  // ── Build query ────────────────────────────────────────────────────────────
   const buildQuery = (values: TFilter): string => {
     let q = "";
 
     if (activeTab === "movements") {
-      // item 1: filtros de beneficiário
       if (values.search)          q += `&regex$or$name=${values.search}`;
       if (values.cpf)             q += `&regex$cpf=${values.cpf}`;
       if (values.gender)          q += `&gender=${values.gender}`;
@@ -283,7 +282,6 @@ export default function B2BPanel() {
       if (values["lte$createdAt"])     q += `&lte$createdAt=${values["lte$createdAt"]}`;
       if (values["gte$effectiveDate"]) q += `&gte$effectiveDate=${values["gte$effectiveDate"]}`;
       if (values["lte$effectiveDate"]) q += `&lte$effectiveDate=${values["lte$effectiveDate"]}`;
-      // filtro de idade → converte para dateOfBirth
       if (values.ageFrom) {
         const maxDate = new Date();
         maxDate.setFullYear(maxDate.getFullYear() - parseInt(values.ageFrom));
@@ -297,7 +295,6 @@ export default function B2BPanel() {
     }
 
     if (activeTab === "invoices") {
-      // item 4: filtros de fatura
       if (values.referenceMonth) q += `&referenceMonth=${values.referenceMonth}`;
       if (values.referenceYear)  q += `&referenceYear=${values.referenceYear}`;
       if (values.status)         q += `&status=${values.status}`;
@@ -320,7 +317,6 @@ export default function B2BPanel() {
     activeTab === "movements" ? await getRecipient(q) : await getAll(q);
   };
 
-  // ── Modals ─────────────────────────────────────────────────────────────────
   const openModal = (action: "create" | "edit" = "create", body?: any) => {
     if (body) { setCurrentBody(body); setId(body.id); }
     setTypeModal(action);
@@ -359,14 +355,12 @@ export default function B2BPanel() {
     }
   };
 
-  // ── Columns ────────────────────────────────────────────────────────────────
   const columns = useMemo(() => {
     if (activeTab === "movements")   return movementColumns;
     if (activeTab === "invoices")    return invoiceColumns;
     return attachmentColumns;
   }, [activeTab]);
 
-  // ── Cell renderer ──────────────────────────────────────────────────────────
   const renderCell = (x: any, col: { key: string; title: string }) => {
     const v = x[col.key];
     if (["createdAt", "dueDate", "paidAt", "effectiveDate", "closingDate"].includes(col.key)) return maskDate(v);
@@ -378,7 +372,6 @@ export default function B2BPanel() {
     return v ?? "—";
   };
 
-  // ── Effects ────────────────────────────────────────────────────────────────
   useEffect(() => {
     loadSummary();
     loadPlans();
@@ -391,7 +384,6 @@ export default function B2BPanel() {
     activeTab === "movements" ? getRecipient() : getAll();
   }, [activeTab]);
 
-  // ── Tabs ───────────────────────────────────────────────────────────────────
   const tabs: { key: TTab; label: string; icon: React.ReactNode; count?: number }[] = [
     { key: "movements",   label: "Movimentação de Massa", icon: <FiUsers size={15} />,             count: summary.movements },
     { key: "invoices",    label: "Painel de Faturas",     icon: <MdOutlineReceipt size={15} />,    count: summary.invoices },
@@ -400,7 +392,6 @@ export default function B2BPanel() {
 
   const MONTHS = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <>
       <Autorization />
@@ -430,7 +421,6 @@ export default function B2BPanel() {
                   </div>
                 }
               >
-                {/* ── Tabs ──────────────────────────────────────────────── */}
                 <div className="flex gap-1 mb-4 p-1 rounded-xl" style={{ background: "var(--surface-bg)", border: "1px solid var(--surface-border)" }}>
                   {tabs.map((t) => (
                     <button
@@ -455,7 +445,6 @@ export default function B2BPanel() {
                   ))}
                 </div>
 
-                {/* ── Filtros ───────────────────────────────────────────── */}
                 <div className="grid grid-cols-12 mb-2">
                   <Accordion className="col-span-12" defaultOpenId="filter">
                     <AccordionItem id="filter">
@@ -469,7 +458,6 @@ export default function B2BPanel() {
                       <AccordionContent>
                         <div className="grid grid-cols-12 gap-3">
 
-                          {/* ── MOVIMENTAÇÃO: filtros item 1 ────────────── */}
                           {activeTab === "movements" && (
                             <>
                               <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
@@ -538,7 +526,6 @@ export default function B2BPanel() {
                             </>
                           )}
 
-                          {/* ── FATURAS: filtros item 4 ─────────────────── */}
                           {activeTab === "invoices" && (
                             <>
                               <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
@@ -573,7 +560,6 @@ export default function B2BPanel() {
                             </>
                           )}
 
-                          {/* ── ANEXOS ──────────────────────────────────── */}
                           {activeTab === "attachments" && (
                             <>
                               <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
@@ -604,9 +590,8 @@ export default function B2BPanel() {
                   </Accordion>
                 </div>
 
-                {/* ── Tabela ────────────────────────────────────────────── */}
                 <DataTable
-                  isAction={activeTab === "invoices" || activeTab === "attachments"}
+                  isAction={activeTab === "attachments"}
                   classContainer={`${filterOpened ? "max-h-[calc(100dvh-(var(--height-header)+23rem))]" : "max-h-[calc(100dvh-(var(--height-header)+16rem))]"}`}
                   columns={columns}
                 >

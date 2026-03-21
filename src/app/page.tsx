@@ -27,6 +27,9 @@ export default function Home() {
             setIsLoading(true);
             const { data } = await api.post(`/auth/login`, body);
             const result = data.result.data;
+            
+            localStorage.setItem("contractorId", result.contractorId);
+            localStorage.setItem("type", result.type);
             localStorage.setItem("permissionProfileName", result.permissionProfileName);
             localStorage.setItem("id", result.id);
             localStorage.setItem("role", result.role);
@@ -36,8 +39,8 @@ export default function Home() {
             localStorage.setItem("photo", result.photo);
             localStorage.setItem("modules", JSON.stringify(result.modules));
 
-            if(result.role == "Manager") {
-                router.push("/management/b2b-panel");
+            if(result.type == "Externo") {
+                router.push("/dashboard/executivo/iso");
             } else {
                 router.push("/dashboard");
             }
