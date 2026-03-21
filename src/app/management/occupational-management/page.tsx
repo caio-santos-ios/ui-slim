@@ -162,7 +162,7 @@ export default function OccupationalManagement() {
   const getAll = async (query: string = "") => {
     try {
       setLoading(true);
-      const idLocal = localStorage.getItem("id");
+      const idLocal = localStorage.getItem("contractorId");
       const id = idLocal ?? "";
 
       // item 6: IPV = todos que fizeram IGS+IGN+IES (têm metric.ipv calculado)
@@ -190,21 +190,21 @@ export default function OccupationalManagement() {
   // ── Summary ────────────────────────────────────────────────────────────────
   const loadSummary = async () => {
     try {
-      const idLocal = localStorage.getItem("id");
+      const idLocal = localStorage.getItem("contractorId");
       const id = idLocal ?? "";
       const [iso, igs, ign, ies, ipv] = await Promise.all([
-        api.get(`/vitals?deleted=false&contractorId=${id}&chekinISO=true&pageSize=1&pageNumber=1`, configApi()),
-        api.get(`/vitals?deleted=false&contractorId=${id}&chekinIGS=true&pageSize=1&pageNumber=1`, configApi()),
-        api.get(`/vitals?deleted=false&contractorId=${id}&chekinIGN=true&pageSize=1&pageNumber=1`, configApi()),
-        api.get(`/vitals?deleted=false&contractorId=${id}&chekinIES=true&pageSize=1&pageNumber=1`, configApi()),
-        api.get(`/vitals?deleted=false&contractorId=${id}&chekinIGS=true&chekinIGN=true&chekinIES=true&pageSize=1&pageNumber=1`, configApi()),
+        api.get(`/vitals?deleted=false&chekinISO=true&pageSize=1&pageNumber=1`, configApi()),
+        api.get(`/vitals?deleted=false&chekinIGS=true&pageSize=1&pageNumber=1`, configApi()),
+        api.get(`/vitals?deleted=false&chekinIGN=true&pageSize=1&pageNumber=1`, configApi()),
+        api.get(`/vitals?deleted=false&chekinIES=true&pageSize=1&pageNumber=1`, configApi()),
+        api.get(`/vitals?deleted=false&chekinIGS=true&chekinIGN=true&chekinIES=true&pageSize=1&pageNumber=1`, configApi()),
       ]);
       setSummary({
-        totalISO: iso.data.result.totalCount,
-        totalIGS: igs.data.result.totalCount,
-        totalIGN: ign.data.result.totalCount,
-        totalIES: ies.data.result.totalCount,
-        totalIPV: ipv.data.result.totalCount,
+        totalISO: iso?.data?.result?.data.filter((x: any) => x.contractorId == id).length,
+        totalIGS: igs?.data?.result?.data.filter((x: any) => x.contractorId == id).length,
+        totalIGN: ign?.data?.result?.data.filter((x: any) => x.contractorId == id).length,
+        totalIES: ies?.data?.result?.data.filter((x: any) => x.contractorId == id).length,
+        totalIPV: ipv?.data?.result?.data.filter((x: any) => x.contractorId == id).length,
       });
     } catch {}
   };

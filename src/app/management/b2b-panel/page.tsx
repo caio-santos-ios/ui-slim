@@ -140,12 +140,8 @@ function ColunasAtivosInativos({ ativos, inativos }: { ativos: number; inativos:
         </div>
       </div>
       <div className="flex justify-center gap-4 mt-2">
-        <span className="text-xs text-[var(--text-muted)]">
-          Total: <strong>{total}</strong>
-        </span>
-        <span className="text-xs text-green-600">
-          {total > 0 ? ((ativos / total) * 100).toFixed(0) : 0}% ativos
-        </span>
+        <span className="text-xs text-[var(--text-muted)]">Total: <strong>{total}</strong></span>
+        <span className="text-xs text-green-600">{total > 0 ? ((ativos / total) * 100).toFixed(0) : 0}% ativos</span>
       </div>
     </div>
   );
@@ -160,15 +156,15 @@ function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) 
   let startAngle = -Math.PI / 2;
 
   const slices = data.map((d, i) => {
-    const angle  = (d.value / total) * 2 * Math.PI;
+    const angle    = (d.value / total) * 2 * Math.PI;
     const endAngle = startAngle + angle;
     const x1 = cx + r * Math.cos(startAngle);
     const y1 = cy + r * Math.sin(startAngle);
     const x2 = cx + r * Math.cos(endAngle);
     const y2 = cy + r * Math.sin(endAngle);
     const large = angle > Math.PI ? 1 : 0;
-    const path  = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
-    startAngle  = endAngle;
+    const path   = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
+    startAngle   = endAngle;
     return { path, color: PIZZA_COLORS[i % PIZZA_COLORS.length], label: d.label, value: d.value };
   });
 
@@ -181,9 +177,7 @@ function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) 
             <path key={i} d={s.path} fill={s.color} stroke="#fff" strokeWidth="1.5" />
           ))}
           <circle cx={cx} cy={cy} r={r * 0.45} fill="var(--surface-card)" />
-          <text x={cx} y={cy + 4} textAnchor="middle" fontSize="10" fontWeight="800" fill="var(--primary-color)">
-            {data.length}
-          </text>
+          <text x={cx} y={cy + 4} textAnchor="middle" fontSize="10" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
           <text x={cx} y={cy + 14} textAnchor="middle" fontSize="7" fill="var(--text-muted)">prog.</text>
         </svg>
         <div className="flex flex-col gap-1.5 flex-1 overflow-hidden">
@@ -201,10 +195,10 @@ function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) 
   );
 }
 
-// ── Gráfico de Barras horizontais: Evolução mensal ─────────────────────────
+// ── Gráfico de Barras verticais: Evolução mensal beneficiários ────────────
 function BarrasMensalBeneficiarios({ data }: { data: { month: string; year: number; total: number }[] }) {
   const max = Math.max(...data.map(d => d.total), 1);
-  const BAR_H = 100; // altura máxima da barra em px
+  const BAR_H = 100;
   return (
     <div className="rounded-2xl p-4" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
       <p className="text-xs font-bold text-[var(--primary-color)] mb-3">Evolução Mensal de Beneficiários</p>
@@ -216,13 +210,10 @@ function BarrasMensalBeneficiarios({ data }: { data: { month: string; year: numb
               <div key={i} className="flex flex-col items-center gap-1 flex-shrink-0" style={{ width: 44 }}>
                 <span className="text-xs font-bold text-[var(--primary-color)]">{d.total || ""}</span>
                 <div className="w-full rounded-t-lg transition-all duration-700"
-                  style={{
-                    height: `${h}px`,
-                    background: "linear-gradient(180deg, #0ea5e9, var(--primary-color))",
-                  }} />
+                  style={{ height: `${h}px`, background: "linear-gradient(180deg, #0ea5e9, var(--primary-color))" }} />
                 <span className="text-xs text-[var(--text-muted)] text-center leading-tight">
-                  {d.month}<br />
-                  <span className="text-[10px]">{d.year}</span>
+                  {d.month}<br /><span className="text-[10px]">{d.year}</span>
+                  <br /><span className="text-[10px]">{d.total}</span>
                 </span>
               </div>
             );
@@ -261,27 +252,18 @@ function BarrasMensalFaturas({ data }: { data: { month: string; year: number; co
             const hTotal = Math.max(6, Math.round((d.total / maxTotal) * BAR_H));
             return (
               <div key={i} className="flex flex-col items-center gap-1 flex-shrink-0" style={{ width: 64 }}>
-                {/* Valores no topo */}
-                <div className="flex gap-1 text-center">
-                  <span className="text-[10px] font-bold text-[var(--primary-color)]">{d.count > 0 ? d.count : ""}</span>
-                </div>
-                {/* Barras lado a lado */}
+                <span className="text-[10px] font-bold text-[var(--primary-color)]">{d.count > 0 ? d.count : ""}</span>
                 <div className="flex items-end gap-1 w-full justify-center" style={{ height: `${BAR_H}px` }}>
                   <div className="rounded-t-md transition-all duration-700 flex-1"
                     style={{ height: `${hCount}px`, background: "linear-gradient(180deg, #0ea5e9, var(--primary-color))" }} />
                   <div className="rounded-t-md transition-all duration-700 flex-1"
                     style={{ height: `${hTotal}px`, background: "linear-gradient(180deg, #22c55e, #16a34a)" }} />
                 </div>
-                {/* Label mês/ano */}
                 <span className="text-xs text-[var(--text-muted)] text-center leading-tight">
-                  {d.month}<br />
-                  <span className="text-[10px]">{d.year}</span>
+                  {d.month}<br /><span className="text-[10px]">{d.year}</span>
                 </span>
-                {/* Valor R$ */}
                 {d.total > 0 && (
-                  <span className="text-[9px] text-green-600 font-semibold text-center leading-tight">
-                    {fmt(d.total)}
-                  </span>
+                  <span className="text-[9px] text-green-600 font-semibold text-center leading-tight">{fmt(d.total)}</span>
                 )}
               </div>
             );
@@ -325,17 +307,14 @@ export default function B2BPanel() {
   const [modalInvoice,    setModalInvoice]    = useState(false);
   const [modalAttachment, setModalAttachment] = useState(false);
 
-  // ── Estados dos gráficos ──────────────────────────────────────────────────
-  const [chartMovements, setChartMovements] = useState<TChartMovements>({
-    ativos: 0, inativos: 0, porPrograma: [], porMes: [],
-  });
+  const [chartMovements, setChartMovements] = useState<TChartMovements>({ ativos: 0, inativos: 0, porPrograma: [], porMes: [] });
   const [chartInvoices, setChartInvoices]   = useState<TChartInvoices>({ porMes: [] });
 
   const { register, reset, getValues } = useForm<TFilter>({ defaultValues: ResetFilter });
 
   const uriMap: Record<TTab, string> = {
-    movements: "b2b-mass-movements",
-    invoices:  "b2b-invoices",
+    movements:   "b2b-mass-movements",
+    invoices:    "b2b-invoices",
     attachments: "attachments",
   };
 
@@ -347,7 +326,6 @@ export default function B2BPanel() {
       if (uri === "attachments") {
         const contractorId = localStorage.getItem("contractorId");
         const id = contractorId ? contractorId : "";
-
         if (id) query += `&parentId=${id}&parent=customer-manager`;
       }
       const { data } = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${query}`, configApi());
@@ -365,7 +343,6 @@ export default function B2BPanel() {
       setLoading(true);
       const contractorId = localStorage.getItem("contractorId");
       const id = contractorId ? contractorId : "";
-
       const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
       setPagination({ currentPage: result.currentPage, data: result.data, sizePage: result.pageSize, totalPages: result.totalCount });
@@ -376,12 +353,11 @@ export default function B2BPanel() {
     }
   };
 
-  // ── Carrega dados dos gráficos ─────────────────────────────────────────────
+  // ── Gráficos ───────────────────────────────────────────────────────────────
   const loadChartMovements = async () => {
     try {
       const contractorId = localStorage.getItem("contractorId");
       const id = contractorId ? contractorId : "";
-
       const { data } = await api.get(
         `/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=9999&pageNumber=1`,
         configApi()
@@ -391,7 +367,6 @@ export default function B2BPanel() {
       const ativos   = rows.filter(r => r.active).length;
       const inativos = rows.filter(r => !r.active).length;
 
-      // Por programa
       const progMap: Record<string, number> = {};
       rows.forEach(r => {
         const p = r.planName || "Sem programa";
@@ -402,9 +377,8 @@ export default function B2BPanel() {
         .sort((a, b) => b.value - a.value)
         .slice(0, 8);
 
-      // Por mês desta vigência (últimos 12 meses)
       const now = new Date();
-      const porMes: any[] = [];
+      const porMes: { month: string; year: number; total: number }[] = [];
       for (let i = 11; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
         const m = d.getMonth();
@@ -431,17 +405,17 @@ export default function B2BPanel() {
 
       const map: Record<string, { count: number; total: number }> = {};
       rows.forEach(r => {
-        const key = `${String(r.referenceMonth).padStart(2,"0")}/${r.referenceYear}`;
+        const key = `${String(r.referenceMonth).padStart(2, "0")}/${r.referenceYear}`;
         if (!map[key]) map[key] = { count: 0, total: 0 };
         map[key].count++;
         map[key].total += Number(r.totalAmount ?? 0);
       });
 
       const now = new Date();
-      const porMes: any[] = [];
+      const porMes: { month: string; year: number; count: number; total: number }[] = [];
       for (let i = 11; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const key = `${String(d.getMonth() + 1).padStart(2,"0")}/${d.getFullYear()}`;
+        const d   = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = `${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
         porMes.push({
           month: MONTHS_SHORT[d.getMonth()],
           year:  d.getFullYear(),
@@ -460,7 +434,6 @@ export default function B2BPanel() {
       setExportingExcel(true);
       const contractorId = localStorage.getItem("contractorId");
       const id = contractorId ? contractorId : "";
-
       const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=99999&pageNumber=1${queryStr}`, configApi());
       const rows: any[] = data.result.data ?? [];
       const sheetData = rows.map((r) => ({
@@ -520,12 +493,12 @@ export default function B2BPanel() {
   const buildQuery = (values: TFilter): string => {
     let q = "";
     if (activeTab === "movements") {
-      if (values.search)          q += `&regex$or$name=${values.search}`;
-      if (values.cpf)             q += `&regex$cpf=${values.cpf}`;
-      if (values.gender)          q += `&gender=${values.gender}`;
-      if (values.planId)          q += `&planId=${values.planId}`;
-      if (values.serviceModuleId) q += `&serviceModuleId=${values.serviceModuleId}`;
-      if (values.active !== "")   q += `&active=${values.active}`;
+      if (values.search)           q += `&regex$or$name=${values.search}`;
+      if (values.cpf)              q += `&regex$cpf=${values.cpf}`;
+      if (values.gender)           q += `&gender=${values.gender}`;
+      if (values.planId)           q += `&planId=${values.planId}`;
+      if (values.serviceModuleId)  q += `&serviceModuleId=${values.serviceModuleId}`;
+      if (values.active !== "")    q += `&active=${values.active}`;
       if (values["gte$createdAt"])     q += `&gte$createdAt=${values["gte$createdAt"]}`;
       if (values["lte$createdAt"])     q += `&lte$createdAt=${values["lte$createdAt"]}`;
       if (values["gte$effectiveDate"]) q += `&gte$effectiveDate=${values["gte$effectiveDate"]}`;
@@ -686,10 +659,7 @@ export default function B2BPanel() {
                 {/* ── GRÁFICOS — ABA MOVEMENTS ──────────────────────────── */}
                 {activeTab === "movements" && (
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                    <ColunasAtivosInativos
-                      ativos={chartMovements.ativos}
-                      inativos={chartMovements.inativos}
-                    />
+                    <ColunasAtivosInativos ativos={chartMovements.ativos} inativos={chartMovements.inativos} />
                     <PizzaProgramas data={chartMovements.porPrograma} />
                     <BarrasMensalBeneficiarios data={chartMovements.porMes} />
                   </div>
