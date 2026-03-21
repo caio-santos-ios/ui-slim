@@ -19,6 +19,7 @@ import { LuHistory, LuCalendarClock } from "react-icons/lu";
 export default function Dashboard() {
     const [userLogger]  = useAtom(userLoggerAtom);
     const [_, setLoading] = useAtom(loadingAtom);
+    const [admin, setAdmin] = useState(false);
 
     const [cardFirst,  setCardFirst]  = useState<any>({});
     const [summary,    setSummary]    = useState<any>(null);
@@ -50,6 +51,11 @@ export default function Dashboard() {
     useEffect(() => {
         getCards();
         getSummary();
+
+        const admin = localStorage.getItem("admin");
+        if(admin) {
+            setAdmin(admin == "true");
+        }
     }, []);
 
     // Normaliza chaves camelCase vindas da API
@@ -82,7 +88,7 @@ export default function Dashboard() {
 
                         <div className="h-[calc(100dvh-5rem)] overflow-y-auto w-full p-6 grid grid-cols-12 gap-4">
                             {
-                                role == "Client" &&
+                                admin &&
                                 <>
                                     <div className="lg:col-span-8">
                                         <FirstCard cardFirst={cardFirst} />

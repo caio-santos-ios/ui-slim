@@ -483,6 +483,33 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
         padding: 'px-2'
     },
     {
+        code: '5',
+        isOpen: true,
+        authorized: false,
+        description: 'Configurações',
+        icon: 'MdSettings',
+        link: '',
+        padding: 'px-2',
+        subMenu: [
+            {
+                code: 'E01',
+                isOpen: true,
+                subMenu: [],
+                description: 'Perfis de Permissão',
+                icon: '',
+                link: 'settings/permission-profiles',
+                padding: 'px-4',
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
+        ],
+    },
+    {
         code: '0',
         isOpen: true,
         authorized: true,

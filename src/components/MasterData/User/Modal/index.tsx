@@ -33,14 +33,49 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
     const [modules] = useAtom<TMenuRoutine[]>(menuRoutinesAtom);
     const [subModules, setSubModule] = useState<any[]>([]);
     const [userAdmin, setUserAdmin] = useState(false);
-
     const [passwordEnabled, setPasswordEnabled] = useState<boolean>(false);
+    const [customers, setCustomers] = useState<any[]>([]);
+
+    const [profiles, setProfiles] = useState<any[]>([]);
     
     const { register, handleSubmit, reset, watch, setValue, formState: { errors }} = useForm<TUser>({
         defaultValues: ResetUser
     });
 
     const myModules = watch("modules");
+
+    const loadProfiles = async () => {
+        try {
+            const { data } = await api.get(`/permission-profiles?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi());
+            setProfiles(data.result.data ?? []);
+        } catch {}
+    };
+    
+    const loadCustomers = async () => {
+        try {
+            const { data } = await api.get(`/customers/select?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi());
+            console.log(data.result)
+            setCustomers(data.result.data ?? []);
+        } catch {}
+    };
+
+    const applyProfile = (profileId: string) => {
+        if (!profileId) return;
+        const profile = profiles.find((p) => p.id === profileId);
+        if (!profile?.modules) return;
+
+        const copiedModules = profile.modules.map((m: any) => ({
+            code:        m.code,
+            description: m.description,
+            routines:    m.routines.map((r: any) => ({
+                code:        r.code,
+                description: r.description,
+                permissions: { ...r.permissions },
+            })),
+        }));
+
+        setValue("modules", copiedModules);
+    };
     
     const onSubmit: SubmitHandler<TUser> = async (body: TUser) => {
         const moduleSaved: any[] = watch("modules");
@@ -79,10 +114,8 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                         description: currentSubModule?.description,
                         permissions: body.permission
                     }]
-                })
+                });
             };
-       
-            
         }; 
 
         const form: any = {
@@ -91,9 +124,12 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
             name: body.name,
             email: body.email,
             admin: body.admin,
-            blocked: body.blocked
+            blocked: body.blocked,
+            permissionProfile: body.permissionProfile,
+            type: body.type,
+            contractorId: body.contractorId
         };
-        
+
         if(!body.id) {
             form.password = watch("password");
             await create(form);
@@ -101,25 +137,33 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
             await update(form);
         };
     };
-      
+    
     const create = async (body: any) => {
         try {
+            setLoading(true);
             const { status, data} = await api.post(`/users`, body, configApi());
             resolveResponse({status, ...data});
             cancel();
+            handleReturnModal(true);
         } catch (error) {
             resolveResponse(error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const update = async (body: any) => {
         try {
+            setLoading(true);
             const { status, data} = await api.put(`/users/modules`, body, configApi());
             resolveResponse({status, ...data});
             reset(ResetUser);
-            getById(id)
+            getById(id);
+            handleReturnModal(true);
         } catch (error) {
             resolveResponse(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -161,9 +205,7 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
 
     useEffect(() => {
         const subModule = modules.find((x: TMenuRoutine) => x.code == watch("module"));
-        if(subModule) {
-            setSubModule(subModule.subMenu)
-        };
+        if(subModule) setSubModule(subModule.subMenu);
     }, [watch("module")]);
     
     useEffect(() => {
@@ -182,31 +224,31 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
     }, [watch("subModule")]);
 
     useEffect(() => {
-        if(id) {            
-            getById(id);
-        };
+        if(id) getById(id);
     }, [id]);
     
     useEffect(() => {
         const admin = localStorage.getItem("admin");
         if(admin) setUserAdmin(admin == "true");
-    }, [])
+        loadProfiles();
+        loadCustomers();
+    }, []);
 
     return (
         <>
             <Dialog
                 open={isOpen}
                 as="div"
-                className="relative z-[999] focus:outline-none"
+                className="relative z-999 focus:outline-none"
                 onClose={cancel}
             >
                 {/* Backdrop */}
                 <div
-                    className="fixed inset-0 z-[999]"
+                    className="fixed inset-0 z-999"
                     style={{ background: "rgba(0,15,35,.65)", backdropFilter: "blur(5px)" }}
                 />
 
-                <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
+                <div className="fixed inset-0 z-1000 flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
                     <DialogPanel
                         className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl"
                         style={{
@@ -246,19 +288,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                     <label className={`label slim-label-primary`}>E-mail</label>
                                     <input {...register("email", { pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "E-mail inválido"}})} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                 </div>
-                                {/* {
-                                    !watch("id") &&
-                                    <div className={`flex flex-col col-span-2`}>
-                                        <label className="slim-label-primary" htmlFor="password">Senha</label>
-                        
-                                        <div className={`container-password rounded-md flex items-center pr-2 ${errors.password ? 'border border-red-500 text-red-500' : 'slim-input-primary'}`}>
-                                            <input {...register("password")} id="password" placeholder="Digite sua senha" className="py-[.4rem] px-2 w-full" type={`${passwordEnabled ? 'text' : 'password'}`} />
-                                            {
-                                                passwordEnabled ? <FaEye onClick={() => setPasswordEnabled(!passwordEnabled)} size={25}/> : <FaEyeSlash onClick={() => setPasswordEnabled(!passwordEnabled)} size={25}/>
-                                            }
-                                        </div>
-                                    </div>
-                                } */}
                                 {
                                     userAdmin &&
                                     <div className={`flex flex-col mb-2`}>
@@ -275,7 +304,52 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                         <input {...register("blocked")} type="checkbox"/>
                                         <span className="slider"></span>
                                     </label>
+                                </div>
+
+                                <div className={`flex flex-col col-span-1 mb-2`}>
+                                    <label className={`label slim-label-primary`}>Tipo</label>
+                                    <select className="select slim-select-primary" {...register("type")}>
+                                        <option value="Interno">Interno</option>
+                                        <option value="Externo">Externo</option>
+                                    </select>
                                 </div>  
+                                {
+                                    watch("type") == "Externo" && (
+                                        <div className={`flex flex-col col-span-3 mb-2`}>
+                                            <label className={`label slim-label-primary`}>Contratante</label>
+                                            <select className="select slim-select-primary" {...register("contractorId")}>
+                                                <option value="">Selecione</option>
+                                                {
+                                                    customers.map((c: any) => {
+                                                        return <option key={c.id} value={c.id}>{c.corporateName}</option>
+                                                    })
+                                                }
+                                            </select>
+                                        </div>
+                                    )
+                                }
+
+                                <div className={`flex flex-col col-span-6 mb-2`}>
+                                    <label className={`label slim-label-primary`}>
+                                        Perfil de Permissão
+                                        <span className="ml-1 text-xs text-(--text-muted) font-normal">
+                                            — aplica os módulos do perfil como base (editável individualmente)
+                                        </span>
+                                    </label>
+                                    <select
+                                        className="select slim-select-primary"
+                                        {...register("permissionProfile")}
+                                        onChange={(e) => {
+                                            applyProfile(e.target.value);
+                                            setValue("permissionProfile", e.target.value);
+                                        }}>
+                                        <option value="">Selecione um perfil para aplicar...</option>
+                                        {profiles.map((p: any) => (
+                                            <option key={p.id} value={p.id}>{p.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
                                 <div className={`flex flex-col col-span-2 mb-2`}>
                                     <label className={`label slim-label-primary`}>Módulos</label>
                                     <select className="select slim-select-primary" {...register("module")}>
@@ -307,7 +381,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                                     <input {...register("permission.read")} type="checkbox" />
                                                     <span className="font-bold">Listagem</span>
                                                 </div>
-
                                                 <p className="text-gray-500">Permite que o usuário liste registros</p>
                                             </li>
                                             <li className="bg-gray-100 shadow-lg shadow-gray-100/50 p-3 rounded-lg">
@@ -315,7 +388,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                                     <input {...register("permission.create")} type="checkbox" />
                                                     <span className="font-bold">Criação</span>
                                                 </div>
-
                                                 <p className="text-gray-500">Permite que o usuário crie registros</p>
                                             </li>
                                             <li className="bg-gray-100 shadow-lg shadow-gray-100/50 p-3 rounded-lg">
@@ -323,7 +395,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                                     <input {...register("permission.update")} type="checkbox" />
                                                     <span className="font-bold">Edição</span>
                                                 </div>
-
                                                 <p className="text-gray-500">Permite que o usuário edite registros</p>
                                             </li>
                                             <li className="bg-gray-100 shadow-lg shadow-gray-100/50 p-3 rounded-lg">
@@ -331,7 +402,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                                     <input {...register("permission.delete")} type="checkbox" />
                                                     <span className="font-bold">Exclusão</span>
                                                 </div>
-
                                                 <p className="text-gray-500">Permite que o usuário exclua registros</p>
                                             </li>
                                         </ul>
@@ -349,7 +419,6 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                                                 <div className="flex gap-1">
                                                     <span className="font-bold">{x.description}</span>
                                                 </div>
-
                                                 <ul key={x.code}>
                                                     {
                                                         x.routines.map((r: any) => {
@@ -385,5 +454,5 @@ export const ModalUser = ({title, isOpen, setIsOpen, onClose, handleReturnModal,
                 </div>
             </Dialog>
         </>    
-    )
-}
+    );
+};

@@ -41,17 +41,13 @@ function NavItem({ item, depth, expanded, admin }: NavItemProps) {
     if(role == "Manager") {
         if (!['4', 'D01', 'D02', 'D03'].includes(item.code)) return null;
     } else {
-        if(item.code == "4") return null;
         if (!item.authorized && !admin) return null;
     }
 
     if (depth === 0 && hasChildren) {
         return (
             <li>
-                {expanded
-                    ? <span className="nav-group-label">{item.description}</span>
-                    : <div className="nav-group-divider" />
-                }
+                { expanded ? <span className="nav-group-label">{item.description}</span> : <div className="nav-group-divider" /> }
                 <ul className="space-y-px">
                     {item.subMenu.map((sub) => (
                         <NavItem key={sub.code} item={sub} depth={1} expanded={expanded} admin={admin} />

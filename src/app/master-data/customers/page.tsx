@@ -375,30 +375,28 @@ export default function Customer() {
                 breadcrumpIcon="MdPerson"
                 buttons={
                   <>
-                    {permissionUpdate("1", "A12") && (
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold"
-                          style={{
-                            background: vision === "contractor"
-                              ? "rgba(0,51,102,.08)"
-                              : "rgba(102,204,153,.12)",
-                            color: vision === "contractor"
-                              ? "var(--primary-color)"
-                              : "#3a9e72",
-                            border: vision === "contractor"
-                              ? "1px solid rgba(0,51,102,.15)"
-                              : "1px solid rgba(102,204,153,.3)",
-                          }}
-                        >
-                          {vision === "contractor" ? "Contratante" : "Beneficiário"}
-                        </span>
-                        <label className="slim-switch" title="Alternar visão">
-                          <input onChange={async () => checked()} type="checkbox" />
-                          <span className="slider-default"></span>
-                        </label>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold"
+                        style={{
+                          background: vision === "contractor"
+                            ? "rgba(0,51,102,.08)"
+                            : "rgba(102,204,153,.12)",
+                          color: vision === "contractor"
+                            ? "var(--primary-color)"
+                            : "#3a9e72",
+                          border: vision === "contractor"
+                            ? "1px solid rgba(0,51,102,.15)"
+                            : "1px solid rgba(102,204,153,.3)",
+                        }}
+                      >
+                        {vision === "contractor" ? "Contratante" : "Beneficiário"}
+                      </span>
+                      <label className="slim-switch" title="Alternar visão">
+                        <input onChange={async () => checked()} type="checkbox" />
+                        <span className="slider-default"></span>
+                      </label>
+                    </div>
                     {permissionCreate("1", "A12") && vision === "contractor" && (
                       <button onClick={() => openModal()} className="slim-btn slim-btn-primary">
                         Adicionar
@@ -679,16 +677,6 @@ export default function Customer() {
                             {permissionDelete("1", "A12") && (
                               <IconDelete obj={x} getObj={openModalDelete} />
                             )}
-                            <button
-                              onClick={() => {
-                                console.log(x)
-                              }}
-                              className="w-8 h-8 rounded-lg flex items-center justify-center text-(--text-muted) bg-(--surface-bg) hover:bg-(--primary-color) hover:text-white border border-(--surface-border) hover:border-(--primary-color) transition-all"
-                              style={{ padding: 0, minWidth: "2rem" }}
-                              title="Converter para contratante">
-                              <GrUpdate size={13} />
-                              {x.customerDocument != x.document}
-                            </button>
                             <WhatsAppButtonModal fieldSearch="beneficiaryId" type="" parent="" id={x.id}/>
                           </div>
                         </td>
