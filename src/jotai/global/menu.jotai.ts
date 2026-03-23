@@ -214,23 +214,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                     read: false,
                     delete: false
                 }
-            },            
-            // {
-            //     code: 'A22',
-            //     isOpen: true,
-            //     subMenu: [],
-            //     description: 'Tabelas de Importação',
-            //     icon: '',
-            //     link: 'master-data/imports',
-            //     padding: 'px-4',
-            //     authorized: false,
-            //     permissions: {
-            //         create: false,
-            //         update: false,
-            //         read: false,
-            //         delete: false
-            //     }
-            // },            
+            },                        
             {
                 code: 'A23',
                 isOpen: true,
@@ -262,23 +246,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                     read: false,
                     delete: false
                 }
-            },            
-            // {
-            //     code: 'A25',
-            //     isOpen: true,
-            //     subMenu: [],
-            //     description: 'Tabela de Negociação',
-            //     icon: '',
-            //     link: 'master-data/trading-tables',
-            //     padding: 'px-4',
-            //     authorized: false,
-            //     permissions: {
-            //         create: false,
-            //         update: false,
-            //         read: false,
-            //         delete: false
-            //     }
-            // },            
+            },                       
         ],
     },
     {

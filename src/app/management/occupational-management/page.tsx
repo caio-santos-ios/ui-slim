@@ -162,7 +162,7 @@ export default function OccupationalManagement() {
   const getAll = async (query: string = "") => {
     try {
       setLoading(true);
-      const idLocal = localStorage.getItem("id");
+      const idLocal = localStorage.getItem("contractorId");
       const id = idLocal ?? "";
 
       // item 6: IPV = todos que fizeram IGS+IGN+IES (têm metric.ipv calculado)
@@ -175,10 +175,10 @@ export default function OccupationalManagement() {
       };
 
       const { data } = await api.get(
-        `/vitals?deleted=false&contractorId=${id}&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${tabFilter[activeTab]}${query}`,
+        `/vitals?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${tabFilter[activeTab]}${query}`,
         configApi()
       );
-      const result = data.result;
+      const result = data.result.filter((x: any) => x.contractorId == id);
       setPagination({ currentPage: result.currentPage, data: result.data ?? [], sizePage: result.pageSize, totalPages: result.totalCount });
     } catch (error) {
       resolveResponse(error);
@@ -190,21 +190,21 @@ export default function OccupationalManagement() {
   // ── Summary ────────────────────────────────────────────────────────────────
   const loadSummary = async () => {
     try {
-      const idLocal = localStorage.getItem("id");
+      const idLocal = localStorage.getItem("contractorId");
       const id = idLocal ?? "";
       const [iso, igs, ign, ies, ipv] = await Promise.all([
-        api.get(`/vitals?deleted=false&contractorId=${id}&chekinISO=true&pageSize=1&pageNumber=1`, configApi()),
-        api.get(`/vitals?deleted=false&contractorId=${id}&chekinIGS=true&pageSize=1&pageNumber=1`, configApi()),
-        api.get(`/vitals?deleted=false&contractorId=${id}&chekinIGN=true&pageSize=1&pageNumber=1`, configApi()),
-        api.get(`/vitals?deleted=false&contractorId=${id}&chekinIES=true&pageSize=1&pageNumber=1`, configApi()),
-        api.get(`/vitals?deleted=false&contractorId=${id}&chekinIGS=true&chekinIGN=true&chekinIES=true&pageSize=1&pageNumber=1`, configApi()),
+        api.get(`/vitals?deleted=false&chekinISO=true&pageSize=1&pageNumber=1`, configApi()),
+        api.get(`/vitals?deleted=false&chekinIGS=true&pageSize=1&pageNumber=1`, configApi()),
+        api.get(`/vitals?deleted=false&chekinIGN=true&pageSize=1&pageNumber=1`, configApi()),
+        api.get(`/vitals?deleted=false&chekinIES=true&pageSize=1&pageNumber=1`, configApi()),
+        api.get(`/vitals?deleted=false&chekinIGS=true&chekinIGN=true&chekinIES=true&pageSize=1&pageNumber=1`, configApi()),
       ]);
       setSummary({
-        totalISO: iso.data.result.totalCount,
-        totalIGS: igs.data.result.totalCount,
-        totalIGN: ign.data.result.totalCount,
-        totalIES: ies.data.result.totalCount,
-        totalIPV: ipv.data.result.totalCount,
+        totalISO: iso?.data?.result?.data.filter((x: any) => x.contractorId == id).length,
+        totalIGS: igs?.data?.result?.data.filter((x: any) => x.contractorId == id).length,
+        totalIGN: ign?.data?.result?.data.filter((x: any) => x.contractorId == id).length,
+        totalIES: ies?.data?.result?.data.filter((x: any) => x.contractorId == id).length,
+        totalIPV: ipv?.data?.result?.data.filter((x: any) => x.contractorId == id).length,
       });
     } catch {}
   };
@@ -216,7 +216,7 @@ export default function OccupationalManagement() {
     if (values["gte$createdAt"]) q += `&gte$createdAt=${values["gte$createdAt"]}`;
     if (values["lte$createdAt"]) q += `&lte$createdAt=${values["lte$createdAt"]}`;
     if (values.department)       q += `&regex$department=${values.department}`;
-    if (values.branch)           q += `&regex$branch=${values.branch}`;
+    // if (values.branch)           q += `&regex$branch=${values.branch}`;
     if (values.function)         q += `&regex$function=${values.function}`;
     return q;
   };
@@ -264,6 +264,13 @@ export default function OccupationalManagement() {
   useEffect(() => { loadSummary(); }, []);
 
   useEffect(() => {
+    setPagination({
+      currentPage: 1,
+      data: [],
+      sizePage: 10,
+      totalPages: 10,
+      query: {}
+    });
     reset(ResetFilter);
     setQueryStr("");
     getAll();
@@ -340,20 +347,20 @@ export default function OccupationalManagement() {
                             <label className="label slim-label-primary">Departamento</label>
                             <input {...register("department")} type="text" className="input slim-input-primary" placeholder="Ex: RH" />
                           </div>
-                          <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                          {/* <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Setor</label>
                             <input {...register("branch")} type="text" className="input slim-input-primary" placeholder="Ex: Operações" />
-                          </div>
+                          </div> */}
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Função</label>
                             <input {...register("function")} type="text" className="input slim-input-primary" placeholder="Ex: Analista" />
                           </div>
 
-                          <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                          <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Data início</label>
                             <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
                           </div>
-                          <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                          <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Data fim</label>
                             <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
                           </div>
