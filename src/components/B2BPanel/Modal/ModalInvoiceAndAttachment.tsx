@@ -1,24 +1,29 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoClose } from "react-icons/io5";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
+import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
+import { useAtom } from "jotai";
+import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
+import { FaCirclePlus } from "react-icons/fa6";
+import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Modal Invoice
 // ═══════════════════════════════════════════════════════════════════════════
 type TInvoiceForm = {
-  customerId:      string;
-  referenceMonth:  string;
-  referenceYear:   string;
-  cycleStart:      string;
-  cycleEnd:        string;
-  totalAmount:     string;
-  beneficiaryCount:string;
-  dueDate:         string;
-  status:          string;
+  customerId:       string;
+  referenceMonth:   string;
+  referenceYear:    string;
+  cycleStart:       string;
+  cycleEnd:         string;
+  totalAmount:      string;
+  beneficiaryCount: string;
+  dueDate:          string;
+  status:           string;
 };
 
 type TInvoiceProps = {
@@ -31,7 +36,19 @@ type TInvoiceProps = {
 };
 
 export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, onSuccess }: TInvoiceProps) => {
-  const { register, handleSubmit, reset } = useForm<TInvoiceForm>();
+  const { register, handleSubmit, reset, watch } = useForm<TInvoiceForm>();
+
+  const refMonth = watch("referenceMonth");
+  const refYear  = watch("referenceYear");
+
+  // item 5: calcula data de corte (último dia do mês) no frontend para exibição
+  const closingDateLabel = useMemo(() => {
+    const m = parseInt(refMonth);
+    const y = parseInt(refYear);
+    if (!m || !y) return "—";
+    const lastDay = new Date(y, m, 0).getDate(); // dia 0 do próximo mês = último dia do mês atual
+    return `${String(lastDay).padStart(2, "0")}/${String(m).padStart(2, "0")}/${y}`;
+  }, [refMonth, refYear]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -97,8 +114,9 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
           <button onClick={onClose} className="text-white/80 hover:text-white transition-colors"><IoClose size={20} /></button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 grid grid-cols-2">
-          {/* <div className="flex flex-col col-span-6 sm:col-span-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6 grid grid-cols-12 gap-4">
+
+          <div className="flex flex-col col-span-6 sm:col-span-3">
             <label className="label slim-label-primary">Mês *</label>
             <select {...register("referenceMonth", { required: true })} className="select slim-select-primary">
               <option value="">Mês</option>
@@ -109,6 +127,16 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
           <div className="flex flex-col col-span-6 sm:col-span-3">
             <label className="label slim-label-primary">Ano *</label>
             <input {...register("referenceYear", { required: true })} type="number" className="input slim-input-primary" placeholder={String(new Date().getFullYear())} />
+          </div>
+
+          {/* item 5: Data de Corte — calculada automaticamente, somente leitura */}
+          <div className="flex flex-col col-span-12 sm:col-span-6">
+            <label className="label slim-label-primary">Data de Corte / Fechamento</label>
+            <div className="input slim-input-primary flex items-center text-sm"
+              style={{ background: "var(--surface-bg)", color: "var(--text-muted)", cursor: "default" }}>
+              {closingDateLabel}
+              <span className="ml-2 text-xs opacity-60">(último dia do mês)</span>
+            </div>
           </div>
 
           <div className="flex flex-col col-span-6 sm:col-span-3">
@@ -124,9 +152,9 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
           <div className="flex flex-col col-span-6 sm:col-span-3">
             <label className="label slim-label-primary">Vencimento</label>
             <input {...register("dueDate")} type="date" className="input slim-input-primary" />
-          </div> */}
+          </div>
 
-          <div className="flex flex-col col-span-2">
+          <div className="flex flex-col col-span-6 sm:col-span-3">
             <label className="label slim-label-primary">Status</label>
             <select {...register("status")} className="select slim-select-primary">
               <option value="Aberta">Aberta</option>
@@ -136,20 +164,20 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
             </select>
           </div>
 
-          {/* <div className="flex flex-col col-span-6 sm:col-span-4">
+          <div className="flex flex-col col-span-6 sm:col-span-4">
             <label className="label slim-label-primary">Valor Total (R$)</label>
             <input {...register("totalAmount")} type="number" step="0.01" className="input slim-input-primary" placeholder="0.00" />
           </div>
 
-          <div className="flex flex-col col-span-6 sm:col-span-3">
+          <div className="flex flex-col col-span-6 sm:col-span-4">
             <label className="label slim-label-primary">Qtd. Beneficiários</label>
             <input {...register("beneficiaryCount")} type="number" className="input slim-input-primary" placeholder="0" />
-          </div> */}
+          </div>
 
           <div className="col-span-12 flex justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} className="slim-btn slim-btn-secondary">Cancelar</button>
             <button type="submit" className="slim-btn slim-btn-primary">
-              {typeModal === "create" ? "Criar Fatura" : "Salvar"}
+              {typeModal === "create" ? "Criar Fatura" : "Salvar Alterações"}
             </button>
           </div>
         </form>
@@ -170,6 +198,7 @@ type TAttachmentForm = {
   required:   boolean;
   notes:      string;
   file: any;
+  type: string;
 };
 
 type TAttachmentProps = {
@@ -182,19 +211,37 @@ type TAttachmentProps = {
 };
 
 export const ModalB2BAttachment = ({ isOpen, typeModal, body, customers, onClose, onSuccess }: TAttachmentProps) => {
-  const { register, handleSubmit, reset } = useForm<TAttachmentForm>();
+  const { register, setValue, handleSubmit, reset } = useForm<TAttachmentForm>();
+  const [types, setTypes] = useState<TGenericTable[]>([]);
+  const [__, setModalGenericTable] = useAtom(modalGenericTableAtom);
+  const [___, setTableGenericTable] = useAtom(tableGenericTableAtom);
+
+  const getSelectType = async () => {
+    try {
+      const {data} = await api.get(`/generic-tables/table/manager-type-attachment`, configApi());
+      const result = data.result;
+      setTypes(result.data);
+    } catch (error) {
+      resolveResponse(error);
+    }
+  };
+
+  const genericTable = (table: string) => {
+    setModalGenericTable(true);
+    setTableGenericTable(table);
+  };
+
+  const onReturnGeneric = () => {
+    getSelectType();
+  };
 
   useEffect(() => {
+    if(isOpen) {
+      getSelectType();
+    };
+
     if (isOpen && typeModal === "edit" && body?.id) {
-      reset({
-        customerId: body.customerId ?? "",
-        name:       body.name ?? "",
-        fileUrl:    body.fileUrl ?? "",
-        fileName:   body.fileName ?? "",
-        fileType:   body.fileType ?? "",
-        required:   body.required ?? false,
-        notes:      body.notes ?? "",
-      });
+      reset({ customerId: body.customerId ?? "", name: body.name ?? "", fileUrl: body.fileUrl ?? "", fileName: body.fileName ?? "", fileType: body.fileType ?? "", required: body.required ?? false, notes: body.notes ?? "" });
     } else if (isOpen && typeModal === "create") {
       reset({});
     }
@@ -205,24 +252,31 @@ export const ModalB2BAttachment = ({ isOpen, typeModal, body, customers, onClose
   const onSubmit = async (values: TAttachmentForm) => {
     try {
       const payload = { ...values };
-      const formBody = new FormData();  
-      const id = localStorage.getItem("id");
+      const formBody = new FormData();
+      const contractorId = localStorage.getItem("contractorId");
       formBody.append("parent", "customer-manager");
       formBody.append("description", payload.name);
-      if(id) {
-        formBody.append("parentId", id);
-      };
+      if (contractorId) formBody.append("parentId", contractorId);
 
-      const attachment: any = document.querySelector('#attachment');
-      if (attachment.files[0]) formBody.append('file', attachment.files[0]);
-
+      const attachment: any = document.querySelector("#attachment");
+      // formBody.append("files", attachment.files);
+      if (attachment.files && attachment.files.length > 0) {
+        for (let i = 0; i < attachment.files.length; i++) {
+          // É crucial que o nome seja exatamente "files" para bater com o DTO
+          formBody.append("files", attachment.files[i]);
+        }
+      }
+      
       if (typeModal === "create") {
-        const { status } = await api.post("/attachments", formBody, configApi(false));
+        console.log(formBody)
+        const { status } = await api.post("/attachments/all", formBody, configApi(false));
         resolveResponse({ status, message: "Anexo criado com sucesso" });
       } else {
         const { status } = await api.put("/attachments", { ...payload, id: body.id }, configApi());
         resolveResponse({ status, message: "Anexo atualizado com sucesso" });
       }
+      setValue("type", "");
+      setValue("name", "");
       onSuccess();
     } catch (error) {
       resolveResponse(error);
@@ -246,13 +300,30 @@ export const ModalB2BAttachment = ({ isOpen, typeModal, body, customers, onClose
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 grid grid-cols-12 gap-4">
           <div className="flex flex-col col-span-12">
             <label className="label slim-label-primary">Anexo *</label>
-            <input id="attachment" {...register("file")} type="file" className={`input slim-input-primary`} placeholder="Digite"/>
+            <input id="attachment" {...register("file")} multiple={true} type="file" className="input slim-input-primary" />
           </div>
           <div className="flex flex-col col-span-12">
             <label className="label slim-label-primary">Nome do Anexo *</label>
             <input {...register("name")} type="text" className="input slim-input-primary" placeholder="Nome descritivo obrigatório" />
           </div>
-
+          <div className="flex flex-col col-span-12">
+            <label className={`label slim-label-primary flex gap-1 items-center`}>
+              <div className="flex items-center gap-1">
+                <p>Tipo</p> 
+                <p onClick={() => genericTable("manager-type-attachment")} className="pr-2 cursor-pointer">
+                  <FaCirclePlus />
+                </p> 
+              </div>
+            </label>
+            <select {...register("type")} className="select slim-select-primary">
+              <option value="">Selecione</option>
+              {
+                types.map((t: TGenericTable) => {
+                  return <option key={t.id} value={t.code}>{t.description}</option>
+                })
+              }
+            </select>
+          </div>
           <div className="col-span-12 flex justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} className="slim-btn slim-btn-secondary">Cancelar</button>
             <button type="submit" className="slim-btn slim-btn-primary">
@@ -261,6 +332,8 @@ export const ModalB2BAttachment = ({ isOpen, typeModal, body, customers, onClose
           </div>
         </form>
       </div>
+
+      <ModalGenericTable onReturn={onReturnGeneric} />
     </div>
   );
 };

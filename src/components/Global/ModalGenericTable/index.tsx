@@ -15,11 +15,15 @@ import { FaTrash } from "react-icons/fa";
 import { useAtom } from "jotai";
 import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/modal.jotai";
 import { IoClose } from "react-icons/io5";
+import { maskDate } from "@/utils/mask.util";
+import { permissionDelete, permissionUpdate } from "@/utils/permission.util";
+import { IconEdit } from "../IconEdit";
+import { IconDelete } from "../IconDelete";
 
 const columns: any[] = [
-  { key: "code", title: "Código" },
-  { key: "description", title: "Descrição" },
-  { key: "active", title: "Ativo" },
+    { key: "code", title: "Código" },
+    { key: "description", title: "Descrição" },
+    { key: "active", title: "Ativo" },
 ];
 
 
@@ -35,14 +39,15 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
     const [isEditItem, setIsEditItem] = useState<boolean>(false);
     const [modalDelete, setModalDelete] = useState<boolean>(false);
     const [currentBody, setCurrentBody] = useState<TGenericTable>();
+    const [qtdItems, setQtdItems] = useState<number>(0);
 
     const { register, handleSubmit, reset, getValues, setValue, formState: { errors }} = useForm<TGenericTable>();
 
     const onSubmit: SubmitHandler<TGenericTable> = async (body: TGenericTable) => {
         if(!body.id) {
-          await create(body);
+            await create(body);
         } else {
-          await update(body);
+            await update(body);
         }
     };
 
@@ -56,7 +61,7 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
             return false;
         }
     };
-      
+    
     const update = async (body: TGenericTable) => {
         try {
             const { status, data} = await api.put(`/generic-tables`, body, configApi());
@@ -95,18 +100,17 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
     };
     
     const saveItem = async () => {
-        let success = false;
         if(!isEditItem) {
-            const res = await create({
+            await create({
                 table:  getValues("table"),
-                code: getValues("code"),
+                code: (qtdItems + 1).toString().padStart(5, '0'),
                 description: getValues("description"),
                 active: getValues("active") || false,
                 items: [],
                 createdAt: getValues("createdAt"),
             });
         } else {
-            const res = await update({
+            await update({
                 id:  getValues("id")!,
                 table:  getValues("table"),
                 code: getValues("code"),
@@ -151,15 +155,18 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
 
     const getByTable = async () => {
         try {
-            const {data} = await api.get(`/generic-tables/table/${table}`, configApi());
-            const result = data.result;
-            setItems(result.data);  
+            const { data } = await api.get(`/generic-tables/table/all/${table}`, configApi());
+            const result: any[] = data.result?.data || []; 
+            console.log(result)
+            setQtdItems(result.length);
+            setItems(result.filter(x => !x.deleted));  
             setValue("table", table);
         } catch (error) {
+            console.error("Erro ao buscar dados:", error);
             resolveResponse(error);
         }
     };
-
+    
     useEffect(() => {
         if(table) {
             reset(ResetGenericTable)
@@ -172,16 +179,11 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
             <Dialog
                 open={modal}
                 as="div"
-                className="relative z-[999] focus:outline-none"
-                onClose={cancel}
-            >
-                {/* Backdrop */}
-                <div
-                    className="fixed inset-0 z-[999]"
-                    style={{ background: "rgba(0,15,35,.65)", backdropFilter: "blur(5px)" }}
-                />
+                className="relative z-999 focus:outline-none"
+                onClose={cancel}>
+                <div className="fixed inset-0 z-999" style={{ background: "rgba(0,15,35,.65)", backdropFilter: "blur(5px)" }}/>
 
-                <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
+                <div className="fixed inset-0 z-1000 flex items-start justify-center pt-14 px-4 pb-6 overflow-y-auto">
                     <DialogPanel
                         className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl"
                         style={{
@@ -190,7 +192,6 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
                             animation: "modal-slide-in .25s cubic-bezier(.34,1.56,.64,1)",
                         }}
                     >
-                        {/* ── Header ── */}
                         <div
                             className="flex items-center justify-between px-6 py-0 h-14"
                             style={{
@@ -209,79 +210,91 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
                             </span>
                         </div>
 
-                        {/* ── Body ── */}
                         <div className="p-6 overflow-y-auto" style={{ maxHeight: "calc(100dvh - 16rem)" }}>
                             <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 mb-2">
-                                <div className={`flex flex-col col-span-2 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Tabela</label>
-                                    <input disabled={items.length > 0} {...register("table")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                </div> 
-                                <div className={`flex flex-col mb-2`}>
-                                    <label className={`label slim-label-primary`}>Código</label>
-                                    <input {...register("code")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                </div> 
-                            </div>                          
-                            <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 mb-2">
-                                <div className={`flex flex-col col-span-2 mb-2`}>
-                                    <label className={`label slim-label-primary`}>Descrição</label>
-                                    <input {...register("description")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
-                                </div> 
-                                <div className={`flex flex-col mb-2`}>
-                                    <label className={`label slim-label-primary`}>Status</label>
-                                    <label className="slim-switch">
-                                        <input {...register("active")} type="checkbox"/>
-                                        <span className="slider"></span>
-                                    </label>
-                                </div> 
-                                <div className={`flex flex-col justify-end mb-2`}>
-                                   <div className="flex justify-end gap-2 w-12/12 mt-3">
-                                        {
-                                            isEditItem &&
-                                            <Button click={cancelItem} text="Cancelar" theme="primary-light" styleClassBtn=""/>
-                                        }
-                                        <Button click={saveItem} text={isEditItem ? 'Salvar' : 'Adicionar'} theme="primary" styleClassBtn=""/>
+                                <div className="grid grid-cols-1 lg:grid-cols-6 gap-2 mb-2">
+                                    <div className={`flex flex-col col-span-${isEditItem ? '4' : '5'} mb-2`}>
+                                        <label className={`label slim-label-primary`}>Descrição</label>
+                                        <input {...register("description")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>
                                     </div> 
-                                </div> 
-                            </div>
+                                    <div className={`flex flex-col col-span-${isEditItem ? '2' : '1'} justify-end mb-2`}>
+                                        <div className="flex justify-end gap-2 w-12/12 mt-3">
+                                            {
+                                                isEditItem &&
+                                                <Button click={cancelItem} text="Cancelar" theme="primary-light" styleClassBtn=""/>
+                                            }
+                                            <Button click={saveItem} text={isEditItem ? 'Salvar' : 'Adicionar'} theme="primary" styleClassBtn=""/>
+                                        </div> 
+                                    </div> 
+                                </div>
 
-                            <DataTable isActive={items.length > 0} columns={columns}>
-                                <>
-                                {
-                                    items.map((x: any, i: number) => {
-                                    return (
-                                        <tr key={i}>
-                                            {columns.map((col: any) => (
-                                                <td className={`px-4 py-3 text-left text-sm font-medium tracking-wider`} key={col.key}>
-                                                    {col.key == "active" ? x.active ? 'Ativo' : 'Inativo' : (x as any)[col.key]}
+                                <div className="slim-container-table max-h-[calc(100dvh-18rem)] w-full">                    
+                                    <table className="min-w-full divide-y">
+                                        <thead className="slim-table-thead">
+                                            <tr>
+                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider rounded-tl-xl`}>#</th>
+                                                <th scope="col" className={`px-4 py-3 text-left text-sm font-bold tracking-wider`}>Descrição</th>
+                                                <th scope="col" className={`px-4 py-3 text-center text-sm font-bold tracking-wider rounded-tr-xl`}>Ações</th>
+                                            </tr>
+                                        </thead>
+            
+                                        <tbody className="slim-body-table divide-y">
+                                            {
+                                                items.map((x: any) => {
+                                                    return (
+                                                        <tr className="slim-tr" key={x.id}>                                            
+                                                            <td className="px-4 py-2">{x.code}</td>
+                                                            <td className="px-4 py-2">{x.description}</td>
+                                                            <td className="text-center">
+                                                                <div className="flex justify-center gap-2">
+                                                                    <MdEdit className="cursor-pointer text-yellow-400" onClick={() => getItem(x)} /> 
+                                                                    <FaTrash className="cursor-pointer text-red-400" onClick={() => openModalDelete(x)} />                                 
+                                                                </div>
+                                                            </td>    
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <DataTable isActive={items.length > 0} columns={columns}>
+                                    {items.map((x, i) => (
+                                        <tr key={x.id || i} className="border-b"> 
+                                            {columns.map((col) => (
+                                                <td className="px-4 py-3 text-sm" key={col.key}>
+                                                    {col.key === "active" 
+                                                        ? (x.active ? 'Ativo' : 'Inativo') 
+                                                        : x[col.key as keyof TGenericTable]}
                                                 </td>        
                                             ))}   
                                             <td className="text-center">
                                                 <div className="flex justify-center gap-2">
-                                                    <MdEdit className="cursor-pointer text-yellow-400 hover:text-yellow-500"  onClick={() => getItem(x)} /> 
-                                                    <FaTrash className="cursor-pointer text-red-400 hover:text-red-500" onClick={() => openModalDelete(x)} />                                                 
+                                                    <IconEdit action="edit" obj={x} getObj={() => {
+                                                        getItem(x);
+                                                    }}/>
+                                                    <IconDelete obj={x} getObj={() => {
+                                                        openModalDelete(x);
+                                                    }}/>                                                   
                                                 </div>
                                             </td>         
                                         </tr>
-                                    )
-                                    })
-                                }
-                                </>
-                            </DataTable>
+                                    ))}
+                                </DataTable>
 
-                            <ModalDelete 
-                                title='Excluír Item'
-                                isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} 
-                                onClose={() => setModalDelete(false)}
-                                onSelectValue={destroy}
-                            />   
+                                <ModalDelete 
+                                    title='Excluír Item'
+                                    isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} 
+                                    onClose={() => setModalDelete(false)}
+                                    onSelectValue={destroy}
+                                />   
 
-                            <div className="flex justify-end gap-2 w-12/12 mt-3">
-                                <Button click={cancel} text="Cancelar" theme="primary-light" styleClassBtn=""/>
-                            </div>  
-                        </form>
+                                <div className="flex justify-end gap-2 w-12/12 mt-3">
+                                    <Button click={cancel} text="Cancelar" theme="primary-light" styleClassBtn=""/>
+                                </div>  
+                            </form>
                         </div>
-
                     </DialogPanel>
                 </div>
             </Dialog>

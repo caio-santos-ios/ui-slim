@@ -78,15 +78,15 @@ const ResetFilter: TFilter = {
 
 const StatusBadge = ({ value }: { value: any }) => {
   const map: Record<string, string> = {
-    Ativo:       "bg-green-100 text-green-800 border-green-200",
-    Inativo:     "bg-red-100 text-red-800 border-red-200",
-    Pendente:    "bg-yellow-100 text-yellow-800 border-yellow-200",
-    Processado:  "bg-green-100 text-green-800 border-green-200",
-    Erro:        "bg-red-100 text-red-800 border-red-200",
-    Aberta:      "bg-blue-100 text-blue-800 border-blue-200",
-    Fechada:     "bg-gray-100 text-gray-700 border-gray-200",
-    Paga:        "bg-green-100 text-green-800 border-green-200",
-    Cancelada:   "bg-red-100 text-red-800 border-red-200",
+    Ativo: "bg-green-100 text-green-800 border-green-200",
+    Inativo: "bg-red-100 text-red-800 border-red-200",
+    Pendente: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    Processado: "bg-green-100 text-green-800 border-green-200",
+    Erro: "bg-red-100 text-red-800 border-red-200",
+    Aberta: "bg-blue-100 text-blue-800 border-blue-200",
+    Fechada: "bg-gray-100 text-gray-700 border-gray-200",
+    Paga: "bg-green-100 text-green-800 border-green-200",
+    Cancelada: "bg-red-100 text-red-800 border-red-200",
   };
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${map[value] ?? "bg-gray-100 text-gray-700 border-gray-200"}`}>
@@ -198,6 +198,7 @@ function BarrasMensalBeneficiarios({ data }: { data: { month: string; year: numb
   );
 }
 
+// ── ALTERAÇÃO 1: 1 barra por fatura individual (sem agrupamento) ──────────
 function BarrasMensalFaturas({ data }: { data: { month: string; year: number; count: number; total: number }[] }) {
   const maxTotal = Math.max(...data.map(d => d.total), 1);
   const BAR_H = 100;
@@ -267,8 +268,8 @@ export default function B2BPanel() {
   const { register, reset, getValues } = useForm<TFilter>({ defaultValues: ResetFilter });
 
   const uriMap: Record<TTab, string> = {
-    movements:   "b2b-mass-movements",
-    invoices:    "b2b-invoices",
+    movements: "b2b-mass-movements",
+    invoices:  "b2b-invoices",
     attachments: "attachments",
   };
 
@@ -321,6 +322,7 @@ export default function B2BPanel() {
     } catch {}
   };
 
+  // ── ALTERAÇÃO 2: 1 entrada por fatura (sem agrupamento por mês) ──────────
   const loadChartInvoices = async () => {
     try {
       const { data } = await api.get(`/b2b-invoices?deleted=false&orderBy=createdAt&sort=asc&pageSize=9999&pageNumber=1`, configApi());
@@ -375,28 +377,22 @@ export default function B2BPanel() {
   };
 
   const loadPlans = async () => {
-    try {
-      const { data } = await api.get(`/plans?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi());
-      setPlans(data.result.data ?? []);
-    } catch {}
+    try { const { data } = await api.get(`/plans?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi()); setPlans(data.result.data ?? []); } catch {}
   };
 
   const loadServiceModules = async () => {
-    try {
-      const { data } = await api.get(`/service-modules/select?deleted=false&orderBy=name&sort=asc`, configApi());
-      setServiceModules(data.result.data ?? []);
-    } catch {}
+    try { const { data } = await api.get(`/service-modules/select?deleted=false&orderBy=name&sort=asc`, configApi()); setServiceModules(data.result.data ?? []); } catch {}
   };
 
   const buildQuery = (values: TFilter): string => {
     let q = "";
     if (activeTab === "movements") {
-      if (values.search)               q += `&regex$or$name=${values.search}`;
-      if (values.cpf)                  q += `&regex$cpf=${values.cpf}`;
-      if (values.gender)               q += `&gender=${values.gender}`;
-      if (values.planId)               q += `&planId=${values.planId}`;
-      if (values.serviceModuleId)      q += `&serviceModuleId=${values.serviceModuleId}`;
-      if (values.active !== "")        q += `&active=${values.active}`;
+      if (values.search)           q += `&regex$or$name=${values.search}`;
+      if (values.cpf)              q += `&regex$cpf=${values.cpf}`;
+      if (values.gender)           q += `&gender=${values.gender}`;
+      if (values.planId)           q += `&planId=${values.planId}`;
+      if (values.serviceModuleId)  q += `&serviceModuleId=${values.serviceModuleId}`;
+      if (values.active !== "")    q += `&active=${values.active}`;
       if (values["gte$createdAt"])     q += `&gte$createdAt=${values["gte$createdAt"]}`;
       if (values["lte$createdAt"])     q += `&lte$createdAt=${values["lte$createdAt"]}`;
       if (values["gte$effectiveDate"]) q += `&gte$effectiveDate=${values["gte$effectiveDate"]}`;
@@ -539,7 +535,7 @@ export default function B2BPanel() {
                   ))}
                 </div>
 
-                {/* Gráficos movements */}
+                {/* Gráficos movements — 2 em cima, 1 embaixo */}
                 {activeTab === "movements" && (
                   <div className="flex flex-col gap-3 mb-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

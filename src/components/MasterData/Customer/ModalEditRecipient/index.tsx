@@ -191,9 +191,9 @@ export const ModalEditRecipient = ({
         } catch {}
     };
 
-    const loadPlans = async () => {
+    const loadPlans = async (customerType: "B2C" | "B2B") => {
         try {
-            const filter = contractorType === "B2B" ? "B2C" : "B2B";
+            const filter = customerType === "B2B" ? "B2C" : "B2B";
             const { data } = await api.get(
                 `/plans?deleted=false&orderBy=createdAt&sort=desc&pageSize=200&pageNumber=1&ne$type=${filter}`,
                 configApi()
@@ -247,6 +247,7 @@ export const ModalEditRecipient = ({
             const result = data.result;
             if(result.data) {
                 setContractorType(result.data.type);
+                await loadPlans(result.data.type);
             }
         } catch (error) {
             resolveResponse(error);
@@ -269,7 +270,6 @@ export const ModalEditRecipient = ({
     useEffect(() => {
         if (!isOpen) return;
         loadGenders();
-        loadPlans();
         getSelectServiceModule();
         if (recipientId) getById(recipientId);
     }, [isOpen, recipientId]);
@@ -472,7 +472,7 @@ export const ModalEditRecipient = ({
                                                     <input {...register("function")} type="text" className="input slim-input-primary" placeholder="Função" />
                                                 </Field>
                                                 <Field label="Matrícula" span={2}>
-                                                    <input {...register("function")} type="text" className="input slim-input-primary" placeholder="Matrícula" />
+                                                    <input {...register("registration")} type="text" className="input slim-input-primary" placeholder="Matrícula" />
                                                 </Field>
                                                 <Field label="CNO" span={2}>
                                                     <input {...register("cno")} type="text" className="input slim-input-primary" placeholder="CNO" />

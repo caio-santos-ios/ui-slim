@@ -10,9 +10,12 @@ type TProp = {
 
 export const IconEditPhoto = ({ obj, getObj, action }: TProp) => {
     return (
-        <div 
-            onClick={() => getObj(action, obj)} className="cursor-pointer text-blue-400 hover:text-blue-500">
+        <button 
+            onClick={() => getObj(action, obj)}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-muted)] bg-[var(--surface-bg)] hover:bg-[var(--primary-color)] hover:text-white border border-[var(--surface-border)] hover:border-[var(--primary-color)] transition-all"
+            style={{ padding: 0, minWidth: "2rem" }}
+            title="Editar">
             <MdPhotoCamera />
-        </div>
+        </button>
     );
 };

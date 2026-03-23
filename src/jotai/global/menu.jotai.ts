@@ -214,23 +214,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                     read: false,
                     delete: false
                 }
-            },            
-            // {
-            //     code: 'A22',
-            //     isOpen: true,
-            //     subMenu: [],
-            //     description: 'Tabelas de Importação',
-            //     icon: '',
-            //     link: 'master-data/imports',
-            //     padding: 'px-4',
-            //     authorized: false,
-            //     permissions: {
-            //         create: false,
-            //         update: false,
-            //         read: false,
-            //         delete: false
-            //     }
-            // },            
+            },                        
             {
                 code: 'A23',
                 isOpen: true,
@@ -262,23 +246,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                     read: false,
                     delete: false
                 }
-            },            
-            // {
-            //     code: 'A25',
-            //     isOpen: true,
-            //     subMenu: [],
-            //     description: 'Tabela de Negociação',
-            //     icon: '',
-            //     link: 'master-data/trading-tables',
-            //     padding: 'px-4',
-            //     authorized: false,
-            //     permissions: {
-            //         create: false,
-            //         update: false,
-            //         read: false,
-            //         delete: false
-            //     }
-            // },            
+            },                       
         ],
     },
     {
@@ -428,22 +396,6 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
         isOpen: true,
         authorized: false,
         subMenu: [
-            // {
-            //     code: 'D01',
-            //     isOpen: false,
-            //     authorized: false,
-            //     subMenu: [],
-            //     description: 'Dashboard',
-            //     icon: '',
-            //     link: 'dashboard',
-            //     padding: 'px-4',
-            //     permissions: {
-            //         create: false,
-            //         update: false,
-            //         read: false,
-            //         delete: false
-            //     }
-            // },
             {
                 code: 'D02',
                 isOpen: false,
@@ -476,11 +428,70 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                     delete: false
                 }
             },
+            {
+                code: 'D04',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Visão Executiva',
+                icon: '',
+                link: 'dashboard/executivo/iso',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
+            {
+                code: 'D05',
+                isOpen: false,
+                authorized: false,
+                subMenu: [],
+                description: 'Painel SST',
+                icon: '',
+                link: 'dashboard/executivo/sst',
+                padding: 'px-4',
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
         ],
         description: 'Gestão',
         icon: 'BsCashCoin',
         link: '',
         padding: 'px-2'
+    },
+    {
+        code: '5',
+        isOpen: true,
+        authorized: false,
+        description: 'Configurações',
+        icon: 'MdSettings',
+        link: '',
+        padding: 'px-2',
+        subMenu: [
+            {
+                code: 'E01',
+                isOpen: true,
+                subMenu: [],
+                description: 'Perfis de Permissão',
+                icon: '',
+                link: 'settings/permission-profiles',
+                padding: 'px-4',
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
+        ],
     },
     {
         code: '0',

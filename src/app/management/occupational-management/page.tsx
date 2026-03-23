@@ -22,10 +22,10 @@ import { TbHeartbeat, TbShieldCheck } from "react-icons/tb";
 import { BsBarChartLine } from "react-icons/bs";
 import { FiCheckSquare, FiMoon, FiActivity } from "react-icons/fi";
 
-// ─── Abas ─────────────────────────────────────────────────────────────────────
+// ─── Abas — item 6: adiciona IPV ─────────────────────────────────────────────
 type TTab = "iso" | "igs" | "ign" | "ies" | "ipv";
 
-// ─── Colunas ──────────────────────────────────────────────────────────────────
+// ─── Colunas — item 7: adiciona período, departamento, setor, função ──────────
 const isoColumns = [
   { key: "beneficiaryName",   title: "Beneficiário" },
   { key: "department",        title: "Departamento" },
@@ -80,6 +80,7 @@ const iesColumns = [
   { key: "createdAt",       title: "Data" },
 ];
 
+// item 6: coluna IPV
 const ipvColumns = [
   { key: "beneficiaryName", title: "Beneficiário" },
   { key: "department",      title: "Departamento" },
@@ -105,11 +106,7 @@ const PointBadge = ({ value }: { value: number }) => {
   const color = value >= 4 ? "bg-green-100 text-green-800 border-green-200"
     : value >= 2 ? "bg-yellow-100 text-yellow-800 border-yellow-200"
     : "bg-red-100 text-red-800 border-red-200";
-  return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${color}`}>
-      {value} pt{value !== 1 ? "s" : ""}
-    </span>
-  );
+  return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${color}`}>{value} pt{value !== 1 ? "s" : ""}</span>;
 };
 
 const ScoreBadge = ({ value }: { value: number }) => {
@@ -126,7 +123,7 @@ const ScoreBadge = ({ value }: { value: number }) => {
   );
 };
 
-// ─── Filtro ───────────────────────────────────────────────────────────────────
+// ─── Filtro — item 7: adiciona período, departamento, setor, função ───────────
 type TFilter = {
   search:          string;
   "gte$createdAt": string;
@@ -168,6 +165,7 @@ export default function OccupationalManagement() {
       const idLocal = localStorage.getItem("contractorId");
       const id = idLocal ?? "";
 
+      // item 6: IPV = todos que fizeram IGS+IGN+IES (têm metric.ipv calculado)
       const tabFilter: Record<TTab, string> = {
         iso: "&chekinISO=true",
         igs: "&chekinIGS=true",
@@ -211,13 +209,14 @@ export default function OccupationalManagement() {
     } catch {}
   };
 
-  // ── Build query ────────────────────────────────────────────────────────────
+  // ── Build query — item 7 ───────────────────────────────────────────────────
   const buildQuery = (values: TFilter): string => {
     let q = "";
     if (values.search)           q += `&regex$or$beneficiaryName=${values.search}`;
     if (values["gte$createdAt"]) q += `&gte$createdAt=${values["gte$createdAt"]}`;
     if (values["lte$createdAt"]) q += `&lte$createdAt=${values["lte$createdAt"]}`;
     if (values.department)       q += `&regex$department=${values.department}`;
+    // if (values.branch)           q += `&regex$branch=${values.branch}`;
     if (values.function)         q += `&regex$function=${values.function}`;
     return q;
   };
@@ -239,26 +238,25 @@ export default function OccupationalManagement() {
 
   // ── Cell renderer ──────────────────────────────────────────────────────────
   const renderCell = (x: any, col: { key: string }) => {
+    // acesso a campos nested (metric.igs, metric.ipv etc.)
     const getValue = (obj: any, path: string) =>
       path.split(".").reduce((o, k) => (o ? o[k] : undefined), obj);
 
     const v = getValue(x, col.key);
 
     if (col.key === "createdAt") return maskDate(v);
-    if (["chekinIGS", "chekinIGN", "chekinIES", "chekinISO"].includes(col.key))
+    if (["chekinIGS","chekinIGN","chekinIES","chekinISO"].includes(col.key))
       return <CheckBadge value={Boolean(v)} />;
-    if (["chekinIGSPoint", "chekinIGNPoint", "chekinIESPoint", "chekinISOPoint"].includes(col.key))
+    if (["chekinIGSPoint","chekinIGNPoint","chekinIESPoint","chekinISOPoint"].includes(col.key))
       return <PointBadge value={Number(v ?? 0)} />;
-    if (["metric.igs", "metric.ign", "metric.ies", "metric.ipv"].includes(col.key))
+    if (["metric.igs","metric.ign","metric.ies","metric.ipv"].includes(col.key))
       return <ScoreBadge value={Number(v ?? 0)} />;
     if (col.key === "sleepQuality") return v ? `${v}/5` : "—";
     if (col.key === "waterAmount")  return v ? `${v}L` : "—";
-    if (["dass1", "dass2", "dass3", "dass7"].includes(col.key))
+    if (["dass1","dass2","dass3","dass7"].includes(col.key))
       return v !== undefined && v !== null ? `${v}/3` : "—";
     if (col.key === "chekinISOQuestion")
-      return v ? (
-        <span className="text-xs text-[var(--text-muted)] italic max-w-[200px] truncate block" title={v}>{v}</span>
-      ) : "—";
+      return v ? <span className="text-xs text-[var(--text-muted)] italic max-w-[200px] truncate block" title={v}>{v}</span> : "—";
     return v ?? "—";
   };
 
@@ -266,13 +264,19 @@ export default function OccupationalManagement() {
   useEffect(() => { loadSummary(); }, []);
 
   useEffect(() => {
-    setPagination({ currentPage: 1, data: [], sizePage: 10, totalPages: 10, query: {} });
+    setPagination({
+      currentPage: 1,
+      data: [],
+      sizePage: 10,
+      totalPages: 10,
+      query: {}
+    });
     reset(ResetFilter);
     setQueryStr("");
     getAll();
   }, [activeTab]);
 
-  // ── Tabs ───────────────────────────────────────────────────────────────────
+  // ── Tabs — item 6: adiciona IPV ────────────────────────────────────────────
   const tabs: { key: TTab; label: string; icon: React.ReactNode; count: number; color: string }[] = [
     { key: "iso", label: "ISO — Ocupacional", icon: <FiCheckSquare size={14} />, count: summary.totalISO, color: "#f59e0b" },
     { key: "igs", label: "IGS — Saúde",       icon: <FiMoon size={14} />,        count: summary.totalIGS, color: "var(--primary-color)" },
@@ -319,7 +323,7 @@ export default function OccupationalManagement() {
                   ))}
                 </div>
 
-                {/* ── Filtros ───────────────────────────────────────────── */}
+                {/* ── Filtros — item 7 ──────────────────────────────────── */}
                 <div className="grid grid-cols-12 mb-2">
                   <Accordion className="col-span-12" defaultOpenId="filter">
                     <AccordionItem id="filter">
@@ -337,11 +341,15 @@ export default function OccupationalManagement() {
                             <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome..." />
                           </div>
 
+                          {/* item 7: departamento, setor, função */}
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Departamento</label>
                             <input {...register("department")} type="text" className="input slim-input-primary" placeholder="Ex: RH" />
                           </div>
-
+                          {/* <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                            <label className="label slim-label-primary">Setor</label>
+                            <input {...register("branch")} type="text" className="input slim-input-primary" placeholder="Ex: Operações" />
+                          </div> */}
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Função</label>
                             <input {...register("function")} type="text" className="input slim-input-primary" placeholder="Ex: Analista" />
@@ -351,7 +359,6 @@ export default function OccupationalManagement() {
                             <label className="label slim-label-primary">Data início</label>
                             <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
                           </div>
-
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Data fim</label>
                             <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
@@ -362,7 +369,6 @@ export default function OccupationalManagement() {
                               <IoSearch />
                             </div>
                           </div>
-
                         </div>
                       </AccordionContent>
                     </AccordionItem>
