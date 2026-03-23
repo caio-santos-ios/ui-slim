@@ -101,29 +101,29 @@ const StatusBadge = ({ value }: { value: any }) => {
 
 function ColunasAtivosInativos({ ativos, inativos }: { ativos: number; inativos: number }) {
   const total = ativos + inativos || 1;
-  const maxH = 80;
+  const maxH = 160;
   const hAtivo   = Math.round((ativos   / total) * maxH);
   const hInativo = Math.round((inativos / total) * maxH);
   return (
-    <div className="rounded-2xl p-4" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
-      <p className="text-xs font-bold text-[var(--primary-color)] mb-3">Beneficiários Ativos / Inativos</p>
-      <div className="flex items-end justify-center gap-6 h-28">
-        <div className="flex flex-col items-center gap-1">
-          <span className="text-xs font-bold text-green-700">{ativos}</span>
-          <div className="w-14 rounded-t-lg transition-all duration-700"
-            style={{ height: `${hAtivo || 4}px`, background: "linear-gradient(180deg, #22c55e, #16a34a)", minHeight: 4 }} />
-          <span className="text-xs text-[var(--text-muted)]">Ativos</span>
+    <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
+      <p className="text-sm font-bold text-[var(--primary-color)] mb-4">Beneficiários Ativos / Inativos</p>
+      <div className="flex items-end justify-center gap-10" style={{ height: 200 }}>
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-lg font-black text-green-700">{ativos}</span>
+          <div className="w-20 rounded-t-xl transition-all duration-700"
+            style={{ height: `${hAtivo || 6}px`, background: "linear-gradient(180deg, #22c55e, #16a34a)", minHeight: 6 }} />
+          <span className="text-sm font-semibold text-[var(--text-muted)]">Ativos</span>
         </div>
-        <div className="flex flex-col items-center gap-1">
-          <span className="text-xs font-bold text-red-600">{inativos}</span>
-          <div className="w-14 rounded-t-lg transition-all duration-700"
-            style={{ height: `${hInativo || 4}px`, background: "linear-gradient(180deg, #ef4444, #dc2626)", minHeight: 4 }} />
-          <span className="text-xs text-[var(--text-muted)]">Inativos</span>
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-lg font-black text-red-600">{inativos}</span>
+          <div className="w-20 rounded-t-xl transition-all duration-700"
+            style={{ height: `${hInativo || 6}px`, background: "linear-gradient(180deg, #ef4444, #dc2626)", minHeight: 6 }} />
+          <span className="text-sm font-semibold text-[var(--text-muted)]">Inativos</span>
         </div>
       </div>
-      <div className="flex justify-center gap-4 mt-2">
-        <span className="text-xs text-[var(--text-muted)]">Total: <strong>{total}</strong></span>
-        <span className="text-xs text-green-600">{((ativos / total) * 100).toFixed(0)}% ativos</span>
+      <div className="flex justify-center gap-6 mt-3">
+        <span className="text-sm text-[var(--text-muted)]">Total: <strong>{total}</strong></span>
+        <span className="text-sm font-semibold text-green-600">{((ativos / total) * 100).toFixed(0)}% ativos</span>
       </div>
     </div>
   );
@@ -133,7 +133,7 @@ const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444
 
 function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) {
   const total = data.reduce((s, d) => s + d.value, 0) || 1;
-  const cx = 70, cy = 70, r = 60;
+  const cx = 100, cy = 100, r = 85;
   let startAngle = -Math.PI / 2;
   const slices = data.map((d, i) => {
     const angle = (d.value / total) * 2 * Math.PI;
@@ -146,21 +146,21 @@ function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) 
     return { path, color: PIZZA_COLORS[i % PIZZA_COLORS.length], label: d.label, value: d.value };
   });
   return (
-    <div className="rounded-2xl p-4" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
-      <p className="text-xs font-bold text-[var(--primary-color)] mb-3">Programas Ativos</p>
-      <div className="flex items-center gap-4">
-        <svg viewBox="0 0 140 140" className="w-28 h-28 flex-shrink-0">
+    <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
+      <p className="text-sm font-bold text-[var(--primary-color)] mb-4">Programas Ativos</p>
+      <div className="flex items-center gap-5">
+        <svg viewBox="0 0 200 200" className="w-40 h-40 flex-shrink-0">
           {slices.map((s, i) => <path key={i} d={s.path} fill={s.color} stroke="#fff" strokeWidth="1.5" />)}
           <circle cx={cx} cy={cy} r={r * 0.45} fill="var(--surface-card)" />
-          <text x={cx} y={cy + 4} textAnchor="middle" fontSize="10" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
-          <text x={cx} y={cy + 14} textAnchor="middle" fontSize="7" fill="var(--text-muted)">prog.</text>
+          <text x={cx} y={cy + 5} textAnchor="middle" fontSize="14" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
+          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="9" fill="var(--text-muted)">programas</text>
         </svg>
-        <div className="flex flex-col gap-1.5 flex-1 overflow-hidden">
+        <div className="flex flex-col gap-2 flex-1 overflow-hidden">
           {slices.map((s, i) => (
-            <div key={i} className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: s.color }} />
+            <div key={i} className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: s.color }} />
               <span className="text-xs text-[var(--text-muted)] truncate flex-1">{s.label}</span>
-              <span className="text-xs font-bold flex-shrink-0" style={{ color: s.color }}>{s.value}</span>
+              <span className="text-sm font-bold flex-shrink-0" style={{ color: s.color }}>{s.value}</span>
             </div>
           ))}
           {data.length === 0 && <span className="text-xs text-[var(--text-muted)]">Sem dados</span>}
@@ -172,18 +172,18 @@ function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) 
 
 function BarrasMensalBeneficiarios({ data }: { data: { month: string; year: number; total: number }[] }) {
   const max = Math.max(...data.map(d => d.total), 1);
-  const BAR_H = 100;
+  const BAR_H = 160;
   return (
-    <div className="rounded-2xl p-4" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
-      <p className="text-xs font-bold text-[var(--primary-color)] mb-3">Evolução Mensal de Beneficiários</p>
+    <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
+      <p className="text-sm font-bold text-[var(--primary-color)] mb-4">Evolução Mensal de Beneficiários</p>
       <div className="overflow-x-auto pb-1">
-        <div className="flex items-end gap-2" style={{ minWidth: `${data.length * 52}px`, height: `${BAR_H + 40}px` }}>
+        <div className="flex items-end gap-2" style={{ minWidth: `${data.length * 56}px`, height: `${BAR_H + 48}px` }}>
           {data.map((d, i) => {
             const h = Math.max(6, Math.round((d.total / max) * BAR_H));
             return (
-              <div key={i} className="flex flex-col items-center gap-1 flex-shrink-0" style={{ width: 44 }}>
+              <div key={i} className="flex flex-col items-center gap-1 flex-shrink-0" style={{ width: 48 }}>
                 <span className="text-xs font-bold text-[var(--primary-color)]">{d.total || ""}</span>
-                <div className="w-full rounded-t-lg transition-all duration-700"
+                <div className="w-full rounded-t-xl transition-all duration-700"
                   style={{ height: `${h}px`, background: "linear-gradient(180deg, #0ea5e9, var(--primary-color))" }} />
                 <span className="text-xs text-[var(--text-muted)] text-center leading-tight">
                   {d.month}<br /><span className="text-[10px]">{d.year}</span>
@@ -535,11 +535,13 @@ export default function B2BPanel() {
                   ))}
                 </div>
 
-                {/* Gráficos movements */}
+                {/* Gráficos movements — 2 em cima, 1 embaixo */}
                 {activeTab === "movements" && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                    <ColunasAtivosInativos ativos={chartMovements.ativos} inativos={chartMovements.inativos} />
-                    <PizzaProgramas data={chartMovements.porPrograma} />
+                  <div className="flex flex-col gap-3 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <ColunasAtivosInativos ativos={chartMovements.ativos} inativos={chartMovements.inativos} />
+                      <PizzaProgramas data={chartMovements.porPrograma} />
+                    </div>
                     <BarrasMensalBeneficiarios data={chartMovements.porMes} />
                   </div>
                 )}
@@ -693,7 +695,7 @@ export default function B2BPanel() {
 
                 {/* Tabela */}
                 <DataTable
-                  isAction={activeTab === "invoices" || activeTab === "attachments"}
+                  isAction={activeTab === "invoices" || activeTab === "attachments" || activeTab === "movements"}
                   classContainer={`${filterOpened ? "max-h-[calc(100dvh-(var(--height-header)+23rem))]" : "max-h-[calc(100dvh-(var(--height-header)+16rem))]"}`}
                   columns={columns}
                 >
@@ -707,6 +709,13 @@ export default function B2BPanel() {
                             </td>
                           )
                         ))}
+                        {activeTab === "movements" && (
+                          <td className="text-center">
+                            <div className="flex justify-center gap-2">
+                              <IconEdit action="edit" obj={x} getObj={openModal} />
+                            </div>
+                          </td>
+                        )}
                         {activeTab === "invoices" && (
                           <td className="text-center">
                             <div className="flex justify-center gap-2">
