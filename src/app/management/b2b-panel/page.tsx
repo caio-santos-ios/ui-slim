@@ -69,6 +69,7 @@ type TFilter = {
   "gte$effectiveDate": string; "lte$effectiveDate": string;
   referenceMonth: string; referenceYear: string; status: string;
   type: string; department: string; period: string;
+   contractorId: string;
 };
 
 const ResetFilter: TFilter = {
@@ -78,6 +79,7 @@ const ResetFilter: TFilter = {
   "gte$effectiveDate": "", "lte$effectiveDate": "",
   referenceMonth: "", referenceYear: "", status: "",
   type: "", department: "", period: "",
+  contractorId: "",
 };
 
 const StatusBadge = ({ value }: { value: any }) => {
@@ -311,13 +313,15 @@ export default function B2BPanel() {
   const [exportingExcel, setExportingExcel] = useState(false);
   const [summary, setSummary]           = useState<TSummary>({ movements: 0, invoices: 0, attachments: 0, pendingMovements: 0 });
   const [filterOpened, setFilterOpened] = useState(true);
+  const [isAdmin, setIsAdmin]           = useState<boolean>(false);
+  const [contractors, setContractors]   = useState<{ id: string; corporateName: string }[]>([]);
   const [modalMovement,   setModalMovement]   = useState(false);
   const [modalInvoice,    setModalInvoice]    = useState(false);
   const [modalAttachment, setModalAttachment] = useState(false);
   const [chartMovements, setChartMovements] = useState<TChartMovements>({ ativos: 0, inativos: 0, porPrograma: [], porMes: [] });
   const [chartInvoices, setChartInvoices]   = useState<TChartInvoices>({ porMes: [] });
 
-  const { register, reset, getValues } = useForm<TFilter>({ defaultValues: ResetFilter });
+  const { register, reset, getValues, setValue } = useForm<TFilter>({ defaultValues: ResetFilter });
 
   const uriMap: Record<TTab, string> = {
     movements: "b2b-mass-movements",
@@ -340,22 +344,24 @@ export default function B2BPanel() {
     } catch (error) { resolveResponse(error); } finally { setLoading(false); }
   };
 
-  const getRecipient = async (query: string = "") => {
+  const getRecipient = async (query: string = "", overrideContractorId?: string) => {
     try {
       setLoading(true);
-      const contractorId = localStorage.getItem("contractorId");
-      const id = contractorId ? contractorId : "";
-      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
+      const adminStr = localStorage.getItem("admin");
+      const contractorId = overrideContractorId ?? (adminStr === "true" ? "" : localStorage.getItem("contractorId") ?? "");
+      const contractorFilter = contractorId ? `&contractorId=${contractorId}` : "";
+      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false${contractorFilter}&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
       setPagination({ currentPage: result.currentPage, data: result.data, sizePage: result.pageSize, totalPages: result.totalCount });
     } catch (error) { resolveResponse(error); } finally { setLoading(false); }
   };
 
-  const loadChartMovements = async () => {
+  const loadChartMovements = async (overrideContractorId?: string) => {
     try {
-      const contractorId = localStorage.getItem("contractorId");
-      const id = contractorId ? contractorId : "";
-      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=9999&pageNumber=1`, configApi());
+      const adminStr = localStorage.getItem("admin");
+      const contractorId = overrideContractorId ?? (adminStr === "true" ? "" : localStorage.getItem("contractorId") ?? "");
+      const contractorFilter = contractorId ? `&contractorId=${contractorId}` : "";
+      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false${contractorFilter}&orderBy=name&sort=asc&pageSize=9999&pageNumber=1`, configApi());
       const rows: any[] = data.result?.data ?? [];
       const ativos   = rows.filter(r => r.active).length;
       const inativos = rows.filter(r => !r.active).length;
@@ -392,9 +398,10 @@ export default function B2BPanel() {
   const exportExcel = async () => {
     try {
       setExportingExcel(true);
-      const contractorId = localStorage.getItem("contractorId");
-      const id = contractorId ? contractorId : "";
-      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false&contractorId=${id}&orderBy=name&sort=asc&pageSize=99999&pageNumber=1${queryStr}`, configApi());
+      const adminStr = localStorage.getItem("admin");
+      const contractorId = adminStr === "true" ? (getValues().contractorId || "") : (localStorage.getItem("contractorId") ?? "");
+      const contractorFilter = contractorId ? `&contractorId=${contractorId}` : "";
+      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false${contractorFilter}&orderBy=name&sort=asc&pageSize=99999&pageNumber=1${queryStr}`, configApi());
       const rows: any[] = data.result.data ?? [];
       const sheetData = rows.map((r) => ({
         "Beneficiário": r.name ?? "", "CPF": r.cpf ?? "", "Status": r.active ? "Ativo" : "Inativo",
@@ -427,6 +434,16 @@ export default function B2BPanel() {
       setSummary({ movements: mov.data.result.totalCount, invoices: inv.data.result.totalCount, attachments: att.data.result.totalCount, pendingMovements: pending.data.result.totalCount });
     } catch {}
   };
+  const handleContractorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const selectedId = e.target.value;
+  setValue("contractorId", selectedId); // ← atualiza o react-hook-form
+  if (selectedId) {
+    localStorage.setItem("contractorId", selectedId);
+  } else {
+    localStorage.removeItem("contractorId");
+  }
+  loadChartMovements(selectedId || undefined);
+};
 
   const loadPlans = async () => {
     try { const { data } = await api.get(`/plans?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi()); setPlans(data.result.data ?? []); } catch {}
@@ -467,10 +484,15 @@ export default function B2BPanel() {
     return q;
   };
 
-  const onSubmit = async () => {
-    const q = buildQuery(getValues());
+    const onSubmit = async () => {
+    const values = getValues();
+    const q = buildQuery(values);
     setQueryStr(q);
-    activeTab === "movements" ? await getRecipient(q) : await getAll(q);
+    if (activeTab === "movements") {
+      await getRecipient(q, values.contractorId || undefined);
+    } else {
+      await getAll(q);
+    }
   };
 
   const openModal = (action: "create" | "edit" = "create", body?: any) => {
@@ -524,7 +546,18 @@ export default function B2BPanel() {
     return v ?? "—";
   };
 
-  useEffect(() => {
+ useEffect(() => {
+    const adminStr = localStorage.getItem("admin");
+    setIsAdmin(adminStr === "true");
+     const contractorId = localStorage.getItem("contractorId");
+  if (contractorId) {
+    setValue("contractorId", contractorId);
+  }
+    if (adminStr === "true") {
+      api.get(`/customers/select?deleted=false&orderBy=corporateName&sort=asc&pageSize=200&pageNumber=1&type=B2B`, configApi())
+        .then(({ data }) => setContractors(data?.result?.data ?? []))
+        .catch(() => {});
+    }
     loadSummary(); loadPlans(); loadServiceModules(); loadChartMovements(); loadChartInvoices();
   }, []);
 
@@ -734,6 +767,23 @@ export default function B2BPanel() {
                               </div>
                             </>
                           )}
+                         {isAdmin && (
+                          <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
+                            <label className="label slim-label-primary">Contratante</label>
+                            <select
+                              value={getValues("contractorId")}
+                              onChange={handleContractorChange}
+                              className="select slim-select-primary"
+                            >
+                              <option value="">Todos</option>
+                              {contractors.map((contractor) => (
+                                <option key={contractor.id} value={contractor.id}>
+                                   {contractor.corporateName}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
                           <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
                             <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">
                               <IoSearch />
