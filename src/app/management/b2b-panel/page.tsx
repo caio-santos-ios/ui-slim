@@ -434,7 +434,7 @@ export default function B2BPanel() {
   };
   const handleContractorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
   const selectedId = e.target.value;
-  setValue("contractorId", selectedId); // ← atualiza o react-hook-form
+  setValue("contractorId", selectedId);
   if (selectedId) {
     localStorage.setItem("contractorId", selectedId);
   } else {
@@ -776,7 +776,7 @@ export default function B2BPanel() {
                               <option value="">Todos</option>
                               {contractors.map((contractor) => (
                                 <option key={contractor.id} value={contractor.id}>
-                                   {contractor.corporateName}
+                                  {contractor.corporateName}
                                 </option>
                               ))}
                             </select>
@@ -810,13 +810,6 @@ export default function B2BPanel() {
                           )
                         ))}
                         {activeTab === "movements" && (
-                          <td className="text-center">
-                            <div className="flex justify-center gap-2">
-                              <IconEdit action="edit" obj={x} getObj={openModal} />
-                            </div>
-                          </td>
-                        )}
-                        {activeTab === "invoices" && (
                           <td className="text-center">
                             <div className="flex justify-center gap-2">
                               <IconEdit action="edit" obj={x} getObj={openModal} />
