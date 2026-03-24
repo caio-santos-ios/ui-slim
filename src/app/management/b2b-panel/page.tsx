@@ -18,12 +18,10 @@ import { NotData } from "@/components/Global/NotData";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { maskDate } from "@/utils/mask.util";
 import { convertNumberMoney } from "@/utils/convert.util";
-import { permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/Global/Accordion/AccordionContent";
 import { IoSearch } from "react-icons/io5";
 import { MdFilterAlt, MdFilterAltOff, MdOutlineAttachFile, MdOutlineReceipt } from "react-icons/md";
 import { FiDownload, FiUsers } from "react-icons/fi";
-import { TB2BMassMovement, TB2BInvoice, TB2BAttachment } from "@/types/b2bPanel/b2bPanel.type";
 import { ModalB2BMassMovement } from "@/components/B2BPanel/Modal/ModalMassMovement";
 import { ModalB2BAttachment, ModalB2BInvoice } from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
 import { IconView } from "@/components/Global/IconView";
@@ -43,7 +41,7 @@ const movementColumns = [
   { key: "cpf",           title: "CPF" },
   { key: "planName",      title: "Programa" },
   { key: "active",        title: "Status" },
-  { key: "role",          title: "Função" },
+  { key: "function",      title: "Função" },
   { key: "department",    title: "Departamento" },
   { key: "effectiveDate", title: "Data de Vigência" },
 ];
@@ -69,7 +67,7 @@ type TFilter = {
   "gte$effectiveDate": string; "lte$effectiveDate": string;
   referenceMonth: string; referenceYear: string; status: string;
   type: string; department: string; period: string;
-   contractorId: string;
+  contractorId: string;
 };
 
 const ResetFilter: TFilter = {
@@ -112,13 +110,13 @@ function ColunasAtivosInativos({ ativos, inativos }: { ativos: number; inativos:
   const hInativo = Math.round((inativos / total) * maxH);
   return (
     <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
-      <p className="text-sm font-bold text-[var(--primary-color)] mb-4">Beneficiários Ativos / Inativos</p>
+      <p className="text-sm font-bold text---primary-color) mb-4">Beneficiários Ativos / Inativos</p>
       <div className="flex items-end justify-center gap-10" style={{ height: 200 }}>
         <div className="flex flex-col items-center gap-2">
           <span className="text-lg font-black text-green-700">{ativos}</span>
           <div className="w-20 rounded-t-xl transition-all duration-700"
             style={{ height: `${hAtivo || 6}px`, background: "linear-gradient(180deg, #22c55e, #16a34a)", minHeight: 6 }} />
-          <span className="text-sm font-semibold text-[var(--text-muted)]">Ativos</span>
+          <span className="text-sm font-semibold text-(--text-muted)">Ativos</span>
         </div>
         <div className="flex flex-col items-center gap-2">
           <span className="text-lg font-black text-red-600">{inativos}</span>
