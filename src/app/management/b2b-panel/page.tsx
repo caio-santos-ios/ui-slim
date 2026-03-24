@@ -31,6 +31,10 @@ import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
 import { TPlan } from "@/types/masterData/plans/plans.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
+import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 type TTab = "movements" | "invoices" | "attachments";
 
@@ -152,8 +156,8 @@ function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) 
         <svg viewBox="0 0 200 200" className="w-40 h-40 flex-shrink-0">
           {slices.map((s, i) => <path key={i} d={s.path} fill={s.color} stroke="#fff" strokeWidth="1.5" />)}
           <circle cx={cx} cy={cy} r={r * 0.45} fill="var(--surface-card)" />
-          <text x={cx} y={cy + 5} textAnchor="middle" fontSize="14" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
-          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="9" fill="var(--text-muted)">programas</text>
+          <text x={cx} y={cy + 5} textAnchor="middle" fontSize="19" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
+          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="15" fill="var(--text-muted)">programas</text>
         </svg>
         <div className="flex flex-col gap-2 flex-1 overflow-hidden">
           {slices.map((s, i) => (
@@ -170,28 +174,76 @@ function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) 
   );
 }
 
-function BarrasMensalBeneficiarios({ data }: { data: { month: string; year: number; total: number }[] }) {
-  const max = Math.max(...data.map(d => d.total), 1);
-  const BAR_H = 160;
+  function BarrasMensalBeneficiarios({ data }: { data: { month: string; year: number; total: number; ativos: number; inativos: number }[] }) {
+  const chartData = {
+    labels: data.map(d => `${d.month} ${d.year}`),
+    datasets: [
+      {
+        label: "Ativos",
+        data: data.map(d => d.ativos),
+        backgroundColor: "#1d4e8f",
+        borderRadius: 4,
+        stack: "stack",
+        barPercentage: 0.4,       
+        categoryPercentage: 0.6,  
+      }, 
+      {
+        label: "Inativos",
+        data: data.map(d => d.inativos),
+        backgroundColor: "#dc2626",
+        borderRadius: 0,
+        stack: "stack",
+        barPercentage: 0.4,    
+        categoryPercentage: 0.6,  
+      }, 
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      duration: 800,  
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: { mode: "index" as const, intersect: false },
+    },
+    scales: {
+      x: {
+        stacked: true,
+        grid: { display: false },
+        ticks: { font: { size: 11 } },
+      },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        grid: { color: "rgba(0,0,0,0.05)" },
+        ticks: { precision: 0, font: { size: 11 } },
+      },
+    },
+  };
+
   return (
     <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
-      <p className="text-sm font-bold text-[var(--primary-color)] mb-4">Evolução Mensal de Beneficiários</p>
-      <div className="overflow-x-auto pb-1">
-        <div className="flex items-end gap-2" style={{ minWidth: `${data.length * 56}px`, height: `${BAR_H + 48}px` }}>
-          {data.map((d, i) => {
-            const h = Math.max(6, Math.round((d.total / max) * BAR_H));
-            return (
-              <div key={i} className="flex flex-col items-center gap-1 flex-shrink-0" style={{ width: 48 }}>
-                <span className="text-xs font-bold text-[var(--primary-color)]">{d.total || ""}</span>
-                <div className="w-full rounded-t-xl transition-all duration-700"
-                  style={{ height: `${h}px`, background: "linear-gradient(180deg, #0ea5e9, var(--primary-color))" }} />
-                <span className="text-xs text-[var(--text-muted)] text-center leading-tight">
-                  {d.month}<br /><span className="text-[10px]">{d.year}</span>
-                  <br /><span className="text-[10px]">{d.total}</span>
-                </span>
-              </div>
-            );
-          })}
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-sm font-bold text-[var(--primary-color)]">Evolução Mensal de Beneficiários</p>
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ background: "#1d4e8f" }} />
+            Ativos
+          </span>
+          <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ background: "#dc2626" }} />
+            Inativos
+          </span>
+        </div>
+      </div>
+
+      {/* ← wrapper com scroll horizontal */}
+      <div style={{ overflowX: "auto" }}>
+        <div style={{ minWidth: 700, height: 220 }}>
+          <Bar data={chartData} options={options} />
         </div>
       </div>
     </div>
@@ -236,7 +288,7 @@ function BarrasMensalFaturas({ data }: { data: { month: string; year: number; co
 }
 
 type TSummary = { movements: number; invoices: number; attachments: number; pendingMovements: number };
-type TChartMovements = { ativos: number; inativos: number; porPrograma: { label: string; value: number }[]; porMes: { month: string; year: number; total: number }[] };
+type TChartMovements = { ativos: number; inativos: number; porPrograma: { label: string; value: number }[]; porMes: { month: string; year: number; total: number; ativos: number; inativos: number }[] };
 type TChartInvoices  = { porMes: { month: string; year: number; count: number; total: number }[] };
 
 const MONTHS_SHORT: string[] = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
@@ -311,12 +363,12 @@ export default function B2BPanel() {
       rows.forEach(r => { const p = r.planName || "Sem programa"; progMap[p] = (progMap[p] || 0) + 1; });
       const porPrograma = Object.entries(progMap).map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value).slice(0, 8);
       const now = new Date();
-      const porMes: { month: string; year: number; total: number }[] = [];
+      const porMes: { month: string; year: number; total: number; ativos: number; inativos: number }[] = [];
       for (let i = 11; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
         const m = d.getMonth(), y = d.getFullYear();
-        const count = rows.filter(r => { if (!r.createdAt) return false; const cd = new Date(r.createdAt); return cd.getMonth() === m && cd.getFullYear() === y; }).length;
-        porMes.push({ month: MONTHS_SHORT[m], year: y, total: count });
+        const filtered = rows.filter(r => { if (!r.createdAt) return false; const cd = new Date(r.createdAt); return cd.getMonth() === m && cd.getFullYear() === y; });
+        porMes.push({ month: MONTHS_SHORT[m], year: y, total: filtered.length, ativos: filtered.filter(r => r.active).length, inativos: filtered.filter(r => !r.active).length });
       }
       setChartMovements({ ativos, inativos, porPrograma, porMes });
     } catch {}

@@ -285,7 +285,6 @@ export default function OccupationalManagement() {
     { key: "ipv", label: "IPV — Geral",       icon: <FiActivity size={14} />,    count: summary.totalIPV, color: "#ef4444" },
   ];
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <>
       <Autorization />
