@@ -85,7 +85,8 @@ export const ModalEditRecipient = ({
             setLoading(true);
             const { data } = await api.get(`/customer-recipients/${id}`, configApi());
             const r: TRecipient = data.result.data;
-            
+            console.log(r)
+
             await getContractorById(r.contractorId);
 
             // Normaliza datas e valores monetários
