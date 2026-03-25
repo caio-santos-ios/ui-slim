@@ -140,7 +140,7 @@ const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444
 
   function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) {
   const total = data.reduce((s, d) => s + d.value, 0) || 1;
-  const cx = 100, cy = 100, r = 85;
+  const cx = 100, cy = 100, r = 90;
   let startAngle = -Math.PI / 2;
   const slices = data.map((d, i) => {
   const angle = (d.value / total) * 2 * Math.PI;
@@ -156,11 +156,11 @@ const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444
     <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
       <p className="text-sm font-bold text-[var(--primary-color)] mb-4">Programas Ativos</p>
       <div className="flex items-center gap-5">
-        <svg viewBox="0 0 200 200" className="w-40 h-40 flex-shrink-0">
+        <svg viewBox="0 0 200 200" className="w-56 h-56 flex-shrink-0">
           {slices.map((s, i) => <path key={i} d={s.path} fill={s.color} stroke="#fff" strokeWidth="1.5" />)}
           <circle cx={cx} cy={cy} r={r * 0.45} fill="var(--surface-card)" />
-          <text x={cx} y={cy + 5} textAnchor="middle" fontSize="19" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
-          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="15" fill="var(--text-muted)">programas</text>
+          <text x={cx} y={cy + 5} textAnchor="middle" fontSize="15" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
+          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="12" fill="var(--text-muted)">programas</text>
         </svg>
         <div className="flex flex-col gap-2 flex-1 overflow-hidden">
           {slices.map((s, i) => (
