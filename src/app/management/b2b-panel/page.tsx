@@ -802,7 +802,7 @@ export default function B2BPanel() {
 
                 {/* Tabela */}
                 <DataTable
-                  isAction={activeTab === "invoices" || activeTab === "attachments" || activeTab === "movements"}
+                  isAction={activeTab === "attachments" || activeTab === "movements"}
                   classContainer={`${filterOpened ? "max-h-[calc(100dvh-(var(--height-header)+23rem))]" : "max-h-[calc(100dvh-(var(--height-header)+16rem))]"}`}
                   columns={columns}
                 >
