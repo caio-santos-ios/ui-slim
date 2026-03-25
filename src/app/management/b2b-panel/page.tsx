@@ -25,6 +25,7 @@ import { MdFilterAlt, MdFilterAltOff, MdOutlineAttachFile, MdOutlineReceipt } fr
 import { FiDownload, FiUsers } from "react-icons/fi";
 import { TB2BMassMovement, TB2BInvoice, TB2BAttachment } from "@/types/b2bPanel/b2bPanel.type";
 import { ModalB2BMassMovement } from "@/components/B2BPanel/Modal/ModalMassMovement";
+import { ModalEditRecipient } from "@/components/MasterData/Customer/ModalEditRecipient";
 import { ModalB2BAttachment, ModalB2BInvoice } from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
 import { IconView } from "@/components/Global/IconView";
 import { IconEdit } from "@/components/Global/IconEdit";
@@ -137,19 +138,19 @@ function ColunasAtivosInativos({ ativos, inativos }: { ativos: number; inativos:
 
 const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444","#10b981","#f97316"];
 
-function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) {
+  function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) {
   const total = data.reduce((s, d) => s + d.value, 0) || 1;
   const cx = 100, cy = 100, r = 85;
   let startAngle = -Math.PI / 2;
   const slices = data.map((d, i) => {
-    const angle = (d.value / total) * 2 * Math.PI;
-    const endAngle = startAngle + angle;
-    const x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
-    const x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
-    const large = angle > Math.PI ? 1 : 0;
-    const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
-    startAngle = endAngle;
-    return { path, color: PIZZA_COLORS[i % PIZZA_COLORS.length], label: d.label, value: d.value };
+  const angle = (d.value / total) * 2 * Math.PI;
+  const endAngle = startAngle + angle;
+  const x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
+  const x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
+  const large = angle > Math.PI ? 1 : 0;
+  const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
+  startAngle = endAngle;
+  return { path, color: PIZZA_COLORS[i % PIZZA_COLORS.length], label: d.label, value: d.value };
   });
   return (
     <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
@@ -315,6 +316,8 @@ export default function B2BPanel() {
   const [filterOpened, setFilterOpened] = useState(true);
   const [isAdmin, setIsAdmin]           = useState<boolean>(false);
   const [contractors, setContractors]   = useState<{ id: string; corporateName: string }[]>([]);
+  const [modalEditRecipient, setModalEditRecipient] = useState(false);
+  const [editRecipientId, setEditRecipientId]       = useState<string>("");
   const [modalMovement,   setModalMovement]   = useState(false);
   const [modalInvoice,    setModalInvoice]    = useState(false);
   const [modalAttachment, setModalAttachment] = useState(false);
@@ -498,7 +501,14 @@ export default function B2BPanel() {
   const openModal = (action: "create" | "edit" = "create", body?: any) => {
     if (body) { setCurrentBody(body); setId(body.id); }
     setTypeModal(action);
-    if (activeTab === "movements")   setModalMovement(true);
+    if (activeTab === "movements") {
+      if (action === "edit" && body?.id) {
+        setEditRecipientId(body.id);
+        setModalEditRecipient(true);
+      } else {
+        setModalMovement(true);
+      }
+    }
     if (activeTab === "invoices")    setModalInvoice(true);
     if (activeTab === "attachments") setModalAttachment(true);
   };
@@ -842,6 +852,7 @@ export default function B2BPanel() {
             </div>
 
             <ModalB2BMassMovement isOpen={modalMovement} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
+            <ModalEditRecipient isOpen={modalEditRecipient} recipientId={editRecipientId} onClose={() => { setModalEditRecipient(false); setEditRecipientId(""); }} onSuccess={async () => { setModalEditRecipient(false); setEditRecipientId(""); await getRecipient(queryStr); await loadChartMovements(); }} />
             <ModalB2BInvoice      isOpen={modalInvoice}  typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
             <ModalB2BAttachment   isOpen={modalAttachment} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
             <ModalDelete title="Excluir registro" isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} onClose={() => setModalDelete(false)} onSelectValue={destroy} />
