@@ -216,13 +216,13 @@ const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444
       x: {
         stacked: true,
         grid: { display: false },
-        ticks: { font: { size: 11 } },
+        ticks: { font: { size: 15 } },
       },
       y: {
         stacked: true,
         beginAtZero: true,
         grid: { color: "rgba(0,0,0,0.05)" },
-        ticks: { precision: 0, font: { size: 11 } },
+        ticks: { precision: 0, font: { size: 15 } },
       },
     },
   };
@@ -862,3 +862,4 @@ export default function B2BPanel() {
     </>
   );
 }
+
