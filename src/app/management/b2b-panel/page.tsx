@@ -777,7 +777,7 @@ export default function B2BPanel() {
                               </div>
                             </>
                           )}
-                         {isAdmin && (
+                        {isAdmin && (
                           <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
                             <label className="label slim-label-primary">Contratante</label>
                             <select
