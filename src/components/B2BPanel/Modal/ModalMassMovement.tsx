@@ -145,7 +145,7 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
 
         {tab === "import" && (
           <div className="p-6 flex flex-col gap-4">
-            <p className="text-xs text-[var(--text-muted)]">
+            <p className="text-xs text-(--text-muted)">
               Faça o upload de uma planilha Excel no formato exportado pelo sistema. O arquivo deve conter a aba <strong>Beneficiários</strong>.
             </p>
             <div className="flex flex-col gap-1">
