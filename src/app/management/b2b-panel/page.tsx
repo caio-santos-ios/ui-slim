@@ -112,13 +112,13 @@ function ColunasAtivosInativos({ ativos, inativos }: { ativos: number; inativos:
   const hInativo = Math.round((inativos / total) * maxH);
   return (
     <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
-      <p className="text-sm font-bold text-[var(--primary-color)] mb-4">Beneficiários Ativos / Inativos</p>
+      <p className="text-sm font-bold text---primary-color) mb-4">Beneficiários Ativos / Inativos</p>
       <div className="flex items-end justify-center gap-10" style={{ height: 200 }}>
         <div className="flex flex-col items-center gap-2">
           <span className="text-lg font-black text-green-700">{ativos}</span>
           <div className="w-20 rounded-t-xl transition-all duration-700"
             style={{ height: `${hAtivo || 6}px`, background: "linear-gradient(180deg, #22c55e, #16a34a)", minHeight: 6 }} />
-          <span className="text-sm font-semibold text-[var(--text-muted)]">Ativos</span>
+          <span className="text-sm font-semibold text-(--text-muted)">Ativos</span>
         </div>
         <div className="flex flex-col items-center gap-2">
           <span className="text-lg font-black text-red-600">{inativos}</span>
@@ -260,10 +260,10 @@ function BarrasMensalFaturas({ data }: { data: { month: string; year: number; co
   return (
     <div className="rounded-2xl p-4" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
       <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-bold text-[var(--primary-color)]">Evolução de Faturas</p>
+        <p className="text-xs font-bold text-(--primary-color)">Evolução de Faturas</p>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-2.5 rounded-sm bg-green-500" />
-          <span className="text-xs text-[var(--text-muted)]">Valor por fatura</span>
+          <span className="text-xs text-(--text-muted)">Valor por fatura</span>
         </div>
       </div>
       <div className="overflow-x-auto pb-1">
@@ -271,7 +271,7 @@ function BarrasMensalFaturas({ data }: { data: { month: string; year: number; co
           {data.map((d, i) => {
             const h = Math.max(6, Math.round((d.total / maxTotal) * BAR_H));
             return (
-              <div key={i} className="flex flex-col items-center gap-1 flex-shrink-0" style={{ width: 56 }}>
+              <div key={i} className="flex flex-col items-center gap-1 shrink-0" style={{ width: 56 }}>
                 <span className="text-[9px] font-bold text-green-600">{d.total > 0 ? fmt(d.total) : ""}</span>
                 <div className="flex items-end w-full justify-center" style={{ height: `${BAR_H}px` }}>
                   <div className="rounded-t-md transition-all duration-700 w-full"
@@ -438,7 +438,7 @@ export default function B2BPanel() {
   };
   const handleContractorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
   const selectedId = e.target.value;
-  setValue("contractorId", selectedId); // ← atualiza o react-hook-form
+  setValue("contractorId", selectedId);
   if (selectedId) {
     localStorage.setItem("contractorId", selectedId);
   } else {
@@ -619,7 +619,6 @@ export default function B2BPanel() {
                   </div>
                 }
               >
-                {/* Tabs */}
                 <div className="flex gap-1 mb-4 p-1 rounded-xl" style={{ background: "var(--surface-bg)", border: "1px solid var(--surface-border)" }}>
                   {tabs.map((t) => (
                     <button key={t.key} onClick={() => setActiveTab(t.key)}
@@ -652,14 +651,12 @@ export default function B2BPanel() {
                   </div>
                 )}
 
-                {/* Gráfico invoices */}
                 {activeTab === "invoices" && (
                   <div className="mb-4">
                     <BarrasMensalFaturas data={chartInvoices.porMes} />
                   </div>
                 )}
 
-                {/* Filtros */}
                 <div className="grid grid-cols-12 mb-2">
                   <Accordion className="col-span-12" defaultOpenId="filter">
                     <AccordionItem id="filter">
@@ -818,7 +815,7 @@ export default function B2BPanel() {
 
                 {/* Tabela */}
                 <DataTable
-                  isAction={activeTab === "invoices" || activeTab === "attachments" || activeTab === "movements"}
+                  isAction={activeTab === "attachments" || activeTab === "movements"}
                   classContainer={`${filterOpened ? "max-h-[calc(100dvh-(var(--height-header)+23rem))]" : "max-h-[calc(100dvh-(var(--height-header)+16rem))]"}`}
                   columns={columns}
                 >

@@ -11,9 +11,6 @@ import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/mod
 import { FaCirclePlus } from "react-icons/fa6";
 import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Modal Invoice
-// ═══════════════════════════════════════════════════════════════════════════
 type TInvoiceForm = {
   customerId:       string;
   referenceMonth:   string;
@@ -41,12 +38,11 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
   const refMonth = watch("referenceMonth");
   const refYear  = watch("referenceYear");
 
-  // item 5: calcula data de corte (último dia do mês) no frontend para exibição
   const closingDateLabel = useMemo(() => {
     const m = parseInt(refMonth);
     const y = parseInt(refYear);
     if (!m || !y) return "—";
-    const lastDay = new Date(y, m, 0).getDate(); // dia 0 do próximo mês = último dia do mês atual
+    const lastDay = new Date(y, m, 0).getDate(); 
     return `${String(lastDay).padStart(2, "0")}/${String(m).padStart(2, "0")}/${y}`;
   }, [refMonth, refYear]);
 
@@ -129,7 +125,6 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
             <input {...register("referenceYear", { required: true })} type="number" className="input slim-input-primary" placeholder={String(new Date().getFullYear())} />
           </div>
 
-          {/* item 5: Data de Corte — calculada automaticamente, somente leitura */}
           <div className="flex flex-col col-span-12 sm:col-span-6">
             <label className="label slim-label-primary">Data de Corte / Fechamento</label>
             <div className="input slim-input-primary flex items-center text-sm"
@@ -186,9 +181,6 @@ export const ModalB2BInvoice = ({ isOpen, typeModal, body, customers, onClose, o
   );
 };
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Modal Attachment
-// ═══════════════════════════════════════════════════════════════════════════
 type TAttachmentForm = {
   customerId: string;
   name:       string;
@@ -259,16 +251,13 @@ export const ModalB2BAttachment = ({ isOpen, typeModal, body, customers, onClose
       if (contractorId) formBody.append("parentId", contractorId);
 
       const attachment: any = document.querySelector("#attachment");
-      // formBody.append("files", attachment.files);
       if (attachment.files && attachment.files.length > 0) {
         for (let i = 0; i < attachment.files.length; i++) {
-          // É crucial que o nome seja exatamente "files" para bater com o DTO
           formBody.append("files", attachment.files[i]);
         }
       }
       
       if (typeModal === "create") {
-        console.log(formBody)
         const { status } = await api.post("/attachments/all", formBody, configApi(false));
         resolveResponse({ status, message: "Anexo criado com sucesso" });
       } else {
