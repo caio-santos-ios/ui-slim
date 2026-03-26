@@ -23,6 +23,7 @@ import { IoSearch } from "react-icons/io5";
 import { MdFilterAlt, MdFilterAltOff, MdOutlineAttachFile, MdOutlineReceipt } from "react-icons/md";
 import { FiDownload, FiUsers } from "react-icons/fi";
 import { ModalB2BMassMovement } from "@/components/B2BPanel/Modal/ModalMassMovement";
+import { ModalEditRecipient } from "@/components/MasterData/Customer/ModalEditRecipient";
 import { ModalB2BAttachment, ModalB2BInvoice } from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
 import { IconView } from "@/components/Global/IconView";
 import { IconEdit } from "@/components/Global/IconEdit";
@@ -135,29 +136,29 @@ function ColunasAtivosInativos({ ativos, inativos }: { ativos: number; inativos:
 
 const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444","#10b981","#f97316"];
 
-function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) {
+  function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) {
   const total = data.reduce((s, d) => s + d.value, 0) || 1;
-  const cx = 100, cy = 100, r = 85;
+  const cx = 100, cy = 100, r = 90;
   let startAngle = -Math.PI / 2;
   const slices = data.map((d, i) => {
-    const angle = (d.value / total) * 2 * Math.PI;
-    const endAngle = startAngle + angle;
-    const x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
-    const x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
-    const large = angle > Math.PI ? 1 : 0;
-    const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
-    startAngle = endAngle;
-    return { path, color: PIZZA_COLORS[i % PIZZA_COLORS.length], label: d.label, value: d.value };
+  const angle = (d.value / total) * 2 * Math.PI;
+  const endAngle = startAngle + angle;
+  const x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
+  const x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
+  const large = angle > Math.PI ? 1 : 0;
+  const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
+  startAngle = endAngle;
+  return { path, color: PIZZA_COLORS[i % PIZZA_COLORS.length], label: d.label, value: d.value };
   });
   return (
     <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
       <p className="text-sm font-bold text-[var(--primary-color)] mb-4">Programas Ativos</p>
       <div className="flex items-center gap-5">
-        <svg viewBox="0 0 200 200" className="w-40 h-40 flex-shrink-0">
+        <svg viewBox="0 0 200 200" className="w-56 h-56 flex-shrink-0">
           {slices.map((s, i) => <path key={i} d={s.path} fill={s.color} stroke="#fff" strokeWidth="1.5" />)}
           <circle cx={cx} cy={cy} r={r * 0.45} fill="var(--surface-card)" />
-          <text x={cx} y={cy + 5} textAnchor="middle" fontSize="19" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
-          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="15" fill="var(--text-muted)">programas</text>
+          <text x={cx} y={cy + 5} textAnchor="middle" fontSize="15" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
+          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="12" fill="var(--text-muted)">programas</text>
         </svg>
         <div className="flex flex-col gap-2 flex-1 overflow-hidden">
           {slices.map((s, i) => (
@@ -213,13 +214,13 @@ function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) 
       x: {
         stacked: true,
         grid: { display: false },
-        ticks: { font: { size: 11 } },
+        ticks: { font: { size: 15 } },
       },
       y: {
         stacked: true,
         beginAtZero: true,
         grid: { color: "rgba(0,0,0,0.05)" },
-        ticks: { precision: 0, font: { size: 11 } },
+        ticks: { precision: 0, font: { size: 15 } },
       },
     },
   };
@@ -313,6 +314,8 @@ export default function B2BPanel() {
   const [filterOpened, setFilterOpened] = useState(true);
   const [isAdmin, setIsAdmin]           = useState<boolean>(false);
   const [contractors, setContractors]   = useState<{ id: string; corporateName: string }[]>([]);
+  const [modalEditRecipient, setModalEditRecipient] = useState(false);
+  const [editRecipientId, setEditRecipientId]       = useState<string>("");
   const [modalMovement,   setModalMovement]   = useState(false);
   const [modalInvoice,    setModalInvoice]    = useState(false);
   const [modalAttachment, setModalAttachment] = useState(false);
@@ -496,7 +499,14 @@ export default function B2BPanel() {
   const openModal = (action: "create" | "edit" = "create", body?: any) => {
     if (body) { setCurrentBody(body); setId(body.id); }
     setTypeModal(action);
-    if (activeTab === "movements")   setModalMovement(true);
+    if (activeTab === "movements") {
+      if (action === "edit" && body?.id) {
+        setEditRecipientId(body.id);
+        setModalEditRecipient(true);
+      } else {
+        setModalMovement(true);
+      }
+    }
     if (activeTab === "invoices")    setModalInvoice(true);
     if (activeTab === "attachments") setModalAttachment(true);
   };
@@ -840,6 +850,7 @@ export default function B2BPanel() {
             </div>
 
             <ModalB2BMassMovement isOpen={modalMovement} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
+            <ModalEditRecipient isOpen={modalEditRecipient} recipientId={editRecipientId} onClose={() => { setModalEditRecipient(false); setEditRecipientId(""); }} onSuccess={async () => { setModalEditRecipient(false); setEditRecipientId(""); await getRecipient(queryStr); await loadChartMovements(); }} />
             <ModalB2BInvoice      isOpen={modalInvoice}  typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
             <ModalB2BAttachment   isOpen={modalAttachment} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
             <ModalDelete title="Excluir registro" isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} onClose={() => setModalDelete(false)} onSelectValue={destroy} />
@@ -849,3 +860,4 @@ export default function B2BPanel() {
     </>
   );
 }
+

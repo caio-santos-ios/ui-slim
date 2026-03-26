@@ -22,6 +22,8 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
 import { convertMoneyToNumber, convertNumberMoney } from "@/utils/convert.util";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
+import { ModalImportValidation, validateImportRows, parseSheetByIndex, TImportRowValidated } from "@/components/MasterData/Customer/ModalImportValidation";
+import * as XLSX from "xlsx";
 
 type TProp = {
     isOpen: boolean;
@@ -47,6 +49,9 @@ export const ModalRecipient = ({contractorId, contractorType, planType, onClose,
     const [file, setFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState('');
+    const [modalValidation, setModalValidation] = useState(false);
+    const [validationRows, setValidationRows] = useState<TImportRowValidated[]>([]);
+    const [pendingFile, setPendingFile] = useState<File | null>(null);
 
     const { register, handleSubmit, reset, getValues, watch, setValue, formState: { errors }} = useForm<TRecipient>();
 
@@ -284,15 +289,42 @@ export const ModalRecipient = ({contractorId, contractorType, planType, onClose,
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setFile(e.target.files[0]);
-            handleUpload(e.target.files[0]);
+        if (e.target.files && e.target.files[0]) {
+            const selectedFile = e.target.files[0];
+            setFile(selectedFile);
+            parseAndValidate(selectedFile);
         }
+    };
+
+    const parseAndValidate = (file: File) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = new Uint8Array(e.target?.result as ArrayBuffer);
+                const workbook = XLSX.read(data, { type: "array" });
+
+                // Lê por índice de coluna — não depende do nome do cabeçalho
+                const normalized = parseSheetByIndex(workbook);
+
+                if (normalized.length === 0) {
+                    toast.warn("A planilha está vazia ou fora do modelo esperado.", { theme: "colored" });
+                    return;
+                }
+
+                const validated = validateImportRows(normalized);
+                setValidationRows(validated);
+                setPendingFile(file);
+                setModalValidation(true);
+            } catch {
+                toast.error("Erro ao ler o arquivo. Use a planilha modelo.", { theme: "colored" });
+            }
+        };
+        reader.readAsArrayBuffer(file);
     };
 
     const handleUpload = async (file: any) => {
         if (!file) {
-        alert("Por favor, selecione um arquivo primeiro.");
+            alert("Por favor, selecione um arquivo primeiro.");
             return;
         }
 
@@ -307,7 +339,10 @@ export const ModalRecipient = ({contractorId, contractorType, planType, onClose,
             const { data } = await api.put('/customer-recipients/import', formData, configApi(false));
             toast.success(data.message, {theme: 'colored'});
             const attachment: any = document.querySelector("#file");
-            attachment.value = "";
+            if (attachment) attachment.value = "";
+            setModalValidation(false);
+            setPendingFile(null);
+            setValidationRows([]);
             await getRecipient();
         } catch (error: any) {
             console.error(error);
@@ -315,6 +350,20 @@ export const ModalRecipient = ({contractorId, contractorType, planType, onClose,
         } finally {
             setUploading(false);
         }
+    };
+
+    const handleConfirmImport = async () => {
+        if (pendingFile) {
+            await handleUpload(pendingFile);
+        }
+    };
+
+    const handleCloseValidation = () => {
+        setModalValidation(false);
+        setPendingFile(null);
+        setValidationRows([]);
+        const attachment: any = document.querySelector("#file");
+        if (attachment) attachment.value = "";
     };
 
     useEffect(() => {
@@ -525,6 +574,14 @@ export const ModalRecipient = ({contractorId, contractorType, planType, onClose,
             />  
 
             <ModalGenericTable onReturn={onReturnGeneric} /> 
+
+            <ModalImportValidation
+                isOpen={modalValidation}
+                onClose={handleCloseValidation}
+                onConfirm={handleConfirmImport}
+                rows={validationRows}
+                isLoading={uploading}
+            />
         </form>
     )
 }
