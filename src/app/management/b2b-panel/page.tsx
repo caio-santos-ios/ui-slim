@@ -21,7 +21,7 @@ import { convertNumberMoney } from "@/utils/convert.util";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/Global/Accordion/AccordionContent";
 import { IoSearch } from "react-icons/io5";
 import { MdFilterAlt, MdFilterAltOff, MdOutlineAttachFile, MdOutlineReceipt } from "react-icons/md";
-import { FiDownload, FiUsers } from "react-icons/fi";
+import { FiDownload, FiUpload, FiUsers } from "react-icons/fi";
 import { ModalB2BMassMovement } from "@/components/B2BPanel/Modal/ModalMassMovement";
 import { ModalEditRecipient } from "@/components/MasterData/Customer/ModalEditRecipient";
 import { ModalB2BAttachment, ModalB2BInvoice } from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
@@ -32,6 +32,7 @@ import { TPlan } from "@/types/masterData/plans/plans.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
+import { ModalEditRecipientManager } from "@/components/MasterData/Customer/ModalEditRecipientManager";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -138,7 +139,7 @@ const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444
 
   function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) {
   const total = data.reduce((s, d) => s + d.value, 0) || 1;
-  const cx = 100, cy = 100, r = 85;
+  const cx = 100, cy = 100, r = 90;
   let startAngle = -Math.PI / 2;
   const slices = data.map((d, i) => {
   const angle = (d.value / total) * 2 * Math.PI;
@@ -154,11 +155,11 @@ const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444
     <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
       <p className="text-sm font-bold text-[var(--primary-color)] mb-4">Programas Ativos</p>
       <div className="flex items-center gap-5">
-        <svg viewBox="0 0 200 200" className="w-40 h-40 flex-shrink-0">
+        <svg viewBox="0 0 200 200" className="w-56 h-56 flex-shrink-0">
           {slices.map((s, i) => <path key={i} d={s.path} fill={s.color} stroke="#fff" strokeWidth="1.5" />)}
           <circle cx={cx} cy={cy} r={r * 0.45} fill="var(--surface-card)" />
-          <text x={cx} y={cy + 5} textAnchor="middle" fontSize="19" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
-          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="15" fill="var(--text-muted)">programas</text>
+          <text x={cx} y={cy + 5} textAnchor="middle" fontSize="15" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
+          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="12" fill="var(--text-muted)">programas</text>
         </svg>
         <div className="flex flex-col gap-2 flex-1 overflow-hidden">
           {slices.map((s, i) => (
@@ -214,13 +215,13 @@ const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444
       x: {
         stacked: true,
         grid: { display: false },
-        ticks: { font: { size: 11 } },
+        ticks: { font: { size: 15 } },
       },
       y: {
         stacked: true,
         beginAtZero: true,
         grid: { color: "rgba(0,0,0,0.05)" },
-        ticks: { precision: 0, font: { size: 11 } },
+        ticks: { precision: 0, font: { size: 15 } },
       },
     },
   };
@@ -406,7 +407,7 @@ export default function B2BPanel() {
       const rows: any[] = data.result.data ?? [];
       const sheetData = rows.map((r) => ({
         "Beneficiário": r.name ?? "", "CPF": r.cpf ?? "", "Status": r.active ? "Ativo" : "Inativo",
-        "Programa": r.planName ?? "", "Função": r.role ?? "", "Departamento": r.department ?? "",
+        "Programa": r.planName ?? "", "Função": r.function ?? "", "Departamento": r.department ?? "",
         "Sexo": r.gender ?? "", "Data de Nascimento": r.dateOfBirth ? maskDate(r.dateOfBirth) : "",
         "Data de Vigência": r.effectiveDate ? maskDate(r.effectiveDate) : "",
         "E-mail": r.email ?? "", "Telefone": r.phone ?? "", "WhatsApp": r.whatsapp ?? "",
@@ -496,13 +497,16 @@ export default function B2BPanel() {
     }
   };
 
-  const openModal = (action: "create" | "edit" = "create", body?: any) => {
+  const openModal = (action: "create" | "edit" = "create", type: string, body?: any) => {
     if (body) { setCurrentBody(body); setId(body.id); }
     setTypeModal(action);
     if (activeTab === "movements") {
-      if (action === "edit" && body?.id) {
-        setEditRecipientId(body.id);
+      if(type == "recipient") {
         setModalEditRecipient(true);
+        
+        if (action === "edit" && body?.id) {
+          setEditRecipientId(body.id);
+        }        
       } else {
         setModalMovement(true);
       }
@@ -554,19 +558,23 @@ export default function B2BPanel() {
     return v ?? "—";
   };
 
- useEffect(() => {
+  useEffect(() => {
     const adminStr = localStorage.getItem("admin");
     setIsAdmin(adminStr === "true");
-     const contractorId = localStorage.getItem("contractorId");
-  if (contractorId) {
-    setValue("contractorId", contractorId);
-  }
+    const contractorId = localStorage.getItem("contractorId");
+    if (contractorId) {
+      setValue("contractorId", contractorId);
+    }
     if (adminStr === "true") {
       api.get(`/customers/select?deleted=false&orderBy=corporateName&sort=asc&pageSize=200&pageNumber=1&type=B2B`, configApi())
         .then(({ data }) => setContractors(data?.result?.data ?? []))
         .catch(() => {});
     }
-    loadSummary(); loadPlans(); loadServiceModules(); loadChartMovements(); loadChartInvoices();
+    loadSummary(); 
+    loadPlans(); 
+    loadServiceModules(); 
+    loadChartMovements(); 
+    loadChartInvoices();
   }, []);
 
   useEffect(() => {
@@ -600,8 +608,13 @@ export default function B2BPanel() {
                         <FiDownload size={14} />{exportingExcel ? "Exportando..." : "Exportar Excel"}
                       </button>
                     )}
+                    {activeTab === "movements" && (
+                      <button onClick={() => openModal("create", "file")} disabled={exportingExcel} className="slim-btn slim-btn-primary-light flex items-center gap-1.5">
+                        <FiUpload size={14} />Importar Excel
+                      </button>
+                    )}
                     {activeTab !== "invoices" && (
-                      <button onClick={() => openModal()} className="slim-btn slim-btn-primary">Adicionar</button>
+                      <button onClick={() => openModal("create", "recipient")} className="slim-btn slim-btn-primary">Adicionar</button>
                     )}
                   </div>
                 }
@@ -823,6 +836,13 @@ export default function B2BPanel() {
                             </div>
                           </td>
                         )}
+                        {activeTab === "invoices" && isAdmin && (
+                          <td className="text-center">
+                            <div className="flex justify-center gap-2">
+                              <IconEdit action="edit" obj={x} getObj={openModal} />
+                            </div>
+                          </td>
+                        )}
                         {activeTab === "attachments" && (
                           <td className="text-center">
                             <div className="flex justify-center gap-2">
@@ -840,7 +860,7 @@ export default function B2BPanel() {
             </div>
 
             <ModalB2BMassMovement isOpen={modalMovement} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
-            <ModalEditRecipient isOpen={modalEditRecipient} recipientId={editRecipientId} onClose={() => { setModalEditRecipient(false); setEditRecipientId(""); }} onSuccess={async () => { setModalEditRecipient(false); setEditRecipientId(""); await getRecipient(queryStr); await loadChartMovements(); }} />
+            <ModalEditRecipientManager isOpen={modalEditRecipient} recipientId={editRecipientId} onClose={() => { setModalEditRecipient(false); setEditRecipientId(""); }} onSuccess={async () => { setModalEditRecipient(false); setEditRecipientId(""); await getRecipient(queryStr); await loadChartMovements(); }} />
             <ModalB2BInvoice      isOpen={modalInvoice}  typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
             <ModalB2BAttachment   isOpen={modalAttachment} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
             <ModalDelete title="Excluir registro" isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} onClose={() => setModalDelete(false)} onSelectValue={destroy} />
@@ -850,3 +870,4 @@ export default function B2BPanel() {
     </>
   );
 }
+
