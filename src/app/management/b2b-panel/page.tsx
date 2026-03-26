@@ -18,12 +18,10 @@ import { NotData } from "@/components/Global/NotData";
 import { ModalDelete } from "@/components/Global/ModalDelete";
 import { maskDate } from "@/utils/mask.util";
 import { convertNumberMoney } from "@/utils/convert.util";
-import { permissionDelete, permissionRead, permissionUpdate } from "@/utils/permission.util";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/Global/Accordion/AccordionContent";
 import { IoSearch } from "react-icons/io5";
 import { MdFilterAlt, MdFilterAltOff, MdOutlineAttachFile, MdOutlineReceipt } from "react-icons/md";
 import { FiDownload, FiUsers } from "react-icons/fi";
-import { TB2BMassMovement, TB2BInvoice, TB2BAttachment } from "@/types/b2bPanel/b2bPanel.type";
 import { ModalB2BMassMovement } from "@/components/B2BPanel/Modal/ModalMassMovement";
 import { ModalB2BAttachment, ModalB2BInvoice } from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
 import { IconView } from "@/components/Global/IconView";
@@ -43,7 +41,7 @@ const movementColumns = [
   { key: "cpf",           title: "CPF" },
   { key: "planName",      title: "Programa" },
   { key: "active",        title: "Status" },
-  { key: "role",          title: "Função" },
+  { key: "function",      title: "Função" },
   { key: "department",    title: "Departamento" },
   { key: "effectiveDate", title: "Data de Vigência" },
 ];
@@ -69,7 +67,7 @@ type TFilter = {
   "gte$effectiveDate": string; "lte$effectiveDate": string;
   referenceMonth: string; referenceYear: string; status: string;
   type: string; department: string; period: string;
-   contractorId: string;
+  contractorId: string;
 };
 
 const ResetFilter: TFilter = {
@@ -405,7 +403,7 @@ export default function B2BPanel() {
       const rows: any[] = data.result.data ?? [];
       const sheetData = rows.map((r) => ({
         "Beneficiário": r.name ?? "", "CPF": r.cpf ?? "", "Status": r.active ? "Ativo" : "Inativo",
-        "Programa": r.planName ?? "", "Função": r.role ?? "", "Departamento": r.department ?? "",
+        "Programa": r.planName ?? "", "Função": r.function ?? "", "Departamento": r.department ?? "",
         "Sexo": r.gender ?? "", "Data de Nascimento": r.dateOfBirth ? maskDate(r.dateOfBirth) : "",
         "Data de Vigência": r.effectiveDate ? maskDate(r.effectiveDate) : "",
         "E-mail": r.email ?? "", "Telefone": r.phone ?? "", "WhatsApp": r.whatsapp ?? "",
