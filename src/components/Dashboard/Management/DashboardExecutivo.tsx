@@ -195,7 +195,7 @@ export default function DashboardExecutivo() {
   const loadDashboard = async () => {
     try {
       setLoading(true);
-      const idLocal = localStorage.getItem("id") ?? "";
+      const idLocal = localStorage.getItem("contractorId") ?? "";
 
       // Busca vitals dos últimos 6 meses
       const now    = new Date();

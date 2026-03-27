@@ -25,6 +25,8 @@ export const Header = () => {
     const [role, setRole] = useAtom(roleUserAtom);
     const [subTitle, setSubTitle] = useState("Administrador");
     const [urlDashboard, setUrlDashboard] = useState("/erp/dashboard/executivo")
+    const [isAdmin, setIsAdmin] = useState(false);
+
     const sincLogged = async () => {
         try {
             setLoading(true);
@@ -34,12 +36,21 @@ export const Header = () => {
             localStorage.setItem("admin", result.data.admin);
             localStorage.setItem("modules", JSON.stringify(result.data.modules));
             setDropOpen(false);
+            await sync();
         } catch (error) {
             resolveResponse(error);
         } finally {
             setLoading(false);
         }
     };
+
+    const sync = async () => {
+        try {
+            await api.get(`/vitals/sync`, configApi());
+        } catch (error) {
+            
+        }
+    }
 
     useEffect(() => {
         const n = localStorage.getItem("name");
@@ -65,6 +76,7 @@ export const Header = () => {
         if (n) setName(n);
         if (p) setPhoto(p);
         if (r) setRole(r);
+        if (a) setIsAdmin(a == "true");
     }, []);
 
     return (
@@ -113,7 +125,7 @@ export const Header = () => {
                         </svg>
                     </div>
 
-                    {dropOpen && (
+                    {dropOpen && isAdmin && (
                         <>
                             <div className="fixed inset-0 z-40" onClick={() => setDropOpen(false)} />
                             <div className="absolute right-0 top-13 z-50 w-52 rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] shadow-lg overflow-hidden">
