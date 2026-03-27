@@ -206,6 +206,13 @@ function BarrasMensalBeneficiarios({ data }: { data: { month: string; year: numb
 }
 
 function BarrasMensalFaturas({ data }: { data: { month: string; year: number; count: number; total: number }[] }) {
+  if (!data || data.length === 0) {
+  return (
+    <div className="rounded-2xl p-5 text-center text-sm text-gray-400">
+      Nenhuma fatura para exibir
+    </div>
+  );
+}
   const maxTotal = Math.max(...data.map(d => d.total), 1);
   const BAR_H    = 100;
   const fmt = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
@@ -221,7 +228,9 @@ function BarrasMensalFaturas({ data }: { data: { month: string; year: number; co
       <div className="overflow-x-auto pb-1">
         <div className="flex items-end gap-3" style={{ minWidth: `${data.length * 64}px`, height: `${BAR_H + 52}px` }}>
           {data.map((d, i) => {
-            const h = Math.max(6, Math.round((d.total / maxTotal) * BAR_H));
+            const h = d.total > 0
+            ? Math.round((d.total / maxTotal) * BAR_H)
+            : 8;
             return (
               <div key={i} className="flex flex-col items-center gap-1 flex-shrink-0" style={{ width: 56 }}>
                 <span className="text-[9px] font-bold text-green-600">{d.total > 0 ? fmt(d.total) : ""}</span>
@@ -331,7 +340,7 @@ export default function B2BPanel() {
     } catch {}
   };
 
-  const loadChartInvoices = async () => {
+const loadChartInvoices = async () => {
   try {
     const adminStr     = localStorage.getItem("admin");
     const contractorId = adminStr === "true"
@@ -370,15 +379,30 @@ export default function B2BPanel() {
     });
  
     // Ordena cronologicamente (chave "YYYY-MM" ordena lexicograficamente)
-    const porMes = Object.entries(grouped)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([, v]) => v);
- 
-    setChartInvoices({ porMes });
+const now = new Date();
+const result: { month: string; year: number; count: number; total: number }[] = [];
+
+// gera últimos 12 meses
+for (let i = 11; i >= 0; i--) {
+  const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+  const m = d.getMonth();
+  const y = d.getFullYear();
+
+  const key = `${y}-${String(m + 1).padStart(2, "0")}`;
+  const found = grouped[key];
+
+  result.push({
+    month: MONTHS_SHORT[m],
+    year: y,
+    count: found?.count ?? 0,
+    total: found?.total ?? 0
+  });
+}
+setChartInvoices({ porMes: result });
   } catch {}
 };
 
-  const exportExcel = async () => {
+const exportExcel = async () => {
     try {
       setExportingExcel(true);
       const adminStr     = localStorage.getItem("admin");
@@ -454,12 +478,12 @@ export default function B2BPanel() {
     if (activeTab === "attachments") {
       if (values.search)           q += `&regex$or$description=${values.search}`;
       if (values["gte$createdAt"]) q += `&gte$createdAt=${values["gte$createdAt"]}`;
-      if (values["lte$createdAt"]) q += `&lte$createdAt=${values["lte$createdAt"]}`;
+      if (values["lte$createdAt"]) q += `&lte$createdAt=${values["lte$createdAt"]}`;  
     }
     return q;
   };
 
-  const onSubmit = async () => {
+    const onSubmit = async () => {
     const values = getValues();
     const q = buildQuery(values);
     setQueryStr(q);
@@ -800,3 +824,4 @@ export default function B2BPanel() {
     </>
   );
 }
+  
