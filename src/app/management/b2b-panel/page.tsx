@@ -3,7 +3,6 @@
 import { userLoggerAtom } from "@/jotai/auth/auth.jotai";
 import { paginationAtom } from "@/jotai/global/pagination.jotai";
 import { loadingAtom } from "@/jotai/global/loading.jotai";
-import { modalAtom } from "@/jotai/global/modal.jotai";
 import { api } from "@/service/api.service";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { useAtom } from "jotai";
@@ -25,6 +24,7 @@ import { FiDownload, FiUpload, FiUsers } from "react-icons/fi";
 import { ModalB2BMassMovement } from "@/components/B2BPanel/Modal/ModalMassMovement";
 import { ModalEditRecipient } from "@/components/MasterData/Customer/ModalEditRecipient";
 import { ModalB2BAttachment, ModalB2BInvoice } from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
+import { InvoicePanel } from "@/app/management/b2b-panel/InvoicePanel";
 import { IconView } from "@/components/Global/IconView";
 import { IconEdit } from "@/components/Global/IconEdit";
 import { IconDelete } from "@/components/Global/IconDelete";
@@ -33,6 +33,8 @@ import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
 import { ModalEditRecipientManager } from "@/components/MasterData/Customer/ModalEditRecipientManager";
+
+const MONTHS: string[] = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -46,15 +48,6 @@ const movementColumns = [
   { key: "function",      title: "Função" },
   { key: "department",    title: "Departamento" },
   { key: "effectiveDate", title: "Data de Vigência" },
-];
-
-const invoiceColumns = [
-  { key: "referenceMonth",   title: "Mês/Ano" },
-  { key: "beneficiaryCount", title: "Beneficiários" },
-  { key: "totalAmount",      title: "Valor Total" },
-  { key: "status",           title: "Status" },
-  { key: "dueDate",          title: "Vencimento" },
-  { key: "closingDate",      title: "Data de Corte" },
 ];
 
 const attachmentColumns = [
@@ -84,15 +77,15 @@ const ResetFilter: TFilter = {
 
 const StatusBadge = ({ value }: { value: any }) => {
   const map: Record<string, string> = {
-    Ativo: "bg-green-100 text-green-800 border-green-200",
-    Inativo: "bg-red-100 text-red-800 border-red-200",
-    Pendente: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    Ativo:      "bg-green-100 text-green-800 border-green-200",
+    Inativo:    "bg-red-100 text-red-800 border-red-200",
+    Pendente:   "bg-yellow-100 text-yellow-800 border-yellow-200",
     Processado: "bg-green-100 text-green-800 border-green-200",
-    Erro: "bg-red-100 text-red-800 border-red-200",
-    Aberta: "bg-blue-100 text-blue-800 border-blue-200",
-    Fechada: "bg-gray-100 text-gray-700 border-gray-200",
-    Paga: "bg-green-100 text-green-800 border-green-200",
-    Cancelada: "bg-red-100 text-red-800 border-red-200",
+    Erro:       "bg-red-100 text-red-800 border-red-200",
+    Aberta:     "bg-blue-100 text-blue-800 border-blue-200",
+    Fechada:    "bg-gray-100 text-gray-700 border-gray-200",
+    Paga:       "bg-green-100 text-green-800 border-green-200",
+    Cancelada:  "bg-red-100 text-red-800 border-red-200",
   };
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${map[value] ?? "bg-gray-100 text-gray-700 border-gray-200"}`}>
@@ -106,8 +99,8 @@ const StatusBadge = ({ value }: { value: any }) => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function ColunasAtivosInativos({ ativos, inativos }: { ativos: number; inativos: number }) {
-  const total = ativos + inativos || 1;
-  const maxH = 160;
+  const total  = ativos + inativos || 1;
+  const maxH   = 160;
   const hAtivo   = Math.round((ativos   / total) * maxH);
   const hInativo = Math.round((inativos / total) * maxH);
   return (
@@ -137,19 +130,19 @@ function ColunasAtivosInativos({ ativos, inativos }: { ativos: number; inativos:
 
 const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444","#10b981","#f97316"];
 
-  function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) {
+function PizzaProgramas({ data }: { data: { label: string; value: number }[] }) {
   const total = data.reduce((s, d) => s + d.value, 0) || 1;
   const cx = 100, cy = 100, r = 90;
   let startAngle = -Math.PI / 2;
   const slices = data.map((d, i) => {
-  const angle = (d.value / total) * 2 * Math.PI;
-  const endAngle = startAngle + angle;
-  const x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
-  const x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
-  const large = angle > Math.PI ? 1 : 0;
-  const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
-  startAngle = endAngle;
-  return { path, color: PIZZA_COLORS[i % PIZZA_COLORS.length], label: d.label, value: d.value };
+    const angle    = (d.value / total) * 2 * Math.PI;
+    const endAngle = startAngle + angle;
+    const x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
+    const large = angle > Math.PI ? 1 : 0;
+    const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
+    startAngle = endAngle;
+    return { path, color: PIZZA_COLORS[i % PIZZA_COLORS.length], label: d.label, value: d.value };
   });
   return (
     <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
@@ -158,8 +151,8 @@ const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444
         <svg viewBox="0 0 200 200" className="w-56 h-56 flex-shrink-0">
           {slices.map((s, i) => <path key={i} d={s.path} fill={s.color} stroke="#fff" strokeWidth="1.5" />)}
           <circle cx={cx} cy={cy} r={r * 0.45} fill="var(--surface-card)" />
-          <text x={cx} y={cy + 5} textAnchor="middle" fontSize="15" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
-          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="12" fill="var(--text-muted)">programas</text>
+          <text x={cx} y={cy + 5}  textAnchor="middle" fontSize="15" fontWeight="800" fill="var(--primary-color)">{data.length}</text>
+          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="12"              fill="var(--text-muted)">programas</text>
         </svg>
         <div className="flex flex-col gap-2 flex-1 overflow-hidden">
           {slices.map((s, i) => (
@@ -176,73 +169,36 @@ const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444
   );
 }
 
-  function BarrasMensalBeneficiarios({ data }: { data: { month: string; year: number; total: number; ativos: number; inativos: number }[] }) {
+function BarrasMensalBeneficiarios({ data }: { data: { month: string; year: number; total: number; ativos: number; inativos: number }[] }) {
   const chartData = {
     labels: data.map(d => `${d.month} ${d.year}`),
     datasets: [
-      {
-        label: "Ativos",
-        data: data.map(d => d.ativos),
-        backgroundColor: "#1d4e8f",
-        borderRadius: 4,
-        stack: "stack",
-        barPercentage: 0.4,       
-        categoryPercentage: 0.6,  
-      }, 
-      {
-        label: "Inativos",
-        data: data.map(d => d.inativos),
-        backgroundColor: "#dc2626",
-        borderRadius: 0,
-        stack: "stack",
-        barPercentage: 0.4,    
-        categoryPercentage: 0.6,  
-      }, 
+      { label: "Ativos",   data: data.map(d => d.ativos),   backgroundColor: "#1d4e8f", borderRadius: 4, stack: "stack", barPercentage: 0.4, categoryPercentage: 0.6 },
+      { label: "Inativos", data: data.map(d => d.inativos), backgroundColor: "#dc2626", borderRadius: 0, stack: "stack", barPercentage: 0.4, categoryPercentage: 0.6 },
     ],
   };
-
   const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      duration: 800,  
-    },
-    plugins: {
-      legend: { display: false },
-      tooltip: { mode: "index" as const, intersect: false },
-    },
+    responsive: true, maintainAspectRatio: false,
+    animation: { duration: 800 },
+    plugins: { legend: { display: false }, tooltip: { mode: "index" as const, intersect: false } },
     scales: {
-      x: {
-        stacked: true,
-        grid: { display: false },
-        ticks: { font: { size: 15 } },
-      },
-      y: {
-        stacked: true,
-        beginAtZero: true,
-        grid: { color: "rgba(0,0,0,0.05)" },
-        ticks: { precision: 0, font: { size: 15 } },
-      },
+      x: { stacked: true, grid: { display: false }, ticks: { font: { size: 15 } } },
+      y: { stacked: true, beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" }, ticks: { precision: 0, font: { size: 15 } } },
     },
   };
-
   return (
     <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm font-bold text-[var(--primary-color)]">Evolução Mensal de Beneficiários</p>
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-            <span className="inline-block w-3 h-3 rounded-sm" style={{ background: "#1d4e8f" }} />
-            Ativos
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ background: "#1d4e8f" }} /> Ativos
           </span>
           <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-            <span className="inline-block w-3 h-3 rounded-sm" style={{ background: "#dc2626" }} />
-            Inativos
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ background: "#dc2626" }} /> Inativos
           </span>
         </div>
       </div>
-
-      {/* ← wrapper com scroll horizontal */}
       <div style={{ overflowX: "auto" }}>
         <div style={{ minWidth: 700, height: 220 }}>
           <Bar data={chartData} options={options} />
@@ -252,10 +208,16 @@ const PIZZA_COLORS = ["#003366","#0ea5e9","#22c55e","#f59e0b","#8b5cf6","#ef4444
   );
 }
 
-// ── ALTERAÇÃO 1: 1 barra por fatura individual (sem agrupamento) ──────────
 function BarrasMensalFaturas({ data }: { data: { month: string; year: number; count: number; total: number }[] }) {
+  if (!data || data.length === 0) {
+  return (
+    <div className="rounded-2xl p-5 text-center text-sm text-gray-400">
+      Nenhuma fatura para exibir
+    </div>
+  );
+}
   const maxTotal = Math.max(...data.map(d => d.total), 1);
-  const BAR_H = 100;
+  const BAR_H    = 100;
   const fmt = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
   return (
     <div className="rounded-2xl p-4" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
@@ -269,7 +231,9 @@ function BarrasMensalFaturas({ data }: { data: { month: string; year: number; co
       <div className="overflow-x-auto pb-1">
         <div className="flex items-end gap-3" style={{ minWidth: `${data.length * 64}px`, height: `${BAR_H + 52}px` }}>
           {data.map((d, i) => {
-            const h = Math.max(6, Math.round((d.total / maxTotal) * BAR_H));
+            const h = d.total > 0
+            ? Math.round((d.total / maxTotal) * BAR_H)
+            : 8;
             return (
               <div key={i} className="flex flex-col items-center gap-1 shrink-0" style={{ width: 56 }}>
                 <span className="text-[9px] font-bold text-green-600">{d.total > 0 ? fmt(d.total) : ""}</span>
@@ -289,45 +253,44 @@ function BarrasMensalFaturas({ data }: { data: { month: string; year: number; co
   );
 }
 
-type TSummary = { movements: number; invoices: number; attachments: number; pendingMovements: number };
+type TSummary        = { movements: number; invoices: number; attachments: number; pendingMovements: number };
 type TChartMovements = { ativos: number; inativos: number; porPrograma: { label: string; value: number }[]; porMes: { month: string; year: number; total: number; ativos: number; inativos: number }[] };
 type TChartInvoices  = { porMes: { month: string; year: number; count: number; total: number }[] };
 
 const MONTHS_SHORT: string[] = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 
 export default function B2BPanel() {
-  const [_, setLoading]             = useAtom(loadingAtom);
-  const [modal, setModal]           = useAtom(modalAtom);
+  const [, setLoading]              = useAtom(loadingAtom);
   const [userLogger]                = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom);
-
-  const [activeTab, setActiveTab]       = useState<TTab>("movements");
-  const [typeModal, setTypeModal]       = useState<"create" | "edit">("create");
-  const [currentBody, setCurrentBody]   = useState<any>({});
-  const [id, setId]                     = useState<string>("");
-  const [modalDelete, setModalDelete]   = useState<boolean>(false);
-  const [queryStr, setQueryStr]         = useState<string>("");
-  const [customers, setCustomers]       = useState<any[]>([]);
-  const [plans, setPlans]               = useState<TPlan[]>([]);
+  const [activeTab, setActiveTab]     = useState<TTab>("movements");
+  const [typeModal, setTypeModal]     = useState<"create" | "edit">("create");
+  const [currentBody, setCurrentBody] = useState<any>({});
+  const [modalDelete, setModalDelete] = useState<boolean>(false);
+  const [queryStr, setQueryStr]       = useState<string>("");
+  const [customers, setCustomers]     = useState<any[]>([]);
+  const [plans, setPlans]             = useState<TPlan[]>([]);
   const [serviceModules, setServiceModules] = useState<TServiceModule[]>([]);
   const [exportingExcel, setExportingExcel] = useState(false);
-  const [summary, setSummary]           = useState<TSummary>({ movements: 0, invoices: 0, attachments: 0, pendingMovements: 0 });
+  const [summary, setSummary]         = useState<TSummary>({ movements: 0, invoices: 0, attachments: 0, pendingMovements: 0 });
   const [filterOpened, setFilterOpened] = useState(true);
-  const [isAdmin, setIsAdmin]           = useState<boolean>(false);
-  const [contractors, setContractors]   = useState<{ id: string; corporateName: string }[]>([]);
+  const [isAdmin, setIsAdmin]         = useState<boolean>(false);
+  const [contractors, setContractors] = useState<{ id: string; corporateName: string }[]>([]);
+  const [selectedContractorId, setSelectedContractorId] = useState<string>("");
   const [modalEditRecipient, setModalEditRecipient] = useState(false);
   const [editRecipientId, setEditRecipientId]       = useState<string>("");
   const [modalMovement,   setModalMovement]   = useState(false);
   const [modalInvoice,    setModalInvoice]    = useState(false);
   const [modalAttachment, setModalAttachment] = useState(false);
-  const [chartMovements, setChartMovements] = useState<TChartMovements>({ ativos: 0, inativos: 0, porPrograma: [], porMes: [] });
-  const [chartInvoices, setChartInvoices]   = useState<TChartInvoices>({ porMes: [] });
+  const [chartMovements, setChartMovements]   = useState<TChartMovements>({ ativos: 0, inativos: 0, porPrograma: [], porMes: [] });
+  const [chartInvoices, setChartInvoices]     = useState<TChartInvoices>({ porMes: [] });
+  const [id, setId] = useState<string>("");
 
   const { register, reset, getValues, setValue } = useForm<TFilter>({ defaultValues: ResetFilter });
 
   const uriMap: Record<TTab, string> = {
-    movements: "b2b-mass-movements",
-    invoices:  "b2b-invoices",
+    movements:   "b2b-mass-movements",
+    invoices:    "b2b-invoices",
     attachments: "attachments",
   };
 
@@ -336,9 +299,8 @@ export default function B2BPanel() {
       setLoading(true);
       const uri = uriMap[activeTab];
       if (uri === "attachments") {
-        const contractorId = localStorage.getItem("contractorId");
-        const id = contractorId ? contractorId : "";
-        if (id) query += `&parentId=${id}&parent=customer-manager`;
+        const cId = localStorage.getItem("contractorId") ?? "";
+        if (cId) query += `&parentId=${cId}&parent=customer-manager`;
       }
       const { data } = await api.get(`/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
@@ -349,10 +311,10 @@ export default function B2BPanel() {
   const getRecipient = async (query: string = "", overrideContractorId?: string) => {
     try {
       setLoading(true);
-      const adminStr = localStorage.getItem("admin");
+      const adminStr     = localStorage.getItem("admin");
       const contractorId = overrideContractorId ?? (adminStr === "true" ? "" : localStorage.getItem("contractorId") ?? "");
-      const contractorFilter = contractorId ? `&contractorId=${contractorId}` : "";
-      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false${contractorFilter}&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
+      const cFilter      = contractorId ? `&contractorId=${contractorId}` : "";
+      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false${cFilter}&orderBy=name&sort=asc&pageSize=10&pageNumber=1${query}`, configApi());
       const result = data.result;
       setPagination({ currentPage: result.currentPage, data: result.data, sizePage: result.pageSize, totalPages: result.totalCount });
     } catch (error) { resolveResponse(error); } finally { setLoading(false); }
@@ -360,10 +322,10 @@ export default function B2BPanel() {
 
   const loadChartMovements = async (overrideContractorId?: string) => {
     try {
-      const adminStr = localStorage.getItem("admin");
+      const adminStr     = localStorage.getItem("admin");
       const contractorId = overrideContractorId ?? (adminStr === "true" ? "" : localStorage.getItem("contractorId") ?? "");
-      const contractorFilter = contractorId ? `&contractorId=${contractorId}` : "";
-      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false${contractorFilter}&orderBy=name&sort=asc&pageSize=9999&pageNumber=1`, configApi());
+      const cFilter      = contractorId ? `&contractorId=${contractorId}` : "";
+      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false${cFilter}&orderBy=name&sort=asc&pageSize=9999&pageNumber=1`, configApi());
       const rows: any[] = data.result?.data ?? [];
       const ativos   = rows.filter(r => r.active).length;
       const inativos = rows.filter(r => !r.active).length;
@@ -382,28 +344,75 @@ export default function B2BPanel() {
     } catch {}
   };
 
-  // ── ALTERAÇÃO 2: 1 entrada por fatura (sem agrupamento por mês) ──────────
-  const loadChartInvoices = async () => {
-    try {
-      const { data } = await api.get(`/b2b-invoices?deleted=false&orderBy=createdAt&sort=asc&pageSize=9999&pageNumber=1`, configApi());
-      const rows: any[] = data.result?.data ?? [];
-      const porMes = rows.map(r => ({
-        month: MONTHS_SHORT[(r.referenceMonth ?? 1) - 1] ?? String(r.referenceMonth),
-        year:  r.referenceYear ?? new Date().getFullYear(),
-        count: 1,
-        total: Number(r.totalAmount ?? 0),
-      }));
-      setChartInvoices({ porMes });
-    } catch {}
-  };
+const loadChartInvoices = async () => {
+  try {
+    const adminStr     = localStorage.getItem("admin");
+    const contractorId = adminStr === "true"
+      ? (selectedContractorId || "")
+      : (localStorage.getItem("contractorId") ?? "");
+    const cFilter = contractorId ? `&contractorId=${contractorId}` : "";
+ 
+    const { data } = await api.get(
+      `/b2b-invoices?deleted=false${cFilter}&orderBy=referenceYear&sort=asc&pageSize=9999&pageNumber=1`,
+      configApi()
+    );
+    const rows: any[] = data.result?.data ?? [];
+ 
+    // Agrupa por mês/ano — evita duplicatas quando há múltiplos registros
+    // para o mesmo período (ex: re-sincronizações)
+    const grouped: Record<
+      string,
+      { month: string; year: number; count: number; total: number }
+    > = {};
+ 
+    rows.forEach((r) => {
+      const key = `${r.referenceYear}-${String(r.referenceMonth).padStart(2, "0")}`;
+      if (!grouped[key]) {
+        grouped[key] = {
+          month: MONTHS_SHORT[(r.referenceMonth ?? 1) - 1] ?? String(r.referenceMonth),
+          year:  Number(r.referenceYear ?? new Date().getFullYear()),
+          count: 0,
+          total: 0,
+        };
+      }
+      grouped[key].count += 1;
+      grouped[key].total = Math.max(
+        grouped[key].total,
+        Number(r.totalAmount ?? 0)
+      ); // usa o maior valor em caso de duplicata
+    });
+ 
+    // Ordena cronologicamente (chave "YYYY-MM" ordena lexicograficamente)
+const now = new Date();
+const result: { month: string; year: number; count: number; total: number }[] = [];
 
-  const exportExcel = async () => {
+// gera últimos 12 meses
+for (let i = 11; i >= 0; i--) {
+  const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+  const m = d.getMonth();
+  const y = d.getFullYear();
+
+  const key = `${y}-${String(m + 1).padStart(2, "0")}`;
+  const found = grouped[key];
+
+  result.push({
+    month: MONTHS_SHORT[m],
+    year: y,
+    count: found?.count ?? 0,
+    total: found?.total ?? 0
+  });
+}
+setChartInvoices({ porMes: result });
+  } catch {}
+};
+
+const exportExcel = async () => {
     try {
       setExportingExcel(true);
-      const adminStr = localStorage.getItem("admin");
+      const adminStr     = localStorage.getItem("admin");
       const contractorId = adminStr === "true" ? (getValues().contractorId || "") : (localStorage.getItem("contractorId") ?? "");
-      const contractorFilter = contractorId ? `&contractorId=${contractorId}` : "";
-      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false${contractorFilter}&orderBy=name&sort=asc&pageSize=99999&pageNumber=1${queryStr}`, configApi());
+      const cFilter      = contractorId ? `&contractorId=${contractorId}` : "";
+      const { data } = await api.get(`/customer-recipients/manager-panel?deleted=false${cFilter}&orderBy=name&sort=asc&pageSize=99999&pageNumber=1${queryStr}`, configApi());
       const rows: any[] = data.result.data ?? [];
       const sheetData = rows.map((r) => ({
         "Beneficiário": r.name ?? "", "CPF": r.cpf ?? "", "Status": r.active ? "Ativo" : "Inativo",
@@ -436,16 +445,15 @@ export default function B2BPanel() {
       setSummary({ movements: mov.data.result.totalCount, invoices: inv.data.result.totalCount, attachments: att.data.result.totalCount, pendingMovements: pending.data.result.totalCount });
     } catch {}
   };
+
   const handleContractorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  const selectedId = e.target.value;
-  setValue("contractorId", selectedId);
-  if (selectedId) {
-    localStorage.setItem("contractorId", selectedId);
-  } else {
-    localStorage.removeItem("contractorId");
-  }
-  loadChartMovements(selectedId || undefined);
-};
+    const id = e.target.value;
+    setValue("contractorId", id);
+    setSelectedContractorId(id);
+    if (id) localStorage.setItem("contractorId", id);
+    else    localStorage.removeItem("contractorId");
+    loadChartMovements(id || undefined);
+  };
 
   const loadPlans = async () => {
     try { const { data } = await api.get(`/plans?deleted=false&orderBy=name&sort=asc&pageSize=200&pageNumber=1`, configApi()); setPlans(data.result.data ?? []); } catch {}
@@ -471,17 +479,10 @@ export default function B2BPanel() {
       if (values.ageFrom) { const d = new Date(); d.setFullYear(d.getFullYear() - parseInt(values.ageFrom)); q += `&lte$dateOfBirth=${d.toISOString().split("T")[0]}`; }
       if (values.ageTo)   { const d = new Date(); d.setFullYear(d.getFullYear() - parseInt(values.ageTo));   q += `&gte$dateOfBirth=${d.toISOString().split("T")[0]}`; }
     }
-    if (activeTab === "invoices") {
-      if (values.referenceMonth)   q += `&referenceMonth=${values.referenceMonth}`;
-      if (values.referenceYear)    q += `&referenceYear=${values.referenceYear}`;
-      if (values.status)           q += `&status=${values.status}`;
-      if (values["gte$createdAt"]) q += `&gte$createdAt=${values["gte$createdAt"]}`;
-      if (values["lte$createdAt"]) q += `&lte$createdAt=${values["lte$createdAt"]}`;
-    }
     if (activeTab === "attachments") {
       if (values.search)           q += `&regex$or$description=${values.search}`;
       if (values["gte$createdAt"]) q += `&gte$createdAt=${values["gte$createdAt"]}`;
-      if (values["lte$createdAt"]) q += `&lte$createdAt=${values["lte$createdAt"]}`;
+      if (values["lte$createdAt"]) q += `&lte$createdAt=${values["lte$createdAt"]}`;  
     }
     return q;
   };
@@ -511,13 +512,12 @@ export default function B2BPanel() {
         setModalMovement(true);
       }
     }
-    if (activeTab === "invoices")    setModalInvoice(true);
     if (activeTab === "attachments") setModalAttachment(true);
   };
 
   const closeModal = () => {
     setModalMovement(false); setModalInvoice(false); setModalAttachment(false);
-    setCurrentBody({}); setId("");
+    setCurrentBody({}); 
   };
 
   const handleSuccess = async () => {
@@ -542,8 +542,7 @@ export default function B2BPanel() {
   };
 
   const columns = useMemo(() => {
-    if (activeTab === "movements") return movementColumns;
-    if (activeTab === "invoices")  return invoiceColumns;
+    if (activeTab === "movements")   return movementColumns;
     return attachmentColumns;
   }, [activeTab]);
 
@@ -559,15 +558,20 @@ export default function B2BPanel() {
   };
 
   useEffect(() => {
-    const adminStr = localStorage.getItem("admin");
+    const adminStr     = localStorage.getItem("admin");
+    const contractorId = localStorage.getItem("contractorId") ?? "";
     setIsAdmin(adminStr === "true");
-    const contractorId = localStorage.getItem("contractorId");
     if (contractorId) {
       setValue("contractorId", contractorId);
+      setSelectedContractorId(contractorId);
     }
     if (adminStr === "true") {
       api.get(`/customers/select?deleted=false&orderBy=corporateName&sort=asc&pageSize=200&pageNumber=1&type=B2B`, configApi())
-        .then(({ data }) => setContractors(data?.result?.data ?? []))
+        .then(({ data }) => {
+          const list = data?.result?.data ?? [];
+          setCustomers(list);
+          setContractors(list);
+        })
         .catch(() => {});
     }
     loadSummary(); 
@@ -588,7 +592,6 @@ export default function B2BPanel() {
     { key: "attachments", label: "Anexos",                icon: <MdOutlineAttachFile size={15} />, count: summary.attachments },
   ];
 
-  const MONTHS = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
   return (
     <>
@@ -628,7 +631,7 @@ export default function B2BPanel() {
                         : { color: "var(--text-muted)" }}>
                       {t.icon}
                       <span className="hidden sm:inline">{t.label}</span>
-                      {t.key !== "movements" && t.count !== undefined && (
+                      {t.count !== undefined && (
                         <span className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
                           style={activeTab === t.key
                             ? { background: "rgba(255,255,255,.25)", color: "#fff" }
@@ -640,7 +643,7 @@ export default function B2BPanel() {
                   ))}
                 </div>
 
-                {/* Gráficos movements — 2 em cima, 1 embaixo */}
+                {/* Gráficos movements */}
                 {activeTab === "movements" && (
                   <div className="flex flex-col gap-3 mb-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -652,8 +655,129 @@ export default function B2BPanel() {
                 )}
 
                 {activeTab === "invoices" && (
-                  <div className="mb-4">
-                    <BarrasMensalFaturas data={chartInvoices.porMes} />
+                <div className="flex flex-col gap-4 mb-4">
+                  <BarrasMensalFaturas data={chartInvoices.porMes} />
+                  <InvoicePanel contractorId={selectedContractorId} />
+                </div>
+              )}
+
+                {/* Filtros — só para movements e attachments */}
+                {activeTab !== "invoices" && (
+                  <div className="grid grid-cols-12 mb-2">
+                    <Accordion className="col-span-12" defaultOpenId="filter">
+                      <AccordionItem id="filter">
+                        <AccordionTrigger
+                          clickHeader={() => setFilterOpened(!filterOpened)}
+                          icon={queryStr ? <MdFilterAlt size={15} /> : <MdFilterAltOff size={15} />}
+                          subtitle=""
+                        >
+                          Filtros
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="grid grid-cols-12 gap-3">
+                            {activeTab === "movements" && (
+                              <>
+                                <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                  <label className="label slim-label-primary">Beneficiário</label>
+                                  <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome..." />
+                                </div>
+                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                  <label className="label slim-label-primary">CPF</label>
+                                  <input {...register("cpf")} type="text" className="input slim-input-primary" placeholder="000.000.000-00" />
+                                </div>
+                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                  <label className="label slim-label-primary">Sexo</label>
+                                  <select {...register("gender")} className="select slim-select-primary">
+                                    <option value="">Todos</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Feminino">Feminino</option>
+                                    <option value="Outros">Outros</option>
+                                  </select>
+                                </div>
+                                <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                                  <label className="label slim-label-primary">Idade de</label>
+                                  <input {...register("ageFrom")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="0" />
+                                </div>
+                                <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                                  <label className="label slim-label-primary">Até</label>
+                                  <input {...register("ageTo")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="120" />
+                                </div>
+                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                  <label className="label slim-label-primary">Status</label>
+                                  <select {...register("active")} className="select slim-select-primary">
+                                    <option value="">Todos</option>
+                                    <option value="true">Ativo</option>
+                                    <option value="false">Inativo</option>
+                                  </select>
+                                </div>
+                                <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                  <label className="label slim-label-primary">Programa (Plano)</label>
+                                  <select {...register("planId")} className="select slim-select-primary">
+                                    <option value="">Todos</option>
+                                    {plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                  </select>
+                                </div>
+                                <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                  <label className="label slim-label-primary">Módulo de Serviço</label>
+                                  <select {...register("serviceModuleId")} className="select slim-select-primary">
+                                    <option value="">Todos</option>
+                                    {serviceModules.map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
+                                  </select>
+                                </div>
+                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                  <label className="label slim-label-primary">Cadastro — início</label>
+                                  <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
+                                </div>
+                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                  <label className="label slim-label-primary">Cadastro — fim</label>
+                                  <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
+                                </div>
+                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                  <label className="label slim-label-primary">Vigência — início</label>
+                                  <input {...register("gte$effectiveDate")} type="date" className="input slim-input-primary" />
+                                </div>
+                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                  <label className="label slim-label-primary">Vigência — fim</label>
+                                  <input {...register("lte$effectiveDate")} type="date" className="input slim-input-primary" />
+                                </div>
+                              </>
+                            )}
+                            {activeTab === "attachments" && (
+                              <>
+                                <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
+                                  <label className="label slim-label-primary">Busca rápida</label>
+                                  <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome do anexo..." />
+                                </div>
+                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                  <label className="label slim-label-primary">Data — início</label>
+                                  <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
+                                </div>
+                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                  <label className="label slim-label-primary">Data — fim</label>
+                                  <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
+                                </div>
+                              </>
+                            )}
+                            {isAdmin && (
+                              <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
+                                <label className="label slim-label-primary">Contratante</label>
+                                <select value={selectedContractorId} onChange={handleContractorChange} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  {contractors.map((c) => (
+                                    <option key={c.id} value={c.id}>{c.corporateName}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            )}
+                            <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
+                              <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">
+                                <IoSearch />
+                              </div>
+                            </div>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
                 )}
 
@@ -813,12 +937,10 @@ export default function B2BPanel() {
                   </Accordion>
                 </div>
 
-                {/* Tabela */}
                 <DataTable
                   isAction={activeTab === "attachments" || activeTab === "movements" || (isAdmin && activeTab == "invoices")}
                   classContainer={`${filterOpened ? "max-h-[calc(100dvh-(var(--height-header)+23rem))]" : "max-h-[calc(100dvh-(var(--height-header)+16rem))]"}`}
-                  columns={columns}
-                >
+                  columns={columns}>
                   <>
                     {pagination.data.map((x: any, i: number) => (
                       <tr className="slim-tr" key={i}>
@@ -855,19 +977,22 @@ export default function B2BPanel() {
                     ))}
                   </>
                 </DataTable>
-                <NotData />
               </SlimContainer>
             </div>
 
-            <ModalB2BMassMovement isOpen={modalMovement} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
             <ModalEditRecipientManager isOpen={modalEditRecipient} recipientId={editRecipientId} onClose={() => { setModalEditRecipient(false); setEditRecipientId(""); }} onSuccess={async () => { setModalEditRecipient(false); setEditRecipientId(""); await getRecipient(queryStr); await loadChartMovements(); }} />
-            <ModalB2BInvoice      isOpen={modalInvoice}  typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
-            <ModalB2BAttachment   isOpen={modalAttachment} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
-            <ModalDelete title="Excluir registro" isOpen={modalDelete} setIsOpen={() => setModalDelete(modal)} onClose={() => setModalDelete(false)} onSelectValue={destroy} />
+            <ModalB2BMassMovement isOpen={modalMovement} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
+            <ModalEditRecipient isOpen={modalEditRecipient} recipientId={editRecipientId}
+              onClose={() => { setModalEditRecipient(false); setEditRecipientId(""); }}
+              onSuccess={async () => { setModalEditRecipient(false); setEditRecipientId(""); await getRecipient(queryStr); await loadChartMovements(); }}
+            />
+            <ModalB2BInvoice    isOpen={modalInvoice}    typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
+            <ModalB2BAttachment isOpen={modalAttachment} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
+            <ModalDelete title="Excluir registro" isOpen={modalDelete} setIsOpen={setModalDelete} onClose={() => setModalDelete(false)} onSelectValue={destroy} />
           </main>
         </>
       ) : <></>}
     </>
   );
 }
-
+  
