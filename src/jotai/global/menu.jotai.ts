@@ -491,6 +491,22 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                     delete: false
                 }
             },
+            {
+                code: 'E02',
+                isOpen: true,
+                subMenu: [],
+                description: 'Métricas de Uso',
+                icon: '',
+                link: 'settings/metrics',
+                padding: 'px-4',
+                authorized: false,
+                permissions: {
+                    create: false,
+                    update: false,
+                    read: false,
+                    delete: false
+                }
+            },
         ],
     },
     {
