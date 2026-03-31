@@ -6,7 +6,7 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "SLIM | Perfis de Permissão",
+  title: "Pasbem | Perfis de Permissão",
   description: "Configuração de perfis de permissão",
 };
 
