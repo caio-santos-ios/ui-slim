@@ -22,10 +22,8 @@ import { TbHeartbeat, TbShieldCheck } from "react-icons/tb";
 import { BsBarChartLine } from "react-icons/bs";
 import { FiCheckSquare, FiMoon, FiActivity } from "react-icons/fi";
 
-// ─── Abas — item 6: adiciona IPV ─────────────────────────────────────────────
 type TTab = "iso" | "igs" | "ign" | "ies" | "ipv";
 
-// ─── Colunas — item 7: adiciona período, departamento, setor, função ──────────
 const isoColumns = [
   { key: "beneficiaryName",   title: "Beneficiário" },
   { key: "department",        title: "Departamento" },
@@ -80,7 +78,6 @@ const iesColumns = [
   { key: "createdAt",       title: "Data" },
 ];
 
-// item 6: coluna IPV
 const ipvColumns = [
   { key: "beneficiaryName", title: "Beneficiário" },
   { key: "department",      title: "Departamento" },
@@ -123,7 +120,6 @@ const ScoreBadge = ({ value }: { value: number }) => {
   );
 };
 
-// ─── Filtro — item 7: adiciona período, departamento, setor, função ───────────
 type TFilter = {
   search:          string;
   "gte$createdAt": string;
@@ -158,7 +154,6 @@ export default function OccupationalManagement() {
 
   const { register, reset, getValues } = useForm<TFilter>({ defaultValues: ResetFilter });
 
-  // ── Listagem ───────────────────────────────────────────────────────────────
   const getAll = async (query: string = "") => {
     try {
       setLoading(true);
@@ -187,7 +182,6 @@ export default function OccupationalManagement() {
     }
   };
 
-  // ── Summary ────────────────────────────────────────────────────────────────
   const loadSummary = async () => {
     try {
       const idLocal = localStorage.getItem("contractorId");
@@ -209,7 +203,6 @@ export default function OccupationalManagement() {
     } catch {}
   };
 
-  // ── Build query — item 7 ───────────────────────────────────────────────────
   const buildQuery = (values: TFilter): string => {
     let q = "";
     if (values.search)           q += `&regex$or$beneficiaryName=${values.search}`;
@@ -227,7 +220,6 @@ export default function OccupationalManagement() {
     await getAll(q);
   };
 
-  // ── Columns ────────────────────────────────────────────────────────────────
   const columns = useMemo(() => {
     if (activeTab === "iso") return isoColumns;
     if (activeTab === "igs") return igsColumns;
@@ -236,7 +228,6 @@ export default function OccupationalManagement() {
     return ipvColumns;
   }, [activeTab]);
 
-  // ── Cell renderer ──────────────────────────────────────────────────────────
   const renderCell = (x: any, col: { key: string }) => {
     // acesso a campos nested (metric.igs, metric.ipv etc.)
     const getValue = (obj: any, path: string) =>
@@ -260,7 +251,6 @@ export default function OccupationalManagement() {
     return v ?? "—";
   };
 
-  // ── Effects ────────────────────────────────────────────────────────────────
   useEffect(() => { loadSummary(); }, []);
 
   useEffect(() => {
@@ -276,7 +266,6 @@ export default function OccupationalManagement() {
     getAll();
   }, [activeTab]);
 
-  // ── Tabs — item 6: adiciona IPV ────────────────────────────────────────────
   const tabs: { key: TTab; label: string; icon: React.ReactNode; count: number; color: string }[] = [
     { key: "iso", label: "ISO — Ocupacional", icon: <FiCheckSquare size={14} />, count: summary.totalISO, color: "#f59e0b" },
     { key: "igs", label: "IGS — Saúde",       icon: <FiMoon size={14} />,        count: summary.totalIGS, color: "var(--primary-color)" },
@@ -296,7 +285,6 @@ export default function OccupationalManagement() {
             <div className="slim-container-customer h-[calc(100dvh-5rem)] w-full">
               <SlimContainer menu="Gestão" breadcrump="Saúde Ocupacional" breadcrumpIcon="MdWorkOutline">
 
-                {/* ── Summary Cards ─────────────────────────────────────── */}
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
                   {tabs.map((t) => (
                     <div key={t.key} onClick={() => setActiveTab(t.key)}
@@ -309,7 +297,6 @@ export default function OccupationalManagement() {
                   ))}
                 </div>
 
-                {/* ── Tabs ──────────────────────────────────────────────── */}
                 <div className="flex gap-1 mb-4 p-1 rounded-xl overflow-x-auto"
                   style={{ background: "var(--surface-bg)", border: "1px solid var(--surface-border)" }}>
                   {tabs.map((t) => (
@@ -323,7 +310,6 @@ export default function OccupationalManagement() {
                   ))}
                 </div>
 
-                {/* ── Filtros — item 7 ──────────────────────────────────── */}
                 <div className="grid grid-cols-12 mb-2">
                   <Accordion className="col-span-12" defaultOpenId="filter">
                     <AccordionItem id="filter">
@@ -341,7 +327,6 @@ export default function OccupationalManagement() {
                             <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome..." />
                           </div>
 
-                          {/* item 7: departamento, setor, função */}
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">Departamento</label>
                             <input {...register("department")} type="text" className="input slim-input-primary" placeholder="Ex: RH" />
@@ -375,7 +360,6 @@ export default function OccupationalManagement() {
                   </Accordion>
                 </div>
 
-                {/* ── Tabela ────────────────────────────────────────────── */}
                 <DataTable isAction={false} classContainer="max-h-[calc(100dvh-(var(--height-header)+20rem))]" columns={columns}>
                   <>
                     {pagination.data.map((x: any, i: number) => (
