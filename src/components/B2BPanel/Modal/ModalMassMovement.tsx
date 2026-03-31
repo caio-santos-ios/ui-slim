@@ -44,7 +44,7 @@ type TForm = {
 };
 
 export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClose, onSuccess }: TProps) => {
-  const { register, watch, handleSubmit, reset } = useForm<TForm>();
+  const { register, watch, handleSubmit, reset, formState: { errors } } = useForm<TForm>();
   const [loading, setLoading] = useAtom(loadingAtom);
   const [tab, setTab] = useState<"import" | "manual">("import");
   const [plans, setPlans] = useState<any[]>([]);
@@ -134,7 +134,7 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
   const onSubmitManual = async (values: TForm) => {
     try {
       setLoading(true);
-      const contractorId = localStorage.getItem("id") ?? "";
+      const contractorId = localStorage.getItem("contractorId") ?? "";
       const payload = {
         contractorId,
         name:          values.name,
@@ -231,10 +231,12 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
               <div className="flex flex-col col-span-12 sm:col-span-6">
                 <label className="label slim-label-primary">Nome completo *</label>
                 <input {...register("name", { required: true })} type="text" className="input slim-input-primary" placeholder="Nome completo" />
+                {errors.name && <span className="text-xs text-red-500 mt-1">Nome é obrigatório</span>}
               </div>
               <div className="flex flex-col col-span-12 sm:col-span-6">
                 <label className="label slim-label-primary">CPF *</label>
                 <input {...register("cpf", { required: true })} type="text" className="input slim-input-primary" placeholder="000.000.000-00" />
+                {errors.cpf && <span className="text-xs text-red-500 mt-1">CPF é obrigatório</span>}
               </div>
               <div className="flex flex-col col-span-6 sm:col-span-4">
                 <label className="label slim-label-primary">Data de Nascimento</label>
@@ -282,9 +284,10 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
                 </>
               )}
               <div className="flex flex-col col-span-12 sm:col-span-4">
-                <label className="label slim-label-primary">Data de Vigência</label>
-                <input {...register("effectiveDate")} type="date" className="input slim-input-primary" />
-              </div>
+  <label className="label slim-label-primary">Data de Vigência *</label>
+  <input {...register("effectiveDate", { required: true })} type="date" className="input slim-input-primary" />
+  {errors.effectiveDate && <span className="text-xs text-red-500 mt-1">Data de vigência é obrigatória</span>}
+</div>
               <div className="flex flex-col col-span-12">
                 <label className="label slim-label-primary">Programa (Plano)</label>
                 <select {...register("planId")} className="select slim-select-primary">
