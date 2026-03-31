@@ -1052,8 +1052,7 @@ export default function B2BPanel() {
                       <button onClick={() => openModal("create", "recipient")} className="slim-btn slim-btn-primary">Adicionar</button>
                     )}
                   </div>
-                }
-              >
+                }>
                 <div className="flex gap-1 mb-4 p-1 rounded-xl" style={{ background: "var(--surface-bg)", border: "1px solid var(--surface-border)" }}>
                   {tabs.map((t) => (
                     <button
@@ -1093,7 +1092,6 @@ export default function B2BPanel() {
                     </button>
                   ))}
                 </div>
-
                 {/* Gráficos movements */}
                 {activeTab === "movements" && (
                   <div className="flex flex-col gap-3 mb-4">
@@ -1107,16 +1105,8 @@ export default function B2BPanel() {
                     <BarrasMensalBeneficiarios data={chartMovements.porMes} />
                   </div>
                 )}
-
-                {activeTab === "invoices" && (
-                  <div className="flex flex-col gap-4 mb-4">
-                    <BarrasMensalFaturas data={chartInvoices.porMes} />
-                    <InvoicePanel contractorId={selectedContractorId} onSyncComplete={(count) => setSummary(prev => ({ ...prev, invoices: count }))} />
-                  </div>
-                )}
-
                 {/* Filtros — só para movements e attachments */}
-                {activeTab !== "invoices" && (
+                {/* {activeTab !== "invoices" && (
                   <div className="grid grid-cols-12 mb-2">
                     <Accordion className="col-span-12" defaultOpenId="filter">
                       <AccordionItem id="filter">
@@ -1353,7 +1343,7 @@ export default function B2BPanel() {
                       </AccordionItem>
                     </Accordion>
                   </div>
-                )}
+                )} */}
 
                 <div className="grid grid-cols-12 mb-2">
                   <Accordion className="col-span-12" defaultOpenId="filter">
@@ -1511,46 +1501,12 @@ export default function B2BPanel() {
                   </Accordion>
                 </div>
 
-                <DataTable
-                  isAction={activeTab === "attachments" || activeTab === "movements" || (isAdmin && activeTab == "invoices")}
-                  classContainer={`${filterOpened ? "max-h-[calc(100dvh-(var(--height-header)+23rem))]" : "max-h-[calc(100dvh-(var(--height-header)+16rem))]"}`}
-                  columns={columns}>
-                  <>
-                    {pagination.data.map((x: any, i: number) => (
-                      <tr className="slim-tr" key={i}>
-                        {columns.map((col) => (
-                          col.key.toLowerCase() !== "ações" && (
-                            <td className="px-4 py-3 text-left text-sm font-medium tracking-wider" key={col.key}>
-                              {renderCell(x, col)}
-                            </td>
-                          )
-                        ))}
-                        {activeTab === "movements" && (
-                          <td className="text-center">
-                            <div className="flex justify-center gap-2">
-                              <IconEdit action="edit" obj={x} getObj={openModal} />
-                            </div>
-                          </td>
-                        )}
-                        {activeTab === "invoices" && isAdmin && (
-                          <td className="text-center">
-                            <div className="flex justify-center gap-2">
-                              <IconEdit action="edit" obj={x} getObj={openModal} />
-                            </div>
-                          </td>
-                        )}
-                        {activeTab === "attachments" && (
-                          <td className="text-center">
-                            <div className="flex justify-center gap-2">
-                              <IconDelete obj={x} getObj={openModalDelete} />
-                              <IconView link={x.uri} />
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    ))}
-                  </>
-                </DataTable>
+                {activeTab === "invoices" && (
+                  <div className="flex flex-col gap-4 mb-4">
+                    <BarrasMensalFaturas data={chartInvoices.porMes} />
+                   <InvoicePanel contractorId={selectedContractorId} onSyncComplete={(count) => setSummary(prev => ({ ...prev, invoices: count }))} />
+                  </div>
+                )}
               </SlimContainer>
             </div>
 
