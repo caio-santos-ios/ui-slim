@@ -620,8 +620,7 @@ const exportExcel = async () => {
                       <button onClick={() => openModal("create", "recipient")} className="slim-btn slim-btn-primary">Adicionar</button>
                     )}
                   </div>
-                }
-              >
+                }>
                 <div className="flex gap-1 mb-4 p-1 rounded-xl" style={{ background: "var(--surface-bg)", border: "1px solid var(--surface-border)" }}>
                   {tabs.map((t) => (
                     <button key={t.key} onClick={() => setActiveTab(t.key)}
@@ -642,7 +641,6 @@ const exportExcel = async () => {
                     </button>
                   ))}
                 </div>
-
                 {/* Gráficos movements */}
                 {activeTab === "movements" && (
                   <div className="flex flex-col gap-3 mb-4">
@@ -653,16 +651,8 @@ const exportExcel = async () => {
                     <BarrasMensalBeneficiarios data={chartMovements.porMes} />
                   </div>
                 )}
-
-                {activeTab === "invoices" && (
-                <div className="flex flex-col gap-4 mb-4">
-                  <BarrasMensalFaturas data={chartInvoices.porMes} />
-                  <InvoicePanel contractorId={selectedContractorId} />
-                </div>
-              )}
-
                 {/* Filtros — só para movements e attachments */}
-                {activeTab !== "invoices" && (
+                {/* {activeTab !== "invoices" && (
                   <div className="grid grid-cols-12 mb-2">
                     <Accordion className="col-span-12" defaultOpenId="filter">
                       <AccordionItem id="filter">
@@ -779,7 +769,7 @@ const exportExcel = async () => {
                       </AccordionItem>
                     </Accordion>
                   </div>
-                )}
+                )} */}
 
                 <div className="grid grid-cols-12 mb-2">
                   <Accordion className="col-span-12" defaultOpenId="filter">
@@ -936,6 +926,13 @@ const exportExcel = async () => {
                     </AccordionItem>
                   </Accordion>
                 </div>
+
+                {activeTab === "invoices" && (
+                  <div className="flex flex-col gap-4 mb-4">
+                    <BarrasMensalFaturas data={chartInvoices.porMes} />
+                    <InvoicePanel contractorId={selectedContractorId} />
+                  </div>
+                )}
 
                 <DataTable
                   isAction={activeTab === "attachments" || activeTab === "movements" || (isAdmin && activeTab == "invoices")}
