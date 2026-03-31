@@ -178,7 +178,7 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
             <span className="text-white font-bold text-sm">Adicionar Beneficiário</span>
             <button onClick={onClose} className="text-white/80 hover:text-white transition-colors"><IoClose size={20} /></button>
           </div>
-          <div className="flex gap-1 p-3 pb-0" style={{ background: "var(--surface-bg)", borderBottom: "1px solid var(--surface-border)" }}>
+          {/* <div className="flex gap-1 p-3 pb-0" style={{ background: "var(--surface-bg)", borderBottom: "1px solid var(--surface-border)" }}>
             {([
               { key: "import", label: "Importar Excel",  icon: <FiUpload size={13} /> },
               { key: "manual", label: "Cadastro Manual", icon: <FiUserPlus size={13} /> },
@@ -195,7 +195,7 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
                 {t.icon}{t.label}
               </button>
             ))}
-          </div>
+          </div> */}
 
           {tab === "import" && (
             <div className="p-6 flex flex-col gap-4">

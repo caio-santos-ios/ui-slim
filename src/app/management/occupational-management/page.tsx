@@ -195,6 +195,8 @@ export default function OccupationalManagement() {
   const getAll = async (query: string = "") => {
     try {
       setLoading(true);
+      setPagination({ currentPage: 0, data: [], sizePage: 0, totalPages: 0 });
+
       const idLocal = localStorage.getItem("contractorId");
       const id = idLocal ?? "";
 
@@ -210,13 +212,10 @@ export default function OccupationalManagement() {
         `/vitals?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${tabFilter[activeTab]}${query}`,
         configApi(),
       );
-      const result = data.result.filter((x: any) => x.contractorId == id);
-      setPagination({
-        currentPage: result.currentPage,
-        data: result.data ?? [],
-        sizePage: result.pageSize,
-        totalPages: result.totalCount,
-      });
+      const res = data?.result?.data;
+
+      const result = res.filter((x: any) => x.contractorId == id);
+      setPagination({ currentPage: 0, data: result, sizePage: 0, totalPages: 0 });
     } catch (error) {
       resolveResponse(error);
     } finally {
@@ -250,6 +249,7 @@ export default function OccupationalManagement() {
           configApi(),
         ),
       ]);
+      console.log(igs?.data?.result?.data)
       setSummary({
         totalISO: iso?.data?.result?.data.filter(
           (x: any) => x.contractorId == id,
@@ -511,10 +511,6 @@ export default function OccupationalManagement() {
                               placeholder="Ex: RH"
                             />
                           </div>
-                          {/* <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                            <label className="label slim-label-primary">Setor</label>
-                            <input {...register("branch")} type="text" className="input slim-input-primary" placeholder="Ex: Operações" />
-                          </div> */}
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">
                               Função
@@ -526,7 +522,6 @@ export default function OccupationalManagement() {
                               placeholder="Ex: Analista"
                             />
                           </div>
-
                           <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
                             <label className="label slim-label-primary">
                               Data início
@@ -547,7 +542,6 @@ export default function OccupationalManagement() {
                               className="input slim-input-primary"
                             />
                           </div>
-
                           <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
                             <div
                               onClick={onSubmit}

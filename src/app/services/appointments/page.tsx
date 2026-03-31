@@ -23,7 +23,7 @@ import { MdFilterAlt, MdFilterAltOff } from "react-icons/md";
 import { IoSearch, IoClose } from "react-icons/io5";
 
 /* ─────────────────────────────────────────────
-   MultiSelect reutilizável (inline — client-side)
+  MultiSelect reutilizável (inline — client-side)
 ───────────────────────────────────────────── */
 type TMultiSelectProps<T> = {
   label:       string;
@@ -418,21 +418,38 @@ export default function Appointments() {
                           {/* ── Limpar filtros ───────────────────── */}
                           <div className="flex flex-col justify-end col-span-12 sm:col-span-2 mb-2">
                             {isFiltered && (
-                              <button
-                                type="button"
-                                onClick={clearFilters}
-                                className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all"
-                                style={{
-                                  background:   "rgba(239,68,68,.08)",
-                                  color:        "#dc2626",
-                                  border:       "1px solid rgba(239,68,68,.2)",
-                                  cursor:       "pointer",
-                                  height:       "2.25rem",
-                                }}
-                              >
-                                <IoClose size={13} />
-                                Limpar filtros
-                              </button>
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={clearFilters}
+                                  className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all"
+                                  style={{
+                                    background:   "rgba(239,68,68,.08)",
+                                    color:        "#dc2626",
+                                    border:       "1px solid rgba(239,68,68,.2)",
+                                    cursor:       "pointer",
+                                    height:       "2.25rem",
+                                  }}
+                                >
+                                  <IoClose size={13} />
+                                  Limpar filtros
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={getAll}
+                                  className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all"
+                                  style={{
+                                    background:   "rgba(239,68,68,.08)",
+                                    color:        "#dc2626",
+                                    border:       "1px solid rgba(239,68,68,.2)",
+                                    cursor:       "pointer",
+                                    height:       "2.25rem",
+                                  }}
+                                >
+                                  <IoClose size={13} />
+                                  Pesquisa
+                                </button>
+                              </>
                             )}
                           </div>
 

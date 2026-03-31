@@ -24,13 +24,8 @@ import {
   AccordionTrigger,
 } from "@/components/Global/Accordion/AccordionContent";
 import { IoSearch } from "react-icons/io5";
-import {
-  MdFilterAlt,
-  MdFilterAltOff,
-  MdOutlineAttachFile,
-  MdOutlineReceipt,
-} from "react-icons/md";
-import { FiDownload, FiUsers } from "react-icons/fi";
+import { MdFilterAlt, MdFilterAltOff, MdOutlineAttachFile, MdOutlineReceipt } from "react-icons/md";
+import { FiDownload, FiUpload, FiUsers } from "react-icons/fi";
 import { ModalB2BMassMovement } from "@/components/B2BPanel/Modal/ModalMassMovement";
 import { ModalEditRecipient } from "@/components/MasterData/Customer/ModalEditRecipient";
 import {
@@ -44,26 +39,22 @@ import { IconDelete } from "@/components/Global/IconDelete";
 import { TPlan } from "@/types/masterData/plans/plans.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
+import { ModalEditRecipientManager } from "@/components/MasterData/Customer/ModalEditRecipientManager";
+
+const MONTHS: string[] = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 type TTab = "movements" | "invoices" | "attachments";
 
 const movementColumns = [
-  { key: "name", title: "Beneficiário" },
-  { key: "cpf", title: "CPF" },
-  { key: "planName", title: "Programa" },
-  { key: "active", title: "Status" },
-  { key: "role", title: "Função" },
-  { key: "department", title: "Departamento" },
+  { key: "name",          title: "Beneficiário" },
+  { key: "cpf",           title: "CPF" },
+  { key: "planName",      title: "Programa" },
+  { key: "active",        title: "Status" },
+  { key: "function",      title: "Função" },
+  { key: "department",    title: "Departamento" },
   { key: "effectiveDate", title: "Data de Vigência" },
 ];
 
@@ -153,33 +144,14 @@ function ColunasAtivosInativos({
   const hAtivo = Math.round((ativos / total) * maxH);
   const hInativo = Math.round((inativos / total) * maxH);
   return (
-    <div
-      className="rounded-2xl p-5"
-      style={{
-        background: "var(--surface-card)",
-        border: "1px solid var(--surface-border)",
-      }}
-    >
-      <p className="text-sm font-bold text-[var(--primary-color)] mb-4">
-        Beneficiários Ativos / Inativos
-      </p>
-      <div
-        className="flex items-end justify-center gap-10"
-        style={{ height: 200 }}
-      >
+    <div className="rounded-2xl p-5" style={{ background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
+      <p className="text-sm font-bold text---primary-color) mb-4">Beneficiários Ativos / Inativos</p>
+      <div className="flex items-end justify-center gap-10" style={{ height: 200 }}>
         <div className="flex flex-col items-center gap-2">
           <span className="text-lg font-black text-green-700">{ativos}</span>
-          <div
-            className="w-20 rounded-t-xl transition-all duration-700"
-            style={{
-              height: `${hAtivo || 6}px`,
-              background: "linear-gradient(180deg, #22c55e, #16a34a)",
-              minHeight: 6,
-            }}
-          />
-          <span className="text-sm font-semibold text-[var(--text-muted)]">
-            Ativos
-          </span>
+          <div className="w-20 rounded-t-xl transition-all duration-700"
+            style={{ height: `${hAtivo || 6}px`, background: "linear-gradient(180deg, #22c55e, #16a34a)", minHeight: 6 }} />
+          <span className="text-sm font-semibold text-(--text-muted)">Ativos</span>
         </div>
         <div className="flex flex-col items-center gap-2">
           <span className="text-lg font-black text-red-600">{inativos}</span>
@@ -439,14 +411,10 @@ function BarrasMensalFaturas({
       }}
     >
       <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-bold text-[var(--primary-color)]">
-          Evolução de Faturas
-        </p>
+        <p className="text-xs font-bold text-(--primary-color)">Evolução de Faturas</p>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-2.5 rounded-sm bg-green-500" />
-          <span className="text-xs text-[var(--text-muted)]">
-            Valor por fatura
-          </span>
+          <span className="text-xs text-(--text-muted)">Valor por fatura</span>
         </div>
       </div>
       <div className="overflow-x-auto pb-1">
@@ -461,25 +429,11 @@ function BarrasMensalFaturas({
             const h =
               d.total > 0 ? Math.round((d.total / maxTotal) * BAR_H) : 8;
             return (
-              <div
-                key={i}
-                className="flex flex-col items-center gap-1 flex-shrink-0"
-                style={{ width: 56 }}
-              >
-                <span className="text-[9px] font-bold text-green-600">
-                  {d.total > 0 ? fmt(d.total) : ""}
-                </span>
-                <div
-                  className="flex items-end w-full justify-center"
-                  style={{ height: `${BAR_H}px` }}
-                >
-                  <div
-                    className="rounded-t-md transition-all duration-700 w-full"
-                    style={{
-                      height: `${h}px`,
-                      background: "linear-gradient(180deg, #22c55e, #16a34a)",
-                    }}
-                  />
+              <div key={i} className="flex flex-col items-center gap-1 shrink-0" style={{ width: 56 }}>
+                <span className="text-[9px] font-bold text-green-600">{d.total > 0 ? fmt(d.total) : ""}</span>
+                <div className="flex items-end w-full justify-center" style={{ height: `${BAR_H}px` }}>
+                  <div className="rounded-t-md transition-all duration-700 w-full"
+                    style={{ height: `${h}px`, background: "linear-gradient(180deg, #22c55e, #16a34a)" }} />
                 </div>
                 <span className="text-xs text-[var(--text-muted)] text-center leading-tight">
                   {d.month}
@@ -562,15 +516,9 @@ export default function B2BPanel() {
   const [modalMovement, setModalMovement] = useState(false);
   const [modalInvoice, setModalInvoice] = useState(false);
   const [modalAttachment, setModalAttachment] = useState(false);
-  const [chartMovements, setChartMovements] = useState<TChartMovements>({
-    ativos: 0,
-    inativos: 0,
-    porPrograma: [],
-    porMes: [],
-  });
-  const [chartInvoices, setChartInvoices] = useState<TChartInvoices>({
-    porMes: [],
-  });
+  const [chartMovements, setChartMovements]   = useState<TChartMovements>({ ativos: 0, inativos: 0, porPrograma: [], porMes: [] });
+  const [chartInvoices, setChartInvoices]     = useState<TChartInvoices>({ porMes: [] });
+  const [id, setId] = useState<string>("");
 
   const { register, reset, getValues, setValue } = useForm<TFilter>({
     defaultValues: ResetFilter,
@@ -778,14 +726,9 @@ export default function B2BPanel() {
       );
       const rows: any[] = data.result.data ?? [];
       const sheetData = rows.map((r) => ({
-        Beneficiário: r.name ?? "",
-        CPF: r.cpf ?? "",
-        Status: r.active ? "Ativo" : "Inativo",
-        Programa: r.planName ?? "",
-        Função: r.role ?? "",
-        Departamento: r.department ?? "",
-        Sexo: r.gender ?? "",
-        "Data de Nascimento": r.dateOfBirth ? maskDate(r.dateOfBirth) : "",
+        "Beneficiário": r.name ?? "", "CPF": r.cpf ?? "", "Status": r.active ? "Ativo" : "Inativo",
+        "Programa": r.planName ?? "", "Função": r.function ?? "", "Departamento": r.department ?? "",
+        "Sexo": r.gender ?? "", "Data de Nascimento": r.dateOfBirth ? maskDate(r.dateOfBirth) : "",
         "Data de Vigência": r.effectiveDate ? maskDate(r.effectiveDate) : "",
         "E-mail": r.email ?? "",
         Telefone: r.phone ?? "",
@@ -930,15 +873,16 @@ export default function B2BPanel() {
     }
   };
 
-  const openModal = (action: "create" | "edit" = "create", body?: any) => {
-    if (body) {
-      setCurrentBody(body);
-    }
+  const openModal = (action: "create" | "edit" = "create", type: string, body?: any) => {
+    if (body) { setCurrentBody(body); setId(body.id); }
     setTypeModal(action);
     if (activeTab === "movements") {
-      if (action === "edit" && body?.id) {
-        setEditRecipientId(body.id);
+      if(type == "recipient") {
         setModalEditRecipient(true);
+        
+        if (action === "edit" && body?.id) {
+          setEditRecipientId(body.id);
+        }        
       } else {
         setModalMovement(true);
       }
@@ -1035,10 +979,10 @@ export default function B2BPanel() {
         })
         .catch(() => {});
     }
-    loadSummary();
-    loadPlans();
-    loadServiceModules();
-    loadChartMovements();
+    loadSummary(); 
+    loadPlans(); 
+    loadServiceModules(); 
+    loadChartMovements(); 
     loadChartInvoices();
   }, []);
 
@@ -1099,25 +1043,18 @@ export default function B2BPanel() {
                         {exportingExcel ? "Exportando..." : "Exportar Excel"}
                       </button>
                     )}
-                    {activeTab !== "invoices" && (
-                      <button
-                        onClick={() => openModal()}
-                        className="slim-btn slim-btn-primary"
-                      >
-                        Adicionar
+                    {activeTab === "movements" && (
+                      <button onClick={() => openModal("create", "file")} disabled={exportingExcel} className="slim-btn slim-btn-primary-light flex items-center gap-1.5">
+                        <FiUpload size={14} />Importar Excel
                       </button>
+                    )}
+                    {activeTab !== "invoices" && (
+                      <button onClick={() => openModal("create", "recipient")} className="slim-btn slim-btn-primary">Adicionar</button>
                     )}
                   </div>
                 }
               >
-                {/* Tabs */}
-                <div
-                  className="flex gap-1 mb-4 p-1 rounded-xl"
-                  style={{
-                    background: "var(--surface-bg)",
-                    border: "1px solid var(--surface-border)",
-                  }}
-                >
+                <div className="flex gap-1 mb-4 p-1 rounded-xl" style={{ background: "var(--surface-bg)", border: "1px solid var(--surface-border)" }}>
                   {tabs.map((t) => (
                     <button
                       key={t.key}
@@ -1171,7 +1108,6 @@ export default function B2BPanel() {
                   </div>
                 )}
 
-                {/* Painel de Faturas */}
                 {activeTab === "invoices" && (
                   <div className="flex flex-col gap-4 mb-4">
                     <BarrasMensalFaturas data={chartInvoices.porMes} />
@@ -1419,106 +1355,210 @@ export default function B2BPanel() {
                   </div>
                 )}
 
-                {/* Tabela — só para movements e attachments */}
-                {activeTab !== "invoices" && (
+                <div className="grid grid-cols-12 mb-2">
+                  <Accordion className="col-span-12" defaultOpenId="filter">
+                    <AccordionItem id="filter">
+                      <AccordionTrigger
+                        clickHeader={() => setFilterOpened(!filterOpened)}
+                        icon={queryStr ? <MdFilterAlt size={15} /> : <MdFilterAltOff size={15} />}
+                        subtitle=""
+                      >
+                        Filtros
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="grid grid-cols-12 gap-3">
+                          {activeTab === "movements" && (
+                            <>
+                              <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                <label className="label slim-label-primary">Beneficiário</label>
+                                <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome..." />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">CPF</label>
+                                <input {...register("cpf")} type="text" className="input slim-input-primary" placeholder="000.000.000-00" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Sexo</label>
+                                <select {...register("gender")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  <option value="Masculino">Masculino</option>
+                                  <option value="Feminino">Feminino</option>
+                                  <option value="Outros">Outros</option>
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                                <label className="label slim-label-primary">Idade de</label>
+                                <input {...register("ageFrom")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="0" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
+                                <label className="label slim-label-primary">Até</label>
+                                <input {...register("ageTo")} type="number" min="0" max="120" className="input slim-input-primary" placeholder="120" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Status</label>
+                                <select {...register("active")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  <option value="true">Ativo</option>
+                                  <option value="false">Inativo</option>
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                <label className="label slim-label-primary">Programa (Plano)</label>
+                                <select {...register("planId")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  {plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
+                                <label className="label slim-label-primary">Módulo de Serviço</label>
+                                <select {...register("serviceModuleId")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  {serviceModules.map((m: any) => <option key={m.id} value={m.id}>{m.name}</option>)}
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Cadastro — início</label>
+                                <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Cadastro — fim</label>
+                                <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Vigência — início</label>
+                                <input {...register("gte$effectiveDate")} type="date" className="input slim-input-primary" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Vigência — fim</label>
+                                <input {...register("lte$effectiveDate")} type="date" className="input slim-input-primary" />
+                              </div>
+                            </>
+                          )}
+                          {activeTab === "invoices" && (
+                            <>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Mês</label>
+                                <select {...register("referenceMonth")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Ano</label>
+                                <input {...register("referenceYear")} type="number" className="input slim-input-primary" placeholder={String(new Date().getFullYear())} />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Status</label>
+                                <select {...register("status")} className="select slim-select-primary">
+                                  <option value="">Todos</option>
+                                  <option value="Aberta">Aberta</option>
+                                  <option value="Fechada">Fechada</option>
+                                  <option value="Paga">Paga</option>
+                                  <option value="Cancelada">Cancelada</option>
+                                </select>
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Data — início</label>
+                                <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Data — fim</label>
+                                <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                            </>
+                          )}
+                          {activeTab === "attachments" && (
+                            <>
+                              <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
+                                <label className="label slim-label-primary">Busca rápida</label>
+                                <input {...register("search")} type="text" className="input slim-input-primary" placeholder="Nome do anexo..." />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Data — início</label>
+                                <input {...register("gte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                              <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
+                                <label className="label slim-label-primary">Data — fim</label>
+                                <input {...register("lte$createdAt")} type="date" className="input slim-input-primary" />
+                              </div>
+                            </>
+                          )}
+                        {isAdmin && (
+                          <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
+                            <label className="label slim-label-primary">Contratante</label>
+                            <select
+                              value={getValues("contractorId")}
+                              onChange={handleContractorChange}
+                              className="select slim-select-primary"
+                            >
+                              <option value="">Todos</option>
+                              {contractors.map((contractor) => (
+                                <option key={contractor.id} value={contractor.id}>
+                                  {contractor.corporateName}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+                          <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
+                            <div onClick={onSubmit} className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer">
+                              <IoSearch />
+                            </div>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+
+                <DataTable
+                  isAction={activeTab === "attachments" || activeTab === "movements" || (isAdmin && activeTab == "invoices")}
+                  classContainer={`${filterOpened ? "max-h-[calc(100dvh-(var(--height-header)+23rem))]" : "max-h-[calc(100dvh-(var(--height-header)+16rem))]"}`}
+                  columns={columns}>
                   <>
-                    <DataTable
-                      isAction={
-                        activeTab === "attachments" || activeTab === "movements"
-                      }
-                      classContainer={`${filterOpened ? "max-h-[calc(100dvh-(var(--height-header)+23rem))]" : "max-h-[calc(100dvh-(var(--height-header)+16rem))]"}`}
-                      columns={columns}
-                    >
-                      <>
-                        {pagination.data.map((x: any, i: number) => (
-                          <tr className="slim-tr" key={i}>
-                            {columns.map(
-                              (col) =>
-                                col.key.toLowerCase() !== "ações" && (
-                                  <td
-                                    className="px-4 py-3 text-left text-sm font-medium tracking-wider"
-                                    key={col.key}
-                                  >
-                                    {renderCell(x, col)}
-                                  </td>
-                                ),
-                            )}
-                            {activeTab === "movements" && (
-                              <td className="text-center">
-                                <div className="flex justify-center gap-2">
-                                  <IconEdit
-                                    action="edit"
-                                    obj={x}
-                                    getObj={openModal}
-                                  />
-                                </div>
-                              </td>
-                            )}
-                            {activeTab === "attachments" && (
-                              <td className="text-center">
-                                <div className="flex justify-center gap-2">
-                                  <IconDelete
-                                    obj={x}
-                                    getObj={openModalDelete}
-                                  />
-                                  <IconView link={x.uri} />
-                                </div>
-                              </td>
-                            )}
-                          </tr>
+                    {pagination.data.map((x: any, i: number) => (
+                      <tr className="slim-tr" key={i}>
+                        {columns.map((col) => (
+                          col.key.toLowerCase() !== "ações" && (
+                            <td className="px-4 py-3 text-left text-sm font-medium tracking-wider" key={col.key}>
+                              {renderCell(x, col)}
+                            </td>
+                          )
                         ))}
-                      </>
-                    </DataTable>
-                    <NotData />
+                        {activeTab === "movements" && (
+                          <td className="text-center">
+                            <div className="flex justify-center gap-2">
+                              <IconEdit action="edit" obj={x} getObj={openModal} />
+                            </div>
+                          </td>
+                        )}
+                        {activeTab === "invoices" && isAdmin && (
+                          <td className="text-center">
+                            <div className="flex justify-center gap-2">
+                              <IconEdit action="edit" obj={x} getObj={openModal} />
+                            </div>
+                          </td>
+                        )}
+                        {activeTab === "attachments" && (
+                          <td className="text-center">
+                            <div className="flex justify-center gap-2">
+                              <IconDelete obj={x} getObj={openModalDelete} />
+                              <IconView link={x.uri} />
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    ))}
                   </>
-                )}
+                </DataTable>
               </SlimContainer>
             </div>
 
-            <ModalB2BMassMovement
-              isOpen={modalMovement}
-              typeModal={typeModal}
-              body={currentBody}
-              customers={customers}
-              onClose={closeModal}
-              onSuccess={handleSuccess}
-            />
-            <ModalEditRecipient
-              isOpen={modalEditRecipient}
-              recipientId={editRecipientId}
-              onClose={() => {
-                setModalEditRecipient(false);
-                setEditRecipientId("");
-              }}
-              onSuccess={async () => {
-                setModalEditRecipient(false);
-                setEditRecipientId("");
-                await getRecipient(queryStr);
-                await loadChartMovements();
-              }}
-            />
-            <ModalB2BInvoice
-              isOpen={modalInvoice}
-              typeModal={typeModal}
-              body={currentBody}
-              customers={customers}
-              onClose={closeModal}
-              onSuccess={handleSuccess}
-            />
-            <ModalB2BAttachment
-              isOpen={modalAttachment}
-              typeModal={typeModal}
-              body={currentBody}
-              customers={customers}
-              onClose={closeModal}
-              onSuccess={handleSuccess}
-            />
-            <ModalDelete
-              title="Excluir registro"
-              isOpen={modalDelete}
-              setIsOpen={setModalDelete}
-              onClose={() => setModalDelete(false)}
-              onSelectValue={destroy}
+             <ModalEditRecipientManager isOpen={modalEditRecipient} recipientId={editRecipientId} onClose={() => { setModalEditRecipient(false); setEditRecipientId(""); }} onSuccess={async () => { setModalEditRecipient(false); setEditRecipientId(""); await getRecipient(queryStr); await loadChartMovements(); }} /> 
+            <ModalB2BMassMovement isOpen={modalMovement} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
+            <ModalEditRecipient isOpen={modalEditRecipient} recipientId={editRecipientId}
+              onClose={() => { setModalEditRecipient(false); setEditRecipientId(""); }}
+              onSuccess={async () => { setModalEditRecipient(false); setEditRecipientId(""); await getRecipient(queryStr); await loadChartMovements(); }}
             />
           </main>
         </>

@@ -157,7 +157,6 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
         try {
             const { data } = await api.get(`/generic-tables/table/all/${table}`, configApi());
             const result: any[] = data.result?.data || []; 
-            console.log(result)
             setQtdItems(result.length);
             setItems(result.filter(x => !x.deleted));  
             setValue("table", table);
@@ -259,7 +258,7 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
                                     </table>
                                 </div>
 
-                                <DataTable isActive={items.length > 0} columns={columns}>
+                                {/* <DataTable isActive={items.length > 0} columns={columns}>
                                     {items.map((x, i) => (
                                         <tr key={x.id || i} className="border-b"> 
                                             {columns.map((col) => (
@@ -281,7 +280,7 @@ export const ModalGenericTable = ({onReturn}: TProp) => {
                                             </td>         
                                         </tr>
                                     ))}
-                                </DataTable>
+                                </DataTable> */}
 
                                 <ModalDelete 
                                     title='Excluír Item'
