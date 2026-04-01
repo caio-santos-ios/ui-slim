@@ -1,7 +1,7 @@
 export type TMetricsSummary = {
   actionsToday: number;
-  actionsWeek: number;
   actionsMonth: number;
+  actions: number;
   uniqueUsersMonth: number;
 };
 
@@ -16,6 +16,8 @@ export type TTopFeature = {
   feature: string;
   action: string;
   total: number;
+  function: string;
+  screen: string;
 };
 
 export type TTimelineEntry = {

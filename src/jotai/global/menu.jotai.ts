@@ -495,7 +495,7 @@ export const menuRoutinesAtom = atom<TMenuRoutine[]>([
                 code: 'E02',
                 isOpen: true,
                 subMenu: [],
-                description: 'Métricas de Uso',
+                description: 'Métricas do APP',
                 icon: '',
                 link: 'settings/metrics',
                 padding: 'px-4',
