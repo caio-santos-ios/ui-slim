@@ -500,6 +500,12 @@ export const ModalRecipient = ({contractorId, contractorType, planType, onClose,
                         <option value="Dependente">Dependente</option>                       
                     </select>
                 </div>   
+                {watch("bond") === "Dependente" && (
+                    <div className={`flex flex-col mb-2`}>
+                        <label className={`label slim-label-primary`}>CPF do Titular</label>
+                        <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskCPF(e)} {...register("holderCpf")} type="text" className={`input slim-input-primary`} placeholder="Digite o CPF do titular"/>
+                    </div>
+                )}
                 <div className={`flex flex-col col-span-1 mb-2`}>
                     <label className={`label slim-label-primary`}>SubTotal</label>
                     <input onInput={(e: React.ChangeEvent<HTMLInputElement>) => maskMoney(e)} {...register("subTotal")} type="text" className={`input slim-input-primary`} placeholder="Digite"/>

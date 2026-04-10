@@ -32,6 +32,7 @@ export type TRecipient = {
     catDate: any;
     catCID: string;
     bondId: string;
+    holderCpf: string;
 }
 
 export const ResetCustomerRecipient: TRecipient = {
@@ -65,7 +66,8 @@ export const ResetCustomerRecipient: TRecipient = {
     catNumber: "",
     catCID: "",
     catDate: null,
-    bondId: ""
+    bondId: "",
+    holderCpf: "",
 }
 
 export type TRecipientSearch = {        
