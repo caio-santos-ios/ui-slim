@@ -133,7 +133,7 @@ export default function DashboardSST() {
   const loadDashboard = async () => {
     try {
       setLoading(true);
-      const idLocal = localStorage.getItem("id") ?? "";
+      const idLocal = localStorage.getItem("contractorId") ?? "";
 
       const { data } = await api.get(
         `/vitals?deleted=false&contractorId=${idLocal}&chekinISO=true&pageSize=999&pageNumber=1`,
@@ -228,7 +228,7 @@ export default function DashboardSST() {
             <SideMenu />
             <div className="slim-container-customer h-[calc(100dvh-5rem)] w-full overflow-y-auto">
               {
-                permissionRead("4", "D05") || admin && (
+                (permissionRead("4", "D05") || admin) && (
                   <SlimContainer
                     menu="Dashboards"
                     breadcrump="Painel SST/RH — Visão de Gestão"

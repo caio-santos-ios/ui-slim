@@ -208,7 +208,7 @@ export default function DashboardExecutivo() {
   const loadDashboard = async () => {
     try {
       setLoading(true);
-      const idLocal = localStorage.getItem("id") ?? "";
+      const idLocal = localStorage.getItem("contractorId") ?? "";
 
       // Busca vitals dos últimos 6 meses
       const now    = new Date();
@@ -228,8 +228,9 @@ export default function DashboardExecutivo() {
         history.push({ month: m.label, iso: Math.round(calcISO(vitals)) });
       }
 
+      const latestISO = history[history.length - 1]?.iso ?? 0;
       setIsoHistory(history);
-      setCurrentISO(history[history.length - 1]?.iso ?? 0);
+      setCurrentISO(latestISO);
 
       // Econômetro: baseado no risco jurídico evitado (R$ 20.000 padrão planilha)
       // + eficiência estimada (66,67% = R$ 66,67 / colaborador por mês)
@@ -253,10 +254,11 @@ export default function DashboardExecutivo() {
       );
       const alertVitals: any[] = alertData.result?.data ?? [];
       const msgs: string[] = [];
+      const isoClassif = ISO_CLASSIFICATION(latestISO);
       if (alertVitals.some((v: any) => (v.chekinISOPoint ?? 0) >= 9))
         msgs.push("P11 crítico detectado: Realizar auditoria imediata de conformidade e reciclar treinamentos de NR obrigatórios.");
-      if (currentISO < ISO_THRESHOLD)
-        msgs.push(`ISO abaixo do limite de segurança (${currentISO.toFixed(0)} pts): ${GLOBAL_ACTIONS[classification.label]}`);
+      if (latestISO < ISO_THRESHOLD)
+        msgs.push(`ISO abaixo do limite de segurança (${latestISO.toFixed(0)} pts): ${GLOBAL_ACTIONS[isoClassif.label]}`);
       setAlertas(msgs);
 
     } catch (e) {
@@ -277,7 +279,7 @@ export default function DashboardExecutivo() {
             <div className="slim-container-customer h-[calc(100dvh-5rem)] w-full">
               
               {
-                permissionRead("4", "D04") || admin && (
+                (permissionRead("4", "D04") || admin) && (
                   <SlimContainer menu="Dashboards" breadcrump="Visão Executiva — ISO" breadcrumpIcon="MdBarChart">
 
                     {alertas.map((a, i) => (
