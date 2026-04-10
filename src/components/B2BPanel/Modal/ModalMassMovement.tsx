@@ -178,42 +178,9 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
             <span className="text-white font-bold text-sm">Adicionar Beneficiário</span>
             <button onClick={onClose} className="text-white/80 hover:text-white transition-colors"><IoClose size={20} /></button>
           </div>
-          {/* <div className="flex gap-1 p-3 pb-0" style={{ background: "var(--surface-bg)", borderBottom: "1px solid var(--surface-border)" }}>
-            {([
-              { key: "import", label: "Importar Excel",  icon: <FiUpload size={13} /> },
-              { key: "manual", label: "Cadastro Manual", icon: <FiUserPlus size={13} /> },
-            ] as const).map((t) => (
-              <button
-                key={t.key}
-                type="button"
-                onClick={() => setTab(t.key)}
-                className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-t-lg transition-all"
-                style={tab === t.key
-                  ? { background: "var(--surface-card)", color: "var(--primary-color)", borderBottom: "2px solid var(--primary-color)" }
-                  : { color: "var(--text-muted)" }}
-              >
-                {t.icon}{t.label}
-              </button>
-            ))}
-          </div> */}
 
           {tab === "import" && (
             <div className="p-6 flex flex-col gap-4">
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-xs text-[var(--text-muted)]">
-                  Faça o upload de uma planilha Excel no formato correto. Use a planilha modelo para garantir que os dados sejam lidos corretamente.
-                </p>
-                <button
-                  type="button"
-                  onClick={downloadTemplate}
-                  className="flex items-center gap-1.5 text-xs font-semibold whitespace-nowrap px-3 py-1.5 rounded-lg border transition-all"
-                  style={{ color: "var(--primary-color)", borderColor: "var(--primary-color)", background: "transparent" }}
-                >
-                  <FiDownload size={12} />
-                  Baixar modelo
-                </button>
-              </div>
-
               <div className="flex flex-col gap-1">
                 <label className="label slim-label-primary">Arquivo Excel *</label>
                 <input id="attachment-import" type="file" accept=".xlsx,.xls" className="input slim-input-primary" />
@@ -284,10 +251,10 @@ export const ModalB2BMassMovement = ({ isOpen, typeModal, body, customers, onClo
                 </>
               )}
               <div className="flex flex-col col-span-12 sm:col-span-4">
-  <label className="label slim-label-primary">Data de Vigência *</label>
-  <input {...register("effectiveDate", { required: true })} type="date" className="input slim-input-primary" />
-  {errors.effectiveDate && <span className="text-xs text-red-500 mt-1">Data de vigência é obrigatória</span>}
-</div>
+                <label className="label slim-label-primary">Data de Vigência *</label>
+                <input {...register("effectiveDate", { required: true })} type="date" className="input slim-input-primary" />
+                {errors.effectiveDate && <span className="text-xs text-red-500 mt-1">Data de vigência é obrigatória</span>}
+              </div>
               <div className="flex flex-col col-span-12">
                 <label className="label slim-label-primary">Programa (Plano)</label>
                 <select {...register("planId")} className="select slim-select-primary">

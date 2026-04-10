@@ -12,8 +12,6 @@ import {
 } from "react-icons/md";
 import { FiUsers, FiDollarSign, FiClock } from "react-icons/fi";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 type TInvoiceItem = {
   recipientId: string;
   recipientName: string;
@@ -126,9 +124,7 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
             const raw = c.effectiveDate || c.createdAt;
             if (raw) vigStart = new Date(raw);
           }
-        } catch {
-          /* silencioso */
-        }
+        } catch {}
       } else {
         setContractorName("");
       }
@@ -237,7 +233,6 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
 
       setInvoices([...built].reverse());
 
-      // ── 7. Sincroniza com backend ─────────────────────────────────────────
       await syncWithBackend(built, cId, savedKeys, now);
     } catch (err) {
       console.error("[InvoicePanel] Erro ao construir faturas:", err);
@@ -330,7 +325,7 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
       }
     } finally {
       setSyncing(false);
-       onSyncComplete?.(built.length);
+      onSyncComplete?.(built.length);
     }
   };
 
@@ -347,7 +342,12 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Header */}
+      {/* {invoices.map((d, i) => {
+        console.log(d)
+
+        return <div></div>
+      })} */}
+      
       <div className="flex items-center justify-between">
         <div>
           <h2
@@ -423,7 +423,7 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
         </div>
 
         <div
-          className="rounded-xl p-4 flex flex-col gap-1"
+          className="rounded-xl p-4 hidden flex-col gap-1"
           style={{
             background: "var(--surface-card)",
             border: "1px solid var(--surface-border)",
@@ -455,7 +455,7 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
         </div>
 
         <div
-          className="rounded-xl p-4 flex flex-col gap-1"
+          className="rounded-xl p-4 hidden flex-col gap-1"
           style={{
             background: "var(--surface-card)",
             border: "1px solid var(--surface-border)",

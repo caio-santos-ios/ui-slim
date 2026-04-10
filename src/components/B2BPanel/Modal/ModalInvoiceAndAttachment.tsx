@@ -246,6 +246,7 @@ export const ModalB2BAttachment = ({ isOpen, typeModal, body, customers, onClose
       const payload = { ...values };
       const formBody = new FormData();
       const contractorId = localStorage.getItem("contractorId");
+      console.log(contractorId)
       formBody.append("parent", "customer-manager");
       formBody.append("description", payload.name);
       if (contractorId) formBody.append("parentId", contractorId);

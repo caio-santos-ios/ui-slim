@@ -12,9 +12,6 @@ import { Autorization } from "@/components/Global/Autorization";
 import { Header } from "@/components/Global/Header";
 import { SideMenu } from "@/components/Global/SideMenu";
 import { SlimContainer } from "@/components/Global/SlimContainer";
-import DataTable from "@/components/Global/Table";
-import { NotData } from "@/components/Global/NotData";
-import { ModalDelete } from "@/components/Global/ModalDelete";
 import { maskDate } from "@/utils/mask.util";
 import { convertNumberMoney } from "@/utils/convert.util";
 import {
@@ -28,19 +25,18 @@ import { MdFilterAlt, MdFilterAltOff, MdOutlineAttachFile, MdOutlineReceipt } fr
 import { FiDownload, FiUpload, FiUsers } from "react-icons/fi";
 import { ModalB2BMassMovement } from "@/components/B2BPanel/Modal/ModalMassMovement";
 import { ModalEditRecipient } from "@/components/MasterData/Customer/ModalEditRecipient";
-import {
-  ModalB2BAttachment,
-  ModalB2BInvoice,
-} from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
 import { InvoicePanel } from "@/app/management/b2b-panel/InvoicePanel";
 import { IconView } from "@/components/Global/IconView";
-import { IconEdit } from "@/components/Global/IconEdit";
-import { IconDelete } from "@/components/Global/IconDelete";
 import { TPlan } from "@/types/masterData/plans/plans.type";
 import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules.type";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
 import { ModalEditRecipientManager } from "@/components/MasterData/Customer/ModalEditRecipientManager";
+import { ModalB2BAttachment } from "@/components/B2BPanel/Modal/ModalInvoiceAndAttachment";
+import DataTable from "@/components/Global/Table";
+import { IconEdit } from "@/components/Global/IconEdit";
+import { IconDelete } from "@/components/Global/IconDelete";
+import { ModalDelete } from "@/components/Global/ModalDelete";
 
 const MONTHS: string[] = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
@@ -128,10 +124,6 @@ const StatusBadge = ({ value }: { value: any }) => {
   );
 };
 
-// ═══════════════════════════════════════════════════════════════════════════
-// GRÁFICOS
-// ═══════════════════════════════════════════════════════════════════════════
-
 function ColunasAtivosInativos({
   ativos,
   inativos,
@@ -163,13 +155,13 @@ function ColunasAtivosInativos({
               minHeight: 6,
             }}
           />
-          <span className="text-sm font-semibold text-[var(--text-muted)]">
+          <span className="text-sm font-semibold text-(--text-muted)">
             Inativos
           </span>
         </div>
       </div>
       <div className="flex justify-center gap-6 mt-3">
-        <span className="text-sm text-[var(--text-muted)]">
+        <span className="text-sm text-(--text-muted)">
           Total: <strong>{total}</strong>
         </span>
         <span className="text-sm font-semibold text-green-600">
@@ -268,7 +260,7 @@ function PizzaProgramas({
                 className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                 style={{ background: s.color }}
               />
-              <span className="text-xs text-[var(--text-muted)] truncate flex-1">
+              <span className="text-xs text-(--text-muted) truncate flex-1">
                 {s.label}
               </span>
               <span
@@ -280,7 +272,7 @@ function PizzaProgramas({
             </div>
           ))}
           {data.length === 0 && (
-            <span className="text-xs text-[var(--text-muted)]">Sem dados</span>
+            <span className="text-xs text-(--text-muted)">Sem dados</span>
           )}
         </div>
       </div>
@@ -357,14 +349,14 @@ function BarrasMensalBeneficiarios({
           Evolução Mensal de Beneficiários
         </p>
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+          <span className="flex items-center gap-1.5 text-xs text-(--text-muted)">
             <span
               className="inline-block w-3 h-3 rounded-sm"
               style={{ background: "#1d4e8f" }}
             />{" "}
             Ativos
           </span>
-          <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+          <span className="flex items-center gap-1.5 text-xs text-(--text-muted)">
             <span
               className="inline-block w-3 h-3 rounded-sm"
               style={{ background: "#dc2626" }}
@@ -404,7 +396,7 @@ function BarrasMensalFaturas({
     });
   return (
     <div
-      className="rounded-2xl p-4"
+      className="rounded-2xl p-4 hidden"
       style={{
         background: "var(--surface-card)",
         border: "1px solid var(--surface-border)",
@@ -426,8 +418,8 @@ function BarrasMensalFaturas({
           }}
         >
           {data.map((d, i) => {
-            const h =
-              d.total > 0 ? Math.round((d.total / maxTotal) * BAR_H) : 8;
+            const h = d.total > 0 ? Math.round((d.total / maxTotal) * BAR_H) : 8;
+
             return (
               <div key={i} className="flex flex-col items-center gap-1 shrink-0" style={{ width: 56 }}>
                 <span className="text-[9px] font-bold text-green-600">{d.total > 0 ? fmt(d.total) : ""}</span>
@@ -435,7 +427,7 @@ function BarrasMensalFaturas({
                   <div className="rounded-t-md transition-all duration-700 w-full"
                     style={{ height: `${h}px`, background: "linear-gradient(180deg, #22c55e, #16a34a)" }} />
                 </div>
-                <span className="text-xs text-[var(--text-muted)] text-center leading-tight">
+                <span className="text-xs text-(--text-muted) text-center leading-tight">
                   {d.month}
                   <br />
                   <span className="text-[10px]">{d.year}</span>
@@ -490,7 +482,7 @@ export default function B2BPanel() {
   const [, setLoading] = useAtom(loadingAtom);
   const [userLogger] = useAtom(userLoggerAtom);
   const [pagination, setPagination] = useAtom(paginationAtom);
-  const [activeTab, setActiveTab] = useState<TTab>("movements");
+  const [activeTab, setActiveTab] = useState<any>("movements");
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
   const [currentBody, setCurrentBody] = useState<any>({});
   const [modalDelete, setModalDelete] = useState<boolean>(false);
@@ -524,7 +516,7 @@ export default function B2BPanel() {
     defaultValues: ResetFilter,
   });
 
-  const uriMap: Record<TTab, string> = {
+  const uriMap: Record<any, string> = {
     movements: "b2b-mass-movements",
     invoices: "b2b-invoices",
     attachments: "attachments",
@@ -536,13 +528,14 @@ export default function B2BPanel() {
       const uri = uriMap[activeTab];
       if (uri === "attachments") {
         const cId = localStorage.getItem("contractorId") ?? "";
-        if (cId) query += `&parentId=${cId}&parent=customer-manager`;
+        if (cId) query += `&parentId=${cId}`;
       }
       const { data } = await api.get(
         `/${uri}?deleted=false&orderBy=createdAt&sort=desc&pageSize=10&pageNumber=1${query}`,
         configApi(),
       );
       const result = data.result;
+      
       setPagination({
         currentPage: result.currentPage,
         data: result.data,
@@ -734,6 +727,7 @@ export default function B2BPanel() {
         Telefone: r.phone ?? "",
         WhatsApp: r.whatsapp ?? "",
         Vínculo: r.bond ?? "",
+        'CPF Titular': r.holderCpf,
         CEP: r?.address?.zipCode ?? "",
         Número: r?.address?.number ?? "",
         Rua: r?.address?.street ?? "",
@@ -887,6 +881,7 @@ export default function B2BPanel() {
         setModalMovement(true);
       }
     }
+    console.log(activeTab)
     if (activeTab === "attachments") setModalAttachment(true);
   };
 
@@ -1105,246 +1100,6 @@ export default function B2BPanel() {
                     <BarrasMensalBeneficiarios data={chartMovements.porMes} />
                   </div>
                 )}
-                {/* Filtros — só para movements e attachments */}
-                {/* {activeTab !== "invoices" && (
-                  <div className="grid grid-cols-12 mb-2">
-                    <Accordion className="col-span-12" defaultOpenId="filter">
-                      <AccordionItem id="filter">
-                        <AccordionTrigger
-                          clickHeader={() => setFilterOpened(!filterOpened)}
-                          icon={
-                            queryStr ? (
-                              <MdFilterAlt size={15} />
-                            ) : (
-                              <MdFilterAltOff size={15} />
-                            )
-                          }
-                          subtitle=""
-                        >
-                          Filtros
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="grid grid-cols-12 gap-3">
-                            {activeTab === "movements" && (
-                              <>
-                                <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Beneficiário
-                                  </label>
-                                  <input
-                                    {...register("search")}
-                                    type="text"
-                                    className="input slim-input-primary"
-                                    placeholder="Nome..."
-                                  />
-                                </div>
-                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                  <label className="label slim-label-primary">
-                                    CPF
-                                  </label>
-                                  <input
-                                    {...register("cpf")}
-                                    type="text"
-                                    className="input slim-input-primary"
-                                    placeholder="000.000.000-00"
-                                  />
-                                </div>
-                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Sexo
-                                  </label>
-                                  <select
-                                    {...register("gender")}
-                                    className="select slim-select-primary"
-                                  >
-                                    <option value="">Todos</option>
-                                    <option value="Masculino">Masculino</option>
-                                    <option value="Feminino">Feminino</option>
-                                    <option value="Outros">Outros</option>
-                                  </select>
-                                </div>
-                                <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Idade de
-                                  </label>
-                                  <input
-                                    {...register("ageFrom")}
-                                    type="number"
-                                    min="0"
-                                    max="120"
-                                    className="input slim-input-primary"
-                                    placeholder="0"
-                                  />
-                                </div>
-                                <div className="flex flex-col col-span-6 sm:col-span-1 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Até
-                                  </label>
-                                  <input
-                                    {...register("ageTo")}
-                                    type="number"
-                                    min="0"
-                                    max="120"
-                                    className="input slim-input-primary"
-                                    placeholder="120"
-                                  />
-                                </div>
-                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Status
-                                  </label>
-                                  <select
-                                    {...register("active")}
-                                    className="select slim-select-primary"
-                                  >
-                                    <option value="">Todos</option>
-                                    <option value="true">Ativo</option>
-                                    <option value="false">Inativo</option>
-                                  </select>
-                                </div>
-                                <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Programa (Plano)
-                                  </label>
-                                  <select
-                                    {...register("planId")}
-                                    className="select slim-select-primary"
-                                  >
-                                    <option value="">Todos</option>
-                                    {plans.map((p) => (
-                                      <option key={p.id} value={p.id}>
-                                        {p.name}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                                <div className="flex flex-col col-span-12 sm:col-span-3 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Módulo de Serviço
-                                  </label>
-                                  <select
-                                    {...register("serviceModuleId")}
-                                    className="select slim-select-primary"
-                                  >
-                                    <option value="">Todos</option>
-                                    {serviceModules.map((m: any) => (
-                                      <option key={m.id} value={m.id}>
-                                        {m.name}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Cadastro — início
-                                  </label>
-                                  <input
-                                    {...register("gte$createdAt")}
-                                    type="date"
-                                    className="input slim-input-primary"
-                                  />
-                                </div>
-                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Cadastro — fim
-                                  </label>
-                                  <input
-                                    {...register("lte$createdAt")}
-                                    type="date"
-                                    className="input slim-input-primary"
-                                  />
-                                </div>
-                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Vigência — início
-                                  </label>
-                                  <input
-                                    {...register("gte$effectiveDate")}
-                                    type="date"
-                                    className="input slim-input-primary"
-                                  />
-                                </div>
-                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Vigência — fim
-                                  </label>
-                                  <input
-                                    {...register("lte$effectiveDate")}
-                                    type="date"
-                                    className="input slim-input-primary"
-                                  />
-                                </div>
-                              </>
-                            )}
-                            {activeTab === "attachments" && (
-                              <>
-                                <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Busca rápida
-                                  </label>
-                                  <input
-                                    {...register("search")}
-                                    type="text"
-                                    className="input slim-input-primary"
-                                    placeholder="Nome do anexo..."
-                                  />
-                                </div>
-                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Data — início
-                                  </label>
-                                  <input
-                                    {...register("gte$createdAt")}
-                                    type="date"
-                                    className="input slim-input-primary"
-                                  />
-                                </div>
-                                <div className="flex flex-col col-span-6 sm:col-span-2 mb-2">
-                                  <label className="label slim-label-primary">
-                                    Data — fim
-                                  </label>
-                                  <input
-                                    {...register("lte$createdAt")}
-                                    type="date"
-                                    className="input slim-input-primary"
-                                  />
-                                </div>
-                              </>
-                            )}
-                            {isAdmin && (
-                              <div className="flex flex-col col-span-12 sm:col-span-4 mb-2">
-                                <label className="label slim-label-primary">
-                                  Contratante
-                                </label>
-                                <select
-                                  value={selectedContractorId}
-                                  onChange={handleContractorChange}
-                                  className="select slim-select-primary"
-                                >
-                                  <option value="">Todos</option>
-                                  {contractors.map((c) => (
-                                    <option key={c.id} value={c.id}>
-                                      {c.corporateName}
-                                    </option>
-                                  ))}
-                                </select>
-                              </div>
-                            )}
-                            <div className="flex flex-col justify-end col-span-12 sm:col-span-1 mb-2">
-                              <div
-                                onClick={onSubmit}
-                                className="slim-bg-primary p-2 w-10 flex justify-center items-center rounded-lg cursor-pointer"
-                              >
-                                <IoSearch />
-                              </div>
-                            </div>
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
-                  </div>
-                )} */}
-
                 <div className="grid grid-cols-12 mb-2">
                   <Accordion className="col-span-12" defaultOpenId="filter">
                     <AccordionItem id="filter">
@@ -1504,18 +1259,53 @@ export default function B2BPanel() {
                 {activeTab === "invoices" && (
                   <div className="flex flex-col gap-4 mb-4">
                     <BarrasMensalFaturas data={chartInvoices.porMes} />
-                   <InvoicePanel contractorId={selectedContractorId} onSyncComplete={(count) => setSummary(prev => ({ ...prev, invoices: count }))} />
+                    <InvoicePanel contractorId={selectedContractorId} onSyncComplete={(count) => setSummary(prev => ({ ...prev, invoices: count }))} />
                   </div>
                 )}
+
+                {
+                  (activeTab == "attachments" || activeTab == "movements") && (
+                    <DataTable
+                      isAction={activeTab == "attachments"}
+                      classContainer={`${filterOpened ? "max-h-[calc(100dvh-(var(--height-header)+23rem))]" : "max-h-[calc(100dvh-(var(--height-header)+16rem))]"}`}
+                      columns={columns}>
+                      <>
+                        {pagination.data.map((x: any, i: number) => (
+                          <tr className="slim-tr" key={i}>
+                            {columns.map((col) => (
+                              col.key.toLowerCase() !== "ações" && (
+                                <td className="px-4 py-3 text-left text-sm font-medium tracking-wider" key={col.key}>
+                                  {renderCell(x, col)}
+                                </td>
+                              )
+                            ))}
+                            {
+                              activeTab != "movements" && (
+                                <td className="text-center">
+                                  <div className="flex justify-center gap-2">
+                                    <IconDelete obj={x} getObj={openModalDelete} />
+                                    <IconView link={x.uri} />
+                                  </div>
+                                </td>
+                              )
+                            }
+                          </tr>
+                        ))}
+                      </>
+                    </DataTable>
+                  )
+                }
               </SlimContainer>
             </div>
 
-             <ModalEditRecipientManager isOpen={modalEditRecipient} recipientId={editRecipientId} onClose={() => { setModalEditRecipient(false); setEditRecipientId(""); }} onSuccess={async () => { setModalEditRecipient(false); setEditRecipientId(""); await getRecipient(queryStr); await loadChartMovements(); }} /> 
+            <ModalEditRecipientManager isOpen={modalEditRecipient} recipientId={editRecipientId} onClose={() => { setModalEditRecipient(false); setEditRecipientId(""); }} onSuccess={async () => { setModalEditRecipient(false); setEditRecipientId(""); await getRecipient(queryStr); await loadChartMovements(); }} /> 
             <ModalB2BMassMovement isOpen={modalMovement} typeModal={typeModal} body={currentBody} customers={customers} onClose={closeModal} onSuccess={handleSuccess} />
             <ModalEditRecipient isOpen={modalEditRecipient} recipientId={editRecipientId}
               onClose={() => { setModalEditRecipient(false); setEditRecipientId(""); }}
               onSuccess={async () => { setModalEditRecipient(false); setEditRecipientId(""); await getRecipient(queryStr); await loadChartMovements(); }}
             />
+            <ModalB2BAttachment isOpen={modalAttachment} onClose={() => setModalAttachment(false)} body={{}} onSuccess={() => setModalAttachment(false)} typeModal="create" customers={[]} />
+            <ModalDelete isOpen={modalDelete} onClose={() => setModalDelete(false)} title="Exclusão" description="Deseja excluir o registro?" body={{}} onSelectValue={destroy} setIsOpen={() => {}}/>
           </main>
         </>
       ) : (
