@@ -2,7 +2,6 @@
 
 import "./style.css";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { TAccountsReceivable } from "@/types/accountsReceivable/accountsReceivable.type";
 import { Button } from "@/components/Global/Button";
 import { configApi, resolveResponse } from "@/service/config.service";
 import { api } from "@/service/api.service";
@@ -12,7 +11,6 @@ import { modalGenericTableAtom, tableGenericTableAtom } from "@/jotai/global/mod
 import { useAtom } from "jotai";
 import { TGenericTable } from "@/types/masterData/genericTable/genericTable.type";
 import { FaCirclePlus } from "react-icons/fa6";
-import { ModalGenericTable } from "@/components/Global/ModalGenericTable";
 import { IoClose } from "react-icons/io5";
 
 type TProp = {

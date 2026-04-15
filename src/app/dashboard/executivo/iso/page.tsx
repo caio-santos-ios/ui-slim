@@ -220,8 +220,23 @@ export default function DashboardExecutivo() {
       const history: { month: string; iso: number }[] = [];
 
       for (const m of months) {
+        const monthIndex = m.month - 1;
+
+        const start = new Date(m.year, monthIndex, 1);
+        const end = new Date(m.year, monthIndex + 1, 0);
+
+        const formatDate = (date: Date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+
+        const startDate = formatDate(start);
+        const endDate = formatDate(end);
+        
         const { data } = await api.get(
-          `/vitals?deleted=false&contractorId=${idLocal}&chekinISO=true&referenceMonth=${m.month}&referenceYear=${m.year}&pageSize=999&pageNumber=1`,
+          `/vitals?deleted=false&contractorId=${idLocal}&chekinISO=true&gte$createdAt=${startDate}&lte$createdAt=${endDate}&pageSize=999&pageNumber=1`,
           configApi()
         );
         const vitals = data.result?.data ?? [];

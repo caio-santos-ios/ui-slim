@@ -24,7 +24,7 @@ export const Header = () => {
     const [dropOpen, setDropOpen] = useState(false);
     const [role, setRole] = useAtom(roleUserAtom);
     const [subTitle, setSubTitle] = useState("Administrador");
-    const [urlDashboard, setUrlDashboard] = useState("/erp/dashboard/executivo")
+    const [urlDashboard, setUrlDashboard] = useState("/erp/dashboard/executivo/iso")
     const [isAdmin, setIsAdmin] = useState(false);
 
     const sincLogged = async () => {

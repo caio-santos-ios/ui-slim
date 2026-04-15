@@ -23,16 +23,16 @@ import {
 } from "@/components/Global/Accordion/AccordionContent";
 import { IoSearch } from "react-icons/io5";
 import { MdFilterAlt, MdFilterAltOff } from "react-icons/md";
-import { TbHeartbeat, TbShieldCheck } from "react-icons/tb";
+import { TbHeartbeat } from "react-icons/tb";
 import { BsBarChartLine } from "react-icons/bs";
 import { FiCheckSquare, FiMoon, FiActivity } from "react-icons/fi";
 
 type TTab = "iso" | "igs" | "ign" | "ies" | "ipv";
 
 const isoColumns = [
-  { key: "beneficiaryName", title: "Beneficiário" },
+  // { key: "beneficiaryName", title: "Beneficiário" },
+  { key: "branch", title: "Filial" },
   { key: "department", title: "Departamento" },
-  { key: "branch", title: "Setor" },
   { key: "function", title: "Função" },
   { key: "chekinISO", title: "Check-in ISO" },
   { key: "chekinISOQuestion", title: "Pergunta" },
@@ -41,11 +41,11 @@ const isoColumns = [
 ];
 
 const igsColumns = [
-  { key: "beneficiaryName", title: "Beneficiário" },
+  // { key: "beneficiaryName", title: "Beneficiário" },
+  { key: "branch", title: "Filial" },
   { key: "department", title: "Departamento" },
-  { key: "branch", title: "Setor" },
   { key: "function", title: "Função" },
-  { key: "chekinIGS", title: "Check-in IGS" },
+  // { key: "chekinIGS", title: "Check-in IGS" },
   { key: "chekinIGSPoint", title: "Pontos IGS" },
   { key: "metric.igs", title: "Índice IGS" },
   { key: "sleepHours", title: "Horas de Sono" },
@@ -55,11 +55,11 @@ const igsColumns = [
 ];
 
 const ignColumns = [
-  { key: "beneficiaryName", title: "Beneficiário" },
+  // { key: "beneficiaryName", title: "Beneficiário" },
+  { key: "branch", title: "Filial" },
   { key: "department", title: "Departamento" },
-  { key: "branch", title: "Setor" },
   { key: "function", title: "Função" },
-  { key: "chekinIGN", title: "Check-in IGN" },
+  // { key: "chekinIGN", title: "Check-in IGN" },
   { key: "chekinIGNPoint", title: "Pontos IGN" },
   { key: "metric.ign", title: "Índice IGN" },
   { key: "waterAmount", title: "Água (L)" },
@@ -69,11 +69,11 @@ const ignColumns = [
 ];
 
 const iesColumns = [
-  { key: "beneficiaryName", title: "Beneficiário" },
+  // { key: "beneficiaryName", title: "Beneficiário" },
+  { key: "branch", title: "Filial" },
   { key: "department", title: "Departamento" },
-  { key: "branch", title: "Setor" },
   { key: "function", title: "Função" },
-  { key: "chekinIES", title: "Check-in IES" },
+  // { key: "chekinIES", title: "Check-in IES" },
   { key: "chekinIESPoint", title: "Pontos IES" },
   { key: "metric.ies", title: "Índice IES" },
   { key: "dass1", title: "Perspectiva" },
@@ -84,9 +84,9 @@ const iesColumns = [
 ];
 
 const ipvColumns = [
-  { key: "beneficiaryName", title: "Beneficiário" },
+  // { key: "beneficiaryName", title: "Beneficiário" },
+  { key: "branch", title: "Filial" },
   { key: "department", title: "Departamento" },
-  { key: "branch", title: "Setor" },
   { key: "function", title: "Função" },
   { key: "metric.igs", title: "IGS" },
   { key: "metric.ign", title: "IGN" },
@@ -249,7 +249,7 @@ export default function OccupationalManagement() {
           configApi(),
         ),
       ]);
-      console.log(igs?.data?.result?.data)
+
       setSummary({
         totalISO: iso?.data?.result?.data.filter(
           (x: any) => x.contractorId == id,
@@ -298,15 +298,27 @@ export default function OccupationalManagement() {
   }, [activeTab]);
 
   const renderCell = (x: any, col: { key: string }) => {
-    // acesso a campos nested (metric.igs, metric.ipv etc.)
-    const getValue = (obj: any, path: string) =>
-      path.split(".").reduce((o, k) => (o ? o[k] : undefined), obj);
+    const getValue = (obj: any, path: string) => {
+      if (!obj || !path) return undefined;
+
+      return path
+        .split(".")
+        .map(key => key.trim()) // Remove espaços acidentais
+        .reduce((acc, key) => {
+          // Verifica se o acumulador atual é um objeto e contém a chave
+          if (acc !== null && typeof acc === 'object' && key in acc) {
+            return acc[key];
+          }
+          return undefined;
+        }, obj);
+    };
 
     const v = getValue(x, col.key);
 
     if (col.key === "createdAt") return maskDate(v);
-    if (["chekinIGS", "chekinIGN", "chekinIES", "chekinISO"].includes(col.key))
+    if (["chekinIGS", "chekinIGN", "chekinIES", "chekinISO"].includes(col.key)) {
       return <CheckBadge value={Boolean(v)} />;
+    }
     if (
       [
         "chekinIGSPoint",
@@ -314,12 +326,20 @@ export default function OccupationalManagement() {
         "chekinIESPoint",
         "chekinISOPoint",
       ].includes(col.key)
-    )
+    ) {
       return <PointBadge value={Number(v ?? 0)} />;
+    }
     if (
       ["metric.igs", "metric.ign", "metric.ies", "metric.ipv"].includes(col.key)
-    )
-      return <ScoreBadge value={Number(v ?? 0)} />;
+    ) {
+      let value = 0;
+
+      if(col.key == "metric.igs") value = x.metrics.IGS;
+      if(col.key == "metric.ign") value = x.metrics.IGN;
+      if(col.key == "metric.ies") value = x.metrics.IES;
+
+      return <ScoreBadge value={Number(value ?? 0)} />;
+    }
     if (col.key === "sleepQuality") return v ? `${v}/5` : "—";
     if (col.key === "waterAmount") return v ? `${v}L` : "—";
     if (["dass1", "dass2", "dass3", "dass7"].includes(col.key))

@@ -32,10 +32,10 @@ import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules
 /* ─── Props ─────────────────────────────────── */
 type TProp = {
     isOpen: boolean;
-    recipientId: string;           // ID do beneficiário a editar
-    contractorType?: string;       // "B2B" | "B2C"
+    recipientId: string;         
+    contractorType?: string;   
     onClose: () => void;
-    onSuccess: () => void;         // callback após salvar com sucesso
+    onSuccess: () => void;  
 };
 
 /* ─── Abas ──────────────────────────────────── */
@@ -50,7 +50,7 @@ const TABS: { key: TTab; label: string; icon: any }[] = [
 /* ─────────────────────────────────────────────
     Componente principal
 ───────────────────────────────────────────── */
-export const ModalEditRecipient = ({
+export const ModalEditRecipientManagerPanel = ({
     isOpen,
     recipientId,
     contractorType = "",
@@ -111,19 +111,19 @@ export const ModalEditRecipient = ({
             if (!body.dateOfBirth)  body.dateOfBirth   = null;
             if (body.effectiveDate) body.effectiveDate = new Date(body.effectiveDate);
             if (!body.effectiveDate) body.effectiveDate = null;
+            if (!body.catDate) delete body.catDate;
+            if (body.catDate) body.catDate = new Date(body.catDate);
 
             body.subTotal            = convertMoneyToNumber(body.subTotal);
             body.discount            = convertMoneyToNumber(body.discount);
             body.discountPercentage  = body.discountPercentage || 0;
             body.total               = convertMoneyToNumber(body.total);
             
-            if(recipientId) {
-                const { status, data } = await api.put(`/customer-recipients`, body, configApi());
-                resolveResponse({ status, ...data });
-            } else {
-                const { status, data } = await api.post(`/customer-recipients`, body, configApi());
-                resolveResponse({ status, ...data });
-            }
+            const contractorId = localStorage.getItem("contractorId");
+            console.log(contractorId)
+            const { status, data } = await api.post(`/customer-recipients/invoice`, {...body, contractorId: contractorId ? contractorId : ""}, configApi());
+            resolveResponse({ status, ...data });
+            
             onSuccess();
             handleClose();
         } catch (e) {

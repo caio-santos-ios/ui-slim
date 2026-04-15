@@ -11,6 +11,9 @@ import {
   MdCalendarMonth,
 } from "react-icons/md";
 import { FiUsers, FiDollarSign, FiClock } from "react-icons/fi";
+import { ModalRecipient } from "@/components/MasterData/Customer/ModalRecipient";
+import { ModalEditRecipient } from "@/components/MasterData/Customer/ModalEditRecipient";
+import { ModalEditRecipientManagerPanel } from "@/components/B2BPanel/Modal/ModalEditRecipientManagerPanel";
 
 type TInvoiceItem = {
   recipientId: string;
@@ -72,6 +75,7 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
   const [syncing, setSyncing] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [contractorName, setContractorName] = useState<string>("");
+  const [modalEditRecipient, setModalEditRecipient] = useState(false);
 
   const isSyncing = useRef(false);
 
@@ -535,6 +539,8 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
             inv.referenceMonth === now.getMonth() + 1 &&
             inv.referenceYear === now.getFullYear();
 
+          const isPrevious = inv.referenceMonth === now.getMonth() && inv.referenceYear === now.getFullYear();
+
           return (
             <div
               key={key}
@@ -580,8 +586,8 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
                     </span>
                     {isCurrent && (
                       <span
-                        className="text-xs px-1.5 py-0.5 rounded-full font-semibold"
-                        style={{
+                      className="text-xs px-1.5 py-0.5 rounded-full font-semibold"
+                      style={{
                           background: "rgba(34,197,94,.15)",
                           color: "#16a34a",
                           border: "1px solid rgba(34,197,94,.3)",
@@ -590,6 +596,14 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
                         Mês atual
                       </span>
                     )}
+                    {
+                      isPrevious && (
+                        <button onClick={() => {
+                          console.log("teste")
+                          setModalEditRecipient(true)
+                        }} className="slim-btn slim-btn-primary">Adicionar Beneficiário</button>
+                      )
+                    }
                   </div>
                   <div className="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span
@@ -777,6 +791,8 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
             </div>
           );
         })}
+
+      <ModalEditRecipientManagerPanel isOpen={modalEditRecipient} onClose={() => {}} onSuccess={() => {}} recipientId="" />
     </div>
   );
 }

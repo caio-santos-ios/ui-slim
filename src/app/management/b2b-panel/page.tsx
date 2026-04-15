@@ -881,7 +881,7 @@ export default function B2BPanel() {
         setModalMovement(true);
       }
     }
-    console.log(activeTab)
+    
     if (activeTab === "attachments") setModalAttachment(true);
   };
 
