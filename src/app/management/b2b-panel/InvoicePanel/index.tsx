@@ -792,7 +792,10 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
           );
         })}
 
-      <ModalEditRecipientManagerPanel isOpen={modalEditRecipient} onClose={() => {}} onSuccess={() => {}} recipientId="" />
+      <ModalEditRecipientManagerPanel isOpen={modalEditRecipient} onClose={() => setModalEditRecipient(false)} onSuccess={async () => {
+        await buildInvoices();
+        setModalEditRecipient(false);
+      }} recipientId="" />
     </div>
   );
 }
