@@ -32,10 +32,10 @@ import { TServiceModule } from "@/types/masterData/serviceModules/serviceModules
 /* ─── Props ─────────────────────────────────── */
 type TProp = {
     isOpen: boolean;
-    recipientId: string;           // ID do beneficiário a editar
-    contractorType?: string;       // "B2B" | "B2C"
+    recipientId: string;           
+    contractorType?: "B2C" | "B2B";     
     onClose: () => void;
-    onSuccess: () => void;         // callback após salvar com sucesso
+    onSuccess: () => void;        
 };
 
 /* ─── Abas ──────────────────────────────────── */
@@ -53,7 +53,7 @@ const TABS: { key: TTab; label: string; icon: any }[] = [
 export const ModalEditRecipient = ({
     isOpen,
     recipientId,
-    contractorType = "",
+    contractorType = "B2B",
     onClose,
     onSuccess,
 }: TProp) => {
@@ -68,6 +68,7 @@ export const ModalEditRecipient = ({
     const [serviceModules, setServiceModule] = useState([]);
     const [modules, setModules] = useState<TServiceModule[]>([]);
     const [type, setContractorType] = useState<string>("");
+    const [bonds, setBonds] = useState<any[]>([]);
 
     const {
         register,
@@ -207,6 +208,20 @@ export const ModalEditRecipient = ({
         } catch {}
     };
 
+    const loadBonds = async (customerType: "B2C" | "B2B") => {
+        try {
+            let filters = `deleted=false`;
+            const contractorId = localStorage.getItem("contractorId");
+            if(contractorId) {
+                filters += `&contractorId=${contractorId}`;
+            };
+
+            const filter = customerType === "B2B" ? "B2C" : "B2B";
+            const { data } = await api.get(`/customer-recipients/select?${filters}&orderBy=createdAt&sort=desc&pageSize=200&pageNumber=1&ne$type=${filter}`, configApi());
+            setBonds(data.result.data ?? []);
+        } catch {}
+    };
+
     const getSelectServiceModule = async () => {
         try {
             setLoading(true);
@@ -275,6 +290,7 @@ export const ModalEditRecipient = ({
     useEffect(() => {
         if (!isOpen) return;
         loadGenders();
+        loadBonds(contractorType);
         getSelectServiceModule();
         if (recipientId) getById(recipientId);
     }, [isOpen, recipientId]);
@@ -449,6 +465,18 @@ export const ModalEditRecipient = ({
                                                 <option value="Dependente">Dependente</option>
                                             </select>
                                         </Field>
+                                        {
+                                            watch("bond") == "Dependente" && (
+                                                <Field label="Titular">
+                                                    <select className="select slim-select-primary" {...register("bondId")}>
+                                                        <option value="">Selecione</option>
+                                                        {bonds.map((p) => (
+                                                            <option key={p.id} value={p.id}>{p.name} - CPF: {p.cpf}</option>
+                                                        ))}
+                                                    </select>
+                                                </Field>
+                                            )
+                                        }
 
                                         <Field label="Programas">
                                             <select className="select slim-select-primary" {...register("planId")}>

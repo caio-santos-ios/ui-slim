@@ -555,7 +555,7 @@ export function InvoicePanel({ contractorId, onSyncComplete }: TProps) {
                 className="flex items-center gap-3 px-4 py-3 cursor-pointer select-none"
                 onClick={() => toggleExpand(key)}
               >
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   {isOpen ? (
                     <MdLockOpen size={18} className="text-green-500" />
                   ) : (
