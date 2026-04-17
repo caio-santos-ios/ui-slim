@@ -138,7 +138,7 @@ export default function Customer() {
   const [modalEditRecipient, setModalEditRecipient] = useState<boolean>(false);
   const [modalEditHistoricRecipient, setModalEditHistoricRecipient] = useState<boolean>(false);
   const [editRecipientId, setEditRecipientId]       = useState<string>("");
-  const [editContractorType, setEditContractorType] = useState<string>("");
+  const [editContractorType, setEditContractorType] = useState<"B2B" | "B2C">("B2C");
 
   const { register, handleSubmit, reset, getValues } = useForm<TCustomerFilter>({
     defaultValues: ResetFilter,
